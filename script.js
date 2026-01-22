@@ -70,11 +70,11 @@ async function fetchWeather() {
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // 1. Stunden (Auf 5 Vorhersagen eingestellt)
+        // 1. Stunden (AUF 5 REDUZIERT)
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += `<div class="f-item"><span class="f-label">${new Date(it.dt*1000).getHours()}:00</span><i class="fa ${iconColorMap[it.weather[0].icon] || "fa-cloud"}" style="font-size:2.2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">${Math.round(it.main.temp)}°</span></div>`;
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + ' f-icon-big"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
         // 2. Tage mit Max/Min
@@ -93,7 +93,7 @@ async function fetchWeather() {
             var maxT = Math.round(Math.max(...daysData[d].temps));
             var minT = Math.round(Math.min(...daysData[d].temps));
             
-            dList.innerHTML += `<div class="f-item"><span class="f-label" style="color:#00ffcc">${d}</span><i class="fa ${iconColorMap[daysData[d].icon] || "fa-cloud"}" style="font-size:2rem; display:block; margin:4px 0;"></i><div><span class="f-temp-max">${maxT}°</span><span class="f-temp-min">${minT}°</span></div></div>`;
+            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[daysData[d].icon] || "fa-cloud") + ' f-icon-big"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
         });
 
     } catch (e) { console.log("Fehler"); }
