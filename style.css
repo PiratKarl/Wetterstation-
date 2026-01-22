@@ -1,46 +1,52 @@
+/* Kompatibilitäts-Reset */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #000; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; height: 100vh; overflow: hidden; }
+body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 100vh; width: 100vw; overflow: hidden; }
 
-.app-shell { height: 100vh; display: flex; flex-direction: column; }
+.container { width: 100%; height: 100%; display: block; }
 
-/* Neue Proportionen: 60% Oben, 10% Ticker, 30% Unten */
-.section-top { height: 60%; display: flex; padding: 10px; }
-.section-ticker { height: 10%; background: rgba(0, 255, 204, 0.08); display: flex; align-items: center; overflow: hidden; border-top: 1px solid #222; border-bottom: 1px solid #222; }
-.section-bottom { height: 30%; display: flex; flex-direction: column; background: #050505; }
+/* Obere Sektion mit Floats statt Grid für alte Browser */
+.top-row { height: 55%; width: 100%; border-bottom: 1px solid #111; overflow: hidden; padding: 10px; }
+.col-33 { width: 33.33%; float: left; height: 100%; text-align: center; display: table; }
 
-.box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-
-/* Uhr */
-#clock { font-size: 5rem; font-weight: 200; color: #fff; line-height: 1; }
-#date { font-size: 1.2rem; color: #00ffcc; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px; }
+/* Uhrzeit */
+#clock { font-size: 80px; font-weight: bold; margin-top: 20px; }
+#date { font-size: 18px; color: #00ffcc; letter-spacing: 2px; }
 
 /* Wetter Mitte */
-#city-title { font-size: 1rem; color: #555; letter-spacing: 4px; margin-bottom: 5px; }
-.main-temp-row { display: flex; align-items: center; gap: 10px; }
-#main-icon { font-size: 5.5rem; }
-#temp-display { font-size: 7rem; font-weight: 100; }
-.unit { font-size: 1.8rem; color: #00ffcc; margin-top: 20px; }
-#weather-desc { font-size: 1.4rem; color: #888; text-transform: uppercase; }
+#city-title { font-size: 14px; color: #666; letter-spacing: 4px; margin-bottom: 10px; }
+.temp-main-wrap { font-size: 90px; font-weight: bold; }
+#main-icon { font-size: 50px; vertical-align: middle; margin-right: 10px; }
+.celsius { font-size: 30px; color: #00ffcc; vertical-align: top; margin-top: 20px; display: inline-block; }
+#weather-desc { font-size: 18px; color: #888; text-transform: uppercase; }
 
-/* Astro Rechts (Groß und deutlich) */
-.sun-row { display: flex; align-items: center; gap: 15px; margin-bottom: 8px; }
-.sun-row i { font-size: 2.5rem; }
-.sun-row span { font-size: 2rem; font-weight: bold; }
-#moon-status { font-size: 1.3rem; color: #00ffcc; margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+/* Astro Rechts */
+.astro-box { margin: 15px 0; font-size: 35px; font-weight: bold; }
+.astro-box i { margin-right: 10px; }
+.moon-phase-wrap { margin-top: 10px; color: #00ffcc; font-size: 16px; }
 
-/* Ticker (Kompakter) */
-.marquee { white-space: nowrap; padding-left: 100%; animation: scroll 40s linear infinite; font-size: 1.4rem; font-weight: 300; color: #00ffcc; }
-@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+/* Ticker Zeile */
+.ticker-row { height: 10%; width: 100%; background: #080808; border-top: 1px solid #222; border-bottom: 1px solid #222; overflow: hidden; position: relative; }
+.marquee-wrap { width: 100%; height: 100%; position: relative; }
+.marquee-text {
+    position: absolute; width: 100%; height: 100%; line-height: 50px;
+    white-space: nowrap; font-size: 24px; font-weight: bold; color: #00ffcc;
+    animation: marquee 30s linear infinite;
+}
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
 
-/* Vorschau (Verkleinert) */
-.f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; padding: 5px 0; }
-.f-item { text-align: center; }
-.f-time { font-size: 0.9rem; color: #555; display: block; }
-.f-icon { font-size: 2.2rem; color: #00ffcc; display: block; margin: 3px 0; }
-.f-temp { font-size: 1.4rem; font-weight: bold; color: #fff; }
+/* Vorhersage (Kompakter) */
+.bottom-row { height: 35%; width: 100%; background: #000; }
+.forecast-container { height: 50%; width: 100%; display: table; table-layout: fixed; }
+.f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 5px; }
+.f-time { font-size: 14px; color: #555; display: block; }
+.f-icon { font-size: 26px; color: #00ffcc; display: block; margin: 2px 0; }
+.f-temp { font-size: 18px; font-weight: bold; }
 
-/* Modal */
-#settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 9999; }
-.modal { background: #111; padding: 30px; border-radius: 20px; border: 2px solid #00ffcc; text-align: center; width: 320px; }
-input { width: 100%; padding: 15px; font-size: 1.2rem; border-radius: 8px; margin-bottom: 15px; text-align: center; }
-button { width: 100%; padding: 15px; font-size: 1.1rem; font-weight: bold; background: #00ffcc; border: none; border-radius: 8px; cursor: pointer; }
+/* Einstellungen */
+#settings-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; z-index: 100; text-align: center; }
+.modal { background: #111; border: 2px solid #00ffcc; border-radius: 15px; width: 80%; margin: 10% auto; padding: 30px; }
+input { width: 90%; padding: 15px; font-size: 20px; border-radius: 10px; border: 1px solid #333; background: #000; color: #fff; margin-bottom: 20px; }
+button { width: 90%; padding: 15px; background: #00ffcc; color: #000; border: none; border-radius: 10px; font-weight: bold; font-size: 20px; }
