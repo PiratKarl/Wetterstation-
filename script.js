@@ -10,20 +10,6 @@ const iconColorMap = {
     "50d": "fa-bars icon-cloud"
 };
 
-function getWindDirText(deg) {
-    const directions = ['Nord', 'Nordost', 'Ost', 'Südost', 'Süd', 'Südwest', 'West', 'Nordwest'];
-    return directions[Math.round(deg / 45) % 8];
-}
-
-function getBeaufortText(kmh) {
-    if (kmh < 1) return "Windstille";
-    if (kmh < 12) return "leichte Brise";
-    if (kmh < 29) return "frischer Wind";
-    if (kmh < 50) return "steifer Wind";
-    if (kmh < 75) return "Sturm";
-    return "Orkan";
-}
-
 function updateClock() {
     var now = new Date();
     var h = now.getHours().toString().padStart(2, '0');
@@ -44,24 +30,39 @@ async function fetchWeather() {
         var data = await res.json();
         
         if (data.cod === 200) {
+            const actualTemp = data.main.temp;
+            const feelsLike = data.main.feels_like;
+            
             document.getElementById('city-title').innerText = data.name.toUpperCase();
-            document.getElementById('temp-display').innerText = data.main.temp.toFixed(1);
+            document.getElementById('temp-display').innerText = actualTemp.toFixed(1);
             document.getElementById('weather-desc').innerText = data.weather[0].description;
             document.getElementById('main-icon').className = "fa " + (iconColorMap[data.weather[0].icon] || "fa-cloud");
             document.getElementById('sunrise-val').innerText = formatT(data.sys.sunrise, data.timezone);
             document.getElementById('sunset-val').innerText = formatT(data.sys.sunset, data.timezone);
             
+            // Logik für die gefühlte Temperatur
+            var feelsElem = document.getElementById('feels-like-display');
+            var diff = Math.round(feelsLike * 10) / 10 - Math.round(actualTemp * 10) / 10;
+            
+            if (Math.abs(diff) < 0.2) {
+                // Bei (fast) gleicher Temperatur ausblenden
+                feelsElem.className = "hidden";
+            } else if (feelsLike > actualTemp) {
+                // Wärmer -> Rot
+                feelsElem.innerHTML = "<small>GEFÜHLT </small>" + feelsLike.toFixed(1) + "°";
+                feelsElem.className = "warmer";
+            } else {
+                // Kälter -> Blau
+                feelsElem.innerHTML = "<small>GEFÜHLT </small>" + feelsLike.toFixed(1) + "°";
+                feelsElem.className = "colder";
+            }
+
             var now = new Date();
             document.getElementById('update-info').innerText = "Update: " + now.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
 
-            const windKmh = Math.round(data.wind.speed * 3.6);
-            const windDir = getWindDirText(data.wind.deg);
-            const windBeaufort = getBeaufortText(windKmh);
-
             var tickerInfo = [
-                "WIND: " + windKmh + " KM/H aus " + windDir + " (" + windBeaufort + ")",
-                "GEFÜHLT: " + data.main.feels_like.toFixed(1) + "°C",
                 "FEUCHTE: " + data.main.humidity + "%",
+                "WIND: " + (data.wind.speed * 3.6).toFixed(1) + " KM/H",
                 "DRUCK: " + data.main.pressure + " HPA"
             ];
             document.getElementById('info-ticker').innerText = " +++ " + tickerInfo.join(" +++ ") + " +++ ";
@@ -70,32 +71,26 @@ async function fetchWeather() {
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // 1. Stunden (AUF 5 REDUZIERT)
+        // 1. Stunden (5 Vorhersagen)
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + ' f-icon-big"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:2.2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
-        // 2. Tage mit Max/Min
+        // 2. Tage
         var dList = document.getElementById('daily-list'); dList.innerHTML = "";
         var daysData = {};
-
         dataF.list.forEach(function(it) {
             var dayName = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
-            if(!daysData[dayName]) {
-                daysData[dayName] = { temps: [], icon: it.weather[0].icon };
-            }
+            if(!daysData[dayName]) daysData[dayName] = { temps: [], icon: it.weather[0].icon };
             daysData[dayName].temps.push(it.main.temp);
         });
-
         Object.keys(daysData).slice(1, 6).forEach(function(d) {
             var maxT = Math.round(Math.max(...daysData[d].temps));
             var minT = Math.round(Math.min(...daysData[d].temps));
-            
-            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[daysData[d].icon] || "fa-cloud") + ' f-icon-big"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
+            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[daysData[d].icon] || "fa-cloud") + '" style="font-size:2.2rem; display:block; margin:4px 0;"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
         });
-
     } catch (e) { console.log("Fehler"); }
 }
 
@@ -108,7 +103,7 @@ function saveCity() {
     var val = document.getElementById('city-input').value.trim();
     if(val) {
         localStorage.setItem('selectedCity', val);
-        window.location.href = window.location.pathname; 
+        window.location.reload(); 
     }
 }
 

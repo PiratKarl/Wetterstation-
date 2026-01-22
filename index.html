@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wetterstation Pro V9 - Big Display</title>
+    <title>Aura Weather Station V10</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -19,9 +19,12 @@
             
             <div class="col-center">
                 <div id="city-title">STADT</div>
-                <div class="temp-wrap">
+                <div class="temp-main-container">
                     <i class="fa fa-cloud" id="main-icon"></i>
-                    <span id="temp-display">--.-</span><span class="unit">°C</span>
+                    <div class="temp-numbers">
+                        <span id="temp-display">--.-</span><span class="unit">°C</span>
+                        <div id="feels-like-display"></div>
+                    </div>
                 </div>
                 <div id="weather-desc">SUCHE...</div>
             </div>
@@ -36,8 +39,8 @@
         </div>
 
         <div class="ticker-row">
-            <div class="ticker-wrap">
-                <div id="info-ticker" class="ticker-move">Wetter- und Winddaten werden geladen...</div>
+            <div class="marquee-wrap">
+                <div id="info-ticker" class="ticker-move">Lade Wetterdaten...</div>
             </div>
         </div>
 
