@@ -35,7 +35,6 @@ async function fetchWeather() {
             
             document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = actualTemp.toFixed(1);
-            // Die Zeile für weather-desc wurde entfernt
             document.getElementById('main-icon').className = "fa " + (iconColorMap[data.weather[0].icon] || "fa-cloud");
             document.getElementById('sunrise-val').innerText = formatT(data.sys.sunrise, data.timezone);
             document.getElementById('sunset-val').innerText = formatT(data.sys.sunset, data.timezone);
@@ -67,14 +66,12 @@ async function fetchWeather() {
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // 1. Stunden
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
             hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:2.2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
-        // 2. Tage
         var dList = document.getElementById('daily-list'); dList.innerHTML = "";
         var daysData = {};
         dataF.list.forEach(function(it) {
@@ -99,7 +96,7 @@ function saveCity() {
     var val = document.getElementById('city-input').value.trim();
     if(val) {
         localStorage.setItem('selectedCity', val);
-        window.location.href = window.location.pathname; 
+        window.location.reload(); 
     }
 }
 

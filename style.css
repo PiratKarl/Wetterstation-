@@ -3,39 +3,31 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 
 .app-shell { width: 100%; height: 100%; display: block; }
 
-/* Oben: 55% Höhe */
-.header-row { height: 55%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
+.header-row { height: 50%; width: 100%; padding: 15px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; }
 
-/* Uhr */
-#clock { font-size: 7rem; font-weight: bold; line-height: 1; margin-top: 10px; }
-#date { font-size: 1.4rem; color: #00ffcc; text-transform: uppercase; }
-#update-info { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
+/* Uhr verkleinert auf 4.5rem */
+#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; margin-top: 15px; }
+#date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
+#update-info { font-size: 0.8rem; color: #aaa; margin-top: 10px; }
 
-/* Temperatur-Bereich */
 #city-title { font-size: 1rem; color: #444; letter-spacing: 4px; margin-bottom: 10px; }
-.temp-main-container { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 5px 0; }
+.temp-main-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 5px; }
 
-/* Haupt-Icon JETZT KLEINER (4.5rem statt 6rem) */
-#main-icon { font-size: 4.5rem; }
+/* Haupt-Icon verkleinert auf 3rem */
+#main-icon { font-size: 3rem; }
 
-/* Haupt-Temperatur */
-.temp-numbers { position: relative; display: inline-block; text-align: left; }
 #temp-display { font-size: 8rem; font-weight: bold; line-height: 1; }
 .unit { font-size: 2.5rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
 
-/* Gefühlte Temperatur */
 #feels-like-display { font-size: 1.5rem; font-weight: bold; margin-top: -10px; text-align: center; }
 .warmer { color: #ff4d4d !important; }
 .colder { color: #00d9ff !important; }
 .hidden { display: none; }
 
-/* CSS für #weather-desc wurde entfernt */
-
-/* Astro & Icons */
-.loc-toggle { font-size: 2.5rem; color: #00ffcc; margin-bottom: 5px; }
-.astro-area { font-size: 2.2rem; font-weight: bold; }
-.sun-item { margin: 8px 0; }
+.loc-toggle { font-size: 2.5rem; color: #00ffcc; margin-bottom: 10px; cursor: pointer; }
+.astro-area { font-size: 2rem; font-weight: bold; }
+.sun-item { margin: 10px 0; }
 .icon-sun { color: #FFD700 !important; }
 .icon-sunset { color: #FF8C00 !important; }
 .icon-cloud { color: #FFFFFF !important; }
@@ -43,13 +35,11 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .icon-snow { color: #F0F8FF !important; }
 .icon-bolt { color: #FFFF00 !important; }
 
-/* Ticker: 8% */
-.ticker-row { height: 8%; width: 100%; background: #080808; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
+.ticker-row { height: 10%; width: 100%; background: #080808; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
 .ticker-move { position: absolute; width: 100%; height: 100%; line-height: 45px; white-space: nowrap; font-size: 1.6rem; color: #00ffcc; animation: marquee 35s linear infinite; font-weight: bold; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* Unten: 37% */
-.footer-row { height: 37%; width: 100%; background: #000; }
+.footer-row { height: 40%; width: 100%; background: #000; }
 .forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
 .f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 5px; }
 .f-label { font-size: 1.1rem; color: #555; display: block; }
@@ -57,7 +47,6 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .f-temp-max { font-size: 1.7rem; font-weight: bold; color: #ff4d4d; }
 .f-temp-min { font-size: 1.4rem; font-weight: bold; color: #00d9ff; margin-left: 6px; }
 
-/* Modal */
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; text-align: center; }
 .modal { background: #111; border: 2px solid #00ffcc; border-radius: 15px; width: 85%; max-width: 400px; margin: 10% auto; padding: 25px; }
 input { width: 100%; padding: 15px; font-size: 1.4rem; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; margin-bottom: 15px; text-align: center; }
