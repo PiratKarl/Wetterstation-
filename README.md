@@ -1,4 +1,8 @@
- Aura Weather OS – Legacy Edition
+<p align="center">
+  <img src="logo.png" width="500">
+</p>
+
+Aura Weather OS – Legacy Edition
 ​Gib deinem alten Tablet oder Handy ein zweites Leben als professionelle Wetterstation.
 ​Dieses Projekt wurde speziell entwickelt, um auf älterer Hardware (z. B. Samsung Galaxy Tabs der frühen Generationen) stabil, flüssig und vor allem lesbar zu laufen. Während moderne Wetter-Apps oft zu viel Rechenleistung fressen, setzt Aura Weather OS auf hocheffizientes HTML5, CSS-Tabellen-Logik und ein Design, das man auch aus 5 Metern Entfernung noch erkennt.
 ​✨ Hauptfunktionen
