@@ -1,5 +1,4 @@
 const API_KEY = '518e81d874739701f08842c1a55f6588';
-// Falls kein Standort gespeichert, nutze Braunschweig als Standard
 let currentCity = localStorage.getItem('selectedCity') || 'Braunschweig';
 
 const iconMap = {
@@ -34,13 +33,13 @@ async function fetchWeather() {
             document.getElementById('sunrise-val').innerText = formatTime(data.sys.sunrise, data.timezone);
             document.getElementById('sunset-val').innerText = formatTime(data.sys.sunset, data.timezone);
 
-            // Ticker befüllen
             const tickerText = [
                 `GEFÜHLT: ${Math.round(data.main.feels_like)}°C`,
                 `WIND: ${Math.round(data.wind.speed * 3.6)} KM/H`,
                 `FEUCHTE: ${data.main.humidity}%`,
                 `DRUCK: ${data.main.pressure} HPA`,
-                `WOLKEN: ${data.clouds.all}%`
+                `WOLKEN: ${data.clouds.all}%`,
+                `SICHT: ${(data.visibility / 1000).toFixed(1)} KM`
             ];
             document.getElementById('info-ticker').innerText = " +++ " + tickerText.join(" +++ ") + " +++ ";
         }
@@ -65,7 +64,7 @@ async function fetchWeather() {
         Object.keys(days).slice(1,6).forEach(d => {
             dList.innerHTML += `<div class="f-item"><span class="f-time" style="color:#00ffcc">${d}</span><i class="fa ${iconMap[days[d].ic]} f-icon"></i><span class="f-temp">${Math.round(days[d].t)}°</span></div>`;
         });
-    } catch (e) { console.log("Netzwerkfehler"); }
+    } catch (e) { console.log("Fehler"); }
 }
 
 function toggleSettings() {
@@ -77,13 +76,11 @@ function saveCity() {
     const val = document.getElementById('city-input').value.trim();
     if(val) {
         localStorage.setItem('selectedCity', val);
-        // Brutaler Neustart der Seite - löst alle Cache- und Speicherprobleme
-        window.location.href = window.location.pathname + "?city=" + encodeURIComponent(val);
+        window.location.reload(); 
     }
 }
 
-// Intervall: 15 Minuten
 setInterval(updateClock, 1000);
-setInterval(fetchWeather, 900000);
+setInterval(fetchWeather, 900000); // 15 Min
 updateClock(); fetchWeather();
 if ('wakeLock' in navigator) navigator.wakeLock.request('screen');

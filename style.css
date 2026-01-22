@@ -1,46 +1,46 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #000; color: #fff; font-family: 'Arial Black', Gadget, sans-serif; height: 100vh; overflow: hidden; }
+body { background: #000; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; height: 100vh; overflow: hidden; }
 
 .app-shell { height: 100vh; display: flex; flex-direction: column; }
 
-/* 45% Oben, 15% Ticker, 40% Unten */
-.section-top { height: 45%; display: flex; padding: 10px; border-bottom: 1px solid #222; }
-.section-ticker { height: 15%; background: rgba(0, 255, 204, 0.15); display: flex; align-items: center; overflow: hidden; border-bottom: 2px solid #00ffcc; }
-.section-bottom { height: 40%; display: flex; flex-direction: column; background: #080808; }
+/* Neue Proportionen: 60% Oben, 10% Ticker, 30% Unten */
+.section-top { height: 60%; display: flex; padding: 10px; }
+.section-ticker { height: 10%; background: rgba(0, 255, 204, 0.08); display: flex; align-items: center; overflow: hidden; border-top: 1px solid #222; border-bottom: 1px solid #222; }
+.section-bottom { height: 30%; display: flex; flex-direction: column; background: #050505; }
 
 .box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
 
 /* Uhr */
-#clock { font-size: 5.5rem; color: #fff; line-height: 1; }
-#date { font-size: 1.5rem; color: #00ffcc; margin-top: 5px; }
+#clock { font-size: 5rem; font-weight: 200; color: #fff; line-height: 1; }
+#date { font-size: 1.2rem; color: #00ffcc; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px; }
 
-/* Wetter Mitte - Kleiner als der Rest wie gewünscht */
-#city-title { font-size: 1.2rem; color: #555; letter-spacing: 4px; }
+/* Wetter Mitte */
+#city-title { font-size: 1rem; color: #555; letter-spacing: 4px; margin-bottom: 5px; }
 .main-temp-row { display: flex; align-items: center; gap: 10px; }
-#main-icon { font-size: 5rem; }
-#temp-display { font-size: 6.5rem; font-weight: bold; }
-.unit { font-size: 2rem; color: #00ffcc; margin-top: 20px; }
-#weather-desc { font-size: 1.5rem; color: #777; }
+#main-icon { font-size: 5.5rem; }
+#temp-display { font-size: 7rem; font-weight: 100; }
+.unit { font-size: 1.8rem; color: #00ffcc; margin-top: 20px; }
+#weather-desc { font-size: 1.4rem; color: #888; text-transform: uppercase; }
 
-/* Astro Rechts - VIEL GRÖSSER */
-.sun-row { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
-.sun-row i { font-size: 3.5rem; }
-.sun-row span { font-size: 2.8rem; font-weight: bold; }
-#moon-status { font-size: 1.8rem; color: #00ffcc; margin-top: 10px; }
+/* Astro Rechts (Groß und deutlich) */
+.sun-row { display: flex; align-items: center; gap: 15px; margin-bottom: 8px; }
+.sun-row i { font-size: 2.5rem; }
+.sun-row span { font-size: 2rem; font-weight: bold; }
+#moon-status { font-size: 1.3rem; color: #00ffcc; margin-top: 10px; display: flex; align-items: center; gap: 8px; }
 
-/* Ticker - MASSIV */
-.marquee { white-space: nowrap; padding-left: 100%; animation: scroll 30s linear infinite; font-size: 2.5rem; font-weight: 900; color: #00ffcc; text-transform: uppercase; }
+/* Ticker (Kompakter) */
+.marquee { white-space: nowrap; padding-left: 100%; animation: scroll 40s linear infinite; font-size: 1.4rem; font-weight: 300; color: #00ffcc; }
 @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-/* Vorschau - MASSIV */
-.f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
+/* Vorschau (Verkleinert) */
+.f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; padding: 5px 0; }
 .f-item { text-align: center; }
-.f-time { font-size: 1.5rem; color: #666; display: block; }
-.f-icon { font-size: 3.5rem; color: #00ffcc; display: block; margin: 5px 0; }
-.f-temp { font-size: 2.2rem; font-weight: bold; color: #fff; }
+.f-time { font-size: 0.9rem; color: #555; display: block; }
+.f-icon { font-size: 2.2rem; color: #00ffcc; display: block; margin: 3px 0; }
+.f-temp { font-size: 1.4rem; font-weight: bold; color: #fff; }
 
 /* Modal */
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 9999; }
-.modal { background: #111; padding: 40px; border-radius: 20px; border: 3px solid #00ffcc; text-align: center; width: 90%; max-width: 500px; }
-input { width: 100%; padding: 20px; font-size: 2rem; border-radius: 10px; margin-bottom: 20px; text-align: center; }
-button { width: 100%; padding: 20px; font-size: 1.5rem; font-weight: bold; background: #00ffcc; border: none; border-radius: 10px; }
+.modal { background: #111; padding: 30px; border-radius: 20px; border: 2px solid #00ffcc; text-align: center; width: 320px; }
+input { width: 100%; padding: 15px; font-size: 1.2rem; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+button { width: 100%; padding: 15px; font-size: 1.1rem; font-weight: bold; background: #00ffcc; border: none; border-radius: 8px; cursor: pointer; }
