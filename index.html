@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station Pro V7</title>
+    <title>Aura Weather Station - Minimal Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,7 +14,7 @@
             <div class="col-left">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
-                <div id="update-info">Update: --:--</div>
+                <div id="update-info">Upd: --:--</div>
             </div>
             
             <div class="col-center">
@@ -27,9 +27,7 @@
             </div>
 
             <div class="col-right">
-                <button class="icon-btn" onclick="toggleSettings()" title="Ort ändern">
-                    <i class="fa fa-map-marker"></i>
-                </button>
+                <div class="location-emoji" onclick="toggleSettings()" title="Ort ändern">📍</div>
                 
                 <div class="astro-stats">
                     <div class="sun-box"><i class="fa fa-sun-o icon-sunrise"></i> <span id="sunrise-val">--:--</span></div>
@@ -41,7 +39,7 @@
 
         <div class="ticker-row">
             <div class="marquee-wrap">
-                <div id="info-ticker" class="marquee-text">Lade Wetter-Datenstrom...</div>
+                <div id="info-ticker" class="marquee-text">Wetter-Datenstrom wird geladen...</div>
             </div>
         </div>
 
@@ -53,9 +51,9 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h3>Standort wählen</h3>
-            <input type="text" id="city-input" placeholder="z.B. Braunschweig">
-            <button onclick="saveCity()">AKTUALISIEREN</button>
+            <h3>Ort wählen</h3>
+            <input type="text" id="city-input" placeholder="Stadtname">
+            <button onclick="saveCity()">ANWENDEN</button>
             <button onclick="toggleSettings()" style="background:#333; color:white; margin-top:10px;">ZURÜCK</button>
         </div>
     </div>
