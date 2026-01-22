@@ -6,13 +6,15 @@ Aura Weather OS – Legacy Edition
 
 ​Gib deinem alten Tablet oder Handy ein zweites Leben als professionelle Wetterstation.
 ​Dieses Projekt wurde speziell entwickelt, um auf älterer Hardware (z. B. Samsung Galaxy Tabs der frühen Generationen) stabil, flüssig und vor allem lesbar zu laufen. Während moderne Wetter-Apps oft zu viel Rechenleistung fressen, setzt Aura Weather OS auf hocheffizientes HTML5, CSS-Tabellen-Logik und ein Design, das man auch aus 5 Metern Entfernung noch erkennt.
-​✨ Hauptfunktionen
+​
+✨ Hauptfunktionen
 ​Massive Anzeige: Uhrzeit und Temperatur sind für maximale Sichtbarkeit optimiert (7rem+).
 ​Dynamische Gefühlte Temperatur: Erscheint nur bei Abweichungen (Rot bei Hitze, Blau bei Kälte).
 ​** Beaufort-Wind-Ticker:** Echtzeit-Winddaten inkl. Himmelsrichtung und textueller Bezeichnung (z. B. „Steifer Wind“).
 ​Astro-Widget: Übergroße Sonnenauf- und -untergangszeiten sowie Mondphasen-Berechnung.
 ​Legacy Forecast: 5-Stunden-Vorschau und 5-Tages-Vorschau inklusive echter Höchst- und Tiefstwerte.
 ​Auto-Update: Aktualisiert alle 5 Minuten völlig selbstständig.
+
 ​🛠️ Tricks für alte Handys & Tablets (Legacy Hacks)
 ​Alte Geräte haben oft "zickige" Browser oder schwache Akkus. Hier sind die besten Kniffe, die in diesem Code integriert sind oder am Gerät eingestellt werden sollten:
 ​1. Der "Standort-Force-Reload"
