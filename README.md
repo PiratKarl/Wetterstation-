@@ -19,6 +19,7 @@ Aura Weather OS – Legacy Edition (de)
 ​Auto-Update: Aktualisiert alle 5 Minuten völlig selbstständig.
 
 ​🛠️ Tricks für alte Handys & Tablets (Legacy Hacks)
+
 ​Alte Geräte haben oft "zickige" Browser oder schwache Akkus. Hier sind die besten Kniffe, die in diesem Code integriert sind oder am Gerät eingestellt werden sollten:
 ​1. Der "Standort-Force-Reload"
 ​Alte Browser hängen oft im Cache fest. Unsere App nutzt einen "Harten Reload":
