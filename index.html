@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station V13 - Legacy Fix</title>
+    <title>Aura Weather Station Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="app-shell">
-        <div class="header-row" onclick="toggleSettings()">
+        <div class="header-row">
             <div class="col-left">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
+                <img src="logo.png" id="station-logo" alt="Station Logo">
                 <div id="update-info">Upd: --:--</div>
             </div>
             
@@ -29,7 +30,7 @@
             </div>
 
             <div class="col-right">
-                <div class="loc-toggle"><i class="fa fa-map-marker"></i></div>
+                <div class="loc-toggle" onclick="toggleSettings()"><i class="fa fa-map-marker"></i></div>
                 <div class="astro-area">
                     <div class="sun-item"><i class="fa fa-sun-o icon-sun"></i> <span id="sunrise-val">--:--</span></div>
                     <div class="sun-item"><i class="fa fa-moon-o icon-sunset"></i> <span id="sunset-val">--:--</span></div>
@@ -39,21 +40,21 @@
 
         <div class="ticker-row">
             <div class="marquee-wrap">
-                <div id="info-ticker" class="ticker-move">Lade Wetterdaten...</div>
+                <div id="info-ticker" class="ticker-move">Wetterdaten werden geladen...</div>
             </div>
         </div>
 
         <div class="footer-row">
             <div class="forecast-table" id="hourly-list"></div>
-            <div class="forecast-table" id="daily-list" style="border-top: 2px solid #111;"></div>
+            <div class="forecast-table" id="daily-list" style="border-top: 1px solid #222;"></div>
         </div>
     </div>
 
     <div id="settings-overlay">
         <div class="modal">
-            <h3>Ort ändern</h3>
-            <input type="text" id="city-input" placeholder="Stadt eingeben">
-            <button onclick="saveCity()">SPEICHERN</button>
+            <h3>Standort wählen</h3>
+            <input type="text" id="city-input" placeholder="z.B. Braunschweig">
+            <button onclick="saveCity()">ANWENDEN</button>
             <button onclick="toggleSettings()" style="background:#444; color:white; margin-top:10px;">ZURÜCK</button>
         </div>
     </div>

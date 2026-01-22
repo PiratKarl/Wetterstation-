@@ -1,30 +1,61 @@
-/* Ticker: Jetzt 12% Höhe für die größere Schrift */
-.ticker-row { 
-    height: 12%; 
-    width: 100%; 
-    background: #050505; 
-    border-top: 2px solid #111; 
-    border-bottom: 2px solid #111; 
-    overflow: hidden; 
-    position: relative; 
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 100vh; width: 100vw; overflow: hidden; }
 
-.ticker-move { 
-    position: absolute; 
-    white-space: nowrap; 
-    line-height: 60px; /* An Höhe angepasst */
-    font-size: 2rem; /* DEUTLICH GRÖSSER */
-    color: #00ffcc; 
-    animation: marquee 40s linear infinite; 
-    font-weight: 900; 
-}
+.app-shell { width: 100%; height: 100%; display: block; }
 
-/* Farben für die Warnstufen im Ticker */
-.warn-yellow { color: #ffff00 !important; } /* Gelbe Warnung */
-.warn-orange { color: #ff8c00 !important; } /* Orange Warnung */
-.warn-red { color: #ff0000 !important; font-weight: bold; } /* Rote Warnung */
-.warn-frost { color: #00ffff !important; } /* Frost Blau */
+/* Oben: 55% Höhe */
+.header-row { height: 55%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
+.col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
+#date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
+#station-logo { width: 100px; height: auto; margin: 10px 0; opacity: 0.8; }
+#update-info { font-size: 0.8rem; color: #aaa; }
+
+#city-title { font-size: 1rem; color: #444; letter-spacing: 4px; margin-bottom: 10px; }
+.temp-main-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
+#main-icon { font-size: 3rem; }
+
+#temp-display { font-size: 8rem; font-weight: bold; line-height: 1; }
+.unit { font-size: 2.5rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
+
+#feels-like-display { font-size: 1.5rem; font-weight: bold; margin-top: -5px; }
+.warmer { color: #ff4d4d !important; }
+.colder { color: #00d9ff !important; }
+.hidden { display: none; }
+
+.loc-toggle { font-size: 2.2rem; color: #00ffcc; margin-bottom: 10px; cursor: pointer; }
+.astro-area { font-size: 2rem; font-weight: bold; }
+.sun-item { margin: 8px 0; }
+
+/* Ticker: 12% Höhe, 2rem Schrift */
+.ticker-row { height: 12%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
+.ticker-move { position: absolute; white-space: nowrap; line-height: 60px; font-size: 2rem; color: #00ffcc; animation: marquee 40s linear infinite; font-weight: 900; }
+
+.warn-red { color: #ff0000 !important; }
+.warn-orange { color: #ff8c00 !important; }
+.warn-frost { color: #00ffff !important; }
 
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* Restliche CSS bleibt gleich... */
+/* Unten: 33% Höhe */
+.footer-row { height: 33%; width: 100%; background: #000; }
+.forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
+.f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 2px; }
+.f-label { font-size: 0.9rem; color: #555; display: block; }
+.f-temp-hour { font-size: 1.8rem; font-weight: bold; color: #fff; }
+.f-temp-max { font-size: 1.5rem; font-weight: bold; color: #ff4d4d; }
+.f-temp-min { font-size: 1.2rem; font-weight: bold; color: #00d9ff; margin-left: 5px; }
+
+/* Icon Farben */
+.icon-sun { color: #FFD700 !important; }
+.icon-sunset { color: #FF8C00 !important; }
+.icon-cloud { color: #FFFFFF !important; }
+.icon-rain { color: #00BFFF !important; }
+.icon-snow { color: #F0F8FF !important; }
+.icon-bolt { color: #FFFF00 !important; }
+
+#settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; text-align: center; }
+.modal { background: #111; border: 2px solid #00ffcc; border-radius: 15px; width: 80%; max-width: 400px; margin: 15% auto; padding: 25px; }
+input { width: 100%; padding: 15px; font-size: 1.5rem; border: 1px solid #333; background: #000; color: #fff; margin-bottom: 20px; text-align: center; }
+button { width: 100%; padding: 15px; background: #00ffcc; color: #000; border: none; font-weight: bold; font-size: 1.2rem; }

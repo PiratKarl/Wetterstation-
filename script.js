@@ -12,51 +12,44 @@ var iconColorMap = {
 
 function zero(n) { return (n < 10 ? '0' : '') + n; }
 
-// --- NEU: Bekleidungstipps ---
-function getClothingTip(temp, rain) {
+function getWindDirText(deg) {
+    var dir = ['Nord', 'Nordost', 'Ost', 'Südost', 'Süd', 'Südwest', 'West', 'Nordwest'];
+    return dir[Math.round(deg / 45) % 8];
+}
+
+function getBeaufortText(kmh) {
+    if (kmh < 1) return "Windstille";
+    if (kmh < 12) return "leichte Brise";
+    if (kmh < 29) return "frischer Wind";
+    if (kmh < 50) return "steifer Wind";
+    if (kmh < 75) return "stürmischer Wind";
+    if (kmh < 103) return "Sturm";
+    return "Orkan";
+}
+
+function getClothingTip(temp, isRain) {
     var tip = "";
-    if (temp < 5) tip = "❄️ WINTERMODUS: Dicke Jacke, Schal & Handschuhe!";
-    else if (temp < 12) tip = "🧥 Übergangsjacke & warmer Pullover empfohlen.";
-    else if (temp < 18) tip = "👕 Leichte Jacke oder Weste reicht aus.";
-    else if (temp < 25) tip = "☀️ T-Shirt Wetter! Genieße die Sonne.";
-    else tip = "🕶️ HEISS: Kurze Kleidung & viel Wasser trinken!";
-    
-    if (rain) tip += " ☔ Schirm nicht vergessen!";
+    if (temp < 5) tip = "❄️ WINTER: Dick anziehen!";
+    else if (temp < 15) tip = "🧥 Übergangsjacke empfohlen.";
+    else if (temp < 23) tip = "👕 T-Shirt Wetter.";
+    else tip = "🕶️ HEISS: Luftig kleiden!";
+    if (isRain) tip += " ☔ Schirm mitnehmen!";
     return tip;
 }
 
-// --- NEU: Warnungs-Logik ---
 function getWarnings(data) {
     var warns = [];
-    var windKmh = Math.round(data.wind.speed * 3.6);
-    var temp = data.main.temp;
-    var condition = data.weather[0].main;
-
-    if (windKmh > 75) warns.push({t: "⚠️ ORKAN-WARNUNG: Bleiben Sie im Haus!", c: "warn-red"});
-    else if (windKmh > 55) warns.push({t: "⚠️ STURM-WARNUNG: Wind bis " + windKmh + " km/h", c: "warn-orange"});
-    
-    if (temp < -5) warns.push({t: "❄️ STRENGER FROST: Glättegefahr!", c: "warn-frost"});
-    if (temp > 32) warns.push({t: "🔥 HITZE-ALARM: Belastung für den Kreislauf!", c: "warn-red"});
-    
-    if (condition === "Thunderstorm") warns.push({t: "⚡ GEWITTER-WARNUNG: Gefahr von Blitzeinschlag!", c: "warn-orange"});
-    
+    var wind = Math.round(data.wind.speed * 3.6);
+    if (wind > 60) warns.push({t: "⚠️ STURM-WARNUNG!", c: "warn-orange"});
+    if (data.main.temp < -3) warns.push({t: "❄️ FROST-GEFAHR!", c: "warn-frost"});
+    if (data.main.temp > 30) warns.push({t: "🔥 HITZE-WARNUNG!", c: "warn-red"});
     return warns;
-}
-
-function getWindDirText(deg) {
-    var directions = ['Nord', 'Nordost', 'Ost', 'Südost', 'Süd', 'Südwest', 'West', 'Nordwest'];
-    return directions[Math.round(deg / 45) % 8];
 }
 
 function updateClock() {
     var now = new Date();
     document.getElementById('clock').innerText = zero(now.getHours()) + ":" + zero(now.getMinutes());
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' });
-}
-
-function formatT(ts, offset) {
-    var d = new Date((ts + offset) * 1000);
-    return zero(d.getUTCHours()) + ":" + zero(d.getUTCMinutes());
 }
 
 async function fetchWeather() {
@@ -67,58 +60,63 @@ async function fetchWeather() {
         
         if (data.cod === 200) {
             var temp = data.main.temp;
-            var isRain = data.weather[0].main === "Rain" || data.weather[0].main === "Drizzle";
-            
+            var feels = data.main.feels_like;
+            document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = temp.toFixed(1);
             document.getElementById('main-icon').className = "fa " + (iconColorMap[data.weather[0].icon] || "fa-cloud");
-            document.getElementById('sunrise-val').innerText = formatT(data.sys.sunrise, data.timezone);
-            document.getElementById('sunset-val').innerText = formatT(data.sys.sunset, data.timezone);
-
-            // Ticker zusammenbauen
-            var tickerContainer = document.getElementById('info-ticker');
-            tickerContainer.innerHTML = ""; // Alten Text löschen
-
-            // 1. Warnungen (Falls vorhanden)
-            var warnings = getWarnings(data);
-            warnings.forEach(function(w) {
-                tickerContainer.innerHTML += '<span class="' + w.c + '">' + w.t + ' +++ </span>';
-            });
-
-            // 2. Bekleidungstipp
-            tickerContainer.innerHTML += '<span>' + getClothingTip(temp, isRain) + ' +++ </span>';
-
-            // 3. Wind & Rest
-            var windKmh = Math.round(data.wind.speed * 3.6);
-            tickerContainer.innerHTML += '<span>WIND: ' + windKmh + ' KM/H (' + getWindDirText(data.wind.deg) + ') +++ </span>';
-            tickerContainer.innerHTML += '<span>LUFTFEUCHTE: ' + data.main.humidity + '% +++ </span>';
-            tickerContainer.innerHTML += '<span>DRUCK: ' + data.main.pressure + ' HPA +++ </span>';
             
+            var feelsElem = document.getElementById('feels-like-display');
+            var diff = feels - temp;
+            if (Math.abs(diff) < 0.3) {
+                feelsElem.className = "hidden";
+            } else {
+                feelsElem.innerHTML = "<small>GEFÜHLT </small>" + feels.toFixed(1) + "°";
+                feelsElem.className = (feels > temp) ? "warmer" : "colder";
+            }
+
+            // Astro
+            var offset = data.timezone;
+            var sunrise = new Date((data.sys.sunrise + offset) * 1000);
+            var sunset = new Date((data.sys.sunset + offset) * 1000);
+            document.getElementById('sunrise-val').innerText = zero(sunrise.getUTCHours()) + ":" + zero(sunrise.getUTCMinutes());
+            document.getElementById('sunset-val').innerText = zero(sunset.getUTCHours()) + ":" + zero(sunset.getUTCMinutes());
+
+            // Ticker
+            var ticker = document.getElementById('info-ticker');
+            ticker.innerHTML = "";
+            var warnings = getWarnings(data);
+            warnings.forEach(function(w) { ticker.innerHTML += '<span class="' + w.c + '">' + w.t + ' +++ </span>'; });
+            ticker.innerHTML += '<span>' + getClothingTip(temp, (data.weather[0].main === "Rain")) + ' +++ </span>';
+            var windKmh = Math.round(data.wind.speed * 3.6);
+            ticker.innerHTML += '<span>WIND: ' + windKmh + ' KM/H (' + getWindDirText(data.wind.deg) + ', ' + getBeaufortText(windKmh) + ') +++ </span>';
+            ticker.innerHTML += '<span>DRUCK: ' + data.main.pressure + ' HPA +++ </span>';
+
             document.getElementById('update-info').innerText = "Upd: " + zero(new Date().getHours()) + ":" + zero(new Date().getMinutes());
         }
 
-        // Vorhersage (Stunden & Tage)
+        // Vorhersage
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // 1. Stunden (5)
+        // Stunden (5)
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:2.2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:2px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
-        // 2. Tage
+        // Tage
         var dList = document.getElementById('daily-list'); dList.innerHTML = "";
-        var daysData = {};
+        var days = {};
         dataF.list.forEach(function(it) {
-            var dayName = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
-            if(!daysData[dayName]) daysData[dayName] = { temps: [], icon: it.weather[0].icon };
-            daysData[dayName].temps.push(it.main.temp);
+            var d = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
+            if(!days[d]) days[d] = { temps: [], icon: it.weather[0].icon };
+            days[d].temps.push(it.main.temp);
         });
-        Object.keys(daysData).slice(1, 6).forEach(function(d) {
-            var maxT = Math.round(Math.max.apply(Math, daysData[d].temps));
-            var minT = Math.round(Math.min.apply(Math, daysData[d].temps));
-            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[daysData[d].icon] || "fa-cloud") + '" style="font-size:2.2rem; display:block; margin:4px 0;"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
+        Object.keys(days).slice(1, 6).forEach(function(d) {
+            var maxT = Math.round(Math.max.apply(Math, days[d].temps));
+            var minT = Math.round(Math.min.apply(Math, days[d].temps));
+            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[days[d].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:2px 0;"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
         });
 
     } catch (e) { console.log(e); }
@@ -139,6 +137,7 @@ function saveCity() {
 
 setInterval(updateClock, 1000);
 setInterval(fetchWeather, 300000);
+// Wachmacher: Seite alle 25 Min neu laden
 setInterval(function() { window.location.reload(); }, 1500000); 
 
 updateClock(); fetchWeather();
