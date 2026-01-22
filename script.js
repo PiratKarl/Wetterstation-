@@ -74,14 +74,12 @@ async function fetchWeather() {
                 feelsElem.className = (feels > temp) ? "warmer" : "colder";
             }
 
-            // Astro
             var offset = data.timezone;
             var sunrise = new Date((data.sys.sunrise + offset) * 1000);
             var sunset = new Date((data.sys.sunset + offset) * 1000);
             document.getElementById('sunrise-val').innerText = zero(sunrise.getUTCHours()) + ":" + zero(sunrise.getUTCMinutes());
             document.getElementById('sunset-val').innerText = zero(sunset.getUTCHours()) + ":" + zero(sunset.getUTCMinutes());
 
-            // Ticker
             var ticker = document.getElementById('info-ticker');
             ticker.innerHTML = "";
             var warnings = getWarnings(data);
@@ -94,18 +92,15 @@ async function fetchWeather() {
             document.getElementById('update-info').innerText = "Upd: " + zero(new Date().getHours()) + ":" + zero(new Date().getMinutes());
         }
 
-        // Vorhersage
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // Stunden (5)
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:2px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
-        // Tage
         var dList = document.getElementById('daily-list'); dList.innerHTML = "";
         var days = {};
         dataF.list.forEach(function(it) {
@@ -116,7 +111,7 @@ async function fetchWeather() {
         Object.keys(days).slice(1, 6).forEach(function(d) {
             var maxT = Math.round(Math.max.apply(Math, days[d].temps));
             var minT = Math.round(Math.min.apply(Math, days[d].temps));
-            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[days[d].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:2px 0;"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
+            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[days[d].icon] || "fa-cloud") + '" style="font-size:2rem; display:block; margin:4px 0;"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
         });
 
     } catch (e) { console.log(e); }
@@ -137,7 +132,7 @@ function saveCity() {
 
 setInterval(updateClock, 1000);
 setInterval(fetchWeather, 300000);
-// Wachmacher: Seite alle 25 Min neu laden
+// Wachmacher Reload alle 25 Minuten
 setInterval(function() { window.location.reload(); }, 1500000); 
 
 updateClock(); fetchWeather();

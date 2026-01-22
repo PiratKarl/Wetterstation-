@@ -7,9 +7,18 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .header-row { height: 55%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
+/* Schriftgrößen bleiben massiv für gute Lesbarkeit */
 #clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
-#station-logo { width: 100px; height: auto; margin: 10px 0; opacity: 0.8; }
+
+/* LOGO ANPASSUNG: Jetzt deutlich kleiner */
+#station-logo { 
+    width: 45px;          /* Das Bild ist jetzt klein und dezent */
+    height: auto; 
+    margin: 5px 0; 
+    opacity: 0.8; 
+}
+
 #update-info { font-size: 0.8rem; color: #aaa; }
 
 #city-title { font-size: 1rem; color: #444; letter-spacing: 4px; margin-bottom: 10px; }
@@ -42,12 +51,12 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .footer-row { height: 33%; width: 100%; background: #000; }
 .forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
 .f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 2px; }
-.f-label { font-size: 0.9rem; color: #555; display: block; }
+.f-label { font-size: 1rem; color: #555; display: block; }
 .f-temp-hour { font-size: 1.8rem; font-weight: bold; color: #fff; }
 .f-temp-max { font-size: 1.5rem; font-weight: bold; color: #ff4d4d; }
 .f-temp-min { font-size: 1.2rem; font-weight: bold; color: #00d9ff; margin-left: 5px; }
 
-/* Icon Farben */
+/* Farben für Wetter-Icons */
 .icon-sun { color: #FFD700 !important; }
 .icon-sunset { color: #FF8C00 !important; }
 .icon-cloud { color: #FFFFFF !important; }
