@@ -1,5 +1,5 @@
 const API_KEY = '518e81d874739701f08842c1a55f6588';
-let currentCity = localStorage.getItem('selectedCity') || 'Braunschweig';
+var currentCity = localStorage.getItem('selectedCity') || 'Braunschweig';
 
 const iconColorMap = {
     "01d": "fa-sun-o icon-sun", "01n": "fa-moon-o icon-cloud",
@@ -10,17 +10,18 @@ const iconColorMap = {
     "50d": "fa-bars icon-cloud"
 };
 
+// Hilfsfunktion für führende Null (Ersatz für padStart)
+function zero(n) { return (n < 10 ? '0' : '') + n; }
+
 function updateClock() {
     var now = new Date();
-    var h = now.getHours().toString().padStart(2, '0');
-    var m = now.getMinutes().toString().padStart(2, '0');
-    document.getElementById('clock').innerText = h + ":" + m;
+    document.getElementById('clock').innerText = zero(now.getHours()) + ":" + zero(now.getMinutes());
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' });
 }
 
 function formatT(ts, offset) {
     var d = new Date((ts + offset) * 1000);
-    return d.getUTCHours().toString().padStart(2, '0') + ":" + d.getUTCMinutes().toString().padStart(2, '0');
+    return zero(d.getUTCHours()) + ":" + zero(d.getUTCMinutes());
 }
 
 async function fetchWeather() {
@@ -30,15 +31,17 @@ async function fetchWeather() {
         var data = await res.json();
         
         if (data.cod === 200) {
-            const actualTemp = data.main.temp;
-            const feelsLike = data.main.feels_like;
+            var actualTemp = data.main.temp;
+            var feelsLike = data.main.feels_like;
             
             document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = actualTemp.toFixed(1);
             document.getElementById('main-icon').className = "fa " + (iconColorMap[data.weather[0].icon] || "fa-cloud");
+            
             document.getElementById('sunrise-val').innerText = formatT(data.sys.sunrise, data.timezone);
             document.getElementById('sunset-val').innerText = formatT(data.sys.sunset, data.timezone);
             
+            // Gefühlte Temperatur Logik
             var feelsElem = document.getElementById('feels-like-display');
             var diff = Math.round(feelsLike * 10) / 10 - Math.round(actualTemp * 10) / 10;
             
@@ -53,7 +56,7 @@ async function fetchWeather() {
             }
 
             var now = new Date();
-            document.getElementById('update-info').innerText = "Update: " + now.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
+            document.getElementById('update-info').innerText = "Upd: " + zero(now.getHours()) + ":" + zero(now.getMinutes());
 
             var tickerInfo = [
                 "FEUCHTE: " + data.main.humidity + "%",
@@ -66,12 +69,14 @@ async function fetchWeather() {
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
+        // Stunden (5 Stück)
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:2.2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
+        // Tage
         var dList = document.getElementById('daily-list'); dList.innerHTML = "";
         var daysData = {};
         dataF.list.forEach(function(it) {
@@ -80,9 +85,9 @@ async function fetchWeather() {
             daysData[dayName].temps.push(it.main.temp);
         });
         Object.keys(daysData).slice(1, 6).forEach(function(d) {
-            var maxT = Math.round(Math.max(...daysData[d].temps));
-            var minT = Math.round(Math.min(...daysData[d].temps));
-            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[daysData[d].icon] || "fa-cloud") + '" style="font-size:2.2rem; display:block; margin:4px 0;"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
+            var maxT = Math.round(Math.max.apply(Math, daysData[d].temps));
+            var minT = Math.round(Math.min.apply(Math, daysData[d].temps));
+            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[daysData[d].icon] || "fa-cloud") + '" style="font-size:2rem; display:block; margin:4px 0;"></i><div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div></div>';
         });
     } catch (e) { console.log("Fehler"); }
 }
@@ -96,7 +101,7 @@ function saveCity() {
     var val = document.getElementById('city-input').value.trim();
     if(val) {
         localStorage.setItem('selectedCity', val);
-        window.location.reload(); 
+        window.location.href = window.location.pathname; 
     }
 }
 

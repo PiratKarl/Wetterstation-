@@ -6,46 +6,52 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .header-row { height: 50%; width: 100%; padding: 15px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; }
 
-/* Uhr verkleinert auf 4.5rem */
-#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; margin-top: 15px; }
-#date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
+/* Uhr kleiner: 4rem */
+#clock { font-size: 4rem; font-weight: bold; line-height: 1; margin-top: 15px; }
+#date { font-size: 1.1rem; color: #00ffcc; text-transform: uppercase; }
 #update-info { font-size: 0.8rem; color: #aaa; margin-top: 10px; }
 
-#city-title { font-size: 1rem; color: #444; letter-spacing: 4px; margin-bottom: 10px; }
+#city-title { font-size: 0.9rem; color: #444; letter-spacing: 3px; margin-bottom: 10px; }
 .temp-main-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 5px; }
 
-/* Haupt-Icon verkleinert auf 3rem */
-#main-icon { font-size: 3rem; }
+/* Icon kleiner: 2.5rem */
+#main-icon { font-size: 2.5rem; }
 
+/* Haupt-Temperatur: 8rem */
 #temp-display { font-size: 8rem; font-weight: bold; line-height: 1; }
 .unit { font-size: 2.5rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
 
-#feels-like-display { font-size: 1.5rem; font-weight: bold; margin-top: -10px; text-align: center; }
-.warmer { color: #ff4d4d !important; }
-.colder { color: #00d9ff !important; }
+/* Gefühlte Temperatur Logik */
+#feels-like-display { font-size: 1.5rem; font-weight: bold; margin-top: -5px; }
+.warmer { color: #ff4d4d !important; } /* Rot */
+.colder { color: #00d9ff !important; } /* Blau */
 .hidden { display: none; }
 
-.loc-toggle { font-size: 2.5rem; color: #00ffcc; margin-bottom: 10px; cursor: pointer; }
-.astro-area { font-size: 2rem; font-weight: bold; }
-.sun-item { margin: 10px 0; }
+.loc-toggle { font-size: 2rem; color: #00ffcc; margin-bottom: 10px; }
+.astro-area { font-size: 1.8rem; font-weight: bold; }
+.sun-item { margin: 8px 0; }
+
+/* Ticker: 10% */
+.ticker-row { height: 10%; width: 100%; background: #080808; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
+.ticker-move { position: absolute; width: 100%; height: 100%; line-height: 45px; white-space: nowrap; font-size: 1.6rem; color: #00ffcc; animation: marquee 35s linear infinite; font-weight: bold; }
+@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+/* Unten: 40% für die Zeilen */
+.footer-row { height: 40%; width: 100%; background: #000; }
+.forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
+.f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 5px; }
+.f-label { font-size: 1rem; color: #555; display: block; }
+.f-temp-hour { font-size: 1.8rem; font-weight: bold; color: #fff; }
+.f-temp-max { font-size: 1.5rem; font-weight: bold; color: #ff4d4d; }
+.f-temp-min { font-size: 1.3rem; font-weight: bold; color: #00d9ff; margin-left: 5px; }
+
+/* Icons Farbig */
 .icon-sun { color: #FFD700 !important; }
 .icon-sunset { color: #FF8C00 !important; }
 .icon-cloud { color: #FFFFFF !important; }
 .icon-rain { color: #00BFFF !important; }
 .icon-snow { color: #F0F8FF !important; }
 .icon-bolt { color: #FFFF00 !important; }
-
-.ticker-row { height: 10%; width: 100%; background: #080808; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
-.ticker-move { position: absolute; width: 100%; height: 100%; line-height: 45px; white-space: nowrap; font-size: 1.6rem; color: #00ffcc; animation: marquee 35s linear infinite; font-weight: bold; }
-@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-.footer-row { height: 40%; width: 100%; background: #000; }
-.forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
-.f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 5px; }
-.f-label { font-size: 1.1rem; color: #555; display: block; }
-.f-temp-hour { font-size: 2rem; font-weight: bold; color: #fff; }
-.f-temp-max { font-size: 1.7rem; font-weight: bold; color: #ff4d4d; }
-.f-temp-min { font-size: 1.4rem; font-weight: bold; color: #00d9ff; margin-left: 6px; }
 
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; text-align: center; }
 .modal { background: #111; border: 2px solid #00ffcc; border-radius: 15px; width: 85%; max-width: 400px; margin: 10% auto; padding: 25px; }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station V12 - Minimal</title>
+    <title>Aura Weather Station V13 - Legacy Fix</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,7 +14,7 @@
             <div class="col-left">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
-                <div id="update-info">Update: --:--</div>
+                <div id="update-info">Upd: --:--</div>
             </div>
             
             <div class="col-center">
@@ -45,7 +45,7 @@
 
         <div class="footer-row">
             <div class="forecast-table" id="hourly-list"></div>
-            <div class="forecast-table" id="daily-list" style="border-top: 2px solid #222;"></div>
+            <div class="forecast-table" id="daily-list" style="border-top: 2px solid #111;"></div>
         </div>
     </div>
 
@@ -53,7 +53,7 @@
         <div class="modal">
             <h3>Ort ändern</h3>
             <input type="text" id="city-input" placeholder="Stadt eingeben">
-            <button onclick="saveCity()">ANWENDEN</button>
+            <button onclick="saveCity()">SPEICHERN</button>
             <button onclick="toggleSettings()" style="background:#444; color:white; margin-top:10px;">ZURÜCK</button>
         </div>
     </div>
