@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station Pro - InfoStream</title>
+    <title>Aura Weather Station Pro V5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="app-shell">
+    <div class="app-shell" id="main-bg">
         
         <div class="layout-top" onclick="toggleSettings()">
             <div class="panel time-panel">
@@ -21,45 +21,55 @@
             </div>
 
             <div class="panel weather-panel">
-                <div id="city-title">SUCHE...</div>
+                <div id="city-title">STADT</div>
                 <div class="hero-weather">
                     <i class="fa fa-cloud" id="main-icon"></i>
                     <div id="temp-display">--</div>
                     <span class="unit">°C</span>
                 </div>
-                <div id="weather-desc">Wetterdaten laden...</div>
+                <div id="weather-desc">Daten laden...</div>
             </div>
 
             <div class="panel astro-panel">
                 <div class="astro-item">
-                    <small>SONNE</small>
-                    <div id="sun-status">--:-- / --:--</div>
+                    <i class="fa fa-sun sunrise-icon"></i>
+                    <div class="astro-text">
+                        <small>AUFGANG</small>
+                        <div id="sunrise-val">--:--</div>
+                    </div>
                 </div>
-                <div class="astro-item moon-box">
-                    <i class="fa fa-moon" id="moon-img"></i>
-                    <div id="moon-name">Mondphase</div>
+                <div class="astro-item">
+                    <i class="fa fa-moon sunset-icon"></i>
+                    <div class="astro-text">
+                        <small>UNTERGANG</small>
+                        <div id="sunset-val">--:--</div>
+                    </div>
+                </div>
+                <div class="moon-box">
+                    <i class="fa fa-circle" id="moon-img"></i>
+                    <span id="moon-name">Mond</span>
                 </div>
             </div>
         </div>
 
         <div class="ticker-box">
             <div class="ticker-content" id="info-ticker">
-                Lade alle verfügbaren Wetterparameter... Windgeschwindigkeit, Luftdruck, Sichtweite, Bewölkung und mehr...
+                Lade Wetterdaten-Stream... +++ Alle Sensoren werden abgefragt... +++
             </div>
         </div>
 
         <div class="layout-bottom">
-            <div class="forecast-row" id="hourly-list"></div>
-            <div class="forecast-row" id="daily-list"></div>
+            <div class="forecast-row hourly" id="hourly-list"></div>
+            <div class="forecast-row daily" id="daily-list"></div>
         </div>
 
     </div>
 
     <div id="settings-overlay">
         <div class="settings-card">
-            <h3>Standort weltweit</h3>
-            <input type="text" id="city-input" placeholder="z.B. Braunschweig, Tokyo, Berlin">
-            <button id="save-btn">AKTUALISIEREN</button>
+            <h3>Standort wählen</h3>
+            <input type="text" id="city-input" placeholder="Stadt (z.B. Berlin)">
+            <button onclick="saveCity()">STATION AKTUALISIEREN</button>
             <button onclick="toggleSettings()" class="btn-close">Abbrechen</button>
         </div>
     </div>

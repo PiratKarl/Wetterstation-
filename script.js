@@ -9,7 +9,6 @@ const iconMap = {
 
 function updateClock() {
     const now = new Date();
-    // Sekunden wurden hier entfernt
     document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' });
 }
@@ -33,57 +32,46 @@ function formatTime(ts, offset) {
 
 async function fetchWeather() {
     try {
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&appid=${API_KEY}&units=metric&lang=de`);
+        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(currentCity)}&appid=${API_KEY}&units=metric&lang=de`);
         const data = await res.json();
         
-        if (data.cod !== 200) {
-            console.error("Stadt nicht gefunden");
-            return;
-        }
+        if (data.cod !== 200) return;
 
-        // Hauptanzeigen
         document.getElementById('city-title').innerText = data.name.toUpperCase();
         document.getElementById('temp-display').innerText = Math.round(data.main.temp);
         document.getElementById('weather-desc').innerText = data.weather[0].description;
         document.getElementById('main-icon').className = "fa " + (iconMap[data.weather[0].icon] || "fa-cloud");
         
-        const sunrise = formatTime(data.sys.sunrise, data.timezone);
-        const sunset = formatTime(data.sys.sunset, data.timezone);
-        document.getElementById('sun-status').innerText = sunrise + " / " + sunset;
+        document.getElementById('sunrise-val').innerText = formatTime(data.sys.sunrise, data.timezone);
+        document.getElementById('sunset-val').innerText = formatTime(data.sys.sunset, data.timezone);
         
         const moon = getMoonPhase();
         document.getElementById('moon-name').innerText = moon.name;
         document.getElementById('moon-img').className = "fa " + moon.icon;
 
-        // DER INFO-TICKER (Alle verfügbaren Daten)
-        const windKmH = Math.round(data.wind.speed * 3.6);
-        const feelsLike = Math.round(data.main.feels_like);
-        const visibility = (data.visibility / 1000).toFixed(1);
-        
+        // Ticker Daten
         const tickerData = [
-            `GEFÜHLTE TEMPERATUR: ${feelsLike}°C`,
-            `LUFTFEUCHTIGKEIT: ${data.main.humidity}%`,
-            `WINDGESCHWINDIGKEIT: ${windKmH} km/h`,
-            `LUFTDRUCK: ${data.main.pressure} hPa`,
-            `BEWÖLKUNG: ${data.clouds.all}%`,
-            `SICHTWEITE: ${visibility} km`,
-            `KOORDINATEN: ${data.coord.lat}, ${data.coord.lon}`,
-            `STANDORT: ${data.name}, ${data.sys.country}`
+            `LUFTFEUCHTE: ${data.main.humidity}%`,
+            `GEFÜHLT: ${Math.round(data.main.feels_like)}°C`,
+            `WIND: ${Math.round(data.wind.speed * 3.6)} km/h`,
+            `DRUCK: ${data.main.pressure} hPa`,
+            `SICHTWEITE: ${(data.visibility / 1000).toFixed(1)} km`,
+            `SONNE: ${formatTime(data.sys.sunrise, data.timezone)} bis ${formatTime(data.sys.sunset, data.timezone)}`
         ];
         document.getElementById('info-ticker').innerText = " +++ " + tickerData.join(" +++ ") + " +++ ";
 
         // Vorhersage
-        const resF = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${currentCity}&appid=${API_KEY}&units=metric&lang=de`);
+        const resF = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(currentCity)}&appid=${API_KEY}&units=metric&lang=de`);
         const dataF = await resF.json();
 
-        // Hourly
+        // Stunden
         const hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(let i=0; i<6; i++) {
             const it = dataF.list[i];
             hList.innerHTML += `<div class="f-item"><span>${new Date(it.dt*1000).getHours()}:00</span><i class="fa ${iconMap[it.weather[0].icon]||"fa-cloud"} f-icon"></i><span class="f-temp">${Math.round(it.main.temp)}°</span></div>`;
         }
 
-        // Daily
+        // Tage
         const dList = document.getElementById('daily-list'); dList.innerHTML = "";
         const uniqueDays = {};
         dataF.list.forEach(it => {
@@ -97,38 +85,36 @@ async function fetchWeather() {
     } catch (e) { console.log(e); }
 }
 
-// STABILER STANDORTWECHSEL
 function toggleSettings() {
     const s = document.getElementById('settings-overlay');
     s.style.display = (s.style.display === 'flex') ? 'none' : 'flex';
 }
 
-document.getElementById('save-btn').addEventListener('click', function() {
+// Stabile Speicherung für alte Samsung Tablets
+function saveCity() {
     const input = document.getElementById('city-input');
-    if (input.value.trim() !== "") {
-        currentCity = input.value.trim();
-        localStorage.setItem('selectedCity', currentCity);
-        fetchWeather(); // Sofort aktualisieren
+    const newCity = input.value.trim();
+    if (newCity !== "") {
+        currentCity = newCity;
+        localStorage.setItem('selectedCity', newCity);
+        fetchWeather();
         toggleSettings();
         input.value = "";
     }
-});
+}
 
 async function getBattery() {
     if ('getBattery' in navigator) {
         const b = await navigator.getBattery();
         const up = () => {
             document.getElementById('bat-level').innerText = Math.round(b.level * 100) + "%";
-            document.getElementById('bat-icon').className = b.charging ? "fa fa-bolt" : "fa fa-plug";
             document.getElementById('bat-icon').style.color = b.charging ? "#00ffcc" : "#444";
         };
-        b.addEventListener('chargingchange', up); 
-        b.addEventListener('levelchange', up);
-        up();
+        b.addEventListener('chargingchange', up); up();
     }
 }
 
 setInterval(updateClock, 1000);
-setInterval(fetchWeather, 1800000); // 30 Min
+setInterval(fetchWeather, 900000); // 15 Minuten (900.000 ms)
 updateClock(); fetchWeather(); getBattery();
 if ('wakeLock' in navigator) navigator.wakeLock.request('screen');
