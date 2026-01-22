@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station Pro V6</title>
+    <title>Aura Weather Station FINAL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,66 +11,54 @@
 
     <div class="app-shell" id="main-bg">
         
-        <div class="layout-top" onclick="toggleSettings()">
-            <div class="panel time-panel">
+        <div class="section-top" onclick="toggleSettings()">
+            <div class="box time-box">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
-                <div class="battery-status">
-                    <i class="fa fa-plug" id="bat-icon"></i> <span id="bat-level">--%</span>
-                </div>
             </div>
 
-            <div class="panel weather-panel">
+            <div class="box weather-box">
                 <div id="city-title">STADT</div>
-                <div class="hero-weather">
+                <div class="main-temp-row">
                     <i class="fa fa-cloud" id="main-icon"></i>
                     <div id="temp-display">--</div>
                     <span class="unit">°C</span>
                 </div>
-                <div id="weather-desc">Daten laden...</div>
+                <div id="weather-desc">SUCHE DATEN...</div>
             </div>
 
-            <div class="panel astro-panel">
-                <div class="astro-item">
-                    <i class="fa fa-sun sunrise-icon"></i>
-                    <div class="astro-text">
-                        <small>SONNENAUFGANG</small>
-                        <div id="sunrise-val">--:--</div>
-                    </div>
+            <div class="box astro-box">
+                <div class="sun-row">
+                    <i class="fa fa-sun" style="color: #ffcc00;"></i>
+                    <span id="sunrise-val">--:--</span>
                 </div>
-                <div class="astro-item">
-                    <i class="fa fa-moon sunset-icon"></i>
-                    <div class="astro-text">
-                        <small>SONNENUNTERGANG</small>
-                        <div id="sunset-val">--:--</div>
-                    </div>
+                <div class="sun-row">
+                    <i class="fa fa-moon" style="color: #ff6600;"></i>
+                    <span id="sunset-val">--:--</span>
                 </div>
-                <div class="moon-box">
-                    <i class="fa fa-circle" id="moon-img"></i>
-                    <span id="moon-name">Mondphase</span>
+                <div id="moon-status">
+                    <i class="fa fa-circle" id="moon-img"></i> <span id="moon-name">Mond</span>
                 </div>
             </div>
         </div>
 
-        <div class="ticker-box">
-            <div class="ticker-content" id="info-ticker">
-                +++ Wetter-Station wird aktualisiert... +++ Suche lokale Daten... +++
-            </div>
+        <div class="section-ticker">
+            <div class="marquee" id="info-ticker">+++ Lade Wetter-Stream... +++</div>
         </div>
 
-        <div class="layout-bottom">
-            <div class="forecast-row hourly" id="hourly-list"></div>
-            <div class="forecast-row daily" id="daily-list"></div>
+        <div class="section-bottom">
+            <div class="f-row" id="hourly-list"></div>
+            <div class="f-row" id="daily-list"></div>
         </div>
 
     </div>
 
     <div id="settings-overlay">
-        <div class="settings-card">
-            <h3>Standort wechseln</h3>
-            <input type="text" id="city-input" placeholder="Stadt eingeben">
-            <button onclick="saveCity()">SPEICHERN & NEU LADEN</button>
-            <button onclick="toggleSettings()" class="btn-close">Abbrechen</button>
+        <div class="modal">
+            <h2>Ort wechseln</h2>
+            <input type="text" id="city-input" placeholder="Stadtname hier...">
+            <button onclick="saveCity()">SPEICHERN & NEUSTART</button>
+            <button onclick="toggleSettings()" style="background: #333; color: #fff; margin-top: 10px;">Abbrechen</button>
         </div>
     </div>
 
