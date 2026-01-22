@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wetterstation Samsung Legacy</title>
+    <title>Wetterstation Legacy Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,37 +14,38 @@
             <div class="col-left">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
-                <div id="update-info">Update: --:--</div>
+                <div id="update-info">Upd: --:--</div>
             </div>
             
             <div class="col-center">
                 <div id="city-title">STADT</div>
-                <div class="temp-wrap">
+                <div class="temp-wrap" onclick="toggleSettings()">
                     <i class="fa fa-cloud" id="main-icon"></i>
                     <span id="temp-display">--.-</span><span class="unit">°C</span>
                 </div>
-                <div id="weather-desc">DATEN...</div>
+                <div id="weather-desc">SUCHE...</div>
             </div>
 
             <div class="col-right">
-                <div class="loc-toggle" onclick="toggleSettings()">📍</div>
+                <div class="loc-toggle" onclick="toggleSettings()">
+                    <i class="fa fa-map-marker"></i>
+                </div>
                 <div class="astro-area">
                     <div class="sun-item"><i class="fa fa-sun-o icon-sun"></i> <span id="sunrise-val">--:--</span></div>
                     <div class="sun-item"><i class="fa fa-moon-o icon-sunset"></i> <span id="sunset-val">--:--</span></div>
-                    <div class="moon-item"><i class="fa fa-circle-o" id="moon-img"></i> <span id="moon-name">Mond</span></div>
                 </div>
             </div>
         </div>
 
         <div class="ticker-row">
             <div class="ticker-wrap">
-                <div id="info-ticker" class="ticker-move">Wetter-Stream wird geladen...</div>
+                <div id="info-ticker" class="ticker-move">Lade Wetterdaten...</div>
             </div>
         </div>
 
         <div class="footer-row">
-            <div id="hourly-list" class="forecast-table"></div>
-            <div id="daily-list" class="forecast-table" style="border-top: 1px solid #151515;"></div>
+            <div class="forecast-table" id="hourly-list"></div>
+            <div class="forecast-table" id="daily-list" style="border-top: 1px solid #222;"></div>
         </div>
     </div>
 
@@ -52,7 +53,7 @@
         <div class="modal">
             <h3>Ort ändern</h3>
             <input type="text" id="city-input" placeholder="Stadt eingeben">
-            <button onclick="saveCity()">SPEICHERN</button>
+            <button onclick="saveCity()">SPEICHERN & NEUSTART</button>
             <button onclick="toggleSettings()" style="background:#444; color:white; margin-top:10px;">ZURÜCK</button>
         </div>
     </div>

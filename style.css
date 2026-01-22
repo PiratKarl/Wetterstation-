@@ -1,54 +1,51 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 100vh; width: 100vw; overflow: hidden; }
 
-.app-shell { width: 100%; height: 100%; }
+.app-shell { width: 100%; height: 100%; display: block; }
 
-/* Obere Sektion: 55% Höhe für mehr Platz unten */
-.header-row { height: 55%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
+/* Aufteilung: Oben 45%, Ticker 10%, Unten 45% */
+.header-row { height: 45%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; }
 
-#clock { font-size: 5.5rem; font-weight: bold; line-height: 1; margin-top: 5px; }
-#date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
-/* Hellere Farbe für das Update-Info wie gewünscht */
-#update-info { font-size: 0.8rem; color: #aaa; margin-top: 8px; }
+#clock { font-size: 4.5rem; font-weight: bold; line-height: 1.1; margin-top: 5px; }
+#date { font-size: 1.1rem; color: #00ffcc; text-transform: uppercase; }
+#update-info { font-size: 0.75rem; color: #666; margin-top: 5px; } /* Helle Farbe für Update-Zeit */
 
-/* Wetter Mitte - Minimal verkleinert */
-#city-title { font-size: 1rem; color: #444; letter-spacing: 4px; }
-.temp-wrap { font-size: 6.5rem; font-weight: bold; margin: 5px 0; }
-.unit { font-size: 2rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
-#weather-desc { font-size: 1.4rem; color: #777; text-transform: uppercase; }
+/* Haupt-Temperatur verkleinert für Platz */
+#city-title { font-size: 0.9rem; color: #444; letter-spacing: 3px; }
+.temp-wrap { font-size: 4.5rem; font-weight: bold; margin: 2px 0; cursor: pointer; }
+.unit { font-size: 1.5rem; color: #00ffcc; vertical-align: top; margin-top: 10px; display: inline-block; }
+#weather-desc { font-size: 1.1rem; color: #777; text-transform: uppercase; }
 
-/* Standort Icon */
-.loc-toggle { font-size: 1.8rem; cursor: pointer; margin-bottom: 15px; }
+/* Standort Button */
+.loc-toggle { font-size: 2.2rem; color: #00ffcc; margin-bottom: 10px; cursor: pointer; }
 
-/* Astro Bereich */
-.astro-area { font-size: 1.8rem; font-weight: bold; }
+/* Astro */
+.astro-area { font-size: 1.5rem; font-weight: bold; }
 .sun-item { margin: 5px 0; }
-.icon-sun { color: #ffcc00; margin-right: 8px; }
-.icon-sunset { color: #ff6600; margin-right: 8px; }
-.moon-item { color: #00ffcc; font-size: 1rem; margin-top: 5px; }
+
+/* ERZWUNGENE FARBEN FÜR SYMBOLE */
+.icon-sun { color: #FFD700 !important; }    /* Gold */
+.icon-sunset { color: #FF8C00 !important; } /* Dunkelorange */
+.icon-cloud { color: #FFFFFF !important; }  /* Weiß */
+.icon-rain { color: #00BFFF !important; }   /* Hellblau */
+.icon-snow { color: #F0F8FF !important; }   /* Schneeweiß */
+.icon-bolt { color: #FFFF00 !important; }   /* Gelb */
 
 /* Ticker: 10% */
 .ticker-row { height: 10%; width: 100%; background: #080808; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
-.ticker-move { position: absolute; width: 100%; height: 100%; line-height: 45px; white-space: nowrap; font-size: 1.5rem; color: #00ffcc; animation: marquee 35s linear infinite; font-weight: bold; }
+.ticker-move { position: absolute; width: 100%; height: 100%; line-height: 45px; white-space: nowrap; font-size: 1.4rem; color: #00ffcc; animation: marquee 35s linear infinite; font-weight: bold; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* Unten: 35% - Garantiert beide Zeilen sichtbar */
-.footer-row { height: 35%; width: 100%; background: #000; }
+/* Unten: 45% für beide Vorhersage-Zeilen */
+.footer-row { height: 45%; width: 100%; background: #000; }
 .forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
-.f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 2px; }
-.f-label { font-size: 0.8rem; color: #555; display: block; }
-.f-temp { font-size: 1.4rem; font-weight: bold; color: #fff; }
-
-/* Farb-Icons */
-.icon-sun { color: #ffcc00 !important; }
-.icon-cloud { color: #ffffff !important; }
-.icon-rain { color: #00d9ff !important; }
-.icon-snow { color: #ffffff !important; }
-.icon-bolt { color: #ffea00 !important; }
+.f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 5px; }
+.f-label { font-size: 0.9rem; color: #555; display: block; }
+.f-temp { font-size: 1.5rem; font-weight: bold; color: #fff; }
 
 /* Modal */
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; text-align: center; }
-.modal { background: #111; border: 2px solid #00ffcc; border-radius: 15px; width: 80%; max-width: 350px; margin: 15% auto; padding: 20px; }
+.modal { background: #111; border: 2px solid #00ffcc; border-radius: 15px; width: 85%; max-width: 350px; margin: 10% auto; padding: 25px; }
 input { width: 100%; padding: 12px; font-size: 1.2rem; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; margin-bottom: 15px; text-align: center; }
-button { width: 100%; padding: 12px; background: #00ffcc; color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; }
+button { width: 100%; padding: 12px; background: #00ffcc; color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 1.2rem; }
