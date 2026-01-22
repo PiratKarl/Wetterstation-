@@ -7,28 +7,30 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .header-row { height: 55%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; }
 
-/* Uhr massiv vergrößert */
+/* Uhr */
 #clock { font-size: 7rem; font-weight: bold; line-height: 1; margin-top: 10px; }
 #date { font-size: 1.4rem; color: #00ffcc; text-transform: uppercase; }
 #update-info { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
 
 /* Temperatur-Bereich */
-#city-title { font-size: 1rem; color: #444; letter-spacing: 4px; }
-.temp-main-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 5px 0; }
-#main-icon { font-size: 6rem; }
+#city-title { font-size: 1rem; color: #444; letter-spacing: 4px; margin-bottom: 10px; }
+.temp-main-container { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 5px 0; }
 
-/* Haupt-Temperatur massiv vergrößert */
+/* Haupt-Icon JETZT KLEINER (4.5rem statt 6rem) */
+#main-icon { font-size: 4.5rem; }
+
+/* Haupt-Temperatur */
 .temp-numbers { position: relative; display: inline-block; text-align: left; }
 #temp-display { font-size: 8rem; font-weight: bold; line-height: 1; }
 .unit { font-size: 2.5rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
 
-/* Gefühlte Temperatur klein daneben */
+/* Gefühlte Temperatur */
 #feels-like-display { font-size: 1.5rem; font-weight: bold; margin-top: -10px; text-align: center; }
-.warmer { color: #ff4d4d !important; } /* Rot wenn gefühlt wärmer */
-.colder { color: #00d9ff !important; } /* Blau wenn gefühlt kälter */
+.warmer { color: #ff4d4d !important; }
+.colder { color: #00d9ff !important; }
 .hidden { display: none; }
 
-#weather-desc { font-size: 1.6rem; color: #888; text-transform: uppercase; }
+/* CSS für #weather-desc wurde entfernt */
 
 /* Astro & Icons */
 .loc-toggle { font-size: 2.5rem; color: #00ffcc; margin-bottom: 5px; }

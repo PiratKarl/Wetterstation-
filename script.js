@@ -35,24 +35,20 @@ async function fetchWeather() {
             
             document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = actualTemp.toFixed(1);
-            document.getElementById('weather-desc').innerText = data.weather[0].description;
+            // Die Zeile für weather-desc wurde entfernt
             document.getElementById('main-icon').className = "fa " + (iconColorMap[data.weather[0].icon] || "fa-cloud");
             document.getElementById('sunrise-val').innerText = formatT(data.sys.sunrise, data.timezone);
             document.getElementById('sunset-val').innerText = formatT(data.sys.sunset, data.timezone);
             
-            // Logik für die gefühlte Temperatur
             var feelsElem = document.getElementById('feels-like-display');
             var diff = Math.round(feelsLike * 10) / 10 - Math.round(actualTemp * 10) / 10;
             
             if (Math.abs(diff) < 0.2) {
-                // Bei (fast) gleicher Temperatur ausblenden
                 feelsElem.className = "hidden";
             } else if (feelsLike > actualTemp) {
-                // Wärmer -> Rot
                 feelsElem.innerHTML = "<small>GEFÜHLT </small>" + feelsLike.toFixed(1) + "°";
                 feelsElem.className = "warmer";
             } else {
-                // Kälter -> Blau
                 feelsElem.innerHTML = "<small>GEFÜHLT </small>" + feelsLike.toFixed(1) + "°";
                 feelsElem.className = "colder";
             }
@@ -71,7 +67,7 @@ async function fetchWeather() {
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // 1. Stunden (5 Vorhersagen)
+        // 1. Stunden
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
@@ -103,7 +99,7 @@ function saveCity() {
     var val = document.getElementById('city-input').value.trim();
     if(val) {
         localStorage.setItem('selectedCity', val);
-        window.location.reload(); 
+        window.location.href = window.location.pathname; 
     }
 }
 
