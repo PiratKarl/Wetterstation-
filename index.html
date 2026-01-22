@@ -3,61 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wetterstation Legacy</title>
+    <title>Aura Weather Station Ultra</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
-        <div class="top-row" onclick="toggleSettings()">
-            <div class="col-33">
+    <div class="app-wrapper">
+        <div class="header-row">
+            <div class="col-left">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
+                <div id="update-info">Zuletzt aktualisiert: --:--</div>
             </div>
             
-            <div class="col-33">
+            <div class="col-center">
                 <div id="city-title">STADT</div>
                 <div class="temp-main-wrap">
                     <i class="fa fa-cloud" id="main-icon"></i>
-                    <span id="temp-display">--</span><span class="celsius">°</span>
+                    <span id="temp-display">--.-</span><span class="unit">°C</span>
                 </div>
                 <div id="weather-desc">SUCHE...</div>
             </div>
 
-            <div class="col-33">
-                <div class="astro-box">
-                    <i class="fa fa-sun-o" style="color: #FFD700;"></i> 
-                    <span id="sunrise-val">--:--</span>
-                </div>
-                <div class="astro-box">
-                    <i class="fa fa-moon-o" style="color: #FF8C00;"></i> 
-                    <span id="sunset-val">--:--</span>
-                </div>
-                <div class="moon-phase-wrap">
-                    <i class="fa fa-circle-o" id="moon-img"></i> <span id="moon-name">Mond</span>
+            <div class="col-right">
+                <button class="settings-trigger" onclick="toggleSettings()">
+                    <i class="fa fa-map-marker"></i> Ort ändern
+                </button>
+                <div class="astro-stats">
+                    <div class="sun-box"><i class="fa fa-sun-o icon-sunrise"></i> <span id="sunrise-val">--:--</span></div>
+                    <div class="sun-box"><i class="fa fa-moon-o icon-sunset"></i> <span id="sunset-val">--:--</span></div>
+                    <div class="moon-box"><i class="fa fa-circle-o" id="moon-img"></i> <span id="moon-name">Mond</span></div>
                 </div>
             </div>
         </div>
 
         <div class="ticker-row">
             <div class="marquee-wrap">
-                <div id="info-ticker" class="marquee-text">Lade alle Wetterdaten... +++ Bitte warten... +++</div>
+                <div id="info-ticker" class="marquee-text">Wetter-Stream wird vorbereitet...</div>
             </div>
         </div>
 
-        <div class="bottom-row">
-            <div id="hourly-list" class="forecast-container"></div>
-            <div id="daily-list" class="forecast-container" style="border-top: 1px solid #222;"></div>
+        <div class="footer-row">
+            <div id="hourly-list" class="forecast-table"></div>
+            <div id="daily-list" class="forecast-table" style="border-top: 2px solid #111;"></div>
         </div>
     </div>
 
     <div id="settings-overlay">
         <div class="modal">
-            <h3>Standort</h3>
-            <input type="text" id="city-input" placeholder="Stadt eingeben">
-            <button onclick="saveCity()">OK & NEUSTART</button>
-            <button onclick="toggleSettings()" style="background:#444; color:white; margin-top:10px;">ABBRECHEN</button>
+            <h3>Standort festlegen</h3>
+            <input type="text" id="city-input" placeholder="z.B. Braunschweig">
+            <button onclick="saveCity()">ANWENDEN</button>
+            <button onclick="toggleSettings()" style="background:#333; color:white; margin-top:10px;">ABBRECHEN</button>
         </div>
     </div>
 
