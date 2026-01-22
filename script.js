@@ -98,7 +98,7 @@ async function fetchWeather() {
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:2px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
         var dList = document.getElementById('daily-list'); dList.innerHTML = "";
@@ -132,7 +132,6 @@ function saveCity() {
 
 setInterval(updateClock, 1000);
 setInterval(fetchWeather, 300000);
-// Wachmacher Reload alle 25 Minuten
 setInterval(function() { window.location.reload(); }, 1500000); 
 
 updateClock(); fetchWeather();

@@ -10,12 +10,23 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 #clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
 
-/* LOGO ANPASSUNG: Jetzt 160px breit, passend zur Uhr */
+/* LOGO ANPASSUNG: Jetzt 200px breit */
 #station-logo { 
-    width: 160px;          /* Deutlich größer */
+    width: 200px;          /* Noch größer */
     height: auto; 
-    margin: 10px 0;        /* Etwas mehr Abstand */
-    opacity: 0.85;         /* Etwas weniger transparent */
+    margin: 10px 0 5px 0;  /* Weniger Abstand nach unten */
+    opacity: 0.85; 
+}
+
+/* Neue Fußzeilen: Winzig und grau */
+#copyright-info, #version-info {
+    font-size: 0.65rem;
+    color: #666;
+    line-height: 1.2;
+}
+#version-info {
+    margin-bottom: 8px;
+    color: #888; /* Version etwas heller */
 }
 
 #update-info { font-size: 0.8rem; color: #aaa; }
