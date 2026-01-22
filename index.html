@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station Pro V5</title>
+    <title>Aura Weather Station Pro V6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -34,27 +34,27 @@
                 <div class="astro-item">
                     <i class="fa fa-sun sunrise-icon"></i>
                     <div class="astro-text">
-                        <small>AUFGANG</small>
+                        <small>SONNENAUFGANG</small>
                         <div id="sunrise-val">--:--</div>
                     </div>
                 </div>
                 <div class="astro-item">
                     <i class="fa fa-moon sunset-icon"></i>
                     <div class="astro-text">
-                        <small>UNTERGANG</small>
+                        <small>SONNENUNTERGANG</small>
                         <div id="sunset-val">--:--</div>
                     </div>
                 </div>
                 <div class="moon-box">
                     <i class="fa fa-circle" id="moon-img"></i>
-                    <span id="moon-name">Mond</span>
+                    <span id="moon-name">Mondphase</span>
                 </div>
             </div>
         </div>
 
         <div class="ticker-box">
             <div class="ticker-content" id="info-ticker">
-                Lade Wetterdaten-Stream... +++ Alle Sensoren werden abgefragt... +++
+                +++ Wetter-Station wird aktualisiert... +++ Suche lokale Daten... +++
             </div>
         </div>
 
@@ -67,9 +67,9 @@
 
     <div id="settings-overlay">
         <div class="settings-card">
-            <h3>Standort wählen</h3>
-            <input type="text" id="city-input" placeholder="Stadt (z.B. Berlin)">
-            <button onclick="saveCity()">STATION AKTUALISIEREN</button>
+            <h3>Standort wechseln</h3>
+            <input type="text" id="city-input" placeholder="Stadt eingeben">
+            <button onclick="saveCity()">SPEICHERN & NEU LADEN</button>
             <button onclick="toggleSettings()" class="btn-close">Abbrechen</button>
         </div>
     </div>
