@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aura Weather Station Pro - InfoStream</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-shell">
+        
+        <div class="layout-top" onclick="toggleSettings()">
+            <div class="panel time-panel">
+                <div id="clock">00:00</div>
+                <div id="date">Lädt...</div>
+                <div class="battery-status">
+                    <i class="fa fa-plug" id="bat-icon"></i> <span id="bat-level">--%</span>
+                </div>
+            </div>
+
+            <div class="panel weather-panel">
+                <div id="city-title">SUCHE...</div>
+                <div class="hero-weather">
+                    <i class="fa fa-cloud" id="main-icon"></i>
+                    <div id="temp-display">--</div>
+                    <span class="unit">°C</span>
+                </div>
+                <div id="weather-desc">Wetterdaten laden...</div>
+            </div>
+
+            <div class="panel astro-panel">
+                <div class="astro-item">
+                    <small>SONNE</small>
+                    <div id="sun-status">--:-- / --:--</div>
+                </div>
+                <div class="astro-item moon-box">
+                    <i class="fa fa-moon" id="moon-img"></i>
+                    <div id="moon-name">Mondphase</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticker-box">
+            <div class="ticker-content" id="info-ticker">
+                Lade alle verfügbaren Wetterparameter... Windgeschwindigkeit, Luftdruck, Sichtweite, Bewölkung und mehr...
+            </div>
+        </div>
+
+        <div class="layout-bottom">
+            <div class="forecast-row" id="hourly-list"></div>
+            <div class="forecast-row" id="daily-list"></div>
+        </div>
+
+    </div>
+
+    <div id="settings-overlay">
+        <div class="settings-card">
+            <h3>Standort weltweit</h3>
+            <input type="text" id="city-input" placeholder="z.B. Braunschweig, Tokyo, Berlin">
+            <button id="save-btn">AKTUALISIEREN</button>
+            <button onclick="toggleSettings()" class="btn-close">Abbrechen</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

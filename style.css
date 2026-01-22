@@ -1,0 +1,74 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+    background: #000; 
+    color: #fff; 
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    height: 100vh; 
+    width: 100vw;
+    overflow: hidden; 
+}
+
+.app-shell {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+/* Aufteilung: Top 60%, Ticker 8%, Bottom 32% */
+.layout-top { height: 60%; display: flex; padding: 10px; }
+.panel { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.time-panel { align-items: flex-start; padding-left: 40px; }
+.astro-panel { align-items: flex-end; padding-right: 40px; text-align: right; }
+
+/* Uhr ohne Sekunden */
+#clock { font-size: 5rem; font-weight: 200; color: #fff; letter-spacing: -2px; line-height: 1; }
+#date { font-size: 1.1rem; color: #00ffcc; text-transform: uppercase; letter-spacing: 2px; }
+.battery-status { color: #444; font-size: 0.9rem; margin-top: 10px; }
+
+#city-title { font-size: 0.9rem; color: #555; letter-spacing: 6px; }
+.hero-weather { display: flex; align-items: center; gap: 10px; }
+#main-icon { font-size: 6rem; color: #fff; }
+#temp-display { font-size: 8rem; font-weight: 100; }
+.unit { font-size: 2rem; color: #00ffcc; margin-top: 20px; font-weight: 200; }
+#weather-desc { font-size: 1.4rem; color: #888; text-transform: uppercase; }
+
+.astro-item { margin-bottom: 15px; }
+.astro-item small { color: #333; font-size: 0.6rem; letter-spacing: 2px; }
+.astro-item div { font-size: 1.2rem; color: #ccc; }
+.moon-box { color: #00ffcc; text-align: center; }
+
+/* Ticker: Die Info-Schleife */
+.ticker-box { 
+    height: 45px; 
+    background: rgba(0, 255, 204, 0.05); 
+    border-top: 1px solid #111; 
+    border-bottom: 1px solid #111;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+.ticker-content {
+    white-space: nowrap;
+    padding-left: 100%;
+    display: inline-block;
+    animation: marquee 50s linear infinite;
+    color: #00ffcc;
+    font-size: 1rem;
+    font-weight: 300;
+}
+@keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+/* Bottom */
+.layout-bottom { height: 32%; background: rgba(255, 255, 255, 0.02); display: flex; flex-direction: column; padding: 5px; }
+.forecast-row { flex: 1; display: flex; justify-content: space-around; align-items: center; }
+.f-item { text-align: center; font-size: 0.8rem; color: #777; }
+.f-icon { display: block; font-size: 1.6rem; color: #00ffcc; margin-bottom: 3px; }
+.f-temp { color: #fff; font-weight: bold; }
+
+/* Settings */
+#settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 1000; }
+.settings-card { background: #111; padding: 30px; border-radius: 20px; border: 1px solid #00ffcc; width: 350px; text-align: center; }
+input { width: 100%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; margin-bottom: 15px; border-radius: 10px; text-align: center; font-size: 1.2rem; }
+button { width: 100%; padding: 15px; background: #00ffcc; color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+.btn-close { background: transparent; color: #444; margin-top: 10px; }
