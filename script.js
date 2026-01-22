@@ -10,11 +10,31 @@ const iconColorMap = {
     "50d": "fa-bars icon-cloud"
 };
 
+// Windrichtung in Text umwandeln
+function getWindDirText(deg) {
+    const directions = ['Nord', 'Nordost', 'Ost', 'Südost', 'Süd', 'Südwest', 'West', 'Nordwest'];
+    return directions[Math.round(deg / 45) % 8];
+}
+
+// Beaufort Skala für Windbezeichnung
+function getBeaufortText(kmh) {
+    if (kmh < 1) return "Windstille";
+    if (kmh < 6) return "leichte Brise";
+    if (kmh < 12) return "leichte Brise";
+    if (kmh < 20) return "mäßiger Wind";
+    if (kmh < 29) return "frischer Wind";
+    if (kmh < 39) return "starker Wind";
+    if (kmh < 50) return "steifer Wind";
+    if (kmh < 62) return "stürmischer Wind";
+    if (kmh < 75) return "Sturm";
+    if (kmh < 89) return "schwerer Sturm";
+    if (kmh < 103) return "orkanartiger Sturm";
+    return "Orkan";
+}
+
 function updateClock() {
     var now = new Date();
-    var h = now.getHours().toString().padStart(2, '0');
-    var m = now.getMinutes().toString().padStart(2, '0');
-    document.getElementById('clock').innerText = h + ":" + m;
+    document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' });
 }
 
@@ -40,10 +60,15 @@ async function fetchWeather() {
             var now = new Date();
             document.getElementById('update-info').innerText = "Update: " + now.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
 
+            // Ticker mit Wind-Details
+            const windKmh = Math.round(data.wind.speed * 3.6);
+            const windDir = getWindDirText(data.wind.deg);
+            const windBeaufort = getBeaufortText(windKmh);
+
             var tickerInfo = [
+                "WIND: " + windKmh + " KM/H aus " + windDir + " (" + windBeaufort + ")",
                 "GEFÜHLT: " + data.main.feels_like.toFixed(1) + "°C",
-                "LUFTFEUCHTE: " + data.main.humidity + "%",
-                "WIND: " + (data.wind.speed * 3.6).toFixed(1) + " KM/H",
+                "FEUCHTE: " + data.main.humidity + "%",
                 "DRUCK: " + data.main.pressure + " HPA"
             ];
             document.getElementById('info-ticker').innerText = " +++ " + tickerInfo.join(" +++ ") + " +++ ";
@@ -52,14 +77,14 @@ async function fetchWeather() {
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // 1. STUNDEN-VORHERSAGE (Nächste 7 Zeitpunkte)
+        // 1. Stunden
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<7; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:3px 0;"></i><span class="f-temp-normal">' + Math.round(it.main.temp) + '°</span></div>';
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:3px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
-        // 2. TAGES-VORHERSAGE (Echte Min/Max Berechnung)
+        // 2. Tage mit Max/Min
         var dList = document.getElementById('daily-list'); dList.innerHTML = "";
         var daysData = {};
 
@@ -71,9 +96,7 @@ async function fetchWeather() {
             daysData[dayName].temps.push(it.main.temp);
         });
 
-        // Die nächsten 5 Tage anzeigen (heute überspringen wir meistens für die Wochenvorschau)
-        var dayKeys = Object.keys(daysData).slice(1, 6); 
-        dayKeys.forEach(function(d) {
+        Object.keys(daysData).slice(1, 6).forEach(function(d) {
             var maxT = Math.round(Math.max(...daysData[d].temps));
             var minT = Math.round(Math.min(...daysData[d].temps));
             
@@ -101,6 +124,5 @@ function saveCity() {
 }
 
 setInterval(updateClock, 1000);
-setInterval(fetchWeather, 300000); // 5 Min Update
-
+setInterval(fetchWeather, 300000);
 updateClock(); fetchWeather();
