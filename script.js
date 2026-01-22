@@ -1,7 +1,6 @@
 const API_KEY = '518e81d874739701f08842c1a55f6588';
 let currentCity = localStorage.getItem('selectedCity') || 'Braunschweig';
 
-// Zuordnung der Icons mit den entsprechenden Farb-Klassen
 const iconColorMap = {
     "01d": "fa-sun-o icon-sun", "01n": "fa-moon-o icon-cloud",
     "02d": "fa-cloud icon-cloud", "02n": "fa-cloud icon-cloud",
@@ -34,10 +33,7 @@ async function fetchWeather() {
             document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = data.main.temp.toFixed(1);
             document.getElementById('weather-desc').innerText = data.weather[0].description;
-            
-            // Setze Icon und Farbe
             document.getElementById('main-icon').className = "fa " + (iconColorMap[data.weather[0].icon] || "fa-cloud");
-            
             document.getElementById('sunrise-val').innerText = formatT(data.sys.sunrise, data.timezone);
             document.getElementById('sunset-val').innerText = formatT(data.sys.sunset, data.timezone);
             
@@ -53,27 +49,41 @@ async function fetchWeather() {
             document.getElementById('info-ticker').innerText = " +++ " + tickerInfo.join(" +++ ") + " +++ ";
         }
 
-        // Vorhersage
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // Stunden
+        // 1. STUNDEN-VORHERSAGE (Nächste 7 Zeitpunkte)
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
         for(var i=0; i<7; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:3px 0;"></i><span class="f-temp">' + it.main.temp.toFixed(1) + '°</span></div>';
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:3px 0;"></i><span class="f-temp-normal">' + Math.round(it.main.temp) + '°</span></div>';
         }
 
-        // Tage
+        // 2. TAGES-VORHERSAGE (Echte Min/Max Berechnung)
         var dList = document.getElementById('daily-list'); dList.innerHTML = "";
-        var days = {};
+        var daysData = {};
+
         dataF.list.forEach(function(it) {
-            var d = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
-            if(!days[d]) days[d] = { t: it.main.temp, ic: it.weather[0].icon };
+            var dayName = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
+            if(!daysData[dayName]) {
+                daysData[dayName] = { temps: [], icon: it.weather[0].icon };
+            }
+            daysData[dayName].temps.push(it.main.temp);
         });
-        Object.keys(days).slice(1, 7).forEach(function(d) {
-            dList.innerHTML += '<div class="f-item"><span class="f-label" style="color:#00ffcc">' + d + '</span><i class="fa ' + (iconColorMap[days[d].ic] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:3px 0;"></i><span class="f-temp">' + days[d].t.toFixed(1) + '°</span></div>';
+
+        // Die nächsten 5 Tage anzeigen (heute überspringen wir meistens für die Wochenvorschau)
+        var dayKeys = Object.keys(daysData).slice(1, 6); 
+        dayKeys.forEach(function(d) {
+            var maxT = Math.round(Math.max(...daysData[d].temps));
+            var minT = Math.round(Math.min(...daysData[d].temps));
+            
+            dList.innerHTML += '<div class="f-item">' +
+                '<span class="f-label" style="color:#00ffcc">' + d + '</span>' +
+                '<i class="fa ' + (iconColorMap[daysData[d].icon] || "fa-cloud") + '" style="font-size:1.6rem; display:block; margin:3px 0;"></i>' +
+                '<div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div>' +
+                '</div>';
         });
+
     } catch (e) { console.log("Fehler"); }
 }
 
@@ -86,7 +96,6 @@ function saveCity() {
     var val = document.getElementById('city-input').value.trim();
     if(val) {
         localStorage.setItem('selectedCity', val);
-        // Harter Reload löst das Problem auf alten Samsung-Geräten
         window.location.href = window.location.pathname; 
     }
 }
