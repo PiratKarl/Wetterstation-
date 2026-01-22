@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wetterstation Pro - Wind & Extremwerte</title>
+    <title>Wetterstation Pro V8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="app-shell">
-        <div class="header-row">
+        <div class="header-row" onclick="toggleSettings()">
             <div class="col-left">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
@@ -19,7 +19,7 @@
             
             <div class="col-center">
                 <div id="city-title">STADT</div>
-                <div class="temp-wrap" onclick="toggleSettings()">
+                <div class="temp-wrap">
                     <i class="fa fa-cloud" id="main-icon"></i>
                     <span id="temp-display">--.-</span><span class="unit">°C</span>
                 </div>
@@ -27,7 +27,7 @@
             </div>
 
             <div class="col-right">
-                <div class="loc-toggle" onclick="toggleSettings()"><i class="fa fa-map-marker"></i></div>
+                <div class="loc-toggle">📍</div>
                 <div class="astro-area">
                     <div class="sun-item"><i class="fa fa-sun-o icon-sun"></i> <span id="sunrise-val">--:--</span></div>
                     <div class="sun-item"><i class="fa fa-moon-o icon-sunset"></i> <span id="sunset-val">--:--</span></div>
@@ -37,7 +37,7 @@
 
         <div class="ticker-row">
             <div class="ticker-wrap">
-                <div id="info-ticker" class="ticker-move">Wetter- und Winddaten werden geladen...</div>
+                <div id="info-ticker" class="ticker-move">Lade Wetterdaten...</div>
             </div>
         </div>
 

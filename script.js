@@ -10,31 +10,25 @@ const iconColorMap = {
     "50d": "fa-bars icon-cloud"
 };
 
-// Windrichtung in Text umwandeln
 function getWindDirText(deg) {
     const directions = ['Nord', 'Nordost', 'Ost', 'Südost', 'Süd', 'Südwest', 'West', 'Nordwest'];
     return directions[Math.round(deg / 45) % 8];
 }
 
-// Beaufort Skala für Windbezeichnung
 function getBeaufortText(kmh) {
     if (kmh < 1) return "Windstille";
-    if (kmh < 6) return "leichte Brise";
     if (kmh < 12) return "leichte Brise";
-    if (kmh < 20) return "mäßiger Wind";
     if (kmh < 29) return "frischer Wind";
-    if (kmh < 39) return "starker Wind";
     if (kmh < 50) return "steifer Wind";
-    if (kmh < 62) return "stürmischer Wind";
     if (kmh < 75) return "Sturm";
-    if (kmh < 89) return "schwerer Sturm";
-    if (kmh < 103) return "orkanartiger Sturm";
     return "Orkan";
 }
 
 function updateClock() {
     var now = new Date();
-    document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    var h = now.getHours().toString().padStart(2, '0');
+    var m = now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('clock').innerText = h + ":" + m;
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' });
 }
 
@@ -60,7 +54,6 @@ async function fetchWeather() {
             var now = new Date();
             document.getElementById('update-info').innerText = "Update: " + now.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
 
-            // Ticker mit Wind-Details
             const windKmh = Math.round(data.wind.speed * 3.6);
             const windDir = getWindDirText(data.wind.deg);
             const windBeaufort = getBeaufortText(windKmh);
@@ -77,11 +70,11 @@ async function fetchWeather() {
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
 
-        // 1. Stunden
+        // 1. Stunden (Auf 5 Vorhersagen eingestellt)
         var hList = document.getElementById('hourly-list'); hList.innerHTML = "";
-        for(var i=0; i<7; i++) {
+        for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:3px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
+            hList.innerHTML += `<div class="f-item"><span class="f-label">${new Date(it.dt*1000).getHours()}:00</span><i class="fa ${iconColorMap[it.weather[0].icon] || "fa-cloud"}" style="font-size:2.2rem; display:block; margin:4px 0;"></i><span class="f-temp-hour">${Math.round(it.main.temp)}°</span></div>`;
         }
 
         // 2. Tage mit Max/Min
@@ -100,11 +93,7 @@ async function fetchWeather() {
             var maxT = Math.round(Math.max(...daysData[d].temps));
             var minT = Math.round(Math.min(...daysData[d].temps));
             
-            dList.innerHTML += '<div class="f-item">' +
-                '<span class="f-label" style="color:#00ffcc">' + d + '</span>' +
-                '<i class="fa ' + (iconColorMap[daysData[d].icon] || "fa-cloud") + '" style="font-size:1.6rem; display:block; margin:3px 0;"></i>' +
-                '<div><span class="f-temp-max">' + maxT + '°</span><span class="f-temp-min">' + minT + '°</span></div>' +
-                '</div>';
+            dList.innerHTML += `<div class="f-item"><span class="f-label" style="color:#00ffcc">${d}</span><i class="fa ${iconColorMap[daysData[d].icon] || "fa-cloud"}" style="font-size:2rem; display:block; margin:4px 0;"></i><div><span class="f-temp-max">${maxT}°</span><span class="f-temp-min">${minT}°</span></div></div>`;
         });
 
     } catch (e) { console.log("Fehler"); }
