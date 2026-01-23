@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Tablet V1.26</title>
+    <title>Aura Weather Tablet V1.27</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body style="background:#000;">
 
-    <div id="night-overlay" onclick="wakeUp()">
+    <div id="night-overlay" onclick="document.getElementById('night-overlay').style.display='none'">
         <div id="night-clock">00:00</div>
     </div>
 
@@ -17,9 +17,9 @@
         <div class="header-row">
             <div class="col-left" onclick="toggleFullscreen()">
                 <div id="clock">00:00</div>
-                <div id="date">Lädt...</div>
+                <div id="date">Lade...</div>
                 <img src="logo.png" id="station-logo">
-                <div id="update-info">...</div>
+                <div id="update-info" style="color:#444; font-size:0.7rem;">V 1.27</div>
             </div>
             
             <div class="col-center">
@@ -33,9 +33,9 @@
             </div>
 
             <div class="col-right">
-                <button class="settings-btn" onclick="toggleSettings()">
-                    <i class="fa fa-gear"></i>
-                </button>
+                <div class="gear-area" onclick="toggleSettings()">
+                    <i class="fa fa-gear" style="color:#fff;"></i>
+                </div>
                 <div class="astro-area">
                     <div class="astro-row"><i class="fa fa-sun-o"></i> <span id="sunrise-val">--:--</span></div>
                     <div class="astro-row"><i class="fa fa-moon-o"></i> <span id="sunset-val">--:--</span></div>
@@ -49,9 +49,7 @@
         </div>
 
         <div class="ticker-row">
-            <div class="marquee-wrap">
-                <div id="info-ticker" class="ticker-move">SYSTEM-CHECK AKTIV...</div>
-            </div>
+            <div id="info-ticker" class="ticker-move">WETTERDATEN WERDEN GELADEN... BITTE WARTEN...</div>
         </div>
 
         <div class="footer-row">
@@ -62,34 +60,32 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 style="color:#00ffcc">SETUP & INFO</h2>
+            <h2 style="color:#00ffcc; border-bottom:1px solid #333; padding-bottom:10px;">SETUP & INFO</h2>
             
             <div class="section">
-                <label>STANDORT:</label>
+                <label>STADT:</label>
                 <input type="text" id="city-input">
             </div>
 
             <div class="section">
                 <label>NACHT-MODUS:</label><br>
-                VON: <input type="time" id="sleep-start" style="width:80px"> 
-                BIS: <input type="time" id="sleep-end" style="width:80px">
+                START: <input type="time" id="sleep-start" style="width:90px"> 
+                ENDE: <input type="time" id="sleep-end" style="width:90px">
             </div>
 
-            <div class="section instruction-box">
-                <label>ANLEITUNG:</label>
-                <ul>
-                    <li><b>Vollbild:</b> Tippe links oben auf die Uhrzeit.</li>
-                    <li><b>Aufwecken:</b> Im Nachtmodus einfach den Schirm berühren.</li>
-                    <li><b>Ticker:</b> Zeigt Wind, Feuchte und Warnungen.</li>
-                </ul>
+            <div class="section" style="font-size:0.8rem; color:#888; text-align:left;">
+                <b>BEDIENUNG:</b><br>
+                • Tippe auf die <b>Uhr</b> für Vollbild.<br>
+                • Tippe auf das <b>Zahnrad</b> für dieses Menü.<br>
+                • Der Schirm wird nachts automatisch schwarz.
             </div>
 
-            <div class="copyright-box">
+            <div style="font-size:0.7rem; color:#444; margin:10px 0;">
                 (c) Karl Altmannshofer 2026<br>
-                Aura Weather Tablet Edition V1.26
+                Aura Weather Tablet Edition
             </div>
 
-            <button class="save-btn" onclick="saveAllSettings()">EINSTELLUNGEN SPEICHERN</button>
+            <button class="save-btn" onclick="saveAllSettings()">SPEICHERN</button>
             <button class="close-btn" onclick="toggleSettings()">ZURÜCK</button>
         </div>
     </div>
