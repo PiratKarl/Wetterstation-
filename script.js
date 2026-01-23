@@ -5,7 +5,7 @@ var sEnd = localStorage.getItem('sleepEnd') || '05:30';
 
 var timeOffset = 0; 
 var lastSuccess = Date.now();
-var tickerData = { main: "", wind: "", astro: "", forecast: "" };
+var tickerData = { main: "Wetterdaten werden geladen...", wind: "", astro: "", forecast: "" };
 
 function getIcon(code) {
     var map = {
@@ -34,7 +34,7 @@ function updateClock() {
 }
 
 function buildTicker() {
-    var fullText = "+++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++ BRAUNSCHWEIG DIGITALER DENKMALSCHUTZ V1.41 +++";
+    var fullText = "+++ V1.41 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++ BRAUNSCHWEIG DIGITALER DENKMALSCHUTZ +++";
     document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
 }
 
@@ -64,11 +64,13 @@ function fetchWeather() {
             var moonText = ms[Math.floor(ph*6)] || ms[0];
             document.getElementById('moon-display').innerText = moonText;
             
+            document.getElementById('update-info').innerText = "UPD: "+z(new Date(Date.now()+timeOffset).getHours())+":"+z(new Date(Date.now()+timeOffset).getMinutes());
+
             // TICKER DATEN TEIL 1
-            var tip = d.main.temp < 8 ? "Winterjacke an! ❄️" : (d.main.temp < 17 ? "Übergangsjacke! 🧥" : "T-Shirt Wetter! 👕");
-            tickerData.main = tip + " - Feuchte: " + d.main.humidity + "%";
+            var tip = d.main.temp < 8 ? "WINTERJACKE AN! ❄️" : (d.main.temp < 17 ? "ÜBERGANGSJACKE! 🧥" : "T-SHIRT WETTER! 👕");
+            tickerData.main = tip + " - Feuchtigkeit: " + d.main.humidity + "%";
             tickerData.wind = "Wind: " + Math.round(d.wind.speed * 3.6) + " km/h (Böen: " + (d.wind.gust ? Math.round(d.wind.gust * 3.6) : "keine") + ")";
-            tickerData.astro = "Aktuell: " + moonText + " - Luftdruck: " + d.main.pressure + " hPa";
+            tickerData.astro = moonText + " - Luftdruck: " + d.main.pressure + " hPa";
 
             fetchForecast();
         }
@@ -83,7 +85,6 @@ function fetchForecast() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var f = JSON.parse(xhr.responseText);
             
-            // STUNDEN
             var hRow = "<tr>";
             for(var i=0; i<5; i++) {
                 var it = f.list[i];
@@ -91,11 +92,10 @@ function fetchForecast() {
             }
             document.getElementById('hourly-table').innerHTML = hRow + "</tr>";
             
-            // TICKER DATEN TEIL 2 (Vorschau)
-            var next3h = f.list[1];
-            tickerData.forecast = "Vorschau " + new Date(next3h.dt*1000).getHours() + " Uhr: " + next3h.weather[0].description + " bei " + Math.round(next3h.main.temp) + "°";
+            // TICKER DATEN TEIL 2 (Vorschau 3h)
+            var n3 = f.list[1];
+            tickerData.forecast = "Vorschau " + new Date(n3.dt*1000).getHours() + " Uhr: " + n3.weather[0].description + " bei " + Math.round(n3.main.temp) + "°";
 
-            // TAGE
             var days = {};
             for(var j=0; j<f.list.length; j++) {
                 var dName = new Date(f.list[j].dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
@@ -112,7 +112,7 @@ function fetchForecast() {
             }
             document.getElementById('daily-table').innerHTML = dRow + "</tr>";
             
-            buildTicker(); // Erst jetzt den Ticker bauen, wenn alle Daten da sind
+            buildTicker(); 
         }
     };
     xhr.send();
