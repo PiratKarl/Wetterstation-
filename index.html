@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.45 PRO</title>
+    <title>Aura Weather V1.46 VISUAL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#000; margin:0; color:#fff; font-family:Arial, sans-serif; overflow:hidden;">
+<body style="background:#000; margin:0; color:#fff; font-family:Arial, sans-serif; overflow:hidden;" onclick="activateWakeLock()">
 
     <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
@@ -16,20 +16,20 @@
     <div class="app-shell">
         <table width="100%" height="250" border="0" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #222;">
             <tr>
-                <td width="33%" align="center" onclick="toggleFullscreen()">
+                <td width="33%" align="center">
                     <div id="clock" style="font-size:4.5rem; font-weight:bold;">00:00</div>
                     <div id="date" style="font-size:1.2rem; color:#00ffcc;">Lade...</div>
                     <img src="logo.png" width="120" style="margin:5px 0;">
                     <div style="margin-top:5px;">
-                        <div class="live-indicator"></div>
-                        <span id="update-info" style="color:#888; font-size:0.9rem; font-weight:bold;">V1.45 PRO</span>
+                        <div id="wake-status" class="live-indicator"></div>
+                        <span id="update-info" style="color:#888; font-size:0.9rem; font-weight:bold;">V1.46 VISUAL</span>
                     </div>
                 </td>
                 
                 <td width="34%" align="center">
-                    <div id="city-title" style="color:#666; letter-spacing:2px; font-size:1rem;">STANDORT</div>
+                    <div id="city-title" style="color:#666; letter-spacing:2px; font-size:1rem;">BRAUNSCHWEIG</div>
                     <div style="white-space:nowrap; margin:10px 0;">
-                        <span id="main-icon-container" style="font-size:6.5rem; vertical-align:middle;"></span>
+                        <span id="main-icon-container" style="display:inline-block; vertical-align:middle; width:120px; height:120px;"></span>
                         <span id="temp-display" style="font-size:6.5rem; font-weight:bold; vertical-align:middle;">--</span>
                         <span style="font-size:2.5rem; color:#00ffcc; vertical-align:top;">°C</span>
                     </div>
@@ -39,8 +39,7 @@
                 <td width="33%" align="center">
                     <div style="margin-bottom:15px;">
                         <i id="offline-warn" class="fa fa-exclamation-triangle" style="display:none; color:#ff4d4d; font-size:3rem; margin-right:15px;"></i>
-                        <i class="fa fa-expand" onclick="toggleFullscreen()" style="font-size:3rem; color:#00ffcc; cursor:pointer; margin-right:20px;"></i>
-                        <i class="fa fa-gear" onclick="toggleSettings()" style="font-size:3rem; color:#fff; cursor:pointer;"></i>
+                        <i class="fa fa-gear" onclick="toggleSettings(); event.stopPropagation();" style="font-size:3rem; color:#fff; cursor:pointer;"></i>
                     </div>
                     <div class="astro" style="font-size:1.5rem; font-weight:bold; line-height:1.4;">
                         <i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span><br>
@@ -52,7 +51,9 @@
         </table>
 
         <div style="height:80px; background:#050505; border-bottom:1px solid #111; overflow:hidden;">
-            <marquee id="info-ticker" scrollamount="7" style="line-height:80px; font-size:2.6rem; color:#00ffcc; font-weight:bold;">+++ AURA WEATHER V1.45 ONLINE +++</marquee>
+            <marquee id="info-ticker" scrollamount="7" style="line-height:80px; font-size:2.6rem; color:#00ffcc; font-weight:bold;">
+                +++ BITTE DISPLAY TIPPEN ZUM AKTIVIEREN +++
+            </marquee>
         </div>
 
         <div id="footer-area" style="background:#000;">
@@ -63,20 +64,19 @@
 
     <div id="settings-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; z-index:1000; text-align:center;">
         <div style="background:#111; border:1px solid #333; width:95%; max-width:480px; margin:2% auto; padding:20px; border-radius:10px;">
-            <h2 style="color:#00ffcc; margin-bottom:20px;">SYSTEM-SETUP</h2>
+            <h2 style="color:#00ffcc;">GERÄTE-SETUP</h2>
             <div style="text-align:left; margin-bottom:5px;"><b style="color:#fff;">Standort eingabe</b></div>
             <input type="text" id="city-input" style="width:100%; padding:15px; background:#000; color:#fff; border:1px solid #444; font-size:1.5rem; margin-bottom:20px;">
             <div style="background:#181818; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
                 <b style="color:#fff;">NACHT-MODUS:</b><br>
                 VON <input type="time" id="s-start" style="width:35%;"> BIS <input type="time" id="s-end" style="width:35%;">
-                <div id="menu-sleep-info" style="color:#00ffcc; font-weight:bold; margin-top:10px;">AUS AB: --:--</div>
             </div>
-            <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; color:#000; font-weight:bold; font-size:1.3rem;">SPEICHERN</button>
-            <button onclick="toggleSettings()" style="width:100%; padding:10px; background:#333; color:#fff; margin-top:10px;">ZURÜCK</button>
+            <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; color:#000; font-weight:bold; font-size:1.3rem; border-radius:5px;">SPEICHERN</button>
+            <button onclick="toggleSettings()" style="width:100%; padding:10px; background:#333; color:#fff; margin-top:10px; border-radius:5px;">ZURÜCK</button>
         </div>
     </div>
 
-    <video id="wake-video" playsinline autoplay muted loop style="position:fixed; width:1px; height:1px; opacity:0.01;">
+    <video id="wake-video" playsinline muted loop style="position:fixed; width:1px; height:1px; opacity:0.01;">
         <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
     </video>
 

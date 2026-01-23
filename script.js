@@ -5,22 +5,30 @@ var sEnd = localStorage.getItem('sleepEnd') || '06:00';
 
 var timeOffset = 0; 
 var lastSuccess = Date.now();
-var tickerData = { main: "Lade Daten...", wind: "", astro: "", forecast: "" };
+var tickerData = { main: "Bitte Display tippen...", wind: "", astro: "", forecast: "" };
+var isActivated = false;
 
-function getIcon(code) {
-    var map = {
-        "01d": ["fa-sun-o","#FFD700"], "01n": ["fa-moon-o","#fff"],
-        "02d": ["fa-cloud","#eee"], "02n": ["fa-cloud","#aaa"],
-        "03d": ["fa-cloud","#888"], "04d": ["fa-cloud","#666"],
-        "09d": ["fa-tint","#00BFFF"], "10d": ["fa-umbrella","#1e90ff"],
-        "11d": ["fa-bolt","#FFFF00"], "13d": ["fa-snowflake-o","#F0F8FF"],
-        "50d": ["fa-bars","#ccc"]
-    };
-    var res = map[code] || ["fa-cloud","#fff"];
-    return '<i class="fa ' + res[0] + '" style="color:' + res[1] + '"></i>';
+// Lädt deine lokalen GIFs (z.B. 01d.gif)
+function getIconHtml(iconCode, size) {
+    return '<img src="' + iconCode + '.gif" style="width:' + size + 'px; height:auto; vertical-align:middle;">';
 }
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
+
+// Aktiviert den Wachhalte-Modus bei Berührung
+function activateWakeLock() {
+    if(!isActivated) {
+        var v = document.getElementById('wake-video');
+        v.play();
+        var el = document.documentElement;
+        if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        
+        document.getElementById('wake-status').style.backgroundColor = '#00ffcc';
+        isActivated = true;
+        tickerData.main = "System aktiv - Lade Wetter...";
+        fetchWeather();
+    }
+}
 
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
@@ -32,20 +40,18 @@ function updateClock() {
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
 
-    var menuSleep = document.getElementById('menu-sleep-info');
-    if(menuSleep) menuSleep.innerText = "NACHTMODUS AKTIV AB: " + sStart + " UHR";
-
     document.getElementById('offline-warn').style.display = (Date.now() - lastSuccess > 900000) ? 'inline-block' : 'none';
 }
 
 function buildTicker() {
-    var fullText = "+++ V1.45 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
+    var fullText = "+++ V1.46 VISUAL +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
     document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
 }
 
 function fetchWeather() {
+    if(!isActivated) return;
     var v = document.getElementById('wake-video');
-    if(v) v.play();
+    if(v && v.paused) v.play();
 
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+encodeURIComponent(city)+"&appid="+API_KEY+"&units=metric&lang=de", true);
@@ -58,7 +64,10 @@ function fetchWeather() {
             
             document.getElementById('temp-display').innerText = Math.round(d.main.temp);
             document.getElementById('city-title').innerText = d.name.toUpperCase();
-            document.getElementById('main-icon-container').innerHTML = getIcon(d.weather[0].icon);
+            
+            // Haupt-GIF setzen
+            document.getElementById('main-icon-container').innerHTML = getIconHtml(d.weather[0].icon, 110);
+            
             document.getElementById('feels-like').innerHTML = '<i class="fa fa-thermometer-half"></i> GEFÜHLT ' + Math.round(d.main.feels_like) + "°";
             document.getElementById('feels-like').className = (d.main.feels_like > d.main.temp) ? "warm" : "kalt";
             
@@ -66,16 +75,16 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(new Date((d.sys.sunrise+off)*1000).getUTCHours()) + ":" + z(new Date((d.sys.sunrise+off)*1000).getUTCMinutes());
             document.getElementById('sunset-val').innerText = z(new Date((d.sys.sunset+off)*1000).getUTCHours()) + ":" + z(new Date((d.sys.sunset+off)*1000).getUTCMinutes());
             
-            var ph = (((Date.now()/86400000)+2440587.5-2451549.5)/29.53)%1;
+            var jd = (new Date().getTime() / 86400000) + 2440587.5;
+            var ph = ((jd - 2451549.5) / 29.53) % 1;
             var ms = ["🌑 Neumond","🌙 Zun. Sichel","🌓 Halbmond","🌕 Vollmond","🌗 Halbmond","🌘 Abn. Sichel"];
-            var moonText = ms[Math.floor(ph*6)] || ms[0];
-            document.getElementById('moon-display').innerText = moonText;
+            document.getElementById('moon-display').innerText = ms[Math.floor(ph*6)] || ms[0];
             
             document.getElementById('update-info').innerText = "UPD: "+z(new Date(Date.now()+timeOffset).getHours())+":"+z(new Date(Date.now()+timeOffset).getMinutes());
 
-            tickerData.main = (d.main.temp < 8 ? "Winterjacke ❄️" : (d.main.temp < 17 ? "Übergangsjacke 🧥" : "T-Shirt 👕")) + " - Feuchte: " + d.main.humidity + "%";
+            tickerData.main = (d.main.temp < 8 ? "Winterjacke" : (d.main.temp < 17 ? "Übergangsjacke" : "T-Shirt Wetter")) + " - Feuchte: " + d.main.humidity + "%";
             tickerData.wind = "Wind: " + Math.round(d.wind.speed * 3.6) + " km/h";
-            tickerData.astro = moonText + " - Luftdruck: " + d.main.pressure + " hPa";
+            tickerData.astro = "Druck: " + d.main.pressure + " hPa";
 
             fetchForecast();
         }
@@ -92,12 +101,11 @@ function fetchForecast() {
             var hRow = "<tr>";
             for(var i=0; i<5; i++) {
                 var it = f.list[i];
-                hRow += '<td class="f-item"><span style="color:#888;font-size:1.1rem;">'+new Date(it.dt*1000).getHours()+':00</span><br><span style="font-size:3.5rem">'+getIcon(it.weather[0].icon)+'</span><br><b>'+Math.round(it.main.temp)+'°</b></td>';
+                hRow += '<td class="f-item"><span style="color:#888;font-size:1.1rem;">'+new Date(it.dt*1000).getHours()+':00</span><br>'+getIconHtml(it.weather[0].icon, 60)+'<br><b>'+Math.round(it.main.temp)+'°</b></td>';
             }
             document.getElementById('hourly-table').innerHTML = hRow + "</tr>";
             
-            var n3 = f.list[1];
-            tickerData.forecast = "Vorschau " + new Date(n3.dt*1000).getHours() + " Uhr: " + n3.weather[0].description;
+            tickerData.forecast = "Vorschau: " + f.list[1].weather[0].description;
 
             var days = {};
             for(var j=0; j<f.list.length; j++) {
@@ -109,7 +117,7 @@ function fetchForecast() {
             var dRow = "<tr>"; var c = 0;
             for(var day in days) {
                 if(c > 0 && c < 6) {
-                    dRow += '<td class="f-item"><span class="f-day-name">'+day+'</span><span style="font-size:3.5rem">'+getIcon(days[day].icon)+'</span><br><span class="f-temp-max">'+Math.round(days[day].max)+'°</span><span class="f-temp-min">'+Math.round(days[day].min)+'°</span></td>';
+                    dRow += '<td class="f-item"><span class="f-day-name">'+day+'</span>'+getIconHtml(days[day].icon, 70)+'<br><span class="f-temp-max">'+Math.round(days[day].max)+'°</span><span class="f-temp-min">'+Math.round(days[day].min)+'°</span></td>';
                 }
                 c++;
             }
@@ -121,18 +129,9 @@ function fetchForecast() {
 }
 
 function toggleSettings() { var s = document.getElementById('settings-overlay'); s.style.display = (s.style.display=='block')?'none':'block'; }
-function saveAll() { 
-    localStorage.setItem('selectedCity', document.getElementById('city-input').value); 
-    localStorage.setItem('sleepStart', document.getElementById('s-start').value); 
-    localStorage.setItem('sleepEnd', document.getElementById('s-end').value); 
-    window.location.reload(); 
-}
-function toggleFullscreen() { 
-    var el = document.documentElement; 
-    if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); 
-}
+function saveAll() { localStorage.setItem('selectedCity', document.getElementById('city-input').value); localStorage.setItem('sleepStart', document.getElementById('s-start').value); localStorage.setItem('sleepEnd', document.getElementById('s-end').value); window.location.reload(); }
+function toggleFullscreen() { var el = document.documentElement; if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }
 
 setInterval(updateClock, 1000); 
 setInterval(fetchWeather, 300000);
 updateClock();
-fetchWeather(); // Automatischer Start
