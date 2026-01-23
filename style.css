@@ -4,13 +4,20 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; overflow: 
 #night-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; text-align: center; padding-top: 20%; }
 #night-clock { font-size: 5rem; color: #111; font-weight: bold; }
 
-/* Vorhersage Styling - DEUTLICH GRÖSSER & HELLER */
-.f-item { text-align: center; padding: 5px; }
-.f-item b { font-size: 1.8rem; display: block; color: #ffffff; margin-top: 5px; } /* Temperatur sattes Weiß */
-.f-label-hour { font-size: 1.1rem; color: #eeeeee; display: block; } /* Stunden heller */
-.f-label-day { font-size: 1.3rem; color: #00ffcc; font-weight: bold; display: block; } /* Tage Cyan */
+/* Temperatur Text jetzt größer (6rem) */
+#main-icon { font-size: 6rem; color: #fff; vertical-align: middle; margin-right: 15px; }
+#temp-display { font-size: 6rem; font-weight: bold; vertical-align: middle; }
 
-.f-icon { font-size: 3rem; margin: 8px 0; } /* Icons jetzt bei 3rem */
-
+#feels-like { font-size: 1.5rem; font-weight: bold; margin-top: 5px; }
 .warm { color: #ff4d4d; }
 .kalt { color: #00d9ff; }
+
+.astro { font-size: 1.4rem; font-weight: bold; line-height: 1.4; }
+
+.ticker-row { height: 15%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; }
+marquee { line-height: 85px; font-size: 2.8rem; color: #00ffcc; font-weight: bold; }
+
+/* Vorhersage - Helles Design */
+.f-item { text-align: center; padding: 5px; }
+.f-item b { font-size: 1.8rem; display: block; color: #ffffff; margin-top: 5px; }
+.f-icon { font-size: 3rem; margin: 8px 0; }

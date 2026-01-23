@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Legacy V1.33</title>
+    <title>Aura Weather Legacy V1.34</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -20,26 +20,29 @@
                     <div id="clock" style="font-size:4.5rem; font-weight:bold;">00:00</div>
                     <div id="date" style="font-size:1.2rem; color:#00ffcc;">Lade...</div>
                     <img src="logo.png" width="130" style="margin:10px 0;">
-                    <div style="font-size:0.7rem; color:#444;">(c) K. Altmannshofer 2026<br>Tablet Version 1.33</div>
+                    <div style="font-size:0.7rem; color:#444;">(c) K. Altmannshofer 2026<br>V1.34 Tablet</div>
                 </td>
                 
                 <td width="34%" align="center">
                     <div id="city-title" style="font-size:1rem; color:#666; letter-spacing:3px;">STADT</div>
                     <div style="white-space:nowrap; margin:10px 0;">
-                        <i class="fa fa-cloud" id="main-icon" style="font-size:6rem; vertical-align:middle;"></i>
-                        <span id="temp-display" style="font-size:4.5rem; font-weight:bold; vertical-align:middle;">--</span>
-                        <span style="font-size:2rem; color:#00ffcc; vertical-align:top;">°C</span>
+                        <i class="fa fa-cloud" id="main-icon"></i>
+                        <span id="temp-display">--</span><span style="font-size:2rem; color:#00ffcc; vertical-align:top;">°C</span>
                     </div>
                     <div id="feels-like" style="font-size:1.5rem; font-weight:bold;"></div>
                 </td>
 
                 <td width="33%" align="center">
-                    <div onclick="toggleSettings()" style="padding:20px; color:#fff; cursor:pointer;">
-                        <i class="fa fa-gear" style="font-size:3.5rem;"></i>
+                    <div style="margin-bottom:10px;">
+                        <i class="fa fa-expand" onclick="toggleFullscreen()" style="font-size:3rem; color:#00ffcc; cursor:pointer; margin-right:20px;" title="Vollbild"></i>
+                        <i class="fa fa-gear" onclick="toggleSettings()" style="font-size:3rem; color:#fff; cursor:pointer;" title="Setup"></i>
                     </div>
-                    <div style="font-size:1.4rem; font-weight:bold; line-height:1.5;">
+                    <div class="astro">
                         <i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span><br>
-                        <i class="fa fa-moon-o" style="color:#FF8C00"></i> <span id="sunset-val">--:--</span>
+                        <i class="fa fa-moon-o" style="color:#FF8C00"></i> <span id="sunset-val">--:--</span><br>
+                        <div id="moon-display" style="color:#aaa; font-size:1.1rem; margin-top:5px; border-top:1px solid #222; padding-top:5px;">
+                             Mond...
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -58,15 +61,13 @@
     </div>
 
     <div id="settings-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); display:none; z-index:1000; text-align:center;">
-        <div style="background:#111; border:1px solid #333; width:90%; max-width:450px; margin:10% auto; padding:20px; border-radius:10px;">
+        <div style="background:#111; border:1px solid #333; width:90%; max-width:450px; margin:5% auto; padding:20px; border-radius:10px;">
             <h2 style="color:#00ffcc; margin-bottom:20px;">EINSTELLUNGEN</h2>
             <div style="text-align:left; color:#888; margin-bottom:10px;">STADT:</div>
             <input type="text" id="city-input" style="width:100%; padding:12px; background:#000; border:1px solid #444; color:#fff; font-size:1.2rem; margin-bottom:20px;">
-            
             <div style="text-align:left; color:#888; margin-bottom:10px;">NACHT-MODUS:</div>
             <input type="time" id="s-start" style="width:45%; padding:10px;"> 
             <input type="time" id="s-end" style="width:45%; padding:10px;">
-
             <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; border:none; font-weight:bold; font-size:1.2rem; border-radius:5px; margin-top:20px;">SPEICHERN</button>
             <button onclick="toggleSettings()" style="width:100%; padding:10px; background:#333; color:#fff; border:none; margin-top:10px; border-radius:5px;">ZURÜCK</button>
         </div>

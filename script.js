@@ -4,14 +4,35 @@ var sStart = localStorage.getItem('sleepStart') || '00:00';
 var sEnd = localStorage.getItem('sleepEnd') || '05:30';
 
 var colors = {
-    "01d": "#FFD700", "01n": "#fff",
-    "02d": "#fff", "02n": "#aaa",
-    "03d": "#eee", "04d": "#888",
-    "09d": "#00BFFF", "10d": "#1e90ff",
+    "01d": "#FFD700", "01n": "#fff", "02d": "#fff", "02n": "#aaa",
+    "03d": "#eee", "04d": "#888", "09d": "#00BFFF", "10d": "#1e90ff",
     "11d": "#FFFF00", "13d": "#F0F8FF", "50d": "#ccc"
 };
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
+
+// --- KLEIDUNGS-LOGIK ---
+function getClothingTip(temp) {
+    if (temp < 6) return "WINTERJACKE AN! ❄️";
+    if (temp < 15) return "ÜBERGANGSJACKE OK. 🧥";
+    if (temp < 23) return "T-SHIRT WETTER! 👕";
+    return "HEISS: LUFTIG KLEIDEN! 🕶️";
+}
+
+// --- MONDPRECHNUNG ---
+function getMoonPhase() {
+    var now = new Date();
+    var jd = (now.getTime() / 86400000) - (now.getTimezoneOffset() / 1440) + 2440587.5;
+    var phase = ((jd - 2451549.5) / 29.53058867) % 1;
+    if (phase < 0.05 || phase > 0.95) return "🌑 NEUMOND";
+    if (phase < 0.25) return "🌙 ZUN. SICHEL";
+    if (phase < 0.30) return "🌓 HALBMOND (ZUN.)";
+    if (phase < 0.45) return "🌔 ZUN. MOND";
+    if (phase < 0.55) return "🌕 VOLLMOND";
+    if (phase < 0.70) return "🌖 ABN. MOND";
+    if (phase < 0.75) return "🌗 HALBMOND (ABN.)";
+    return "🌘 ABN. SICHEL";
+}
 
 function updateClock() {
     var now = new Date();
@@ -33,23 +54,23 @@ function fetchWeather() {
             var t = data.main.temp;
             var f = data.main.feels_like;
             
-            document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = Math.round(t);
+            document.getElementById('city-title').innerText = data.name.toUpperCase();
             
             var feels = document.getElementById('feels-like');
             feels.innerHTML = "GEFÜHLT " + Math.round(f) + "°";
             feels.className = (f > t) ? "warm" : "kalt";
 
-            var iconCode = data.weather[0].icon;
-            document.getElementById('main-icon').style.color = colors[iconCode] || "#fff";
+            document.getElementById('main-icon').style.color = colors[data.weather[0].icon] || "#fff";
             
             var off = data.timezone;
             document.getElementById('sunrise-val').innerText = z(new Date((data.sys.sunrise+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunrise+off)*1000).getUTCMinutes());
-            document.getElementById('sunset-val').innerText = z(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + zero(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
+            document.getElementById('sunset-val').innerText = z(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
 
-            // TICKER OHNE STATUS-ANZEIGE
+            // Ticker & Mond Update
+            document.getElementById('moon-display').innerText = getMoonPhase();
             var wind = Math.round(data.wind.speed * 3.6);
-            document.getElementById('info-ticker').innerHTML = "+++ WIND: " + wind + " KM/H +++ FEUCHTE: " + data.main.humidity + "% +++ LUFTDRUCK: " + data.main.pressure + " HPA +++ REGENCHANCE: " + (data.clouds.all) + "% +++";
+            document.getElementById('info-ticker').innerHTML = "+++ " + getClothingTip(t) + " +++ WIND: " + wind + " KM/H +++ FEUCHTE: " + data.main.humidity + "% +++ DRUCK: " + data.main.pressure + " HPA +++";
             
             fetchForecast();
         }
@@ -57,26 +78,21 @@ function fetchWeather() {
     xhr.send();
 }
 
-function zero(n) { return (n < 10 ? '0' : '') + n; }
-
 function fetchForecast() {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var dataF = JSON.parse(xhr.responseText);
-            
-            // STUNDEN
             var hT = document.getElementById('hourly-table');
             var hRow = "<tr>";
             for(var i=0; i<5; i++) {
                 var it = dataF.list[i];
                 var c = colors[it.weather[0].icon] || "#fff";
-                hRow += '<td class="f-item"><span class="f-label-hour">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa fa-cloud f-icon" style="color:' + c + '"></i><b>' + Math.round(it.main.temp) + '°</b></td>';
+                hRow += '<td class="f-item"><span style="color:#eee">' + new Date(it.dt*1000).getHours() + ':00</span><br><i class="fa fa-cloud f-icon" style="color:' + c + '"></i><br><b>' + Math.round(it.main.temp) + '°</b></td>';
             }
             hT.innerHTML = hRow + "</tr>";
             
-            // TAGE
             var dT = document.getElementById('daily-table');
             var days = {};
             for(var j=0; j<dataF.list.length; j++) {
@@ -90,7 +106,7 @@ function fetchForecast() {
             for(var day in days) {
                 if(count > 0 && count < 6) {
                     var cd = colors[days[day].icon] || "#fff";
-                    dRow += '<td class="f-item"><span class="f-label-day">' + day + '</span><i class="fa fa-cloud f-icon" style="color:' + cd + '"></i><span style="color:#ff4d4d; font-weight:bold; font-size:1.4rem;">' + Math.round(days[day].max) + '°</span> <span style="color:#00d9ff; font-weight:bold; font-size:1.2rem;">' + Math.round(days[day].min) + '°</span></td>';
+                    dRow += '<td class="f-item"><span style="color:#00ffcc">' + day + '</span><br><i class="fa fa-cloud f-icon" style="color:' + cd + '"></i><br><span style="color:#ff4d4d">' + Math.round(days[day].max) + '°</span> <span style="color:#00d9ff">' + Math.round(days[day].min) + '°</span></td>';
                 }
                 count++;
             }
