@@ -3,80 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.39</title>
-    <link rel="manifest" href="manifest.json">
+    <title>Aura Weather V1.40</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#000; margin:0;">
+<body style="background:#000; margin:0; color:#fff; font-family:Arial;">
 
     <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
     </div>
 
     <div class="app-shell">
-        <table width="100%" height="52%" border="0" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #222;">
+        <table width="100%" height="250" border="0" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #222;">
             <tr>
                 <td width="33%" align="center" onclick="toggleFullscreen()">
-                    <div id="clock">00:00</div>
-                    <div id="date">Lade...</div>
-                    <img src="logo.png" width="130">
-                    <div style="margin-top:8px;">
+                    <div id="clock" style="font-size:4.5rem; font-weight:bold;">00:00</div>
+                    <div id="date" style="font-size:1.2rem; color:#00ffcc;">Lade...</div>
+                    <img src="logo.png" width="120" style="margin:5px 0;">
+                    <div style="margin-top:5px;">
                         <div class="live-indicator"></div>
-                        <span id="update-info">SYNC ACTIVE</span>
+                        <span id="update-info" style="color:#666; font-size:0.9rem; font-weight:bold;">V1.40</span>
                     </div>
                 </td>
                 
                 <td width="34%" align="center">
-                    <div id="city-title">STADT</div>
+                    <div id="city-title" style="color:#666; letter-spacing:2px; font-size:1rem;">STADT</div>
                     <div style="white-space:nowrap; margin:10px 0;">
-                        <span id="main-icon-container" style="font-size:6rem; vertical-align:middle;"></span>
-                        <span id="temp-display">--</span><span class="unit">°C</span>
+                        <span id="main-icon-container" style="font-size:6.5rem; vertical-align:middle;"></span>
+                        <span id="temp-display" style="font-size:6.5rem; font-weight:bold; vertical-align:middle;">--</span>
+                        <span style="font-size:2.5rem; color:#00ffcc; vertical-align:top;">°C</span>
                     </div>
-                    <div id="feels-like"></div>
+                    <div id="feels-like" style="font-size:1.6rem; font-weight:bold;"></div>
                 </td>
 
                 <td width="33%" align="center">
                     <div style="margin-bottom:15px;">
-                        <i id="offline-warn" class="fa fa-exclamation-triangle" style="display:none; color:#ff4d4d; font-size:3rem; margin-right:15px; vertical-align:middle;"></i>
-                        <i class="fa fa-expand" onclick="toggleFullscreen()" class="btn-top" style="color:#00ffcc; margin-right:25px;"></i>
-                        <i class="fa fa-gear" onclick="toggleSettings()" class="btn-top" style="color:#fff;"></i>
+                        <i id="offline-warn" class="fa fa-exclamation-triangle" style="display:none; color:#ff4d4d; font-size:3rem; margin-right:15px;"></i>
+                        <i class="fa fa-expand" onclick="toggleFullscreen()" style="font-size:3rem; color:#00ffcc; cursor:pointer; margin-right:20px;"></i>
+                        <i class="fa fa-gear" onclick="toggleSettings()" style="font-size:3rem; color:#fff; cursor:pointer;"></i>
                     </div>
-                    <div class="astro">
+                    <div class="astro" style="font-size:1.5rem; font-weight:bold; line-height:1.4;">
                         <i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span><br>
                         <i class="fa fa-moon-o" style="color:#FF8C00"></i> <span id="sunset-val">--:--</span><br>
-                        <div id="moon-display">Mond...</div>
+                        <div id="moon-display" style="color:#aaa; font-size:1.1rem; border-top:1px solid #222; margin-top:5px;">Mond...</div>
                     </div>
                 </td>
             </tr>
         </table>
 
-        <div class="ticker-row">
-            <marquee id="info-ticker" scrollamount="8">INITIALISIERE SYSTEM...</marquee>
+        <div style="height:80px; background:#050505; border-bottom:1px solid #111; overflow:hidden;">
+            <marquee id="info-ticker" scrollamount="8" style="line-height:80px; font-size:2.8rem; color:#00ffcc; font-weight:bold;">INITIALISIERE...</marquee>
         </div>
 
-        <div class="footer-row">
-            <table width="100%" height="50%" id="hourly-table" border="0"></table>
-            <table width="100%" height="50%" id="daily-table" border="0" style="border-top:1px solid #111;"></table>
+        <div id="footer-area" style="background:#000;">
+            <table width="100%" height="120" id="hourly-table" border="0" style="table-layout:fixed;"></table>
+            <table width="100%" height="150" id="daily-table" border="0" style="table-layout:fixed; border-top:1px solid #222;"></table>
         </div>
     </div>
 
-    <div id="settings-overlay">
-        <div class="modal">
-            <h2 style="color:#00ffcc;">DASHBOARD SETUP</h2>
-            <div class="sect">STADT: <input type="text" id="city-input"></div>
-            <div class="sect">NACHT-MODUS: VON <input type="time" id="s-start" style="width:35%"> BIS <input type="time" id="s-end" style="width:35%"></div>
-            
-            <div class="donation-box">
-                <b>Digitaler Denkmalschutz</b><br>
-                Unterstütze die Rettung dieser Hardware.<br>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz+Aura+Weather" target="_blank" class="paypal-link">
-                    <i class="fa fa-paypal"></i> Kaffeekasse Piratkarl
+    <div id="settings-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); display:none; z-index:1000; text-align:center;">
+        <div style="background:#111; border:1px solid #333; width:95%; max-width:480px; margin:2% auto; padding:20px; border-radius:10px;">
+            <h2 style="color:#00ffcc;">SETUP</h2>
+            <input type="text" id="city-input" style="width:100%; padding:15px; background:#000; color:#fff; border:1px solid #444; font-size:1.5rem;">
+            <div style="margin:20px 0; color:#888;">
+                NACHT: <input type="time" id="s-start"> BIS <input type="time" id="s-end">
+            </div>
+            <div style="background:#0a0a0a; padding:15px; border-radius:10px; margin-bottom:20px;">
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" style="background:#0070ba; color:#fff; text-decoration:none; padding:15px 25px; border-radius:30px; font-weight:bold; display:inline-block;">
+                    <i class="fa fa-paypal"></i> Kaffeekasse
                 </a>
             </div>
-
-            <button class="save" onclick="saveAll()">SPEICHERN</button>
-            <button class="close" onclick="toggleSettings()">ZURÜCK</button>
+            <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; border:none; font-weight:bold; font-size:1.2rem;">SPEICHERN</button>
+            <button onclick="toggleSettings()" style="width:100%; padding:10px; background:#333; color:#fff; border:none; margin-top:10px;">ZURÜCK</button>
         </div>
     </div>
 
