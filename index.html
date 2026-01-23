@@ -1,19 +1,15 @@
 <!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Tablet V1.34</title>
-    
+    <title>Aura Weather KitKat V1.35</title>
     <link rel="manifest" href="manifest.json">
-    
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-
-<body style="background:#000; color:#fff; margin:0; font-family:Arial;">
+<body style="background:#000; margin:0;">
 
     <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
@@ -23,59 +19,71 @@
         <table width="100%" height="52%" border="0" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #222;">
             <tr>
                 <td width="33%" align="center" onclick="toggleFullscreen()">
-                    <div id="clock" style="font-size:4.5rem; font-weight:bold;">00:00</div>
-                    <div id="date" style="font-size:1.2rem; color:#00ffcc;">Lade...</div>
-                    <img src="logo.png" width="130" style="margin:10px 0;">
-                    <div style="font-size:0.7rem; color:#444;">(c) K. Altmannshofer 2026<br>V1.34 Tablet</div>
+                    <div id="clock">00:00</div>
+                    <div id="date">Lade...</div>
+                    <img src="logo.png" id="station-logo" width="130">
+                    <div class="legal">V1.35 Tablet Edition</div>
                 </td>
                 
                 <td width="34%" align="center">
-                    <div id="city-title" style="font-size:1rem; color:#666; letter-spacing:3px;">STADT</div>
+                    <div id="city-title">STADT</div>
                     <div style="white-space:nowrap; margin:10px 0;">
                         <i class="fa fa-cloud" id="main-icon"></i>
-                        <span id="temp-display">--</span><span style="font-size:2rem; color:#00ffcc; vertical-align:top;">°C</span>
+                        <span id="temp-display">--</span><span class="unit">°C</span>
                     </div>
-                    <div id="feels-like" style="font-size:1.5rem; font-weight:bold;"></div>
+                    <div id="feels-like"></div>
                 </td>
 
                 <td width="33%" align="center">
-                    <div style="margin-bottom:10px;">
-                        <i class="fa fa-expand" onclick="toggleFullscreen()" style="font-size:3rem; color:#00ffcc; cursor:pointer; margin-right:20px;" title="Vollbild"></i>
-                        <i class="fa fa-gear" onclick="toggleSettings()" style="font-size:3rem; color:#fff; cursor:pointer;" title="Setup"></i>
+                    <div style="margin-bottom:15px;">
+                        <i class="fa fa-expand" onclick="toggleFullscreen()" class="icon-btn" style="color:#00ffcc; margin-right:25px;"></i>
+                        <i class="fa fa-gear" onclick="toggleSettings()" class="icon-btn" style="color:#fff;"></i>
                     </div>
                     <div class="astro">
                         <i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span><br>
                         <i class="fa fa-moon-o" style="color:#FF8C00"></i> <span id="sunset-val">--:--</span><br>
-                        <div id="moon-display" style="color:#aaa; font-size:1.1rem; margin-top:5px; border-top:1px solid #222; padding-top:5px;">
-                             Mond...
-                        </div>
+                        <div id="moon-display">Mond...</div>
                     </div>
                 </td>
             </tr>
         </table>
 
-        <div style="height:15%; background:#050505; border-top:1px solid #111; border-bottom:1px solid #111; overflow:hidden;">
-            <marquee id="info-ticker" scrollamount="8" style="line-height:85px; font-size:2.8rem; color:#00ffcc; font-weight:bold;">
-                DATENABFRAGE LÄUFT...
-            </marquee>
+        <div class="ticker-row">
+            <marquee id="info-ticker" scrollamount="8">LADE WETTERDATEN...</marquee>
         </div>
 
-        <div style="height:33%; background:#000;">
+        <div class="footer-row">
             <table width="100%" height="50%" id="hourly-table" border="0"></table>
             <table width="100%" height="50%" id="daily-table" border="0" style="border-top:1px solid #111;"></table>
         </div>
     </div>
 
-    <div id="settings-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); display:none; z-index:1000; text-align:center;">
-        <div style="background:#111; border:1px solid #333; width:90%; max-width:450px; margin:5% auto; padding:20px; border-radius:10px;">
-            <h2 style="color:#00ffcc; margin-bottom:20px;">EINSTELLUNGEN</h2>
-            <div style="text-align:left; color:#888; margin-bottom:10px;">STADT:</div>
-            <input type="text" id="city-input" style="width:100%; padding:12px; background:#000; border:1px solid #444; color:#fff; font-size:1.2rem; margin-bottom:20px;">
-            <div style="text-align:left; color:#888; margin-bottom:10px;">NACHT-MODUS:</div>
-            <input type="time" id="s-start" style="width:45%; padding:10px;"> 
-            <input type="time" id="s-end" style="width:45%; padding:10px;">
-            <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; border:none; font-weight:bold; font-size:1.2rem; border-radius:5px; margin-top:20px;">SPEICHERN</button>
-            <button onclick="toggleSettings()" style="width:100%; padding:10px; background:#333; color:#fff; border:none; margin-top:10px; border-radius:5px;">ZURÜCK</button>
+    <div id="settings-overlay">
+        <div class="modal">
+            <h2 style="color:#00ffcc;">DASHBOARD SETUP</h2>
+            
+            <div class="sect">STADT: <input type="text" id="city-input"></div>
+            <div class="sect">
+                NACHT (VON-BIS):<br>
+                <input type="time" id="s-start" style="width:45%"> 
+                <input type="time" id="s-end" style="width:45%">
+            </div>
+
+            <div class="donation-box">
+                <b>Digitaler Denkmalschutz</b><br>
+                Dieses Tablet sollte auf den Müll - jetzt zeigt es das Wetter! Unterstütze die Rettung alter Hardware.<br>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Piratkarl@web.de&item_name=Digitaler+Denkmalschutz+Aura+Weather" target="_blank" class="paypal-link">
+                    <i class="fa fa-paypal"></i> Kaffeekasse für Piratkarl
+                </a>
+            </div>
+
+            <div class="copyright-info">
+                (c) Karl Altmannshofer 2026<br>
+                Braunschweig Tablet Edition
+            </div>
+
+            <button class="save" onclick="saveAll()">SPEICHERN</button>
+            <button class="close" onclick="toggleSettings()">ZURÜCK</button>
         </div>
     </div>
 

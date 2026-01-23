@@ -11,27 +11,21 @@ var colors = {
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
 
-// --- KLEIDUNGS-LOGIK ---
 function getClothingTip(temp) {
     if (temp < 6) return "WINTERJACKE AN! ❄️";
     if (temp < 15) return "ÜBERGANGSJACKE OK. 🧥";
     if (temp < 23) return "T-SHIRT WETTER! 👕";
-    return "HEISS: LUFTIG KLEIDEN! 🕶️";
+    return "LUFTIG KLEIDEN! 🕶️";
 }
 
-// --- MONDPRECHNUNG ---
 function getMoonPhase() {
-    var now = new Date();
-    var jd = (now.getTime() / 86400000) - (now.getTimezoneOffset() / 1440) + 2440587.5;
-    var phase = ((jd - 2451549.5) / 29.53058867) % 1;
+    var jd = (new Date().getTime() / 86400000) + 2440587.5;
+    var phase = ((jd - 2451549.5) / 29.53) % 1;
     if (phase < 0.05 || phase > 0.95) return "🌑 NEUMOND";
     if (phase < 0.25) return "🌙 ZUN. SICHEL";
-    if (phase < 0.30) return "🌓 HALBMOND (ZUN.)";
-    if (phase < 0.45) return "🌔 ZUN. MOND";
-    if (phase < 0.55) return "🌕 VOLLMOND";
-    if (phase < 0.70) return "🌖 ABN. MOND";
-    if (phase < 0.75) return "🌗 HALBMOND (ABN.)";
-    return "🌘 ABN. SICHEL";
+    if (phase < 0.55 && phase > 0.45) return "🌕 VOLLMOND";
+    if (phase < 0.75) return "🌗 HALBMOND";
+    return "🌖 ABN. MOND";
 }
 
 function updateClock() {
@@ -39,7 +33,6 @@ function updateClock() {
     var cur = z(now.getHours()) + ":" + z(now.getMinutes());
     document.getElementById('clock').innerText = cur;
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short' });
-    
     var isS = (sStart < sEnd) ? (cur >= sStart && cur < sEnd) : (cur >= sStart || cur < sEnd);
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
@@ -53,25 +46,18 @@ function fetchWeather() {
             var data = JSON.parse(xhr.responseText);
             var t = data.main.temp;
             var f = data.main.feels_like;
-            
             document.getElementById('temp-display').innerText = Math.round(t);
             document.getElementById('city-title').innerText = data.name.toUpperCase();
-            
             var feels = document.getElementById('feels-like');
             feels.innerHTML = "GEFÜHLT " + Math.round(f) + "°";
             feels.className = (f > t) ? "warm" : "kalt";
-
             document.getElementById('main-icon').style.color = colors[data.weather[0].icon] || "#fff";
-            
             var off = data.timezone;
             document.getElementById('sunrise-val').innerText = z(new Date((data.sys.sunrise+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunrise+off)*1000).getUTCMinutes());
             document.getElementById('sunset-val').innerText = z(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
-
-            // Ticker & Mond Update
             document.getElementById('moon-display').innerText = getMoonPhase();
             var wind = Math.round(data.wind.speed * 3.6);
             document.getElementById('info-ticker').innerHTML = "+++ " + getClothingTip(t) + " +++ WIND: " + wind + " KM/H +++ FEUCHTE: " + data.main.humidity + "% +++ DRUCK: " + data.main.pressure + " HPA +++";
-            
             fetchForecast();
         }
     };
@@ -92,7 +78,6 @@ function fetchForecast() {
                 hRow += '<td class="f-item"><span style="color:#eee">' + new Date(it.dt*1000).getHours() + ':00</span><br><i class="fa fa-cloud f-icon" style="color:' + c + '"></i><br><b>' + Math.round(it.main.temp) + '°</b></td>';
             }
             hT.innerHTML = hRow + "</tr>";
-            
             var dT = document.getElementById('daily-table');
             var days = {};
             for(var j=0; j<dataF.list.length; j++) {
