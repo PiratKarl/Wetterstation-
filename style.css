@@ -4,29 +4,23 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; overflow: 
 #night-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; text-align: center; padding-top: 20%; }
 #night-clock { font-size: 5rem; color: #111; font-weight: bold; }
 
-/* LIVE SIGNAL PULS ANIMATION */
-.live-dot {
+/* DER NEUE LIVE-PUNKT (KITKAT SICHER) */
+.live-indicator {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     background-color: #00ffcc;
     border-radius: 50%;
     vertical-align: middle;
-    -webkit-animation: pulse 2s infinite;
-    animation: pulse 2s infinite;
+    -webkit-animation: blink 2s infinite;
+    animation: blink 2s infinite;
 }
 
-@-webkit-keyframes pulse {
-    0% { opacity: 1; -webkit-transform: scale(1); }
-    50% { opacity: 0.3; -webkit-transform: scale(0.8); }
-    100% { opacity: 1; -webkit-transform: scale(1); }
+@-webkit-keyframes blink {
+    0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; }
 }
 
-@keyframes pulse {
-    0% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.3; transform: scale(0.8); }
-    100% { opacity: 1; transform: scale(1); }
-}
+#update-info { color: #888; font-size: 0.9rem; vertical-align: middle; margin-left: 5px; font-weight: bold; }
 
 #clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
@@ -39,6 +33,7 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; overflow: 
 .warm { color: #ff4d4d; }
 .kalt { color: #00d9ff; }
 
+.btn-top { font-size: 3rem; cursor: pointer; }
 .astro { font-size: 1.4rem; font-weight: bold; line-height: 1.5; }
 #moon-display { color: #aaa; font-size: 1.1rem; border-top: 1px solid #222; margin-top: 5px; }
 

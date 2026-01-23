@@ -11,6 +11,14 @@ var colors = {
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
 
+// Anti-Dim Kickstart
+function keepScreenAwake() {
+    var v1 = document.getElementById('wake-1');
+    var v2 = document.getElementById('wake-2');
+    if (v1) v1.play();
+    if (v2) v2.play();
+}
+
 function getClothingTip(temp) {
     if (temp < 6) return "WINTERJACKE AN! ❄️";
     if (temp < 15) return "ÜBERGANGSJACKE OK. 🧥";
@@ -39,6 +47,7 @@ function updateClock() {
 }
 
 function fetchWeather() {
+    keepScreenAwake(); // Jedes Mal beim Wetter-Update die Videos neu anstoßen
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de", true);
     xhr.onreadystatechange = function() {
@@ -57,8 +66,7 @@ function fetchWeather() {
             document.getElementById('sunset-val').innerText = z(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
             document.getElementById('moon-display').innerText = getMoonPhase();
             
-            // UPDATE INFO MIT UHRZEIT
-            document.getElementById('update-info').innerText = "Upd: " + z(new Date().getHours()) + ":" + z(new Date().getMinutes());
+            document.getElementById('update-info').innerText = "UPD: " + z(new Date().getHours()) + ":" + z(new Date().getMinutes());
             
             var wind = Math.round(data.wind.speed * 3.6);
             document.getElementById('info-ticker').innerHTML = "+++ " + getClothingTip(t) + " +++ WIND: " + wind + " KM/H +++ FEUCHTE: " + data.main.humidity + "% +++ DRUCK: " + data.main.pressure + " HPA +++";
