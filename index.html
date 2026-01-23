@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Sync V1.38</title>
+    <title>Aura Weather V1.39</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -19,7 +20,7 @@
                 <td width="33%" align="center" onclick="toggleFullscreen()">
                     <div id="clock">00:00</div>
                     <div id="date">Lade...</div>
-                    <img src="logo.png" id="station-logo" width="130">
+                    <img src="logo.png" width="130">
                     <div style="margin-top:8px;">
                         <div class="live-indicator"></div>
                         <span id="update-info">SYNC ACTIVE</span>
@@ -29,7 +30,7 @@
                 <td width="34%" align="center">
                     <div id="city-title">STADT</div>
                     <div style="white-space:nowrap; margin:10px 0;">
-                        <i class="fa fa-cloud" id="main-icon"></i>
+                        <span id="main-icon-container" style="font-size:6rem; vertical-align:middle;"></span>
                         <span id="temp-display">--</span><span class="unit">°C</span>
                     </div>
                     <div id="feels-like"></div>
@@ -38,7 +39,6 @@
                 <td width="33%" align="center">
                     <div style="margin-bottom:15px;">
                         <i id="offline-warn" class="fa fa-exclamation-triangle" style="display:none; color:#ff4d4d; font-size:3rem; margin-right:15px; vertical-align:middle;"></i>
-                        
                         <i class="fa fa-expand" onclick="toggleFullscreen()" class="btn-top" style="color:#00ffcc; margin-right:25px;"></i>
                         <i class="fa fa-gear" onclick="toggleSettings()" class="btn-top" style="color:#fff;"></i>
                     </div>
@@ -52,7 +52,7 @@
         </table>
 
         <div class="ticker-row">
-            <marquee id="info-ticker" scrollamount="8">SYNCHRONISIERE ZEIT...</marquee>
+            <marquee id="info-ticker" scrollamount="8">INITIALISIERE SYSTEM...</marquee>
         </div>
 
         <div class="footer-row">
@@ -65,11 +65,16 @@
         <div class="modal">
             <h2 style="color:#00ffcc;">DASHBOARD SETUP</h2>
             <div class="sect">STADT: <input type="text" id="city-input"></div>
-            <div class="sect">NACHT-MODUS: VON: <input type="time" id="s-start" style="width:40%"> BIS: <input type="time" id="s-end" style="width:40%"></div>
+            <div class="sect">NACHT-MODUS: VON <input type="time" id="s-start" style="width:35%"> BIS <input type="time" id="s-end" style="width:35%"></div>
+            
             <div class="donation-box">
                 <b>Digitaler Denkmalschutz</b><br>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz+Aura+Weather" target="_blank" class="paypal-link">Kaffeekasse Piratkarl</a>
+                Unterstütze die Rettung dieser Hardware.<br>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz+Aura+Weather" target="_blank" class="paypal-link">
+                    <i class="fa fa-paypal"></i> Kaffeekasse Piratkarl
+                </a>
             </div>
+
             <button class="save" onclick="saveAll()">SPEICHERN</button>
             <button class="close" onclick="toggleSettings()">ZURÜCK</button>
         </div>
