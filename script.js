@@ -4,35 +4,31 @@ var sleepStart = localStorage.getItem('sleepStart') || '00:00';
 var sleepEnd = localStorage.getItem('sleepEnd') || '05:30';
 
 var iconColorMap = {
-    "01d": "fa-sun-o icon-sun", "01n": "fa-moon-o icon-cloud",
-    "02d": "fa-cloud icon-cloud", "02n": "fa-cloud icon-cloud",
-    "03d": "fa-cloud icon-cloud", "04d": "fa-cloud icon-cloud",
-    "09d": "fa-tint icon-rain", "10d": "fa-umbrella icon-rain",
-    "11d": "fa-bolt icon-bolt", "13d": "fa-snowflake-o icon-snow",
-    "50d": "fa-bars icon-cloud"
+    "01d": "fa-sun-o", "01n": "fa-moon-o",
+    "02d": "fa-cloud", "02n": "fa-cloud",
+    "03d": "fa-cloud", "04d": "fa-cloud",
+    "09d": "fa-tint", "10d": "fa-umbrella",
+    "11d": "fa-bolt", "13d": "fa-snowflake-o",
+    "50d": "fa-bars"
 };
 
 function zero(n) { return (n < 10 ? '0' : '') + n; }
 
 // MONDBERECHNUNG
 function updateMoon() {
-    var now = new Date();
-    var jd = (now.getTime() / 86400000) - (now.getTimezoneOffset() / 1440) + 2440587.5;
+    var jd = (new Date().getTime() / 86400000) - (new Date().getTimezoneOffset() / 1440) + 2440587.5;
     var phase = ((jd - 2451549.5) / 29.53058867) % 1;
     var name = "Mond"; var icon = "fa-moon-o";
     if (phase < 0.03 || phase > 0.97) { name = "Neumond"; icon = "fa-circle-o"; }
-    else if (phase < 0.22) { name = "Zun. Sichel"; icon = "fa-moon-o"; }
     else if (phase < 0.28) { name = "Halbmond"; icon = "fa-adjust"; }
-    else if (phase < 0.47) { name = "Zun. Mond"; icon = "fa-circle"; }
     else if (phase < 0.53) { name = "Vollmond"; icon = "fa-circle"; }
-    else if (phase < 0.72) { name = "Abn. Mond"; icon = "fa-circle"; }
     else if (phase < 0.78) { name = "Halbmond"; icon = "fa-adjust"; }
     else { name = "Abn. Sichel"; icon = "fa-moon-o"; }
     document.getElementById('moon-phase-name').innerText = name;
     document.getElementById('moon-icon').className = "fa " + icon + " icon-moon";
 }
 
-// NACHTMODUS
+// NACHTMODUS CHECK
 function checkSleepMode() {
     var now = new Date();
     var cur = zero(now.getHours()) + ":" + zero(now.getMinutes());
@@ -63,30 +59,37 @@ async function fetchWeather() {
             document.getElementById('sunrise-val').innerText = zero(new Date((data.sys.sunrise+off)*1000).getUTCHours()) + ":" + zero(new Date((data.sys.sunrise+off)*1000).getUTCMinutes());
             document.getElementById('sunset-val').innerText = zero(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + zero(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
             updateMoon();
-            document.getElementById('info-ticker').innerHTML = "SYSTEM AKTIV +++ WIND: " + Math.round(data.wind.speed * 3.6) + " KM/H +++ DRUCK: " + data.main.pressure + " HPA";
             document.getElementById('update-info').innerText = "Upd: " + zero(new Date().getHours()) + ":" + zero(new Date().getMinutes());
         }
         
+        // VORSCHAU LADEN
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
         var dataF = await resF.json();
         
-        var hL = document.getElementById('hourly-list'); hL.innerHTML = "";
+        // 1. STUNDEN
+        var hL = document.getElementById('hourly-list'); 
+        hL.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hL.innerHTML += '<div class="f-item"><span style="color:#555; display:block;">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; margin:5px 0; display:block;"></i><b>' + Math.round(it.main.temp) + '°</b></div>';
+            hL.innerHTML += '<div class="f-item"><span style="color:#555; display:block; font-size:0.9rem;">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; margin:5px 0; display:block;"></i><b>' + Math.round(it.main.temp) + '°</b></div>';
         }
         
-        var dL = document.getElementById('daily-list'); dL.innerHTML = ""; var days = {};
+        // 2. TAGE
+        var dL = document.getElementById('daily-list'); 
+        dL.innerHTML = ""; 
+        var days = {};
         dataF.list.forEach(function(it) {
             var d = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
             if(!days[d]) days[d] = { temps: [], icon: it.weather[0].icon };
             days[d].temps.push(it.main.temp);
         });
         Object.keys(days).slice(1, 6).forEach(function(d) {
-            var mx = Math.round(Math.max.apply(Math, days[d].temps)); var mn = Math.round(Math.min.apply(Math, days[d].temps));
-            dL.innerHTML += '<div class="f-item"><span style="color:#00ffcc; display:block;">' + d + '</span><i class="fa ' + (iconColorMap[days[d].icon] || "fa-cloud") + '" style="font-size:1.8rem; margin:5px 0; display:block;"></i><span class="f-temp-max">' + mx + '°</span><span class="f-temp-min">' + mn + '°</span></div>';
+            var mx = Math.round(Math.max.apply(Math, days[d].temps)); 
+            var mn = Math.round(Math.min.apply(Math, days[d].temps));
+            dL.innerHTML += '<div class="f-item"><span style="color:#00ffcc; display:block; font-size:0.9rem;">' + d + '</span><i class="fa ' + (iconColorMap[days[d].icon] || "fa-cloud") + '" style="font-size:1.8rem; margin:5px 0; display:block;"></i><span class="f-temp-max">' + mx + '°</span><span class="f-temp-min">' + mn + '°</span></div>';
         });
-    } catch (e) { console.log(e); }
+        
+    } catch (e) { console.log("Wetter-Fehler:", e); }
 }
 
 function toggleSettings() {
@@ -115,6 +118,7 @@ function toggleFullscreen() {
     }
 }
 
+// Intervalle
 setInterval(updateClock, 1000);
 setInterval(fetchWeather, 300000);
 setInterval(function() { window.location.reload(); }, 1500000); 
