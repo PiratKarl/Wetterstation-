@@ -1,56 +1,48 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 100vh; width: 100vw; overflow: hidden; }
 
+/* Nachtmodus Overlay */
+#night-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #000; z-index: 10000; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer;
+}
+#night-clock { font-size: 3rem; color: #111; font-weight: bold; }
+
 .app-shell { width: 100%; height: 100%; display: block; }
 .header-row { height: 52%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
+#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; color: #fff; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
-#station-logo { width: 200px; height: auto; margin: 12px 0 5px 0; opacity: 0.9; }
+#station-logo { width: 180px; height: auto; margin: 10px 0; opacity: 0.9; }
+.legal-info { font-size: 0.6rem; color: #444; margin-bottom: 5px; }
 
-.legal-info { font-size: 0.6rem; color: #555; line-height: 1.2; margin-bottom: 5px; }
-#update-info { font-size: 0.8rem; color: #aaa; }
-
-#city-title { font-size: 1rem; color: #444; letter-spacing: 4px; margin-bottom: 10px; }
-.temp-main-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
-#main-icon { font-size: 3rem; }
 #temp-display { font-size: 8rem; font-weight: bold; line-height: 1; }
 .unit { font-size: 2.5rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
 
-#feels-like-display { font-size: 1.5rem; font-weight: bold; margin-top: -5px; }
-.warmer { color: #ff4d4d !important; }
-.colder { color: #00d9ff !important; }
-.hidden { display: none; }
+/* Zahnrad Icon */
+.loc-toggle { font-size: 2.5rem; color: #444; margin-bottom: 15px; cursor: pointer; transition: color 0.3s; }
+.loc-toggle:hover { color: #00ffcc; }
 
-.loc-toggle { font-size: 2.2rem; color: #00ffcc; margin-bottom: 5px; cursor: pointer; }
-.astro-area { font-size: 1.6rem; font-weight: bold; width: 100%; }
-.astro-row { margin: 5px 0; }
-.moon-divider { border-top: 1px solid #222; width: 60%; margin: 8px auto; }
-.moon-detail { font-size: 1.3rem; }
-.icon-moon { color: #00ffcc !important; }
-
+/* Ticker: 15% */
 .ticker-row { height: 15%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
 .ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.5rem; color: #00ffcc; animation: marquee 40s linear infinite; font-weight: 900; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
+/* Footer: 33% */
 .footer-row { height: 33%; width: 100%; background: #000; }
 .forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
 .f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 2px; }
-.f-label { font-size: 1rem; color: #555; display: block; }
-.f-temp-hour { font-size: 1.8rem; font-weight: bold; color: #fff; }
-.f-temp-max { font-size: 1.5rem; font-weight: bold; color: #ff4d4d; }
-.f-temp-min { font-size: 1.2rem; font-weight: bold; color: #00d9ff; margin-left: 5px; }
+.f-temp-max { font-size: 1.5rem; color: #ff4d4d; font-weight: bold; }
+.f-temp-min { font-size: 1.2rem; color: #00d9ff; margin-left: 5px; }
 
-/* Icon Farben */
-.icon-sun { color: #FFD700 !important; }
-.icon-sunset { color: #FF8C00 !important; }
-.icon-cloud { color: #FFFFFF !important; }
-.icon-rain { color: #00BFFF !important; }
-.icon-snow { color: #F0F8FF !important; }
-.icon-bolt { color: #FFFF00 !important; }
-
+/* Menü Styling */
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; text-align: center; }
-.modal { background: #111; border: 2px solid #00ffcc; border-radius: 15px; width: 80%; max-width: 400px; margin: 15% auto; padding: 25px; }
-input { width: 100%; padding: 15px; font-size: 1.5rem; border: 1px solid #333; background: #000; color: #fff; margin-bottom: 20px; text-align: center; }
-button { width: 100%; padding: 15px; background: #00ffcc; color: #000; border: none; font-weight: bold; font-size: 1.2rem; }
+.modal { background: #111; border: 2px solid #333; border-radius: 15px; width: 90%; max-width: 500px; margin: 5% auto; padding: 20px; color: #ccc; }
+.settings-section { background: #181818; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 3px solid #00ffcc; text-align: left; }
+.settings-section h3 { font-size: 1rem; color: #fff; margin-bottom: 10px; }
+.info-box p { font-size: 0.85rem; margin-bottom: 5px; color: #999; }
+input { background: #000; border: 1px solid #333; color: #fff; padding: 10px; width: 100%; border-radius: 5px; }
+button { width: 100%; padding: 15px; background: #00ffcc; color: #000; border: none; font-weight: bold; border-radius: 10px; cursor: pointer; }

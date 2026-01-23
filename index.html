@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station Pro V1.19</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Aura Weather - Tablet Edition V1.20</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <div id="night-overlay" onclick="wakeUp()">
+        <div id="night-clock">00:00</div>
+        <div style="font-size:1rem; color:#222;">Tippen zum Aufwecken</div>
+    </div>
+
     <div class="app-shell" id="main-app">
         <div class="header-row">
-            <div class="col-left" onclick="toggleFullscreen()" style="cursor:pointer;">
+            <div class="col-left" onclick="toggleFullscreen()">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
-                <img src="logo.png" id="station-logo" alt="Station Logo">
+                <img src="logo.png" id="station-logo" alt="Logo">
                 <div class="legal-info">
                     <div>(c) Karl Altmannshofer 2026</div>
-                    <div>Version 1.19</div>
+                    <div>Aura Tablet Edition V1.20</div>
                 </div>
                 <div id="update-info">Upd: --:--</div>
-                <div style="font-size:0.5rem; color:#333; margin-top:5px;">Tippe Uhr für Vollbild</div>
             </div>
             
             <div class="col-center">
@@ -38,7 +39,7 @@
             </div>
 
             <div class="col-right">
-                <div class="loc-toggle" onclick="toggleSettings()"><i class="fa fa-map-marker"></i></div>
+                <div class="loc-toggle" onclick="toggleSettings()"><i class="fa fa-gear"></i></div>
                 <div class="astro-area">
                     <div class="astro-row"><i class="fa fa-sun-o icon-sun"></i> <span id="sunrise-val">--:--</span></div>
                     <div class="astro-row"><i class="fa fa-moon-o icon-sunset"></i> <span id="sunset-val">--:--</span></div>
@@ -53,7 +54,7 @@
 
         <div class="ticker-row">
             <div class="marquee-wrap">
-                <div id="info-ticker" class="ticker-move">System wird gestartet...</div>
+                <div id="info-ticker" class="ticker-move">System V1.20 aktiv...</div>
             </div>
         </div>
 
@@ -63,18 +64,39 @@
         </div>
     </div>
 
+    <div id="settings-overlay">
+        <div class="modal">
+            <h2 style="color:#00ffcc; margin-bottom:15px;">Dashboard Setup</h2>
+            
+            <div class="settings-section">
+                <h3>📍 Standort</h3>
+                <input type="text" id="city-input" placeholder="z.B. München">
+            </div>
+
+            <div class="settings-section">
+                <h3>🌙 Nachtabschaltung</h3>
+                <div style="display:flex; justify-content:space-around; align-items:center;">
+                    <span>Von: <input type="time" id="sleep-start" style="width:80px; padding:5px;"></span>
+                    <span>Bis: <input type="time" id="sleep-end" style="width:80px; padding:5px;"></span>
+                </div>
+                <p style="font-size:0.7rem; color:#666; margin-top:5px;">(Bildschirm wird in dieser Zeit schwarz)</p>
+            </div>
+
+            <div class="settings-section info-box">
+                <h3>ℹ️ Informationen</h3>
+                <p>Tippe auf die <b>Uhrzeit</b> für Vollbild.</p>
+                <p>Tippe auf das <b>Zahnrad</b> für Einstellungen.</p>
+                <p>Der <b>Ticker</b> zeigt Warnungen & Kleidungstipps.</p>
+            </div>
+
+            <button onclick="saveAllSettings()">SPEICHERN & NEUSTART</button>
+            <button onclick="toggleSettings()" style="background:#333; color:white; margin-top:10px;">SCHLIESSEN</button>
+        </div>
+    </div>
+
     <video id="no-sleep-video" playsinline autoplay muted loop style="position:absolute; width:1px; height:1px; opacity:0.01;">
         <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
     </video>
-
-    <div id="settings-overlay">
-        <div class="modal">
-            <h3>Standort wählen</h3>
-            <input type="text" id="city-input" placeholder="z.B. München">
-            <button onclick="saveCity()">ANWENDEN</button>
-            <button onclick="toggleSettings()" style="background:#444; color:white; margin-top:10px;">ZURÜCK</button>
-        </div>
-    </div>
 
     <script src="script.js"></script>
 </body>
