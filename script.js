@@ -12,6 +12,18 @@ var iconColorMap = {
 
 function zero(n) { return (n < 10 ? '0' : '') + n; }
 
+// --- VOLLBILD LOGIK ---
+function toggleFullscreen() {
+    var elem = document.documentElement;
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (elem.requestFullscreen) { elem.requestFullscreen(); }
+        else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } // Für alte Safari/Chrome
+    } else {
+        if (document.exitFullscreen) { document.exitFullscreen(); }
+        else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+    }
+}
+
 function updateMoon() {
     var now = new Date();
     var jd = (now.getTime() / 86400000) - (now.getTimezoneOffset() / 1440) + 2440587.5;
@@ -54,7 +66,7 @@ async function fetchWeather() {
             document.getElementById('sunset-val').innerText = zero(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + zero(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
             updateMoon();
             var wind = Math.round(data.wind.speed * 3.6);
-            document.getElementById('info-ticker').innerHTML = "WIND: " + wind + " KM/H +++ DRUCK: " + data.main.pressure + " HPA +++ FEUCHTE: " + data.main.humidity + "% +++ SYSTEM-STATUS: AKTIV";
+            document.getElementById('info-ticker').innerHTML = "WIND: " + wind + " KM/H +++ DRUCK: " + data.main.pressure + " HPA +++ FEUCHTE: " + data.main.humidity + "% +++ SYSTEM-STATUS: VOLLBILD BEREIT";
             document.getElementById('update-info').innerText = "Upd: " + zero(new Date().getHours()) + ":" + zero(new Date().getMinutes());
         }
         var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
@@ -62,7 +74,7 @@ async function fetchWeather() {
         var hL = document.getElementById('hourly-list'); hL.innerHTML = "";
         for(var i=0; i<5; i++) {
             var it = dataF.list[i];
-            hL.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:2px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
+            hList.innerHTML += '<div class="f-item"><span class="f-label">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; display:block; margin:2px 0;"></i><span class="f-temp-hour">' + Math.round(it.main.temp) + '°</span></div>';
         }
         var dL = document.getElementById('daily-list'); dL.innerHTML = ""; var days = {};
         dataF.list.forEach(function(it) {
@@ -82,7 +94,7 @@ function saveCity() { var v = document.getElementById('city-input').value.trim()
 
 setInterval(updateClock, 1000);
 setInterval(fetchWeather, 300000);
-// Wachmacher: Seite alle 25 Min neu laden UND Video sicherstellen
+// Wachmacher: Seite alle 25 Min neu laden
 setInterval(function() { 
     var v = document.getElementById('no-sleep-video');
     if(v) v.play();

@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station Pro V1.18</title>
+    <title>Aura Weather Station Pro V1.19</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="app-shell">
+    <div class="app-shell" id="main-app">
         <div class="header-row">
-            <div class="col-left">
+            <div class="col-left" onclick="toggleFullscreen()" style="cursor:pointer;">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
                 <img src="logo.png" id="station-logo" alt="Station Logo">
                 <div class="legal-info">
                     <div>(c) Karl Altmannshofer 2026</div>
-                    <div>Version 1.18</div>
+                    <div>Version 1.19</div>
                 </div>
                 <div id="update-info">Upd: --:--</div>
+                <div style="font-size:0.5rem; color:#333; margin-top:5px;">Tippe Uhr für Vollbild</div>
             </div>
             
             <div class="col-center">
@@ -49,7 +53,7 @@
 
         <div class="ticker-row">
             <div class="marquee-wrap">
-                <div id="info-ticker" class="ticker-move">Lade Wachmacher-System...</div>
+                <div id="info-ticker" class="ticker-move">System wird gestartet...</div>
             </div>
         </div>
 
