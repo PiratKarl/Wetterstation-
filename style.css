@@ -4,9 +4,32 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; overflow: 
 #night-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; text-align: center; padding-top: 20%; }
 #night-clock { font-size: 5rem; color: #111; font-weight: bold; }
 
+/* LIVE SIGNAL PULS ANIMATION */
+.live-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #00ffcc;
+    border-radius: 50%;
+    vertical-align: middle;
+    -webkit-animation: pulse 2s infinite;
+    animation: pulse 2s infinite;
+}
+
+@-webkit-keyframes pulse {
+    0% { opacity: 1; -webkit-transform: scale(1); }
+    50% { opacity: 0.3; -webkit-transform: scale(0.8); }
+    100% { opacity: 1; -webkit-transform: scale(1); }
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
 #clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
-.legal { font-size: 0.7rem; color: #444; margin-top: 5px; }
 
 #main-icon { font-size: 6rem; color: #fff; vertical-align: middle; }
 #temp-display { font-size: 6rem; font-weight: bold; vertical-align: middle; }
@@ -16,7 +39,6 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; overflow: 
 .warm { color: #ff4d4d; }
 .kalt { color: #00d9ff; }
 
-.icon-btn { font-size: 3rem; cursor: pointer; }
 .astro { font-size: 1.4rem; font-weight: bold; line-height: 1.5; }
 #moon-display { color: #aaa; font-size: 1.1rem; border-top: 1px solid #222; margin-top: 5px; }
 
@@ -27,15 +49,14 @@ marquee { line-height: 85px; font-size: 3rem; color: #00ffcc; font-weight: bold;
 .f-item b { font-size: 1.8rem; display: block; color: #fff; }
 .f-icon { font-size: 3rem; margin: 8px 0; }
 
-/* Modal & Spende */
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 1000; }
 .modal { background: #111; border: 1px solid #333; width: 95%; max-width: 480px; margin: 2% auto; padding: 15px; text-align: center; border-radius: 10px; }
 .sect { background: #181818; padding: 10px; margin-bottom: 10px; text-align: left; color: #888; border-radius: 5px; }
 input { background: #000; border: 1px solid #444; color: #fff; padding: 10px; width: 100%; font-size: 1.2rem; }
 
-.donation-box { background: #0a0a0a; border: 1px solid #222; padding: 15px; margin: 15px 0; border-radius: 8px; font-size: 0.9rem; color: #bbb; line-height: 1.4; }
-.paypal-link { display: inline-block; margin-top: 10px; background: #0070ba; color: #fff; text-decoration: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; }
-.copyright-info { font-size: 0.7rem; color: #444; margin: 10px 0; }
+.donation-box { background: #0a0a0a; border: 1px solid #222; padding: 12px; margin: 15px 0; border-radius: 8px; font-size: 0.9rem; color: #bbb; line-height: 1.3; }
+.paypal-link { display: inline-block; margin-top: 8px; background: #0070ba; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; }
+.copyright-info { font-size: 0.7rem; color: #444; margin-bottom: 5px; }
 
 .save { background: #00ffcc; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; font-size: 1.2rem; border-radius: 5px; }
 .close { background: #333; color: #fff; border: none; padding: 10px; width: 100%; margin-top: 5px; border-radius: 5px; }

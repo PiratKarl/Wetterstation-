@@ -56,6 +56,10 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(new Date((data.sys.sunrise+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunrise+off)*1000).getUTCMinutes());
             document.getElementById('sunset-val').innerText = z(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
             document.getElementById('moon-display').innerText = getMoonPhase();
+            
+            // UPDATE INFO MIT UHRZEIT
+            document.getElementById('update-info').innerText = "Upd: " + z(new Date().getHours()) + ":" + z(new Date().getMinutes());
+            
             var wind = Math.round(data.wind.speed * 3.6);
             document.getElementById('info-ticker').innerHTML = "+++ " + getClothingTip(t) + " +++ WIND: " + wind + " KM/H +++ FEUCHTE: " + data.main.humidity + "% +++ DRUCK: " + data.main.pressure + " HPA +++";
             fetchForecast();
