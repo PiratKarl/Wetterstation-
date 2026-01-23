@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Tablet V1.29</title>
+    <title>Aura Weather Tablet V1.30</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#000; margin:0; padding:0;">
+<body>
 
     <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
@@ -19,7 +19,7 @@
                 <div id="clock">00:00</div>
                 <div id="date">Lade...</div>
                 <img src="logo.png" id="station-logo">
-                <div id="update-info">V 1.29</div>
+                <div id="update-info">V 1.30</div>
             </div>
             
             <div class="col-center">
@@ -28,20 +28,21 @@
                     <i class="fa fa-cloud" id="main-icon"></i>
                     <div class="temp-numbers">
                         <span id="temp-display">--.-</span><span class="unit">°C</span>
+                        <div id="feels-like-display"></div>
                     </div>
                 </div>
             </div>
 
             <div class="col-right">
-                <div class="gear-zone" onclick="toggleSettings()">
+                <button class="settings-btn" onclick="toggleSettings()">
                     <i class="fa fa-gear"></i>
-                </div>
+                </button>
                 <div class="astro-area">
-                    <div class="astro-row"><i class="fa fa-sun-o"></i> <span id="sunrise-val">--:--</span></div>
-                    <div class="astro-row"><i class="fa fa-moon-o"></i> <span id="sunset-val">--:--</span></div>
+                    <div class="astro-row"><i class="fa fa-sun-o sun-gold"></i> <span id="sunrise-val">--:--</span></div>
+                    <div class="astro-row"><i class="fa fa-moon-o sun-orange"></i> <span id="sunset-val">--:--</span></div>
                     <div class="moon-divider"></div>
                     <div class="astro-row">
-                        <i id="moon-icon" class="fa fa-moon-o"></i>
+                        <i id="moon-icon" class="fa fa-moon-o moon-cyan"></i>
                         <span id="moon-phase-name">...</span>
                     </div>
                 </div>
@@ -50,7 +51,7 @@
 
         <div class="ticker-row">
             <div class="ticker-wrapper">
-                <div id="info-ticker" class="ticker-text">WETTERSTATION STARTET... BITTE WARTEN...</div>
+                <div id="info-ticker" class="ticker-text">INITIALISIERE WETTERSTATION V1.30... BITTE WARTEN...</div>
             </div>
         </div>
 
@@ -62,30 +63,28 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 style="color:#00ffcc; border-bottom:1px solid #333; padding-bottom:10px;">EINSTELLUNGEN</h2>
-            
+            <h2 style="color:#00ffcc; border-bottom:1px solid #333; padding-bottom:10px;">DASHBOARD SETUP</h2>
             <div class="section">
                 <label>STADT:</label>
                 <input type="text" id="city-input">
             </div>
-
             <div class="section">
                 <label>NACHT-MODUS:</label><br>
-                START: <input type="time" id="sleep-start" style="width:90px"> 
-                ENDE: <input type="time" id="sleep-end" style="width:90px">
+                VON: <input type="time" id="sleep-start" style="width:90px"> 
+                BIS: <input type="time" id="sleep-end" style="width:90px">
             </div>
-
-            <div class="info-box">
+            <div class="section instruction-box">
                 <b>ANLEITUNG:</b><br>
-                • <b>Vollbild:</b> Auf Uhrzeit tippen.<br>
-                • <b>Menü:</b> Auf weißes Zahnrad tippen.<br><br>
-                <b>COPYRIGHT:</b><br>
-                (c) Karl Altmannshofer 2026<br>
-                Tablet Edition V1.29
+                • Vollbild: Tippe auf die Uhrzeit.<br>
+                • Nachtmodus: Schirm wird automatisch schwarz.<br>
+                • Aufwecken: Tippe auf den schwarzen Schirm.
             </div>
-
-            <button class="save-btn" onclick="saveAllSettings()">SPEICHERN</button>
-            <button class="close-btn" onclick="toggleSettings()">ABBRECHEN</button>
+            <div class="copyright-box">
+                (c) Karl Altmannshofer 2026<br>
+                Aura Weather Pro - Tablet Edition
+            </div>
+            <button class="save-btn" onclick="saveAllSettings()">EINSTELLUNGEN SPEICHERN</button>
+            <button class="close-btn" onclick="toggleSettings()">ZURÜCK</button>
         </div>
     </div>
 
