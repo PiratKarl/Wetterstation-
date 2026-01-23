@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.46 VISUAL</title>
+    <title>Aura Weather V1.46 Final</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -22,12 +22,12 @@
                     <img src="logo.png" width="120" style="margin:5px 0;">
                     <div style="margin-top:5px;">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span id="update-info" style="color:#888; font-size:0.9rem; font-weight:bold;">V1.46 VISUAL</span>
+                        <span id="update-info" style="color:#888; font-size:0.9rem; font-weight:bold;">V1.46 FINAL</span>
                     </div>
                 </td>
                 
                 <td width="34%" align="center">
-                    <div id="city-title" style="color:#666; letter-spacing:2px; font-size:1rem;">BRAUNSCHWEIG</div>
+                    <div id="city-title" style="color:#666; letter-spacing:2px; font-size:1rem;">STADT</div>
                     <div style="white-space:nowrap; margin:10px 0;">
                         <span id="main-icon-container" style="display:inline-block; vertical-align:middle; width:120px; height:120px;"></span>
                         <span id="temp-display" style="font-size:6.5rem; font-weight:bold; vertical-align:middle;">--</span>
@@ -64,15 +64,20 @@
 
     <div id="settings-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; z-index:1000; text-align:center;">
         <div style="background:#111; border:1px solid #333; width:95%; max-width:480px; margin:2% auto; padding:20px; border-radius:10px;">
-            <h2 style="color:#00ffcc;">GERÄTE-SETUP</h2>
+            <h2 style="color:#00ffcc;">SETUP</h2>
             <div style="text-align:left; margin-bottom:5px;"><b style="color:#fff;">Standort eingabe</b></div>
             <input type="text" id="city-input" style="width:100%; padding:15px; background:#000; color:#fff; border:1px solid #444; font-size:1.5rem; margin-bottom:20px;">
             <div style="background:#181818; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
                 <b style="color:#fff;">NACHT-MODUS:</b><br>
                 VON <input type="time" id="s-start" style="width:35%;"> BIS <input type="time" id="s-end" style="width:35%;">
             </div>
-            <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; color:#000; font-weight:bold; font-size:1.3rem; border-radius:5px;">SPEICHERN</button>
-            <button onclick="toggleSettings()" style="width:100%; padding:10px; background:#333; color:#fff; margin-top:10px; border-radius:5px;">ZURÜCK</button>
+            <div style="margin-bottom:20px;">
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" style="background:#0070ba; color:#fff; text-decoration:none; padding:12px 20px; border-radius:30px; font-weight:bold; display:inline-block;">
+                    <i class="fa fa-paypal"></i> Kaffeekasse
+                </a>
+            </div>
+            <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; color:#000; font-weight:bold; border:none; border-radius:5px;">SPEICHERN</button>
+            <button onclick="toggleSettings()" style="width:100%; padding:10px; background:#333; color:#fff; margin-top:10px; border:none; border-radius:5px;">ZURÜCK</button>
         </div>
     </div>
 

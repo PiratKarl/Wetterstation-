@@ -5,17 +5,17 @@ var sEnd = localStorage.getItem('sleepEnd') || '06:00';
 
 var timeOffset = 0; 
 var lastSuccess = Date.now();
-var tickerData = { main: "Bitte Display tippen...", wind: "", astro: "", forecast: "" };
+var tickerData = { main: "Warte auf Klick...", wind: "", astro: "", forecast: "" };
 var isActivated = false;
 
-// Lädt deine lokalen GIFs (z.B. 01d.gif)
+// Lädt deine lokalen GIFs
 function getIconHtml(iconCode, size) {
     return '<img src="' + iconCode + '.gif" style="width:' + size + 'px; height:auto; vertical-align:middle;">';
 }
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
 
-// Aktiviert den Wachhalte-Modus bei Berührung
+// WACHHALTE-MODUS STARTEN
 function activateWakeLock() {
     if(!isActivated) {
         var v = document.getElementById('wake-video');
@@ -44,12 +44,14 @@ function updateClock() {
 }
 
 function buildTicker() {
-    var fullText = "+++ V1.46 VISUAL +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
+    var fullText = "+++ AURA WEATHER V1.46 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
     document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
 }
 
 function fetchWeather() {
     if(!isActivated) return;
+    
+    // Video-Puls zur Sicherheit
     var v = document.getElementById('wake-video');
     if(v && v.paused) v.play();
 
@@ -59,31 +61,33 @@ function fetchWeather() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var d = JSON.parse(xhr.responseText);
             lastSuccess = Date.now();
+            
+            // Zeit-Sync vom Server
             var sTime = xhr.getResponseHeader('Date');
             if(sTime) timeOffset = new Date(sTime).getTime() - Date.now();
             
             document.getElementById('temp-display').innerText = Math.round(d.main.temp);
             document.getElementById('city-title').innerText = d.name.toUpperCase();
             
-            // Haupt-GIF setzen
+            // Haupt-GIF
             document.getElementById('main-icon-container').innerHTML = getIconHtml(d.weather[0].icon, 110);
             
-            document.getElementById('feels-like').innerHTML = '<i class="fa fa-thermometer-half"></i> GEFÜHLT ' + Math.round(d.main.feels_like) + "°";
-            document.getElementById('feels-like').className = (d.main.feels_like > d.main.temp) ? "warm" : "kalt";
+            var feels = document.getElementById('feels-like');
+            feels.innerHTML = '<i class="fa fa-thermometer-half"></i> GEFÜHLT ' + Math.round(d.main.feels_like) + "°";
+            feels.className = (d.main.feels_like > d.main.temp) ? "warm" : "kalt";
             
             var off = d.timezone;
             document.getElementById('sunrise-val').innerText = z(new Date((d.sys.sunrise+off)*1000).getUTCHours()) + ":" + z(new Date((d.sys.sunrise+off)*1000).getUTCMinutes());
             document.getElementById('sunset-val').innerText = z(new Date((d.sys.sunset+off)*1000).getUTCHours()) + ":" + z(new Date((d.sys.sunset+off)*1000).getUTCMinutes());
             
-            var jd = (new Date().getTime() / 86400000) + 2440587.5;
-            var ph = ((jd - 2451549.5) / 29.53) % 1;
+            var ph = (((Date.now()/86400000)+2440587.5-2451549.5)/29.53)%1;
             var ms = ["🌑 Neumond","🌙 Zun. Sichel","🌓 Halbmond","🌕 Vollmond","🌗 Halbmond","🌘 Abn. Sichel"];
             document.getElementById('moon-display').innerText = ms[Math.floor(ph*6)] || ms[0];
             
             document.getElementById('update-info').innerText = "UPD: "+z(new Date(Date.now()+timeOffset).getHours())+":"+z(new Date(Date.now()+timeOffset).getMinutes());
 
-            tickerData.main = (d.main.temp < 8 ? "Winterjacke" : (d.main.temp < 17 ? "Übergangsjacke" : "T-Shirt Wetter")) + " - Feuchte: " + d.main.humidity + "%";
-            tickerData.wind = "Wind: " + Math.round(d.wind.speed * 3.6) + " km/h";
+            tickerData.main = (d.main.temp < 8 ? "Winterjacke" : (d.main.temp < 17 ? "Übergangsjacke" : "T-Shirt Wetter"));
+            tickerData.wind = "Wind: " + Math.round(d.wind.speed * 3.6) + " km/h - Feuchte: " + d.main.humidity + "%";
             tickerData.astro = "Druck: " + d.main.pressure + " hPa";
 
             fetchForecast();
