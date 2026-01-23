@@ -33,14 +33,15 @@ function updateClock() {
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
     
-    // Anzeige der Ausschaltzeit
-    document.getElementById('sleep-info').innerText = "NACHTMODUS AB: " + sStart;
+    // Anzeige der Ausschaltzeit IM MENÜ
+    var menuSleep = document.getElementById('menu-sleep-info');
+    if(menuSleep) menuSleep.innerText = "NACHTMODUS AKTIV AB: " + sStart + " UHR";
 
     document.getElementById('offline-warn').style.display = (Date.now() - lastSuccess > 900000) ? 'inline-block' : 'none';
 }
 
 function buildTicker() {
-    var fullText = "+++ V1.42 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++ BRAUNSCHWEIG DIGITALER DENKMALSCHUTZ +++";
+    var fullText = "+++ V1.43 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++ DIGITALER DENKMALSCHUTZ PRO +++";
     document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
 }
 
@@ -56,6 +57,7 @@ function fetchWeather() {
             if(sTime) timeOffset = new Date(sTime).getTime() - Date.now();
             
             document.getElementById('temp-display').innerText = Math.round(d.main.temp);
+            document.getElementById('city-title').innerText = d.name.toUpperCase();
             document.getElementById('main-icon-container').innerHTML = getIcon(d.weather[0].icon);
             document.getElementById('feels-like').innerHTML = '<i class="fa fa-thermometer-half"></i> GEFÜHLT ' + Math.round(d.main.feels_like) + "°";
             document.getElementById('feels-like').className = (d.main.feels_like > d.main.temp) ? "warm" : "kalt";
@@ -71,10 +73,9 @@ function fetchWeather() {
             
             document.getElementById('update-info').innerText = "UPD: "+z(new Date(Date.now()+timeOffset).getHours())+":"+z(new Date(Date.now()+timeOffset).getMinutes());
 
-            var tip = d.main.temp < 8 ? "WINTERJACKE AN! ❄️" : (d.main.temp < 17 ? "ÜBERGANGSJACKE! 🧥" : "T-SHIRT WETTER! 👕");
-            tickerData.main = tip + " - Feuchte: " + d.main.humidity + "%";
+            tickerData.main = (d.main.temp < 8 ? "Winterjacke ❄️" : (d.main.temp < 17 ? "Übergangsjacke 🧥" : "T-Shirt Wetter 👕")) + " - Feuchte: " + d.main.humidity + "%";
             tickerData.wind = "Wind: " + Math.round(d.wind.speed * 3.6) + " km/h";
-            tickerData.astro = moonText + " - Druck: " + d.main.pressure + " hPa";
+            tickerData.astro = moonText + " - Luftdruck: " + d.main.pressure + " hPa";
 
             fetchForecast();
         }
