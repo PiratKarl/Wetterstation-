@@ -3,7 +3,7 @@ var city = localStorage.getItem('selectedCity') || 'Braunschweig';
 var sStart = localStorage.getItem('sleepStart') || '00:00';
 var sEnd = localStorage.getItem('sleepEnd') || '05:30';
 
-// Icon-Farb-Map
+// Icon-Farben
 var colors = {
     "01d": "#FFD700", "01n": "#fff",
     "02d": "#fff", "02n": "#aaa",
@@ -20,7 +20,7 @@ function updateClock() {
     document.getElementById('clock').innerText = cur;
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short' });
     
-    // Nachtmodus
+    // Nachtmodus Check
     var isS = (sStart < sEnd) ? (cur >= sStart && cur < sEnd) : (cur >= sStart || cur < sEnd);
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
@@ -40,16 +40,19 @@ function fetchWeather() {
             
             // Gefühlte Temp
             var feels = document.getElementById('feels-like');
-            if (Math.abs(f - t) > 0.5) {
-                feels.innerHTML = "GEFÜHLT " + Math.round(f) + "°";
-                feels.className = (f > t) ? "warm" : "kalt";
-            } else { feels.innerHTML = ""; }
+            feels.innerHTML = "GEFÜHLT " + Math.round(f) + "°";
+            feels.className = (f > t) ? "warm" : "kalt";
 
             var iconCode = data.weather[0].icon;
             document.getElementById('main-icon').style.color = colors[iconCode] || "#fff";
             
+            var off = data.timezone;
+            document.getElementById('sunrise-val').innerText = z(new Date((data.sys.sunrise+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunrise+off)*1000).getUTCMinutes());
+            document.getElementById('sunset-val').innerText = z(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
+
+            // TICKER AKTUALISIEREN
             var wind = Math.round(data.wind.speed * 3.6);
-            document.getElementById('info-ticker').innerHTML = "WIND: " + wind + " KM/H +++ FEUCHTE: " + data.main.humidity + "% +++ DRUCK: " + data.main.pressure + " HPA +++ STATUS: AKTIV";
+            document.getElementById('info-ticker').innerHTML = "+++ WIND: " + wind + " KM/H (" + data.main.humidity + "% FEUCHTE) +++ DRUCK: " + data.main.pressure + " HPA +++ STATUS: AKTIV +++";
             
             fetchForecast();
         }
@@ -70,7 +73,7 @@ function fetchForecast() {
             for(var i=0; i<5; i++) {
                 var it = dataF.list[i];
                 var c = colors[it.weather[0].icon] || "#fff";
-                hRow += '<td class="f-item"><span style="color:#555">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa fa-cloud f-icon" style="color:' + c + '"></i><b>' + Math.round(it.main.temp) + '°</b></td>';
+                hRow += '<td class="f-item"><span style="color:#555">' + new Date(it.dt*1000).getHours() + ':00</span><br><i class="fa fa-cloud f-icon" style="color:' + c + '"></i><br><b>' + Math.round(it.main.temp) + '°</b></td>';
             }
             hT.innerHTML = hRow + "</tr>";
             
@@ -88,7 +91,7 @@ function fetchForecast() {
             for(var day in days) {
                 if(count > 0 && count < 6) {
                     var cd = colors[days[day].icon] || "#fff";
-                    dRow += '<td class="f-item"><span style="color:#00ffcc">' + day + '</span><i class="fa fa-cloud f-icon" style="color:' + cd + '"></i><span style="color:#ff4d4d">' + Math.round(days[day].max) + '°</span> <span style="color:#00d9ff">' + Math.round(days[day].min) + '°</span></td>';
+                    dRow += '<td class="f-item"><span style="color:#00ffcc">' + day + '</span><br><i class="fa fa-cloud f-icon" style="color:' + cd + '"></i><br><span style="color:#ff4d4d">' + Math.round(days[day].max) + '°</span> <span style="color:#00d9ff">' + Math.round(days[day].min) + '°</span></td>';
                 }
                 count++;
             }
@@ -101,7 +104,6 @@ function fetchForecast() {
 function toggleSettings() {
     var s = document.getElementById('settings-overlay');
     s.style.display = (s.style.display == 'block') ? 'none' : 'block';
-    document.getElementById('city-input').value = city;
 }
 
 function saveAll() {
