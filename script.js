@@ -36,7 +36,8 @@ function fetchWeather() {
             document.getElementById('sunset-val').innerText = z(sunset.getUTCHours()) + ":" + z(sunset.getUTCMinutes());
             
             var wind = Math.round(data.wind.speed * 3.6);
-            document.getElementById('info-ticker').innerHTML = "WIND: " + wind + " KM/H --- FEUCHTE: " + data.main.humidity + "% --- DRUCK: " + data.main.pressure + " HPA --- STATUS: BEREIT";
+            // Ticker-Text Aktualisierung
+            document.getElementById('info-ticker').innerHTML = "WIND: " + wind + " KM/H --- FEUCHTE: " + data.main.humidity + "% --- DRUCK: " + data.main.pressure + " HPA --- STATUS: AKTIV";
             
             fetchForecast();
         }

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Tablet V1.27</title>
+    <title>Aura Weather Legacy V1.28</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#000;">
+<body style="background:#000; margin:0; padding:0;">
 
-    <div id="night-overlay" onclick="document.getElementById('night-overlay').style.display='none'">
+    <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
     </div>
 
@@ -19,7 +19,7 @@
                 <div id="clock">00:00</div>
                 <div id="date">Lade...</div>
                 <img src="logo.png" id="station-logo">
-                <div id="update-info" style="color:#444; font-size:0.7rem;">V 1.27</div>
+                <div id="update-info">V 1.28</div>
             </div>
             
             <div class="col-center">
@@ -33,8 +33,8 @@
             </div>
 
             <div class="col-right">
-                <div class="gear-area" onclick="toggleSettings()">
-                    <i class="fa fa-gear" style="color:#fff;"></i>
+                <div class="gear-box" onclick="toggleSettings()">
+                    <i class="fa fa-gear"></i>
                 </div>
                 <div class="astro-area">
                     <div class="astro-row"><i class="fa fa-sun-o"></i> <span id="sunrise-val">--:--</span></div>
@@ -49,7 +49,9 @@
         </div>
 
         <div class="ticker-row">
-            <div id="info-ticker" class="ticker-move">WETTERDATEN WERDEN GELADEN... BITTE WARTEN...</div>
+            <div class="marquee-container">
+                <div id="info-ticker" class="ticker-move">SYSTEM-START... DATEN WERDEN ABGERUFEN...</div>
+            </div>
         </div>
 
         <div class="footer-row">
@@ -60,7 +62,7 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 style="color:#00ffcc; border-bottom:1px solid #333; padding-bottom:10px;">SETUP & INFO</h2>
+            <h2 style="color:#00ffcc;">SETUP & INFORMATION</h2>
             
             <div class="section">
                 <label>STADT:</label>
@@ -69,18 +71,16 @@
 
             <div class="section">
                 <label>NACHT-MODUS:</label><br>
-                START: <input type="time" id="sleep-start" style="width:90px"> 
-                ENDE: <input type="time" id="sleep-end" style="width:90px">
+                VON: <input type="time" id="sleep-start" style="width:90px"> 
+                BIS: <input type="time" id="sleep-end" style="width:90px">
             </div>
 
-            <div class="section" style="font-size:0.8rem; color:#888; text-align:left;">
-                <b>BEDIENUNG:</b><br>
-                • Tippe auf die <b>Uhr</b> für Vollbild.<br>
-                • Tippe auf das <b>Zahnrad</b> für dieses Menü.<br>
-                • Der Schirm wird nachts automatisch schwarz.
-            </div>
-
-            <div style="font-size:0.7rem; color:#444; margin:10px 0;">
+            <div class="info-section">
+                <b>ANLEITUNG:</b><br>
+                • <b>Vollbild:</b> Auf die Uhr tippen.<br>
+                • <b>Einstellungen:</b> Auf das weiße Zahnrad tippen.<br>
+                • <b>Nachtmodus:</b> Display wird automatisch schwarz.<br><br>
+                <b>COPYRIGHT:</b><br>
                 (c) Karl Altmannshofer 2026<br>
                 Aura Weather Tablet Edition
             </div>

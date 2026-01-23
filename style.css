@@ -8,32 +8,53 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; overflow: 
 .col-left, .col-center, .col-right { display: table-cell; vertical-align: middle; text-align: center; }
 
 #clock { font-size: 4rem; font-weight: bold; }
-#date { font-size: 1.1rem; color: #00ffcc; }
-#station-logo { width: 140px; margin: 5px 0; opacity: 0.7; }
+#date { font-size: 1.1rem; color: #00ffcc; text-transform: uppercase; }
+#station-logo { width: 130px; margin: 5px 0; opacity: 0.7; }
 
-/* Wettersymbol GRÖSSER, Temp KLEINER */
-#main-icon { font-size: 6.5rem; color: #fff; margin-right: 15px; vertical-align: middle; }
+/* Wettersymbol groß, Temp klein */
+#main-icon { font-size: 6rem; color: #fff; vertical-align: middle; margin-right: 15px; }
 #temp-display { font-size: 4rem; font-weight: bold; vertical-align: middle; }
 .unit { font-size: 1.8rem; color: #00ffcc; vertical-align: top; }
 
 /* Zahnrad: Weiß, groß und hell */
-.gear-area { font-size: 3.5rem; padding: 20px; cursor: pointer; display: inline-block; }
+.gear-box { font-size: 3.5rem; color: #fff; padding: 15px; cursor: pointer; display: inline-block; }
 
 .astro-area { font-size: 1.4rem; font-weight: bold; }
 .moon-divider { border-top: 1px solid #222; width: 40%; margin: 5px auto; }
 
+/* TICKER-FIX für alte Samsung Tablets */
 .ticker-row { height: 15%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
-.ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.2rem; color: #00ffcc; animation: marquee 30s linear infinite; }
+.marquee-container { width: 100%; overflow: hidden; }
 
-@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+.ticker-move { 
+    position: absolute; 
+    white-space: nowrap; 
+    line-height: 85px; 
+    font-size: 2.3rem; 
+    color: #00ffcc; 
+    font-weight: bold;
+    /* Animation mit allen Präfixen */
+    -webkit-animation: marquee 30s linear infinite;
+    animation: marquee 30s linear infinite;
+}
+
+@-webkit-keyframes marquee {
+    0% { -webkit-transform: translateX(100%); }
+    100% { -webkit-transform: translateX(-100%); }
+}
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
 
 .footer-row { height: 33%; width: 100%; }
 .forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
 .f-item { display: table-cell; vertical-align: middle; text-align: center; }
 
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; z-index: 1000; }
-.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 450px; margin: 5% auto; padding: 20px; text-align: center; border-radius: 10px; }
-.section { background: #181818; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 480px; margin: 5% auto; padding: 20px; text-align: center; border-radius: 10px; }
+.section { background: #181818; padding: 10px; margin-bottom: 10px; border-radius: 5px; text-align: left; }
+.info-section { background: #080808; padding: 10px; text-align: left; font-size: 0.8rem; color: #888; margin-bottom: 10px; line-height: 1.4; }
 input { background: #000; border: 1px solid #444; color: #fff; padding: 8px; width: 100%; font-size: 1.2rem; }
-.save-btn { background: #00ffcc; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; border-radius: 5px; margin-top: 10px; }
-.close-btn { background: #333; color: #fff; border: none; padding: 10px; width: 100%; margin-top: 5px; border-radius: 5px; }
+.save-btn { background: #00ffcc; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; font-size: 1.2rem; border-radius: 5px; cursor: pointer; }
+.close-btn { background: #333; color: #fff; border: none; padding: 10px; width: 100%; margin-top: 5px; border-radius: 5px; cursor: pointer; }
