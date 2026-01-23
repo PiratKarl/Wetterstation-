@@ -1,11 +1,11 @@
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
-var sStart = localStorage.getItem('sleepStart') || '00:00';
-var sEnd = localStorage.getItem('sleepEnd') || '05:30';
+var sStart = localStorage.getItem('sleepStart') || '22:00';
+var sEnd = localStorage.getItem('sleepEnd') || '06:00';
 
 var timeOffset = 0; 
 var lastSuccess = Date.now();
-var tickerData = { main: "Wetterdaten werden geladen...", wind: "", astro: "", forecast: "" };
+var tickerData = { main: "Lade Daten...", wind: "", astro: "", forecast: "" };
 
 function getIcon(code) {
     var map = {
@@ -28,20 +28,21 @@ function updateClock() {
     document.getElementById('clock').innerText = cur;
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short' });
     
-    // Nacht-Modus Logik
+    // Nachtmodus
     var isS = (sStart < sEnd) ? (cur >= sStart && cur < sEnd) : (cur >= sStart || cur < sEnd);
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
     
-    // Anzeige der Ausschaltzeit IM MENÜ
+    // Menü-Info Update
     var menuSleep = document.getElementById('menu-sleep-info');
     if(menuSleep) menuSleep.innerText = "NACHTMODUS AKTIV AB: " + sStart + " UHR";
 
+    // Offline Warnung
     document.getElementById('offline-warn').style.display = (Date.now() - lastSuccess > 900000) ? 'inline-block' : 'none';
 }
 
 function buildTicker() {
-    var fullText = "+++ V1.43 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++ DIGITALER DENKMALSCHUTZ PRO +++";
+    var fullText = "+++ V1.43 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
     document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
 }
 
@@ -73,9 +74,9 @@ function fetchWeather() {
             
             document.getElementById('update-info').innerText = "UPD: "+z(new Date(Date.now()+timeOffset).getHours())+":"+z(new Date(Date.now()+timeOffset).getMinutes());
 
-            tickerData.main = (d.main.temp < 8 ? "Winterjacke ❄️" : (d.main.temp < 17 ? "Übergangsjacke 🧥" : "T-Shirt Wetter 👕")) + " - Feuchte: " + d.main.humidity + "%";
+            tickerData.main = (d.main.temp < 8 ? "Winterjacke ❄️" : (d.main.temp < 17 ? "Übergangsjacke 🧥" : "T-Shirt 👕")) + " - Feuchte: " + d.main.humidity + "%";
             tickerData.wind = "Wind: " + Math.round(d.wind.speed * 3.6) + " km/h";
-            tickerData.astro = moonText + " - Luftdruck: " + d.main.pressure + " hPa";
+            tickerData.astro = moonText + " - Druck: " + d.main.pressure + " hPa";
 
             fetchForecast();
         }
@@ -97,7 +98,7 @@ function fetchForecast() {
             document.getElementById('hourly-table').innerHTML = hRow + "</tr>";
             
             var n3 = f.list[1];
-            tickerData.forecast = "Vorschau " + new Date(n3.dt*1000).getHours() + " Uhr: " + n3.weather[0].description + " bei " + Math.round(n3.main.temp) + "°";
+            tickerData.forecast = "Vorschau " + new Date(n3.dt*1000).getHours() + " Uhr: " + n3.weather[0].description;
 
             var days = {};
             for(var j=0; j<f.list.length; j++) {

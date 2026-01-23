@@ -4,15 +4,15 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; overflow: 
 #night-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; text-align: center; padding-top: 20%; }
 #night-clock { font-size: 5rem; color: #111; font-weight: bold; }
 
+/* Vorhersage Styling */
 .f-item { text-align: center; vertical-align: middle; }
 .f-item b { font-size: 1.8rem; display: block; color: #fff; margin-top: 3px; }
 
-/* Große Anzeige für Wochentage & Temps */
 .f-day-name { font-size: 1.8rem; color: #00ffcc; font-weight: bold; display: block; text-transform: uppercase; }
 .f-temp-max { font-size: 2.2rem; color: #ff4d4d; font-weight: bold; }
 .f-temp-min { font-size: 1.6rem; color: #00d9ff; font-weight: bold; margin-left: 5px; }
 
-/* Status Puls */
+/* Status Puls für das Live-Signal */
 .live-indicator {
     display: inline-block; width: 12px; height: 12px; background-color: #00ffcc;
     border-radius: 50%; vertical-align: middle; -webkit-animation: blink 2s infinite; animation: blink 2s infinite;
