@@ -27,14 +27,20 @@ function updateClock() {
     var cur = z(now.getHours()) + ":" + z(now.getMinutes());
     document.getElementById('clock').innerText = cur;
     document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short' });
+    
+    // Nacht-Modus Logik
     var isS = (sStart < sEnd) ? (cur >= sStart && cur < sEnd) : (cur >= sStart || cur < sEnd);
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
+    
+    // Anzeige der Ausschaltzeit
+    document.getElementById('sleep-info').innerText = "NACHTMODUS AB: " + sStart;
+
     document.getElementById('offline-warn').style.display = (Date.now() - lastSuccess > 900000) ? 'inline-block' : 'none';
 }
 
 function buildTicker() {
-    var fullText = "+++ V1.41 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++ BRAUNSCHWEIG DIGITALER DENKMALSCHUTZ +++";
+    var fullText = "+++ V1.42 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++ BRAUNSCHWEIG DIGITALER DENKMALSCHUTZ +++";
     document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
 }
 
@@ -50,7 +56,6 @@ function fetchWeather() {
             if(sTime) timeOffset = new Date(sTime).getTime() - Date.now();
             
             document.getElementById('temp-display').innerText = Math.round(d.main.temp);
-            document.getElementById('city-title').innerText = d.name.toUpperCase();
             document.getElementById('main-icon-container').innerHTML = getIcon(d.weather[0].icon);
             document.getElementById('feels-like').innerHTML = '<i class="fa fa-thermometer-half"></i> GEFÜHLT ' + Math.round(d.main.feels_like) + "°";
             document.getElementById('feels-like').className = (d.main.feels_like > d.main.temp) ? "warm" : "kalt";
@@ -66,11 +71,10 @@ function fetchWeather() {
             
             document.getElementById('update-info').innerText = "UPD: "+z(new Date(Date.now()+timeOffset).getHours())+":"+z(new Date(Date.now()+timeOffset).getMinutes());
 
-            // TICKER DATEN TEIL 1
             var tip = d.main.temp < 8 ? "WINTERJACKE AN! ❄️" : (d.main.temp < 17 ? "ÜBERGANGSJACKE! 🧥" : "T-SHIRT WETTER! 👕");
-            tickerData.main = tip + " - Feuchtigkeit: " + d.main.humidity + "%";
-            tickerData.wind = "Wind: " + Math.round(d.wind.speed * 3.6) + " km/h (Böen: " + (d.wind.gust ? Math.round(d.wind.gust * 3.6) : "keine") + ")";
-            tickerData.astro = moonText + " - Luftdruck: " + d.main.pressure + " hPa";
+            tickerData.main = tip + " - Feuchte: " + d.main.humidity + "%";
+            tickerData.wind = "Wind: " + Math.round(d.wind.speed * 3.6) + " km/h";
+            tickerData.astro = moonText + " - Druck: " + d.main.pressure + " hPa";
 
             fetchForecast();
         }
@@ -84,7 +88,6 @@ function fetchForecast() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var f = JSON.parse(xhr.responseText);
-            
             var hRow = "<tr>";
             for(var i=0; i<5; i++) {
                 var it = f.list[i];
@@ -92,7 +95,6 @@ function fetchForecast() {
             }
             document.getElementById('hourly-table').innerHTML = hRow + "</tr>";
             
-            // TICKER DATEN TEIL 2 (Vorschau 3h)
             var n3 = f.list[1];
             tickerData.forecast = "Vorschau " + new Date(n3.dt*1000).getHours() + " Uhr: " + n3.weather[0].description + " bei " + Math.round(n3.main.temp) + "°";
 
@@ -111,7 +113,6 @@ function fetchForecast() {
                 c++;
             }
             document.getElementById('daily-table').innerHTML = dRow + "</tr>";
-            
             buildTicker(); 
         }
     };
@@ -119,7 +120,12 @@ function fetchForecast() {
 }
 
 function toggleSettings() { var s = document.getElementById('settings-overlay'); s.style.display = (s.style.display=='block')?'none':'block'; }
-function saveAll() { localStorage.setItem('selectedCity', document.getElementById('city-input').value); localStorage.setItem('sleepStart', document.getElementById('s-start').value); localStorage.setItem('sleepEnd', document.getElementById('s-end').value); window.location.reload(); }
+function saveAll() { 
+    localStorage.setItem('selectedCity', document.getElementById('city-input').value); 
+    localStorage.setItem('sleepStart', document.getElementById('s-start').value); 
+    localStorage.setItem('sleepEnd', document.getElementById('s-end').value); 
+    window.location.reload(); 
+}
 function toggleFullscreen() { var el = document.documentElement; if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }
 
 setInterval(updateClock, 1000); setInterval(fetchWeather, 300000);
