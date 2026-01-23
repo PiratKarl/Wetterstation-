@@ -3,6 +3,15 @@ var city = localStorage.getItem('selectedCity') || 'Braunschweig';
 var sStart = localStorage.getItem('sleepStart') || '00:00';
 var sEnd = localStorage.getItem('sleepEnd') || '05:30';
 
+var iconMap = {
+    "01d": "fa-sun-o icon-sun", "01n": "fa-moon-o",
+    "02d": "fa-cloud icon-cloud", "02n": "fa-cloud",
+    "03d": "fa-cloud", "04d": "fa-cloud",
+    "09d": "fa-tint icon-rain", "10d": "fa-umbrella icon-rain",
+    "11d": "fa-bolt", "13d": "fa-snowflake-o icon-snow",
+    "50d": "fa-bars"
+};
+
 function z(n) { return (n < 10 ? '0' : '') + n; }
 
 function checkSleep() {
@@ -30,13 +39,15 @@ function fetchWeather() {
             document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = data.main.temp.toFixed(1);
             
-            var sunrise = new Date((data.sys.sunrise + data.timezone) * 1000);
-            var sunset = new Date((data.sys.sunset + data.timezone) * 1000);
-            document.getElementById('sunrise-val').innerText = z(sunrise.getUTCHours()) + ":" + z(sunrise.getUTCMinutes());
-            document.getElementById('sunset-val').innerText = z(sunset.getUTCHours()) + ":" + z(sunset.getUTCMinutes());
+            // Icon Mapping
+            var iconClass = iconMap[data.weather[0].icon] || "fa-cloud";
+            document.getElementById('main-icon').className = "fa " + iconClass;
+            
+            var off = data.timezone;
+            document.getElementById('sunrise-val').innerText = z(new Date((data.sys.sunrise+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunrise+off)*1000).getUTCMinutes());
+            document.getElementById('sunset-val').innerText = z(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + z(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
             
             var wind = Math.round(data.wind.speed * 3.6);
-            // Ticker-Text Aktualisierung
             document.getElementById('info-ticker').innerHTML = "WIND: " + wind + " KM/H --- FEUCHTE: " + data.main.humidity + "% --- DRUCK: " + data.main.pressure + " HPA --- STATUS: AKTIV";
             
             fetchForecast();
@@ -51,29 +62,35 @@ function fetchForecast() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var dataF = JSON.parse(xhr.responseText);
+            
+            // Stunden (5 Stück)
             var hL = document.getElementById('hourly-list'); hL.innerHTML = "";
             for(var i=0; i<5; i++) {
                 var it = dataF.list[i];
-                hL.innerHTML += '<div class="f-item"><span>' + new Date(it.dt*1000).getHours() + ':00</span><br><b>' + Math.round(it.main.temp) + '°</b></div>';
+                var icon = iconMap[it.weather[0].icon] || "fa-cloud";
+                hL.innerHTML += '<div class="f-item"><span>' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + icon + '"></i><b>' + Math.round(it.main.temp) + '°</b></div>';
             }
+            
+            // Tage (Max/Min Berechnung)
             var dL = document.getElementById('daily-list'); dL.innerHTML = "";
             var days = {};
             for(var j=0; j<dataF.list.length; j++) {
                 var dName = new Date(dataF.list[j].dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
-                if(!days[dName]) days[dName] = { max: -99, min: 99 };
+                if(!days[dName]) days[dName] = { max: -99, min: 99, icon: dataF.list[j].weather[0].icon };
                 if(dataF.list[j].main.temp > days[dName].max) days[dName].max = dataF.list[j].main.temp;
                 if(dataF.list[j].main.temp < days[dName].min) days[dName].min = dataF.list[j].main.temp;
             }
+            
             var count = 0;
             for(var d in days) {
                 if(count > 0 && count < 6) {
-                    dL.innerHTML += '<div class="f-item"><span style="color:#00ffcc">' + d + '</span><br><b style="color:#ff4d4d">' + Math.round(days[d].max) + '°</b> <b style="color:#00d9ff">' + Math.round(days[d].min) + '°</b></div>';
+                    var iconD = iconMap[days[d].icon] || "fa-cloud";
+                    dL.innerHTML += '<div class="f-item"><span style="color:#00ffcc">' + d + '</span><i class="fa ' + iconD + '"></i><span style="color:#ff4d4d">' + Math.round(days[d].max) + '°</span> <span style="color:#00d9ff">' + Math.round(days[d].min) + '°</span></div>';
                 }
                 count++;
             }
         }
     };
-    xhr.open("GET", url, true);
     xhr.send();
 }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Legacy V1.28</title>
+    <title>Aura Weather Tablet V1.29</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -19,7 +19,7 @@
                 <div id="clock">00:00</div>
                 <div id="date">Lade...</div>
                 <img src="logo.png" id="station-logo">
-                <div id="update-info">V 1.28</div>
+                <div id="update-info">V 1.29</div>
             </div>
             
             <div class="col-center">
@@ -33,7 +33,7 @@
             </div>
 
             <div class="col-right">
-                <div class="gear-box" onclick="toggleSettings()">
+                <div class="gear-zone" onclick="toggleSettings()">
                     <i class="fa fa-gear"></i>
                 </div>
                 <div class="astro-area">
@@ -49,8 +49,8 @@
         </div>
 
         <div class="ticker-row">
-            <div class="marquee-container">
-                <div id="info-ticker" class="ticker-move">SYSTEM-START... DATEN WERDEN ABGERUFEN...</div>
+            <div class="ticker-wrapper">
+                <div id="info-ticker" class="ticker-text">WETTERSTATION STARTET... BITTE WARTEN...</div>
             </div>
         </div>
 
@@ -62,7 +62,7 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 style="color:#00ffcc;">SETUP & INFORMATION</h2>
+            <h2 style="color:#00ffcc; border-bottom:1px solid #333; padding-bottom:10px;">EINSTELLUNGEN</h2>
             
             <div class="section">
                 <label>STADT:</label>
@@ -71,22 +71,21 @@
 
             <div class="section">
                 <label>NACHT-MODUS:</label><br>
-                VON: <input type="time" id="sleep-start" style="width:90px"> 
-                BIS: <input type="time" id="sleep-end" style="width:90px">
+                START: <input type="time" id="sleep-start" style="width:90px"> 
+                ENDE: <input type="time" id="sleep-end" style="width:90px">
             </div>
 
-            <div class="info-section">
+            <div class="info-box">
                 <b>ANLEITUNG:</b><br>
-                • <b>Vollbild:</b> Auf die Uhr tippen.<br>
-                • <b>Einstellungen:</b> Auf das weiße Zahnrad tippen.<br>
-                • <b>Nachtmodus:</b> Display wird automatisch schwarz.<br><br>
+                • <b>Vollbild:</b> Auf Uhrzeit tippen.<br>
+                • <b>Menü:</b> Auf weißes Zahnrad tippen.<br><br>
                 <b>COPYRIGHT:</b><br>
                 (c) Karl Altmannshofer 2026<br>
-                Aura Weather Tablet Edition
+                Tablet Edition V1.29
             </div>
 
             <button class="save-btn" onclick="saveAllSettings()">SPEICHERN</button>
-            <button class="close-btn" onclick="toggleSettings()">ZURÜCK</button>
+            <button class="close-btn" onclick="toggleSettings()">ABBRECHEN</button>
         </div>
     </div>
 
