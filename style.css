@@ -1,48 +1,52 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 100vh; width: 100vw; overflow: hidden; }
 
-/* Nachtmodus Overlay */
+/* Nachtmodus */
 #night-overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #000; z-index: 10000; display: none;
-    flex-direction: column; align-items: center; justify-content: center;
-    cursor: pointer;
+    position: fixed; inset: 0; background: #000; z-index: 10000;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
 }
-#night-clock { font-size: 3rem; color: #111; font-weight: bold; }
+#night-clock { font-size: 5rem; color: #111; font-weight: bold; }
 
 .app-shell { width: 100%; height: 100%; display: block; }
+
 .header-row { height: 52%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; color: #fff; }
+#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
 #station-logo { width: 180px; height: auto; margin: 10px 0; opacity: 0.9; }
-.legal-info { font-size: 0.6rem; color: #444; margin-bottom: 5px; }
+.legal-info { font-size: 0.65rem; color: #444; margin-bottom: 5px; }
 
 #temp-display { font-size: 8rem; font-weight: bold; line-height: 1; }
 .unit { font-size: 2.5rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
 
-/* Zahnrad Icon */
-.loc-toggle { font-size: 2.5rem; color: #444; margin-bottom: 15px; cursor: pointer; transition: color 0.3s; }
+.loc-toggle { font-size: 2.5rem; color: #333; margin-bottom: 15px; cursor: pointer; }
 .loc-toggle:hover { color: #00ffcc; }
 
-/* Ticker: 15% */
+.astro-area { font-size: 1.6rem; font-weight: bold; }
+.astro-row { margin: 5px 0; }
+.moon-divider { border-top: 1px solid #222; width: 60%; margin: 8px auto; }
+.icon-moon { color: #00ffcc !important; margin-right: 5px; }
+
+/* Ticker */
 .ticker-row { height: 15%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
 .ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.5rem; color: #00ffcc; animation: marquee 40s linear infinite; font-weight: 900; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* Footer: 33% */
+/* Footer */
 .footer-row { height: 33%; width: 100%; background: #000; }
 .forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
-.f-item { display: table-cell; text-align: center; vertical-align: middle; padding: 2px; }
-.f-temp-max { font-size: 1.5rem; color: #ff4d4d; font-weight: bold; }
-.f-temp-min { font-size: 1.2rem; color: #00d9ff; margin-left: 5px; }
+.f-item { display: table-cell; text-align: center; vertical-align: middle; }
+.f-temp-max { font-size: 1.6rem; color: #ff4d4d; font-weight: bold; }
+.f-temp-min { font-size: 1.3rem; color: #00d9ff; margin-left: 5px; }
 
-/* Menü Styling */
-#settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; text-align: center; }
-.modal { background: #111; border: 2px solid #333; border-radius: 15px; width: 90%; max-width: 500px; margin: 5% auto; padding: 20px; color: #ccc; }
-.settings-section { background: #181818; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 3px solid #00ffcc; text-align: left; }
-.settings-section h3 { font-size: 1rem; color: #fff; margin-bottom: 10px; }
-.info-box p { font-size: 0.85rem; margin-bottom: 5px; color: #999; }
-input { background: #000; border: 1px solid #333; color: #fff; padding: 10px; width: 100%; border-radius: 5px; }
-button { width: 100%; padding: 15px; background: #00ffcc; color: #000; border: none; font-weight: bold; border-radius: 10px; cursor: pointer; }
+/* Modal Design */
+#settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; }
+.modal { background: #111; border: 1px solid #333; border-radius: 20px; width: 90%; max-width: 500px; margin: 5vh auto; padding: 25px; }
+.settings-section { background: #181818; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left; }
+.settings-section h3 { font-size: 1rem; color: #00ffcc; margin-bottom: 10px; }
+.info-box p { font-size: 0.85rem; color: #888; margin-bottom: 6px; }
+input { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 1.1rem; width: 100%; }
+.btn-save { background: #00ffcc; color: #000; border: none; font-weight: bold; padding: 15px; width: 100%; border-radius: 10px; font-size: 1.1rem; }
+.btn-close { background: #333; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 10px; margin-top: 10px; }
