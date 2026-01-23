@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.25</title>
+    <title>Aura Weather Tablet V1.26</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -19,10 +19,6 @@
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
                 <img src="logo.png" id="station-logo">
-                <div class="legal-info">
-                    (c) Karl Altmannshofer 2026<br>
-                    Version 1.25 Tablet
-                </div>
                 <div id="update-info">...</div>
             </div>
             
@@ -54,7 +50,7 @@
 
         <div class="ticker-row">
             <div class="marquee-wrap">
-                <div id="info-ticker" class="ticker-move">WETTERDATEN WERDEN GELADEN...</div>
+                <div id="info-ticker" class="ticker-move">SYSTEM-CHECK AKTIV...</div>
             </div>
         </div>
 
@@ -66,7 +62,7 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 style="color:#00ffcc">DASHBOARD SETUP</h2>
+            <h2 style="color:#00ffcc">SETUP & INFO</h2>
             
             <div class="section">
                 <label>STANDORT:</label>
@@ -75,12 +71,26 @@
 
             <div class="section">
                 <label>NACHT-MODUS:</label><br>
-                START: <input type="time" id="sleep-start" style="width:80px"> 
-                ENDE: <input type="time" id="sleep-end" style="width:80px">
+                VON: <input type="time" id="sleep-start" style="width:80px"> 
+                BIS: <input type="time" id="sleep-end" style="width:80px">
             </div>
 
-            <button class="save-btn" onclick="saveAllSettings()">SPEICHERN & NEUSTART</button>
-            <button class="close-btn" onclick="toggleSettings()">ABBRECHEN</button>
+            <div class="section instruction-box">
+                <label>ANLEITUNG:</label>
+                <ul>
+                    <li><b>Vollbild:</b> Tippe links oben auf die Uhrzeit.</li>
+                    <li><b>Aufwecken:</b> Im Nachtmodus einfach den Schirm berühren.</li>
+                    <li><b>Ticker:</b> Zeigt Wind, Feuchte und Warnungen.</li>
+                </ul>
+            </div>
+
+            <div class="copyright-box">
+                (c) Karl Altmannshofer 2026<br>
+                Aura Weather Tablet Edition V1.26
+            </div>
+
+            <button class="save-btn" onclick="saveAllSettings()">EINSTELLUNGEN SPEICHERN</button>
+            <button class="close-btn" onclick="toggleSettings()">ZURÜCK</button>
         </div>
     </div>
 

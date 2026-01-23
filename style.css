@@ -7,36 +7,38 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .header-row { height: 52%; width: 100%; border-bottom: 1px solid #111; display: table; table-layout: fixed; }
 .col-left, .col-center, .col-right { display: table-cell; vertical-align: middle; text-align: center; }
 
-#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
+#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; cursor: pointer; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
-#station-logo { width: 160px; margin: 10px 0; opacity: 0.8; }
-.legal-info { font-size: 0.6rem; color: #444; }
+#station-logo { width: 150px; margin: 10px 0; opacity: 0.8; }
 
-/* Wettersymbol RIESIG, Temperatur KLEINER */
-#main-icon { font-size: 8rem; color: #fff; margin-right: 15px; vertical-align: middle; }
-#temp-display { font-size: 4.5rem; font-weight: bold; vertical-align: middle; }
-.unit { font-size: 1.8rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
+/* Wettersymbol angepast (5.5rem), Temperatur (5rem) */
+#main-icon { font-size: 5.5rem; color: #fff; margin-right: 15px; vertical-align: middle; }
+#temp-display { font-size: 5rem; font-weight: bold; vertical-align: middle; }
+.unit { font-size: 2rem; color: #00ffcc; vertical-align: top; margin-top: 10px; display: inline-block; }
 
-/* Zahnrad: Weiß und klickbar */
 .settings-btn { background: none; border: none; color: #fff; font-size: 3.5rem; cursor: pointer; padding: 20px; outline: none; }
 
 .astro-area { font-size: 1.5rem; font-weight: bold; }
 .moon-divider { border-top: 1px solid #222; width: 50%; margin: 8px auto; }
 
 .ticker-row { height: 15%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
-.ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.2rem; color: #00ffcc; animation: marquee 35s linear infinite; font-weight: bold; }
+.ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.3rem; color: #00ffcc; animation: marquee 35s linear infinite; font-weight: bold; }
+
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
 .footer-row { height: 33%; width: 100%; display: block; }
-.forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; border-bottom: 1px solid #111; }
+.forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
 .f-item { display: table-cell; vertical-align: middle; text-align: center; }
-.f-temp-max { font-size: 1.5rem; color: #ff4d4d; font-weight: bold; }
-.f-temp-min { font-size: 1.2rem; color: #00d9ff; }
+.f-temp-max { font-size: 1.6rem; color: #ff4d4d; font-weight: bold; }
+.f-temp-min { font-size: 1.3rem; color: #00d9ff; }
 
-/* Modal */
+/* Modal Design */
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; z-index: 1000; }
-.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 450px; margin: 10% auto; padding: 20px; border-radius: 10px; text-align: center; }
-.section { background: #181818; padding: 15px; margin-bottom: 15px; border-radius: 8px; text-align: left; }
+.modal { background: #111; border: 2px solid #333; width: 95%; max-width: 500px; margin: 2% auto; padding: 20px; border-radius: 15px; text-align: center; height: 95vh; overflow-y: auto; }
+.section { background: #181818; padding: 12px; margin-bottom: 12px; border-radius: 8px; text-align: left; }
+.instruction-box { font-size: 0.85rem; color: #aaa; line-height: 1.4; }
+.instruction-box ul { padding-left: 20px; }
+.copyright-box { font-size: 0.7rem; color: #444; margin: 10px 0; }
 input { background: #000; border: 1px solid #444; color: #fff; padding: 10px; font-size: 1.2rem; width: 100%; }
-.save-btn { background: #00ffcc; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; font-size: 1.2rem; border-radius: 5px; cursor: pointer; }
-.close-btn { background: #333; color: #fff; border: none; padding: 10px; width: 100%; margin-top: 10px; border-radius: 5px; cursor: pointer; }
+.save-btn { background: #00ffcc; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; font-size: 1.2rem; border-radius: 8px; cursor: pointer; }
+.close-btn { background: #333; color: #fff; border: none; padding: 10px; width: 100%; margin-top: 10px; border-radius: 8px; cursor: pointer; }

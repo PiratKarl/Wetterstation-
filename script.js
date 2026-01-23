@@ -10,8 +10,7 @@ function updateMoon() {
     var phase = ((jd - 2451549.5) / 29.53) % 1;
     var name = "Mond";
     if (phase < 0.05 || phase > 0.95) name = "Neumond";
-    else if (phase < 0.3) name = "Halbmond";
-    else if (phase < 0.7) name = "Vollmond";
+    else if (phase < 0.55 && phase > 0.45) name = "Vollmond";
     else name = "Halbmond";
     document.getElementById('moon-phase-name').innerText = name;
 }
@@ -35,21 +34,27 @@ function updateClock() {
 
 function fetchWeather() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de", true);
+    var url = "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de";
+    xhr.open("GET", url, true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var data = JSON.parse(xhr.responseText);
             document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = data.main.temp.toFixed(1);
             
-            var sunrise = new Date((data.sys.sunrise + data.timezone) * 1000);
-            var sunset = new Date((data.sys.sunset + data.timezone) * 1000);
+            var off = data.timezone;
+            var sunrise = new Date((data.sys.sunrise + off) * 1000);
+            var sunset = new Date((data.sys.sunset + off) * 1000);
             document.getElementById('sunrise-val').innerText = z(sunrise.getUTCHours()) + ":" + z(sunrise.getUTCMinutes());
             document.getElementById('sunset-val').innerText = z(sunset.getUTCHours()) + ":" + z(sunset.getUTCMinutes());
             
             updateMoon();
-            var wind = Math.round(data.wind.speed * 3.6);
-            document.getElementById('info-ticker').innerHTML = "WIND: " + wind + " KM/H --- LUFTFEUCHTE: " + data.main.humidity + "% --- DRUCK: " + data.main.pressure + " HPA --- STATUS: OK";
+            
+            // TICKER-REPARATUR: Einfacher Text ohne komplexe Variablen
+            var w = Math.round(data.wind.speed * 3.6);
+            var tText = "WIND: " + w + " KM/H --- FEUCHTE: " + data.main.humidity + "% --- DRUCK: " + data.main.pressure + " HPA --- STATUS: AKTIV";
+            document.getElementById('info-ticker').innerHTML = tText;
+            
             document.getElementById('update-info').innerText = "Upd: " + z(new Date().getHours()) + ":" + z(new Date().getMinutes());
             fetchForecast();
         }
@@ -59,15 +64,18 @@ function fetchWeather() {
 
 function fetchForecast() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de", true);
+    var url = "https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de";
+    xhr.open("GET", url, true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var dataF = JSON.parse(xhr.responseText);
+            // Stunden
             var hL = document.getElementById('hourly-list'); hL.innerHTML = "";
             for(var i=0; i<5; i++) {
                 var it = dataF.list[i];
                 hL.innerHTML += '<div class="f-item"><span>' + new Date(it.dt*1000).getHours() + ':00</span><br><b>' + Math.round(it.main.temp) + '°</b></div>';
             }
+            // Tage
             var dL = document.getElementById('daily-list'); dL.innerHTML = "";
             var days = {};
             for(var j=0; j<dataF.list.length; j++) {
@@ -79,7 +87,7 @@ function fetchForecast() {
             var count = 0;
             for(var day in days) {
                 if(count > 0 && count < 6) {
-                    dL.innerHTML += '<div class="f-item"><span style="color:#00ffcc">' + day + '</span><br><b class="f-temp-max">' + Math.round(days[day].max) + '°</b> <b class="f-temp-min">' + Math.round(days[day].min) + '°</b></div>';
+                    dL.innerHTML += '<div class="f-item"><span style="color:#00ffcc">' + day + '</span><br><b style="color:#ff4d4d">' + Math.round(days[day].max) + '°</b> <b style="color:#00d9ff">' + Math.round(days[day].min) + '°</b></div>';
                 }
                 count++;
             }
