@@ -12,38 +12,39 @@ var iconColorMap = {
 
 function zero(n) { return (n < 10 ? '0' : '') + n; }
 
-function getWindDirText(deg) {
-    var dir = ['Nord', 'Nordost', 'Ost', 'Südost', 'Süd', 'Südwest', 'West', 'Nordwest'];
-    return dir[Math.round(deg / 45) % 8];
+// --- UNIVERSELLE MONDBERECHNUNG ---
+function updateMoon() {
+    var now = new Date();
+    // Julianisches Datum für UTC berechnen (unabhängig vom Ort)
+    var jd = (now.getTime() / 86400000) - (now.getTimezoneOffset() / 1440) + 2440587.5;
+    var daysSinceNew = jd - 2451549.5;
+    var cycles = daysSinceNew / 29.53058867;
+    var phase = cycles - Math.floor(cycles);
+
+    var moonName = "Mond";
+    var icon = "fa-moon-o";
+
+    if (phase < 0.03 || phase > 0.97) { moonName = "Neumond"; icon = "fa-circle-o"; }
+    else if (phase < 0.22) { moonName = "Zun. Sichel"; icon = "fa-moon-o"; }
+    else if (phase < 0.28) { moonName = "Halbmond"; icon = "fa-adjust"; }
+    else if (phase < 0.47) { moonName = "Zun. Mond"; icon = "fa-circle"; }
+    else if (phase < 0.53) { moonName = "Vollmond"; icon = "fa-circle"; }
+    else if (phase < 0.72) { moonName = "Abn. Mond"; icon = "fa-circle"; }
+    else if (phase < 0.78) { moonName = "Halbmond"; icon = "fa-adjust"; }
+    else { moonName = "Abn. Sichel"; icon = "fa-moon-o"; }
+
+    document.getElementById('moon-phase-name').innerText = moonName;
+    document.getElementById('moon-icon').className = "fa " + icon + " icon-moon";
 }
 
-function getBeaufortText(kmh) {
-    if (kmh < 1) return "Windstille";
-    if (kmh < 12) return "leichte Brise";
-    if (kmh < 29) return "frischer Wind";
-    if (kmh < 50) return "steifer Wind";
-    if (kmh < 75) return "stürmischer Wind";
-    if (kmh < 103) return "Sturm";
-    return "Orkan";
+function getWindDir(deg) {
+    var d = ['Nord', 'Nordost', 'Ost', 'Südost', 'Süd', 'Südwest', 'West', 'Nordwest'];
+    return d[Math.round(deg / 45) % 8];
 }
 
-function getClothingTip(temp, isRain) {
-    var tip = "";
-    if (temp < 5) tip = "❄️ WINTER: Dick anziehen!";
-    else if (temp < 15) tip = "🧥 Übergangsjacke empfohlen.";
-    else if (temp < 23) tip = "👕 T-Shirt Wetter.";
-    else tip = "🕶️ HEISS: Luftig kleiden!";
-    if (isRain) tip += " ☔ Schirm mitnehmen!";
-    return tip;
-}
-
-function getWarnings(data) {
-    var warns = [];
-    var wind = Math.round(data.wind.speed * 3.6);
-    if (wind > 60) warns.push({t: "⚠️ STURM-WARNUNG!", c: "warn-orange"});
-    if (data.main.temp < -3) warns.push({t: "❄️ FROST-GEFAHR!", c: "warn-frost"});
-    if (data.main.temp > 30) warns.push({t: "🔥 HITZE-WARNUNG!", c: "warn-red"});
-    return warns;
+function getClothing(t, r) {
+    var tip = (t < 6) ? "❄️ Winterjacke!" : (t < 15) ? "🧥 Übergangsjacke." : (t < 23) ? "👕 T-Shirt." : "🕶️ Heiß!";
+    return tip + (r ? " ☔ Schirm!" : "");
 }
 
 function updateClock() {
@@ -66,29 +67,21 @@ async function fetchWeather() {
             document.getElementById('main-icon').className = "fa " + (iconColorMap[data.weather[0].icon] || "fa-cloud");
             
             var feelsElem = document.getElementById('feels-like-display');
-            var diff = feels - temp;
-            if (Math.abs(diff) < 0.3) {
-                feelsElem.className = "hidden";
-            } else {
+            if (Math.abs(feels - temp) < 0.4) feelsElem.className = "hidden";
+            else {
                 feelsElem.innerHTML = "<small>GEFÜHLT </small>" + feels.toFixed(1) + "°";
                 feelsElem.className = (feels > temp) ? "warmer" : "colder";
             }
 
             var offset = data.timezone;
-            var sunrise = new Date((data.sys.sunrise + offset) * 1000);
-            var sunset = new Date((data.sys.sunset + offset) * 1000);
-            document.getElementById('sunrise-val').innerText = zero(sunrise.getUTCHours()) + ":" + zero(sunrise.getUTCMinutes());
-            document.getElementById('sunset-val').innerText = zero(sunset.getUTCHours()) + ":" + zero(sunset.getUTCMinutes());
+            document.getElementById('sunrise-val').innerText = zero(new Date((data.sys.sunrise + offset)*1000).getUTCHours()) + ":" + zero(new Date((data.sys.sunrise + offset)*1000).getUTCMinutes());
+            document.getElementById('sunset-val').innerText = zero(new Date((data.sys.sunset + offset)*1000).getUTCHours()) + ":" + zero(new Date((data.sys.sunset + offset)*1000).getUTCMinutes());
 
-            var ticker = document.getElementById('info-ticker');
-            ticker.innerHTML = "";
-            var warnings = getWarnings(data);
-            warnings.forEach(function(w) { ticker.innerHTML += '<span class="' + w.c + '">' + w.t + ' +++ </span>'; });
-            ticker.innerHTML += '<span>' + getClothingTip(temp, (data.weather[0].main === "Rain")) + ' +++ </span>';
+            updateMoon();
+
             var windKmh = Math.round(data.wind.speed * 3.6);
-            ticker.innerHTML += '<span>WIND: ' + windKmh + ' KM/H (' + getWindDirText(data.wind.deg) + ', ' + getBeaufortText(windKmh) + ') +++ </span>';
-            ticker.innerHTML += '<span>DRUCK: ' + data.main.pressure + ' HPA +++ </span>';
-
+            var ticker = document.getElementById('info-ticker');
+            ticker.innerHTML = getClothing(temp, data.weather[0].main === "Rain") + " +++ WIND: " + windKmh + " KM/H (" + getWindDir(data.wind.deg) + ") +++ FEUCHTE: " + data.main.humidity + "% +++ DRUCK: " + data.main.pressure + " HPA";
             document.getElementById('update-info').innerText = "Upd: " + zero(new Date().getHours()) + ":" + zero(new Date().getMinutes());
         }
 
@@ -132,6 +125,6 @@ function saveCity() {
 
 setInterval(updateClock, 1000);
 setInterval(fetchWeather, 300000);
-setInterval(function() { window.location.reload(); }, 1500000); 
+setInterval(function() { window.location.reload(); }, 1500000); // 25 Min Wachmacher
 
 updateClock(); fetchWeather();

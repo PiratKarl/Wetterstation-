@@ -10,16 +10,17 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 #clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
 
-#station-logo { width: 200px; height: auto; margin: 10px 0 5px 0; opacity: 0.85; }
+/* Logo Breite passend zur Uhr */
+#station-logo { width: 200px; height: auto; margin: 12px 0 5px 0; opacity: 0.9; }
 
-#copyright-info, #version-info { font-size: 0.65rem; color: #666; line-height: 1.2; }
-#version-info { margin-bottom: 8px; color: #888; }
+/* Copyright & Version winzig */
+.legal-info { font-size: 0.6rem; color: #555; line-height: 1.2; margin-bottom: 5px; }
 #update-info { font-size: 0.8rem; color: #aaa; }
 
+/* Mitte: Temperatur */
 #city-title { font-size: 1rem; color: #444; letter-spacing: 4px; margin-bottom: 10px; }
 .temp-main-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
 #main-icon { font-size: 3rem; }
-
 #temp-display { font-size: 8rem; font-weight: bold; line-height: 1; }
 .unit { font-size: 2.5rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
 
@@ -28,35 +29,24 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .colder { color: #00d9ff !important; }
 .hidden { display: none; }
 
-.loc-toggle { font-size: 2.2rem; color: #00ffcc; margin-bottom: 10px; cursor: pointer; }
-.astro-area { font-size: 2rem; font-weight: bold; }
-.sun-item { margin: 8px 0; }
+/* Rechts: Astro */
+.loc-toggle { font-size: 2.2rem; color: #00ffcc; margin-bottom: 5px; cursor: pointer; }
+.astro-area { font-size: 1.6rem; font-weight: bold; width: 100%; }
+.astro-row { margin: 5px 0; }
+.moon-divider { border-top: 1px solid #222; width: 60%; margin: 8px auto; }
+.moon-detail { font-size: 1.3rem; }
+.icon-sun { color: #FFD700 !important; }
+.icon-sunset { color: #FF8C00 !important; }
+.icon-moon { color: #00ffcc !important; }
 
-/* TICKER ANPASSUNG: Jetzt 15% Höhe und 2.5rem Schrift */
-.ticker-row { 
-    height: 15%; 
-    width: 100%; 
-    background: #050505; 
-    border-top: 1px solid #111; 
-    border-bottom: 1px solid #111; 
-    overflow: hidden; 
-    position: relative; 
-}
-.ticker-move { 
-    position: absolute; 
-    white-space: nowrap; 
-    line-height: 85px; /* Zentrierung für die neue Höhe */
-    font-size: 2.5rem; /* Noch größerer Text */
-    color: #00ffcc; 
-    animation: marquee 40s linear infinite; 
-    font-weight: 900; 
-}
+/* TICKER: 15% Höhe & 2.5rem Schrift */
+.ticker-row { height: 15%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
+.ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.5rem; color: #00ffcc; animation: marquee 40s linear infinite; font-weight: 900; }
+@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
 .warn-red { color: #ff0000 !important; }
 .warn-orange { color: #ff8c00 !important; }
 .warn-frost { color: #00ffff !important; }
-
-@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
 /* Unten: 33% Höhe */
 .footer-row { height: 33%; width: 100%; background: #000; }
@@ -67,14 +57,14 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .f-temp-max { font-size: 1.5rem; font-weight: bold; color: #ff4d4d; }
 .f-temp-min { font-size: 1.2rem; font-weight: bold; color: #00d9ff; margin-left: 5px; }
 
-/* Farben für Wetter-Icons */
+/* Icons Farbig */
 .icon-sun { color: #FFD700 !important; }
-.icon-sunset { color: #FF8C00 !important; }
 .icon-cloud { color: #FFFFFF !important; }
 .icon-rain { color: #00BFFF !important; }
 .icon-snow { color: #F0F8FF !important; }
 .icon-bolt { color: #FFFF00 !important; }
 
+/* Modal */
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; text-align: center; }
 .modal { background: #111; border: 2px solid #00ffcc; border-radius: 15px; width: 80%; max-width: 400px; margin: 15% auto; padding: 25px; }
 input { width: 100%; padding: 15px; font-size: 1.5rem; border: 1px solid #333; background: #000; color: #fff; margin-bottom: 20px; text-align: center; }
