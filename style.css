@@ -3,32 +3,17 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 
 .app-shell { width: 100%; height: 100%; display: block; }
 
-/* Oben: 55% Höhe */
-.header-row { height: 55%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
+/* Oben: 52% Höhe */
+.header-row { height: 52%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
 #clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
 
-/* LOGO ANPASSUNG: Jetzt 200px breit */
-#station-logo { 
-    width: 200px;          /* Noch größer */
-    height: auto; 
-    margin: 10px 0 5px 0;  /* Weniger Abstand nach unten */
-    opacity: 0.85; 
-}
+#station-logo { width: 200px; height: auto; margin: 10px 0 5px 0; opacity: 0.85; }
 
-/* Neue Fußzeilen: Winzig und grau */
-#copyright-info, #version-info {
-    font-size: 0.65rem;
-    color: #666;
-    line-height: 1.2;
-}
-#version-info {
-    margin-bottom: 8px;
-    color: #888; /* Version etwas heller */
-}
-
+#copyright-info, #version-info { font-size: 0.65rem; color: #666; line-height: 1.2; }
+#version-info { margin-bottom: 8px; color: #888; }
 #update-info { font-size: 0.8rem; color: #aaa; }
 
 #city-title { font-size: 1rem; color: #444; letter-spacing: 4px; margin-bottom: 10px; }
@@ -47,9 +32,25 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .astro-area { font-size: 2rem; font-weight: bold; }
 .sun-item { margin: 8px 0; }
 
-/* Ticker: 12% Höhe, 2rem Schrift */
-.ticker-row { height: 12%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
-.ticker-move { position: absolute; white-space: nowrap; line-height: 60px; font-size: 2rem; color: #00ffcc; animation: marquee 40s linear infinite; font-weight: 900; }
+/* TICKER ANPASSUNG: Jetzt 15% Höhe und 2.5rem Schrift */
+.ticker-row { 
+    height: 15%; 
+    width: 100%; 
+    background: #050505; 
+    border-top: 1px solid #111; 
+    border-bottom: 1px solid #111; 
+    overflow: hidden; 
+    position: relative; 
+}
+.ticker-move { 
+    position: absolute; 
+    white-space: nowrap; 
+    line-height: 85px; /* Zentrierung für die neue Höhe */
+    font-size: 2.5rem; /* Noch größerer Text */
+    color: #00ffcc; 
+    animation: marquee 40s linear infinite; 
+    font-weight: 900; 
+}
 
 .warn-red { color: #ff0000 !important; }
 .warn-orange { color: #ff8c00 !important; }
