@@ -56,18 +56,13 @@ function fetchWeather() {
             lastSuccess = Date.now();
             var sTime = xhr.getResponseHeader('Date');
             if(sTime) timeOffset = new Date(sTime).getTime() - Date.now();
-            
             document.getElementById('temp-display').innerText = Math.round(d.main.temp);
             document.getElementById('city-title').innerText = d.name.toUpperCase();
             document.getElementById('main-icon-container').innerHTML = getIconHtml(d.weather[0].icon, 130);
-            
-            var feels = document.getElementById('feels-like');
-            feels.innerHTML = '<i class="fa fa-thermometer-half"></i> GEFÜHLT ' + Math.round(d.main.feels_like) + "°";
-            
+            document.getElementById('feels-like').innerHTML = '<i class="fa fa-thermometer-half"></i> GEFÜHLT ' + Math.round(d.main.feels_like) + "°";
             tickerData.main = d.weather[0].description + " (FEUCHTE: " + d.main.humidity + "%)";
-            tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H AUS " + getWindDir(d.wind.deg);
+            tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H " + getWindDir(d.wind.deg);
             tickerData.astro = "LUFTDRUCK: " + d.main.pressure + " HPA";
-
             fetchUV(d.coord.lat, d.coord.lon);
             fetchForecast();
         }
@@ -93,12 +88,12 @@ function fetchForecast() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var f = JSON.parse(xhr.responseText);
-            
             var hRow = "<tr>";
             for(var i=0; i<5; i++) {
                 var it = f.list[i];
                 var pop = it.pop ? Math.round(it.pop * 100) : 0;
-                hRow += '<td class="f-item"><span style="color:#888;font-size:1.1rem;">'+new Date(it.dt*1000).getHours()+':00</span><br>'+getIconHtml(it.weather[0].icon, 60)+'<br><b>'+Math.round(it.main.temp)+'°</b><br><span style="color:#00d9ff;font-size:1rem;">☂️'+pop+'%</span></td>';
+                // NEU: Stunden jetzt in Cyan (#00ffcc)
+                hRow += '<td class="f-item"><span style="color:#00ffcc;font-size:1.2rem;font-weight:bold;">'+new Date(it.dt*1000).getHours()+':00</span><br>'+getIconHtml(it.weather[0].icon, 60)+'<br><b>'+Math.round(it.main.temp)+'°</b><br><span style="color:#00d9ff;font-size:1rem;">☂️'+pop+'%</span></td>';
             }
             document.getElementById('hourly-table').innerHTML = hRow + "</tr>";
             
