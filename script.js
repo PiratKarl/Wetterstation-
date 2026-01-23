@@ -5,27 +5,7 @@ var sEnd = localStorage.getItem('sleepEnd') || '06:00';
 
 var timeOffset = 0; 
 var lastSuccess = Date.now();
-var tickerData = { main: "Warte auf Start...", wind: "", astro: "", forecast: "" };
-
-// --- WAKE LOCK FIX ---
-function startDashboard() {
-    var v = document.getElementById('wake-video');
-    v.play().then(function() {
-        console.log("Wake-Video läuft!");
-    }).catch(function(e) {
-        console.log("Video-Fehler:", e);
-    });
-    
-    // Vollbild anfordern
-    var el = document.documentElement;
-    if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    
-    // Start-Overlay ausblenden
-    document.getElementById('start-overlay').style.display = 'none';
-    
-    // Daten laden
-    fetchWeather();
-}
+var tickerData = { main: "Lade Daten...", wind: "", astro: "", forecast: "" };
 
 function getIcon(code) {
     var map = {
@@ -52,18 +32,20 @@ function updateClock() {
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
 
+    var menuSleep = document.getElementById('menu-sleep-info');
+    if(menuSleep) menuSleep.innerText = "NACHTMODUS AKTIV AB: " + sStart + " UHR";
+
     document.getElementById('offline-warn').style.display = (Date.now() - lastSuccess > 900000) ? 'inline-block' : 'none';
 }
 
 function buildTicker() {
-    var fullText = "+++ V1.44 ACTIVE +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
+    var fullText = "+++ V1.45 +++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
     document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
 }
 
 function fetchWeather() {
-    // Video-Puls: Sicherstellen, dass das Video weiterläuft
     var v = document.getElementById('wake-video');
-    if(v && v.paused) v.play();
+    if(v) v.play();
 
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+encodeURIComponent(city)+"&appid="+API_KEY+"&units=metric&lang=de", true);
@@ -145,8 +127,12 @@ function saveAll() {
     localStorage.setItem('sleepEnd', document.getElementById('s-end').value); 
     window.location.reload(); 
 }
+function toggleFullscreen() { 
+    var el = document.documentElement; 
+    if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); 
+}
 
 setInterval(updateClock, 1000); 
 setInterval(fetchWeather, 300000);
 updateClock();
-// fetchWeather() wird jetzt erst durch startDashboard() aufgerufen!
+fetchWeather(); // Automatischer Start

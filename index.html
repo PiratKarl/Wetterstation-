@@ -3,17 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.44 PRO</title>
+    <title>Aura Weather V1.45 PRO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body style="background:#000; margin:0; color:#fff; font-family:Arial, sans-serif; overflow:hidden;">
-
-    <div id="start-overlay" onclick="startDashboard()" style="position:fixed; inset:0; background:#000; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;">
-        <img src="logo.png" width="200" style="margin-bottom:20px;">
-        <div style="font-size:3rem; color:#00ffcc; font-weight:bold; border:4px solid #00ffcc; padding:20px 40px; border-radius:15px;">STATION STARTEN</div>
-        <p style="color:#666; margin-top:20px; font-size:1.2rem;">Tippen, um Wachhalte-Modus zu aktivieren</p>
-    </div>
 
     <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
@@ -22,13 +16,13 @@
     <div class="app-shell">
         <table width="100%" height="250" border="0" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #222;">
             <tr>
-                <td width="33%" align="center">
+                <td width="33%" align="center" onclick="toggleFullscreen()">
                     <div id="clock" style="font-size:4.5rem; font-weight:bold;">00:00</div>
                     <div id="date" style="font-size:1.2rem; color:#00ffcc;">Lade...</div>
                     <img src="logo.png" width="120" style="margin:5px 0;">
                     <div style="margin-top:5px;">
                         <div class="live-indicator"></div>
-                        <span id="update-info" style="color:#888; font-size:0.9rem; font-weight:bold;">V1.44 PRO</span>
+                        <span id="update-info" style="color:#888; font-size:0.9rem; font-weight:bold;">V1.45 PRO</span>
                     </div>
                 </td>
                 
@@ -45,6 +39,7 @@
                 <td width="33%" align="center">
                     <div style="margin-bottom:15px;">
                         <i id="offline-warn" class="fa fa-exclamation-triangle" style="display:none; color:#ff4d4d; font-size:3rem; margin-right:15px;"></i>
+                        <i class="fa fa-expand" onclick="toggleFullscreen()" style="font-size:3rem; color:#00ffcc; cursor:pointer; margin-right:20px;"></i>
                         <i class="fa fa-gear" onclick="toggleSettings()" style="font-size:3rem; color:#fff; cursor:pointer;"></i>
                     </div>
                     <div class="astro" style="font-size:1.5rem; font-weight:bold; line-height:1.4;">
@@ -57,7 +52,7 @@
         </table>
 
         <div style="height:80px; background:#050505; border-bottom:1px solid #111; overflow:hidden;">
-            <marquee id="info-ticker" scrollamount="7" style="line-height:80px; font-size:2.6rem; color:#00ffcc; font-weight:bold;">+++ INITIALISIERE V1.44 +++</marquee>
+            <marquee id="info-ticker" scrollamount="7" style="line-height:80px; font-size:2.6rem; color:#00ffcc; font-weight:bold;">+++ AURA WEATHER V1.45 ONLINE +++</marquee>
         </div>
 
         <div id="footer-area" style="background:#000;">
@@ -68,19 +63,20 @@
 
     <div id="settings-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; z-index:1000; text-align:center;">
         <div style="background:#111; border:1px solid #333; width:95%; max-width:480px; margin:2% auto; padding:20px; border-radius:10px;">
-            <h2 style="color:#00ffcc;">SYSTEM-SETUP</h2>
+            <h2 style="color:#00ffcc; margin-bottom:20px;">SYSTEM-SETUP</h2>
             <div style="text-align:left; margin-bottom:5px;"><b style="color:#fff;">Standort eingabe</b></div>
             <input type="text" id="city-input" style="width:100%; padding:15px; background:#000; color:#fff; border:1px solid #444; font-size:1.5rem; margin-bottom:20px;">
             <div style="background:#181818; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
                 <b style="color:#fff;">NACHT-MODUS:</b><br>
                 VON <input type="time" id="s-start" style="width:35%;"> BIS <input type="time" id="s-end" style="width:35%;">
+                <div id="menu-sleep-info" style="color:#00ffcc; font-weight:bold; margin-top:10px;">AUS AB: --:--</div>
             </div>
-            <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; font-weight:bold; font-size:1.3rem;">SPEICHERN</button>
+            <button onclick="saveAll()" style="width:100%; padding:15px; background:#00ffcc; color:#000; font-weight:bold; font-size:1.3rem;">SPEICHERN</button>
             <button onclick="toggleSettings()" style="width:100%; padding:10px; background:#333; color:#fff; margin-top:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <video id="wake-video" playsinline muted loop style="position:fixed; width:1px; height:1px; opacity:0.01;">
+    <video id="wake-video" playsinline autoplay muted loop style="position:fixed; width:1px; height:1px; opacity:0.01;">
         <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
     </video>
 
