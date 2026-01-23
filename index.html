@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station Pro V1.17</title>
+    <title>Aura Weather Station Pro V1.18</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,11 +14,10 @@
             <div class="col-left">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
-                
                 <img src="logo.png" id="station-logo" alt="Station Logo">
                 <div class="legal-info">
                     <div>(c) Karl Altmannshofer 2026</div>
-                    <div>Version 1.17</div>
+                    <div>Version 1.18</div>
                 </div>
                 <div id="update-info">Upd: --:--</div>
             </div>
@@ -50,7 +49,7 @@
 
         <div class="ticker-row">
             <div class="marquee-wrap">
-                <div id="info-ticker" class="ticker-move">Lade Wetterdaten...</div>
+                <div id="info-ticker" class="ticker-move">Lade Wachmacher-System...</div>
             </div>
         </div>
 
@@ -59,6 +58,10 @@
             <div class="forecast-table" id="daily-list" style="border-top: 2px solid #222;"></div>
         </div>
     </div>
+
+    <video id="no-sleep-video" playsinline autoplay muted loop style="position:absolute; width:1px; height:1px; opacity:0.01;">
+        <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
+    </video>
 
     <div id="settings-overlay">
         <div class="modal">
