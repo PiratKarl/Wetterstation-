@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather - Tablet Edition V1.24</title>
+    <title>Aura Weather V1.25</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,20 +11,19 @@
 
     <div id="night-overlay" onclick="wakeUp()">
         <div id="night-clock">00:00</div>
-        <div style="font-size:1.5rem; color:#222; margin-top:20px;">Tippen zum Aufwecken</div>
     </div>
 
-    <div class="app-shell" id="main-app">
+    <div class="app-shell">
         <div class="header-row">
             <div class="col-left" onclick="toggleFullscreen()">
                 <div id="clock">00:00</div>
                 <div id="date">Lädt...</div>
-                <img src="logo.png" id="station-logo" alt="Logo">
+                <img src="logo.png" id="station-logo">
                 <div class="legal-info">
-                    <div>(c) Karl Altmannshofer 2026</div>
-                    <div>Aura Tablet Edition V1.24</div>
+                    (c) Karl Altmannshofer 2026<br>
+                    Version 1.25 Tablet
                 </div>
-                <div id="update-info">Upd: --:--</div>
+                <div id="update-info">...</div>
             </div>
             
             <div class="col-center">
@@ -33,22 +32,21 @@
                     <i class="fa fa-cloud" id="main-icon"></i>
                     <div class="temp-numbers">
                         <span id="temp-display">--.-</span><span class="unit">°C</span>
-                        <div id="feels-like-display"></div>
                     </div>
                 </div>
             </div>
 
             <div class="col-right">
-                <div class="settings-trigger" onclick="toggleSettings()">
+                <button class="settings-btn" onclick="toggleSettings()">
                     <i class="fa fa-gear"></i>
-                </div>
+                </button>
                 <div class="astro-area">
-                    <div class="astro-row"><i class="fa fa-sun-o icon-sun"></i> <span id="sunrise-val">--:--</span></div>
-                    <div class="astro-row"><i class="fa fa-moon-o icon-sunset"></i> <span id="sunset-val">--:--</span></div>
+                    <div class="astro-row"><i class="fa fa-sun-o"></i> <span id="sunrise-val">--:--</span></div>
+                    <div class="astro-row"><i class="fa fa-moon-o"></i> <span id="sunset-val">--:--</span></div>
                     <div class="moon-divider"></div>
-                    <div class="astro-row moon-detail">
-                        <i id="moon-icon" class="fa fa-moon-o icon-moon"></i>
-                        <span id="moon-phase-name">Mond...</span>
+                    <div class="astro-row">
+                        <i id="moon-icon" class="fa fa-moon-o"></i>
+                        <span id="moon-phase-name">...</span>
                     </div>
                 </div>
             </div>
@@ -56,42 +54,35 @@
 
         <div class="ticker-row">
             <div class="marquee-wrap">
-                <div id="info-ticker" class="ticker-move">Wetterdaten werden geladen...</div>
+                <div id="info-ticker" class="ticker-move">WETTERDATEN WERDEN GELADEN...</div>
             </div>
         </div>
 
         <div class="footer-row">
             <div class="forecast-table" id="hourly-list"></div>
-            <div class="forecast-table" id="daily-list" style="border-top: 2px solid #222;"></div>
+            <div class="forecast-table" id="daily-list"></div>
         </div>
     </div>
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 style="color:#00ffcc; margin-bottom:20px;">Setup & Info</h2>
-            <div class="settings-section">
-                <h3>📍 Standort</h3>
+            <h2 style="color:#00ffcc">DASHBOARD SETUP</h2>
+            
+            <div class="section">
+                <label>STANDORT:</label>
                 <input type="text" id="city-input">
             </div>
-            <div class="settings-section">
-                <h3>🌙 Nacht-Modus</h3>
-                <div style="display:flex; justify-content:space-around; align-items:center;">
-                    <span>Start: <input type="time" id="sleep-start"></span>
-                    <span>Ende: <input type="time" id="sleep-end"></span>
-                </div>
+
+            <div class="section">
+                <label>NACHT-MODUS:</label><br>
+                START: <input type="time" id="sleep-start" style="width:80px"> 
+                ENDE: <input type="time" id="sleep-end" style="width:80px">
             </div>
-            <div class="settings-section info-box">
-                <p>• <b>Uhrzeit:</b> Vollbild aktivieren.</p>
-                <p>• <b>Zahnrad:</b> Einstellungen öffnen.</p>
-            </div>
-            <button type="button" onclick="saveAllSettings()" class="btn-save">EINSTELLUNGEN SPEICHERN</button>
-            <button type="button" onclick="toggleSettings()" class="btn-close">ZURÜCK</button>
+
+            <button class="save-btn" onclick="saveAllSettings()">SPEICHERN & NEUSTART</button>
+            <button class="close-btn" onclick="toggleSettings()">ABBRECHEN</button>
         </div>
     </div>
-
-    <video id="no-sleep-video" playsinline autoplay muted loop style="position:absolute; width:1px; height:1px; opacity:0.01;">
-        <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
-    </video>
 
     <script src="script.js"></script>
 </body>

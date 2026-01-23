@@ -1,53 +1,42 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 100vh; width: 100vw; overflow: hidden; }
 
-#night-overlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+#night-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; align-items: center; justify-content: center; }
 #night-clock { font-size: 5rem; color: #111; font-weight: bold; }
 
-.app-shell { width: 100%; height: 100%; display: block; }
-.header-row { height: 52%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
-.col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.header-row { height: 52%; width: 100%; border-bottom: 1px solid #111; display: table; table-layout: fixed; }
+.col-left, .col-center, .col-right { display: table-cell; vertical-align: middle; text-align: center; }
 
 #clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
-#station-logo { width: 180px; height: auto; margin: 10px 0; opacity: 0.9; }
-.legal-info { font-size: 0.65rem; color: #444; }
+#station-logo { width: 160px; margin: 10px 0; opacity: 0.8; }
+.legal-info { font-size: 0.6rem; color: #444; }
 
-/* NEU: Symbol GRÖSSER, Temperatur KLEINER */
-#main-icon { font-size: 6rem; margin-right: 20px; color: #fff; }
-#temp-display { font-size: 4.5rem; font-weight: bold; line-height: 1; }
-.unit { font-size: 2rem; color: #00ffcc; vertical-align: top; margin-top: 5px; display: inline-block; }
+/* Wettersymbol RIESIG, Temperatur KLEINER */
+#main-icon { font-size: 8rem; color: #fff; margin-right: 15px; vertical-align: middle; }
+#temp-display { font-size: 4.5rem; font-weight: bold; vertical-align: middle; }
+.unit { font-size: 1.8rem; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
 
-/* Zahnrad HELLER */
-.settings-trigger { font-size: 3rem; color: #aaa; margin-bottom: 15px; cursor: pointer; padding: 10px; }
+/* Zahnrad: Weiß und klickbar */
+.settings-btn { background: none; border: none; color: #fff; font-size: 3.5rem; cursor: pointer; padding: 20px; outline: none; }
 
-.astro-area { font-size: 1.6rem; font-weight: bold; }
-.moon-divider { border-top: 1px solid #222; width: 60%; margin: 8px auto; }
-.icon-moon { color: #00ffcc !important; }
+.astro-area { font-size: 1.5rem; font-weight: bold; }
+.moon-divider { border-top: 1px solid #222; width: 50%; margin: 8px auto; }
 
 .ticker-row { height: 15%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
-.ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.5rem; color: #00ffcc; animation: marquee 40s linear infinite; font-weight: 900; }
+.ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.2rem; color: #00ffcc; animation: marquee 35s linear infinite; font-weight: bold; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-.footer-row { height: 33%; width: 100%; background: #000; }
-.forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
-.f-item { display: table-cell; text-align: center; vertical-align: middle; }
-.f-temp-max { font-size: 1.6rem; color: #ff4d4d; font-weight: bold; }
-.f-temp-min { font-size: 1.3rem; color: #00d9ff; }
+.footer-row { height: 33%; width: 100%; display: block; }
+.forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; border-bottom: 1px solid #111; }
+.f-item { display: table-cell; vertical-align: middle; text-align: center; }
+.f-temp-max { font-size: 1.5rem; color: #ff4d4d; font-weight: bold; }
+.f-temp-min { font-size: 1.2rem; color: #00d9ff; }
 
 /* Modal */
-#settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; }
-.modal { background: #111; border: 1px solid #333; border-radius: 20px; width: 90%; max-width: 500px; margin: 5vh auto; padding: 25px; text-align: center; }
-.settings-section { background: #181818; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left; }
-.settings-section h3 { font-size: 1rem; color: #00ffcc; margin-bottom: 10px; }
-input { background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 1.1rem; }
-.btn-save { background: #00ffcc; color: #000; border: none; font-weight: bold; padding: 18px; width: 100%; border-radius: 10px; font-size: 1.2rem; cursor: pointer; }
-.btn-close { background: #333; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; }
-
-/* Icon Farben */
-.icon-sun { color: #FFD700 !important; }
-.icon-sunset { color: #FF8C00 !important; }
-.icon-cloud { color: #FFFFFF !important; }
-.icon-rain { color: #00BFFF !important; }
-.icon-snow { color: #F0F8FF !important; }
-.icon-bolt { color: #FFFF00 !important; }
+#settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; z-index: 1000; }
+.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 450px; margin: 10% auto; padding: 20px; border-radius: 10px; text-align: center; }
+.section { background: #181818; padding: 15px; margin-bottom: 15px; border-radius: 8px; text-align: left; }
+input { background: #000; border: 1px solid #444; color: #fff; padding: 10px; font-size: 1.2rem; width: 100%; }
+.save-btn { background: #00ffcc; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; font-size: 1.2rem; border-radius: 5px; cursor: pointer; }
+.close-btn { background: #333; color: #fff; border: none; padding: 10px; width: 100%; margin-top: 10px; border-radius: 5px; cursor: pointer; }
