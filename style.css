@@ -8,50 +8,43 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; height: 10
 .header-row { height: 52%; width: 100%; padding: 10px; border-bottom: 1px solid #111; overflow: hidden; }
 .col-left, .col-center, .col-right { width: 33.33%; float: left; height: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; cursor: pointer; }
+#clock { font-size: 4.5rem; font-weight: bold; line-height: 1; }
 #date { font-size: 1.2rem; color: #00ffcc; text-transform: uppercase; }
 #station-logo { width: 180px; height: auto; margin: 10px 0; opacity: 0.9; }
-.legal-info { font-size: 0.65rem; color: #444; margin-bottom: 5px; }
+.legal-info { font-size: 0.65rem; color: #444; }
 
-/* Größenanpassung: Icon GRÖSSER, Temp KLEINER */
-#main-icon { font-size: 5rem; margin-right: 15px; }
-#temp-display { font-size: 5.5rem; font-weight: bold; line-height: 1; }
-.unit { font-size: 2rem; color: #00ffcc; vertical-align: top; margin-top: 10px; display: inline-block; }
+/* NEU: Symbol GRÖSSER, Temperatur KLEINER */
+#main-icon { font-size: 6rem; margin-right: 20px; color: #fff; }
+#temp-display { font-size: 4.5rem; font-weight: bold; line-height: 1; }
+.unit { font-size: 2rem; color: #00ffcc; vertical-align: top; margin-top: 5px; display: inline-block; }
 
-.settings-trigger { font-size: 2.8rem; color: #222; margin-bottom: 10px; cursor: pointer; padding: 10px; }
-.settings-trigger:hover { color: #00ffcc; }
+/* Zahnrad HELLER */
+.settings-trigger { font-size: 3rem; color: #aaa; margin-bottom: 15px; cursor: pointer; padding: 10px; }
 
 .astro-area { font-size: 1.6rem; font-weight: bold; }
 .moon-divider { border-top: 1px solid #222; width: 60%; margin: 8px auto; }
 .icon-moon { color: #00ffcc !important; }
 
-/* Ticker: 15% Höhe */
 .ticker-row { height: 15%; width: 100%; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; overflow: hidden; position: relative; }
 .ticker-move { position: absolute; white-space: nowrap; line-height: 85px; font-size: 2.5rem; color: #00ffcc; animation: marquee 40s linear infinite; font-weight: 900; }
-
-/* Ticker Warnfarben */
-.warn-red { color: #ff0000 !important; }
-.warn-orange { color: #ff8c00 !important; }
-.warn-frost { color: #00ffff !important; }
-
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
 .footer-row { height: 33%; width: 100%; background: #000; }
 .forecast-table { height: 50%; width: 100%; display: table; table-layout: fixed; }
 .f-item { display: table-cell; text-align: center; vertical-align: middle; }
 .f-temp-max { font-size: 1.6rem; color: #ff4d4d; font-weight: bold; }
-.f-temp-min { font-size: 1.3rem; color: #00d9ff; margin-left: 5px; }
+.f-temp-min { font-size: 1.3rem; color: #00d9ff; }
 
 /* Modal */
 #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 999; }
-.modal { background: #111; border: 1px solid #333; border-radius: 20px; width: 90%; max-width: 500px; margin: 5vh auto; padding: 25px; }
+.modal { background: #111; border: 1px solid #333; border-radius: 20px; width: 90%; max-width: 500px; margin: 5vh auto; padding: 25px; text-align: center; }
 .settings-section { background: #181818; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left; }
 .settings-section h3 { font-size: 1rem; color: #00ffcc; margin-bottom: 10px; }
 input { background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 1.1rem; }
 .btn-save { background: #00ffcc; color: #000; border: none; font-weight: bold; padding: 18px; width: 100%; border-radius: 10px; font-size: 1.2rem; cursor: pointer; }
 .btn-close { background: #333; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; }
 
-/* Icons Farbig */
+/* Icon Farben */
 .icon-sun { color: #FFD700 !important; }
 .icon-sunset { color: #FF8C00 !important; }
 .icon-cloud { color: #FFFFFF !important; }

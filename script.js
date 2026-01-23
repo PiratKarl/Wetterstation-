@@ -14,24 +14,6 @@ var iconColorMap = {
 
 function zero(n) { return (n < 10 ? '0' : '') + n; }
 
-// --- TICKER LOGIK (WARNUNGEN & TIPPS) ---
-function getClothingTip(temp, rain) {
-    if (temp < 6) return "❄️ WINTERMODUS: Dicke Jacke & Schal!";
-    if (temp < 15) return "🧥 Übergangsjacke empfohlen.";
-    if (temp < 22) return "👕 T-Shirt Wetter!";
-    return "🕶️ HEISS: Luftig kleiden!";
-}
-
-function getWarnings(data) {
-    var warns = [];
-    var wind = Math.round(data.wind.speed * 3.6);
-    if (wind > 65) warns.push({t: "⚠️ STURM-WARNUNG!", c: "warn-orange"});
-    if (data.main.temp < -2) warns.push({t: "❄️ FROST-ALARM!", c: "warn-frost"});
-    if (data.main.temp > 30) warns.push({t: "🔥 HITZE-ALARM!", c: "warn-red"});
-    return warns;
-}
-
-// MONDBERECHNUNG
 function updateMoon() {
     var jd = (new Date().getTime() / 86400000) - (new Date().getTimezoneOffset() / 1440) + 2440587.5;
     var phase = ((jd - 2451549.5) / 29.53058867) % 1;
@@ -45,7 +27,6 @@ function updateMoon() {
     document.getElementById('moon-icon').className = "fa " + icon + " icon-moon";
 }
 
-// NACHTMODUS CHECK
 function checkSleepMode() {
     var now = new Date();
     var cur = zero(now.getHours()) + ":" + zero(now.getMinutes());
@@ -63,55 +44,82 @@ function updateClock() {
     checkSleepMode();
 }
 
-async function fetchWeather() {
-    try {
-        var res = await fetch("https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
-        var data = await res.json();
-        if (data.cod === 200) {
+function fetchWeather() {
+    // XMLHttpRequest statt fetch für bessere Legacy-Kompatibilität
+    var xhr = new XMLHttpRequest();
+    var url = "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de";
+    
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var data = JSON.parse(xhr.responseText);
             document.getElementById('city-title').innerText = data.name.toUpperCase();
             document.getElementById('temp-display').innerText = data.main.temp.toFixed(1);
             document.getElementById('main-icon').className = "fa " + (iconColorMap[data.weather[0].icon] || "fa-cloud");
+            
             var off = data.timezone;
             document.getElementById('sunrise-val').innerText = zero(new Date((data.sys.sunrise+off)*1000).getUTCHours()) + ":" + zero(new Date((data.sys.sunrise+off)*1000).getUTCMinutes());
             document.getElementById('sunset-val').innerText = zero(new Date((data.sys.sunset+off)*1000).getUTCHours()) + ":" + zero(new Date((data.sys.sunset+off)*1000).getUTCMinutes());
-            updateMoon();
-
-            // Ticker zusammenbauen
-            var ticker = document.getElementById('info-ticker');
-            ticker.innerHTML = "";
-            getWarnings(data).forEach(function(w) { ticker.innerHTML += '<span class="' + w.c + '">' + w.t + ' +++ </span>'; });
-            ticker.innerHTML += '<span>' + getClothingTip(data.main.temp, false) + ' +++ </span>';
-            ticker.innerHTML += '<span>WIND: ' + Math.round(data.wind.speed * 3.6) + ' KM/H +++ FEUCHTE: ' + data.main.humidity + '% +++ </span>';
             
+            updateMoon();
+            
+            // TICKER UPDATE
+            var wind = Math.round(data.wind.speed * 3.6);
+            var tickerText = "WIND: " + wind + " KM/H +++ DRUCK: " + data.main.pressure + " HPA +++ FEUCHTE: " + data.main.humidity + "% +++ TIP: UHR TIPPEN FÜR VOLLBILD";
+            document.getElementById('info-ticker').innerHTML = tickerText;
             document.getElementById('update-info').innerText = "Upd: " + zero(new Date().getHours()) + ":" + zero(new Date().getMinutes());
+            
+            fetchForecast(); // Vorhersage erst nach aktuellem Wetter laden
         }
-        
-        var resF = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de");
-        var dataF = await resF.json();
-        
-        var hL = document.getElementById('hourly-list'); hL.innerHTML = "";
-        for(var i=0; i<5; i++) {
-            var it = dataF.list[i];
-            hL.innerHTML += '<div class="f-item"><span style="color:#555; display:block;">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; margin:5px 0; display:block;"></i><b>' + Math.round(it.main.temp) + '°</b></div>';
+    };
+    xhr.open("GET", url, true);
+    xhr.send();
+}
+
+function fetchForecast() {
+    var xhr = new XMLHttpRequest();
+    var url = "https://api.openweathermap.org/data/2.5/forecast?q=" + encodeURIComponent(currentCity) + "&appid=" + API_KEY + "&units=metric&lang=de";
+    
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var dataF = JSON.parse(xhr.responseText);
+            
+            var hL = document.getElementById('hourly-list'); 
+            hL.innerHTML = "";
+            for(var i=0; i<5; i++) {
+                var it = dataF.list[i];
+                hL.innerHTML += '<div class="f-item"><span style="color:#555; display:block;">' + new Date(it.dt*1000).getHours() + ':00</span><i class="fa ' + (iconColorMap[it.weather[0].icon] || "fa-cloud") + '" style="font-size:1.8rem; margin:5px 0; display:block;"></i><b>' + Math.round(it.main.temp) + '°</b></div>';
+            }
+            
+            var dL = document.getElementById('daily-list'); 
+            dL.innerHTML = ""; 
+            var days = {};
+            for(var j=0; j < dataF.list.length; j++) {
+                var item = dataF.list[j];
+                var dName = new Date(item.dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
+                if(!days[dName]) days[dName] = { temps: [], icon: item.weather[0].icon };
+                days[dName].temps.push(item.main.temp);
+            }
+            
+            var count = 0;
+            for(var d in days) {
+                if(count > 0 && count < 6) {
+                    var mx = Math.round(Math.max.apply(Math, days[d].temps)); 
+                    var mn = Math.round(Math.min.apply(Math, days[d].temps));
+                    dL.innerHTML += '<div class="f-item"><span style="color:#00ffcc; display:block;">' + d + '</span><i class="fa ' + (iconColorMap[days[d].icon] || "fa-cloud") + '" style="font-size:1.8rem; margin:5px 0; display:block;"></i><span class="f-temp-max">' + mx + '°</span><span class="f-temp-min">' + mn + '°</span></div>';
+                }
+                count++;
+            }
         }
-        
-        var dL = document.getElementById('daily-list'); dL.innerHTML = ""; var days = {};
-        dataF.list.forEach(function(it) {
-            var d = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
-            if(!days[d]) days[d] = { temps: [], icon: it.weather[0].icon };
-            days[d].temps.push(it.main.temp);
-        });
-        Object.keys(days).slice(1, 6).forEach(function(d) {
-            var mx = Math.round(Math.max.apply(Math, days[d].temps)); var mn = Math.round(Math.min.apply(Math, days[d].temps));
-            dL.innerHTML += '<div class="f-item"><span style="color:#00ffcc; display:block;">' + d + '</span><i class="fa ' + (iconColorMap[days[d].icon] || "fa-cloud") + '" style="font-size:1.8rem; margin:5px 0; display:block;"></i><span class="f-temp-max">' + mx + '°</span><span class="f-temp-min">' + mn + '°</span></div>';
-        });
-    } catch (e) { console.log(e); }
+    };
+    xhr.open("GET", url, true);
+    xhr.send();
 }
 
 function toggleSettings() {
     var s = document.getElementById('settings-overlay');
-    if (s.style.display === 'block') { s.style.display = 'none'; }
-    else {
+    if (s.style.display === 'block') {
+        s.style.display = 'none';
+    } else {
         document.getElementById('city-input').value = currentCity;
         document.getElementById('sleep-start').value = sleepStart;
         document.getElementById('sleep-end').value = sleepEnd;
