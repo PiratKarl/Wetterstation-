@@ -3,26 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.51</title>
+    <title>Aura Weather V1.52 PRO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body onclick="activateWakeLock()">
+<body style="background:#000; margin:0; overflow:hidden;" onclick="activateWakeLock()">
 
     <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
     </div>
 
+    <div id="settings-overlay">
+        <div class="modal">
+            <h2 class="cyan-title">SYSTEM SETUP</h2>
+            
+            <div class="input-group">
+                <label>Standort eingabe</label>
+                <input type="text" id="city-input" placeholder="z.B. Braunschweig">
+            </div>
+            
+            <div class="settings-sect">
+                <b>NACHT-MODUS ZEITEN:</b><br>
+                VON <input type="time" id="s-start"> BIS <input type="time" id="s-end">
+                <div id="menu-sleep-info">AKTIVE RUHEZEIT: --:--</div>
+            </div>
+
+            <div class="donation-card">
+                <b>PROJEKT: DIGITALER DENKMALSCHUTZ</b><br>
+                <p>Hilf mit, diese Hardware zu retten! Deine Spende hält die Entwicklung für Karls Projekt am Leben.</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
+                    <i class="fa fa-paypal"></i> Kaffeekasse Piratkarl
+                </a>
+            </div>
+
+            <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
+            <button onclick="toggleSettings()" class="btn-close">ZURÜCK</button>
+        </div>
+    </div>
+
     <div class="app-shell">
-        <table width="100%" height="260" border="0" cellpadding="0" cellspacing="0" class="main-table">
+        <table width="100%" height="260" border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <td width="33%" align="center">
                     <div id="clock">00:00</div>
                     <div id="date">Lade...</div>
-                    <img src="logo.png" id="main-logo">
+                    <img src="logo.png" height="70" style="margin:5px 0;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V1.51 PRO</span>
+                        <span class="ver-label">V1.52 PRO</span>
                     </div>
                 </td>
                 
@@ -32,7 +60,7 @@
                         <span id="main-icon-container"></span>
                         <span id="temp-display">--</span><span class="degree-unit">°</span>
                     </div>
-                    <div id="feels-like"></div>
+                    <div id="feels-like">--</div>
                 </td>
 
                 <td width="33%" align="center">
@@ -50,7 +78,7 @@
         </table>
 
         <div class="ticker-box">
-            <marquee id="info-ticker" scrollamount="6">+++ BITTE DISPLAY TIPPEN ZUM AKTIVIEREN +++</marquee>
+            <marquee id="info-ticker" scrollamount="6">+++ BITTE TIPPEN ZUM AKTIVIEREN +++</marquee>
         </div>
 
         <div class="forecast-area">
@@ -59,42 +87,7 @@
         </div>
     </div>
 
-    <div id="settings-overlay">
-        <div class="modal">
-            <h2 class="cyan-title">SYSTEM SETUP</h2>
-            
-            <div class="input-group">
-                <label>Standort eingabe</label>
-                <input type="text" id="city-input">
-            </div>
-            
-            <div class="settings-sect">
-                <b>NACHT-MODUS ZEITEN:</b><br>
-                VON <input type="time" id="s-start"> BIS <input type="time" id="s-end">
-                <div id="menu-sleep-info">AKTIVE RUHEZEIT: --:--</div>
-            </div>
-
-            <div class="donation-card">
-                <b>PROJEKT: DIGITALER DENKMALSCHUTZ</b><br>
-                <p>Diese App rettet alte Hardware. Deine Spende hilft, die Entwicklung für das Samsung Tab 2 am Leben zu erhalten!</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                    <i class="fa fa-paypal"></i> Kaffeekasse Piratkarl
-                </a>
-            </div>
-
-            <div class="tips-sect">
-                <b>WARTUNGSTIPPS:</b><br>
-                • Dauerstrom & Nachtmodus nutzen.<br>
-                • Andere Apps im Hintergrund schließen.<br>
-                • Einmal pro Monat Tablet neu starten.
-            </div>
-
-            <button onclick="saveAll()" class="btn-save">SPEICHERN & RESTART</button>
-            <button onclick="toggleSettings()" class="btn-close">ZURÜCK</button>
-        </div>
-    </div>
-
-    <video id="wake-video" playsinline muted loop>
+    <video id="wake-video" playsinline muted loop style="position:fixed; top:0; left:0; width:1px; height:1px; opacity:0.01;">
         <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
     </video>
 

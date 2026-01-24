@@ -1,54 +1,39 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { background: #000; color: #fff; font-family: Arial, sans-serif; overflow: hidden; margin: 0; padding: 0; }
+body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; width: 1024px; height: 600px; overflow: hidden; }
 
-#night-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; text-align: center; padding-top: 150px; }
-#night-clock { font-size: 80px; color: #111; font-weight: bold; }
+/* SETTINGS FIX: Absolut oben fixiert */
+#settings-overlay {
+    position: absolute; top: 0px !important; left: 0px !important;
+    width: 100% !important; height: 100% !important;
+    background: rgba(0,0,0,0.98); display: none; z-index: 99999;
+    overflow-y: scroll; -webkit-overflow-scrolling: touch;
+}
+.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 500px; margin: 10px auto; padding: 15px; border-radius: 10px; }
+.cyan-title { background: #00ffcc; color: #000; padding: 8px; margin: 0 0 15px 0; border-radius: 4px; font-size: 20px; }
 
-.app-shell { width: 1024px; height: 600px; }
+/* Schriften in Pixel für Tab 2 */
+#clock { font-size: 80px; font-weight: bold; line-height: 1; }
+#date { font-size: 20px; color: #00ffcc; }
+#temp-display { font-size: 90px; font-weight: bold; }
+.degree-unit { font-size: 40px; color: #00ffcc; vertical-align: top; }
+#city-title { color: #555; font-size: 14px; letter-spacing: 2px; }
+#feels-like { font-size: 22px; font-weight: bold; color: #eee; }
 
-/* Obere Sektion */
-#clock { font-size: 85px; font-weight: bold; line-height: 1; }
-#date { font-size: 22px; color: #00ffcc; }
-#main-logo { height: 75px; margin: 5px 0; }
-.ver-label { color: #444; font-size: 14px; font-weight: bold; margin-left: 5px; }
+.astro-line { font-size: 26px; font-weight: bold; margin-bottom: 5px; }
+#moon-display { font-size: 16px; color: #777; }
+.fa-gear { font-size: 40px; color: #fff; }
 
-#temp-display { font-size: 100px; font-weight: bold; vertical-align: middle; }
-.degree-unit { font-size: 40px; color: #00ffcc; vertical-align: top; margin-top: 15px; display: inline-block; }
-#city-title { color: #555; letter-spacing: 2px; font-size: 16px; margin-bottom: 5px; }
-#feels-like { font-size: 24px; font-weight: bold; }
-
-/* Astro Bereich */
-.astro-box { border-top: 1px solid #222; padding-top: 10px; }
-.astro-line { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
-#moon-display { font-size: 18px; color: #888; margin-top: 5px; }
-.fa-gear { font-size: 45px; color: #fff; cursor: pointer; }
-#offline-warn { font-size: 40px; color: #ff4d4d; display: none; margin-right: 20px; }
-
-/* Ticker */
 .ticker-box { height: 80px; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; }
-marquee { line-height: 80px; font-size: 40px; color: #00ffcc; font-weight: bold; }
+marquee { line-height: 80px; font-size: 38px; color: #00ffcc; font-weight: bold; }
 
-/* Vorhersage Tabellen */
-#hourly-table, #daily-table { table-layout: fixed; border-collapse: collapse; }
-.f-item { text-align: center; vertical-align: middle; padding: 2px; }
+.f-day-name { font-size: 16px; color: #00ffcc; font-weight: bold; display: block; }
+.f-temp-max { font-size: 22px; color: #ff4d4d; font-weight: bold; }
+.f-rain-info { color: #00d9ff; font-size: 14px; }
 
-/* WOCHENTAGE - FIXIERTE GRÖSSE */
-.f-day-name { font-size: 18px; color: #00ffcc; font-weight: bold; display: block; text-transform: uppercase; }
-.f-temp-max { font-size: 24px; color: #ff4d4d; font-weight: bold; }
-.f-rain-info { color: #00d9ff; font-size: 16px; }
-.f-hour { color: #00ffcc; font-size: 18px; font-weight: bold; }
-
-/* Settings Modal */
-#settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; z-index: 1000; overflow-y: auto; }
-.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 550px; margin: 10px auto; padding: 20px; border-radius: 12px; }
-.cyan-title { background: #00ffcc; color: #000; padding: 10px; border-radius: 5px; }
-.donation-card { background: #181818; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 5px solid #0070ba; text-align: left; }
-.paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 12px; border-radius: 25px; display: block; text-align: center; font-weight: bold; margin-top: 10px; }
-.settings-sect { background: #181818; padding: 15px; border-radius: 10px; text-align: left; margin-bottom: 10px; }
-#menu-sleep-info { color: #00ffcc; font-weight: bold; margin-top: 10px; font-size: 18px; }
-.btn-save { width: 100%; padding: 15px; background: #00ffcc; border: none; font-weight: bold; font-size: 20px; border-radius: 8px; }
-.btn-close { width: 100%; padding: 10px; background: #333; color: #fff; border: none; margin-top: 10px; border-radius: 8px; }
+.donation-card { background: #0a0a0a; border-left: 4px solid #0070ba; padding: 10px; text-align: left; margin: 10px 0; font-size: 14px; }
+.paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 10px; border-radius: 20px; display: block; text-align: center; font-weight: bold; margin-top: 5px; }
+.btn-save { width: 100%; padding: 12px; background: #00ffcc; font-weight: bold; border-radius: 5px; border: none; font-size: 18px; }
+.btn-close { width: 100%; padding: 8px; background: #333; color: #fff; border: none; margin-top: 8px; border-radius: 5px; }
 
 .live-indicator { display: inline-block; width: 12px; height: 12px; background-color: #ff4d4d; border-radius: 50%; -webkit-animation: blink 2s infinite; }
 @-webkit-keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-#wake-video { position: fixed; width: 1px; height: 1px; opacity: 0.01; }
