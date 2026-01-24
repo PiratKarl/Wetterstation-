@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.57 PRO</title>
+    <title>Aura Weather V1.59 Master</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -15,47 +15,50 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">STATION CONTROL</h2>
+            <h2 class="cyan-title">STATION MASTER CONTROL</h2>
             
-            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
+            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN (STADT / ZEIT)</div>
             <div id="sect-setup" class="sub-sect">
-                <label>Standort eingabe</label>
+                <label>Stadt für Wetterdaten:</label>
                 <input type="text" id="city-input">
-                <label style="margin-top:10px; display:block;">Nachtmodus Zeiten</label>
+                <label style="margin-top:10px; display:block;">Nachtmodus (Display aus):</label>
                 VON <input type="time" id="s-start"> BIS <input type="time" id="s-end">
             </div>
 
-            <div class="menu-item" onclick="toggleSub('sect-guide')"><i class="fa fa-book"></i> ANLEITUNG</div>
+            <div class="menu-item" onclick="toggleSub('sect-guide')"><i class="fa fa-book"></i> BEDIENUNGSANLEITUNG</div>
             <div id="sect-guide" class="sub-sect">
-                • Einmal tippen aktiviert Vollbild & Wachhalte-Modus.<br>
-                • Nachtmodus dimmt das Display automatisch.<br>
-                • Der Ticker zeigt UV-Index & Regenwahrscheinlichkeit.
+                • <b>Aktivierung:</b> Nach dem Laden einmal tippen für Vollbild.<br>
+                • <b>Update:</b> Wetterdaten aktualisieren sich alle 5 Minuten.<br>
+                • <b>Nachtmodus:</b> Schont das Display durch Schwarzbild.<br>
+                • <b>Farben:</b> Gefühlte Temp: Rot(warm), Blau(kalt), Weiß(gleich).
             </div>
 
-            <div class="menu-item" onclick="toggleSub('sect-tips')"><i class="fa fa-lightbulb-o"></i> TABLET-TIPPS</div>
+            <div class="menu-item" onclick="toggleSub('sect-tips')"><i class="fa fa-lightbulb-o"></i> TABLET-WARTUNG (KITKAT)</div>
             <div id="sect-tips" class="sub-sect">
-                • Dauerstrom wird für den Wachhalte-Modus empfohlen.<br>
-                • Hintergrund-Apps schließen für flüssige Animationen.<br>
-                • Nachtmodus schützt vor Display-Einbrennen.
+                • <b>Entwickler-Optionen:</b> "Aktiv lassen beim Laden" einschalten.<br>
+                • <b>Cache:</b> Einmal wöchentlich Browser-Daten löschen.<br>
+                • <b>WLAN:</b> In den Android-Einstellungen "WLAN im Standby anlassen" wählen.
             </div>
 
-            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart"></i> KAFFEEKASSE</div>
+            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> UNTERSTÜTZUNG</div>
             <div id="sect-coffee" class="sub-sect">
-                <b style="color:#fff;">Projekt: Digitaler Denkmalschutz</b><br>
-                Diese Station rettet Hardware vor dem Schrottplatz. Jede Unterstützung hilft mir, das Projekt weiterzuentwickeln!
+                <b>Digitaler Denkmalschutz:</b><br>
+                Ich entwickle diese App ehrenamtlich, um alte Hardware vor dem Schrott zu retten. Jede Spende motiviert mich für neue Updates!
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                    <i class="fa fa-paypal"></i> Jetzt Spenden via PayPal
+                    <i class="fa fa-paypal"></i> Kaffeekasse via PayPal
                 </a>
             </div>
 
-            <div class="menu-item" onclick="toggleSub('sect-legal')"><i class="fa fa-balance-scale"></i> RECHTLICHES</div>
+            <div class="menu-item" onclick="toggleSub('sect-legal')"><i class="fa fa-balance-scale"></i> RECHTLICHES & DATENSCHUTZ</div>
             <div id="sect-legal" class="sub-sect">
-                <b>Impressum:</b> Karl Pirat, Lohengrinstraße 25, 38106 Braunschweig.<br>
-                <b>Datenschutz:</b> Keine Speicherung persönlicher Daten.
+                <b>Impressum:</b><br>
+                Karl Pirat<br>Lohengrinstraße 25<br>38106 Braunschweig<br><br>
+                <b>Datenschutz:</b><br>
+                Es werden keine Nutzerdaten erhoben. Die App kommuniziert nur mit OpenWeatherMap.
             </div>
 
             <button onclick="saveAll()" class="btn-save">SPEICHERN & START</button>
-            <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
+            <button onclick="toggleSettings()" class="btn-close">MENÜ SCHLIESSEN</button>
         </div>
     </div>
 
@@ -65,10 +68,10 @@
                 <td width="33%" align="center">
                     <div id="clock">00:00</div>
                     <div id="date">Lade...</div>
-                    <img src="logo.png" height="65">
+                    <img src="logo.png" height="60" style="margin:5px 0;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V1.57 PRO</span>
+                        <span class="ver-label">V1.59 MASTER</span>
                     </div>
                 </td>
                 <td width="34%" align="center">
@@ -77,7 +80,7 @@
                         <span id="main-icon-container"></span>
                         <span id="temp-display">--</span><span class="degree-unit">°</span>
                     </div>
-                    <div id="feels-like" style="font-size:24px; font-weight:bold;">--</div>
+                    <div id="feels-like">--</div>
                 </td>
                 <td width="33%" align="center">
                     <div class="top-btns">
@@ -87,14 +90,14 @@
                     <div class="astro-box">
                         <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
                         <div class="astro-line"><i class="fa fa-moon-o" style="color:#FF8C00"></i> <span id="sunset-val">--:--</span></div>
-                        <div id="moon-display">Mond...</div>
+                        <div id="moon-display">Berechne...</div>
                     </div>
                 </td>
             </tr>
         </table>
 
         <div class="ticker-box">
-            <marquee id="info-ticker" scrollamount="6">+++ BITTE TIPPEN ZUM AKTIVIEREN +++</marquee>
+            <marquee id="info-ticker" scrollamount="6">+++ BITTE DISPLAY TIPPEN ZUM AKTIVIEREN +++</marquee>
         </div>
 
         <div class="forecast-area">
