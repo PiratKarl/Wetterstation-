@@ -4,8 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aura Weather V1.59 Master</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="logo.png">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(function() {
+          console.log("Aura Service Worker aktiv!");
+        });
+      }
+    </script>
 </head>
 <body onclick="activateWakeLock()">
 
@@ -35,26 +49,26 @@
 
             <div class="menu-item" onclick="toggleSub('sect-tips')"><i class="fa fa-lightbulb-o"></i> TABLET-WARTUNG (KITKAT)</div>
             <div id="sect-tips" class="sub-sect">
-                • <b>Entwickler-Optionen:</b> "Aktiv lassen beim Laden" einschalten.<br>
-                • <b>Cache:</b> Einmal wöchentlich Browser-Daten löschen.<br>
-                • <b>WLAN:</b> In den Android-Einstellungen "WLAN im Standby anlassen" wählen.
+                • <b>Aktiv bleiben:</b> "Wachbleiben beim Laden" in den Android-Entwickleroptionen aktivieren.<br>
+                • <b>WLAN-Stabilität:</b> Flugmodus AN, dann WLAN manuell AN spart Akku-Zyklen.<br>
+                • <b>Browser:</b> Cache einmal wöchentlich in den Einstellungen leeren.
             </div>
 
-            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> UNTERSTÜTZUNG</div>
+            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> UNTERSTÜTZUNG (SUPPORT)</div>
             <div id="sect-coffee" class="sub-sect">
                 <b>Digitaler Denkmalschutz:</b><br>
-                Ich entwickle diese App ehrenamtlich, um alte Hardware vor dem Schrott zu retten. Jede Spende motiviert mich für neue Updates!
+                Diese App rettet alte Hardware vor dem Schrottplatz. Jede Spende hilft mir, die Serverkosten zu decken und neue Updates zu bauen!
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                    <i class="fa fa-paypal"></i> Kaffeekasse via PayPal
+                    <i class="fa fa-paypal"></i> Jetzt Kaffeekasse via PayPal öffnen
                 </a>
             </div>
 
-            <div class="menu-item" onclick="toggleSub('sect-legal')"><i class="fa fa-balance-scale"></i> RECHTLICHES & DATENSCHUTZ</div>
+            <div class="menu-item" onclick="toggleSub('sect-legal')"><i class="fa fa-balance-scale"></i> RECHTLICHES & IMPRESSUM</div>
             <div id="sect-legal" class="sub-sect">
                 <b>Impressum:</b><br>
                 Karl Pirat<br>Lohengrinstraße 25<br>38106 Braunschweig<br><br>
                 <b>Datenschutz:</b><br>
-                Es werden keine Nutzerdaten erhoben. Die App kommuniziert nur mit OpenWeatherMap.
+                Es werden keine Nutzerdaten erhoben. Die App kommuniziert nur mit OpenWeatherMap für deine Standortdaten.
             </div>
 
             <button onclick="saveAll()" class="btn-save">SPEICHERN & START</button>
@@ -74,6 +88,7 @@
                         <span class="ver-label">V1.59 MASTER</span>
                     </div>
                 </td>
+                
                 <td width="34%" align="center">
                     <div id="city-title">STANDORT</div>
                     <div class="temp-row">
@@ -82,15 +97,16 @@
                     </div>
                     <div id="feels-like">--</div>
                 </td>
+
                 <td width="33%" align="center">
                     <div class="top-btns">
-                        <i id="offline-warn" class="fa fa-exclamation-triangle"></i>
+                        <i id="offline-warn" class="fa fa-exclamation-triangle" style="display:none; color:#ff4d4d; font-size:35px; margin-right:20px;"></i>
                         <i class="fa fa-gear" onclick="toggleSettings(); event.stopPropagation();"></i>
                     </div>
                     <div class="astro-box">
                         <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
                         <div class="astro-line"><i class="fa fa-moon-o" style="color:#FF8C00"></i> <span id="sunset-val">--:--</span></div>
-                        <div id="moon-display">Berechne...</div>
+                        <div id="moon-display">Mond...</div>
                     </div>
                 </td>
             </tr>

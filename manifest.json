@@ -1,16 +1,21 @@
 {
-  "name": "Aura Weather Station Pro",
   "short_name": "Aura Weather",
-  "description": "Professionelle Wetterstation für Tablet Edition",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "name": "Aura Weather V1.59 Master",
   "icons": [
     {
       "src": "logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "index.html?v=159",
+  "background_color": "#000000",
+  "display": "standalone",
+  "theme_color": "#00ffcc",
+  "orientation": "landscape"
 }
