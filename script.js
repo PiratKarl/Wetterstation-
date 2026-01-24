@@ -8,16 +8,18 @@ var lastSuccess = Date.now();
 var tickerData = { main: "", wind: "", astro: "", forecast: "", uv: "" };
 var isActivated = false;
 
-function getIconHtml(iconCode, size) {
-    return '<img src="' + iconCode + '.gif" style="width:' + size + 'px; height:auto; vertical-align:middle;">';
-}
-
 function z(n) { return (n < 10 ? '0' : '') + n; }
 
-// Hilfsfunktion für die Astro-Zeit (korrigiert Zeitversatz)
-function formatAstroTime(unix, timezone) {
-    var date = new Date((unix + timezone) * 1000);
-    return z(date.getUTCHours()) + ":" + z(date.getUTCMinutes());
+// Astro-Zeit Fix
+function formatUnix(unix, timezone) {
+    if (!unix) return "--:--";
+    // Umrechnung in Millisekunden inkl. Timezone-Shift von OpenWeather
+    var d = new Date((unix + timezone) * 1000);
+    return z(d.getUTCHours()) + ":" + z(d.getUTCMinutes());
+}
+
+function getIconHtml(iconCode, size) {
+    return '<img src="' + iconCode + '.gif" style="width:' + size + 'px; height:auto; vertical-align:middle;">';
 }
 
 function activateWakeLock() {
@@ -41,47 +43,40 @@ function updateClock() {
     var isS = (sStart < sEnd) ? (cur >= sStart && cur < sEnd) : (cur >= sStart || cur < sEnd);
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
-
-    // Anzeige im Menü
-    var mInfo = document.getElementById('menu-sleep-info');
-    if(mInfo) mInfo.innerText = "NACHTMODUS: " + sStart + " BIS " + sEnd + " UHR";
-}
-
-function buildTicker() {
-    var fullText = "+++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.uv + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
-    document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
+    
+    // Menü Info
+    var m = document.getElementById('menu-sleep-info');
+    if(m) m.innerText = "NACHTMODUS: " + sStart + " BIS " + sEnd + " UHR";
 }
 
 function fetchWeather() {
     if(!isActivated) return;
-    
-    // Wachhalte-Video nachdrücken
-    var v = document.getElementById('wake-video');
-    if(v) v.play();
-
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+encodeURIComponent(city)+"&appid="+API_KEY+"&units=metric&lang=de", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var d = JSON.parse(xhr.responseText);
             lastSuccess = Date.now();
-            
             var sTime = xhr.getResponseHeader('Date');
             if(sTime) timeOffset = new Date(sTime).getTime() - Date.now();
             
             document.getElementById('temp-display').innerText = Math.round(d.main.temp);
             document.getElementById('city-title').innerText = d.name.toUpperCase();
-            document.getElementById('main-icon-container').innerHTML = getIconHtml(d.weather[0].icon, 115);
-            document.getElementById('feels-like').innerHTML = '<i class="fa fa-thermometer-half"></i> GEFÜHLT ' + Math.round(d.main.feels_like) + "°";
+            document.getElementById('main-icon-container').innerHTML = getIconHtml(d.weather[0].icon, 120);
+            document.getElementById('feels-like').innerHTML = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
             
-            // ASTRO FIX
-            document.getElementById('sunrise-val').innerText = formatAstroTime(d.sys.sunrise, d.timezone);
-            document.getElementById('sunset-val').innerText = formatAstroTime(d.sys.sunset, d.timezone);
+            // ASTRO DATEN SETZEN
+            document.getElementById('sunrise-val').innerText = formatUnix(d.sys.sunrise, d.timezone);
+            document.getElementById('sunset-val').innerText = formatUnix(d.sys.sunset, d.timezone);
             
-            tickerData.main = d.weather[0].description + " (FEUCHTE: " + d.main.humidity + "%)";
-            tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
-            tickerData.astro = "LUFTDRUCK: " + d.main.pressure + " HPA";
+            var ph = (((Date.now()/86400000)+2440587.5-2451549.5)/29.53)%1;
+            var ms = ["🌑 Neumond","🌙 Zun. Sichel","🌓 Halbmond","🌕 Vollmond","🌗 Halbmond","🌘 Abn. Sichel"];
+            document.getElementById('moon-display').innerText = ms[Math.floor(ph*6)] || ms[0];
 
+            tickerData.main = d.weather[0].description;
+            tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
+            tickerData.astro = "DRUCK: " + d.main.pressure + " HPA";
+            
             fetchForecast();
         }
     };
@@ -94,31 +89,38 @@ function fetchForecast() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var f = JSON.parse(xhr.responseText);
+            
+            // Stunden
             var hRow = "<tr>";
             for(var i=0; i<5; i++) {
                 var it = f.list[i];
                 var pop = it.pop ? Math.round(it.pop * 100) : 0;
-                hRow += '<td class="f-item"><span style="color:#00ffcc;font-size:1rem;font-weight:bold;">'+new Date(it.dt*1000).getHours()+':00</span><br>'+getIconHtml(it.weather[0].icon, 55)+'<br><b>'+Math.round(it.main.temp)+'°</b><br><span style="color:#00d9ff;font-size:0.85rem;">☂️'+pop+'%</span></td>';
+                hRow += '<td class="f-item"><span class="f-hour">'+new Date(it.dt*1000).getHours()+':00</span><br>'+getIconHtml(it.weather[0].icon, 55)+'<br><b>'+Math.round(it.main.temp)+'°</b><br><span class="f-rain-info">☂️'+pop+'%</span></td>';
             }
             document.getElementById('hourly-table').innerHTML = hRow + "</tr>";
             
+            // Tage
             var days = {};
             for(var j=0; j<f.list.length; j++) {
                 var dN = new Date(f.list[j].dt*1000).toLocaleDateString('de-DE', {weekday:'short'});
                 if(!days[dN]) days[dN] = { max: -99, min: 99, icon: f.list[j].weather[0].icon, pop: 0 };
                 if(f.list[j].main.temp > days[dN].max) days[dN].max = f.list[j].main.temp;
-                if(f.list[j].main.temp < days[dN].min) days[dN].min = f.list[j].main.temp;
                 if(f.list[j].pop > days[dN].pop) days[dN].pop = f.list[j].pop;
             }
             var dRow = "<tr>"; var c = 0;
             for(var day in days) {
                 if(c > 0 && c < 6) {
-                    dRow += '<td class="f-item"><span class="f-day-name">'+day+'</span>'+getIconHtml(days[day].icon, 65)+'<br><span class="f-temp-max">'+Math.round(days[day].max)+'°</span> <span style="color:#00d9ff;font-size:1rem;">☂️'+Math.round(days[day].pop * 100)+'%</span></td>';
+                    dRow += '<td class="f-item"><span class="f-day-name">'+day+'</span>'+getIconHtml(days[day].icon, 60)+'<br><span class="f-temp-max">'+Math.round(days[day].max)+'°</span><br><span class="f-rain-info">☂️'+Math.round(days[day].pop * 100)+'%</span></td>';
                 }
                 c++;
             }
             document.getElementById('daily-table').innerHTML = dRow + "</tr>";
-            buildTicker(); 
+            
+            var n3 = f.list[1];
+            tickerData.forecast = "Vorschau " + new Date(n3.dt*1000).getHours() + " Uhr: " + n3.weather[0].description;
+            
+            var fullText = "+++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
+            document.getElementById('info-ticker').innerHTML = fullText.toUpperCase();
         }
     };
     xhr.send();
