@@ -41,7 +41,6 @@ function updateClock() {
     var isS = (sStart < sEnd) ? (cur >= sStart && cur < sEnd) : (cur >= sStart || cur < sEnd);
     document.getElementById('night-overlay').style.display = isS ? 'block' : 'none';
     if(isS) document.getElementById('night-clock').innerText = cur;
-    document.getElementById('menu-sleep-info').innerText = "MODUS: " + sStart + " BIS " + sEnd + " UHR";
 }
 
 function fetchWeather() {
