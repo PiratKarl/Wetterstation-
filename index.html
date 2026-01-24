@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.59 Master</title>
-    
+    <title>Aura Weather V1.60 Master</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link rel="apple-touch-icon" href="logo.png">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
-
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(function() {
-          console.log("Aura Service Worker aktiv!");
-        });
+        navigator.serviceWorker.register('sw.js');
       }
     </script>
 </head>
@@ -30,65 +24,37 @@
     <div id="settings-overlay">
         <div class="modal">
             <h2 class="cyan-title">STATION MASTER CONTROL</h2>
-            
-            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN (STADT / ZEIT)</div>
+            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
             <div id="sect-setup" class="sub-sect">
-                <label>Stadt für Wetterdaten:</label>
-                <input type="text" id="city-input">
-                <label style="margin-top:10px; display:block;">Nachtmodus (Display aus):</label>
+                <label>Stadt:</label> <input type="text" id="city-input">
+                <label style="margin-top:10px; display:block;">Nachtmodus:</label>
                 VON <input type="time" id="s-start"> BIS <input type="time" id="s-end">
             </div>
-
-            <div class="menu-item" onclick="toggleSub('sect-guide')"><i class="fa fa-book"></i> BEDIENUNGSANLEITUNG</div>
-            <div id="sect-guide" class="sub-sect">
-                • <b>Aktivierung:</b> Nach dem Laden einmal tippen für Vollbild.<br>
-                • <b>Update:</b> Wetterdaten aktualisieren sich alle 5 Minuten.<br>
-                • <b>Nachtmodus:</b> Schont das Display durch Schwarzbild.<br>
-                • <b>Farben:</b> Gefühlte Temp: Rot(warm), Blau(kalt), Weiß(gleich).
-            </div>
-
-            <div class="menu-item" onclick="toggleSub('sect-tips')"><i class="fa fa-lightbulb-o"></i> TABLET-WARTUNG (KITKAT)</div>
-            <div id="sect-tips" class="sub-sect">
-                • <b>Aktiv bleiben:</b> "Wachbleiben beim Laden" in den Android-Entwickleroptionen aktivieren.<br>
-                • <b>WLAN-Stabilität:</b> Flugmodus AN, dann WLAN manuell AN spart Akku-Zyklen.<br>
-                • <b>Browser:</b> Cache einmal wöchentlich in den Einstellungen leeren.
-            </div>
-
-            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> UNTERSTÜTZUNG (SUPPORT)</div>
+            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> UNTERSTÜTZUNG</div>
             <div id="sect-coffee" class="sub-sect">
-                <b>Digitaler Denkmalschutz:</b><br>
-                Diese App rettet alte Hardware vor dem Schrottplatz. Jede Spende hilft mir, die Serverkosten zu decken und neue Updates zu bauen!
+                <b>Projekt: Digitaler Denkmalschutz</b><br>
+                Hilf mit, alte Hardware zu retten!
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                    <i class="fa fa-paypal"></i> Jetzt Kaffeekasse via PayPal öffnen
+                    <i class="fa fa-paypal"></i> PayPal Kaffeekasse
                 </a>
             </div>
-
-            <div class="menu-item" onclick="toggleSub('sect-legal')"><i class="fa fa-balance-scale"></i> RECHTLICHES & IMPRESSUM</div>
-            <div id="sect-legal" class="sub-sect">
-                <b>Impressum:</b><br>
-                Karl Pirat<br>Lohengrinstraße 25<br>38106 Braunschweig<br><br>
-                <b>Datenschutz:</b><br>
-                Es werden keine Nutzerdaten erhoben. Die App kommuniziert nur mit OpenWeatherMap für deine Standortdaten.
-            </div>
-
             <button onclick="saveAll()" class="btn-save">SPEICHERN & START</button>
-            <button onclick="toggleSettings()" class="btn-close">MENÜ SCHLIESSEN</button>
+            <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
         </div>
     </div>
 
     <div class="app-shell">
-        <table width="100%" height="260" border="0" cellpadding="0" cellspacing="0">
+        <table width="100%" height="210" border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <td width="33%" align="center">
                     <div id="clock">00:00</div>
                     <div id="date">Lade...</div>
-                    <img src="logo.png" height="60" style="margin:5px 0;">
+                    <img src="logo.png" height="50">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V1.59 MASTER</span>
+                        <span class="ver-label">V1.60 MASTER</span>
                     </div>
                 </td>
-                
                 <td width="34%" align="center">
                     <div id="city-title">STANDORT</div>
                     <div class="temp-row">
@@ -97,10 +63,8 @@
                     </div>
                     <div id="feels-like">--</div>
                 </td>
-
                 <td width="33%" align="center">
                     <div class="top-btns">
-                        <i id="offline-warn" class="fa fa-exclamation-triangle" style="display:none; color:#ff4d4d; font-size:35px; margin-right:20px;"></i>
                         <i class="fa fa-gear" onclick="toggleSettings(); event.stopPropagation();"></i>
                     </div>
                     <div class="astro-box">
@@ -113,15 +77,15 @@
         </table>
 
         <div class="ticker-box">
-            <marquee id="info-ticker" scrollamount="6">+++ BITTE DISPLAY TIPPEN ZUM AKTIVIEREN +++</marquee>
+            <marquee id="info-ticker" scrollamount="6">+++ BITTE TIPPEN +++</marquee>
         </div>
 
         <div class="forecast-area">
             <div class="table-container">
-                <table id="hourly-table" width="98%" border="0"></table>
+                <table id="hourly-table" width="98%"></table>
             </div>
-            <div class="table-container" style="border-top:1px solid #222;">
-                <table id="daily-table" width="98%" border="0"></table>
+            <div class="table-container" style="border-top:1px solid #222; margin-top: 2px;">
+                <table id="daily-table" width="98%"></table>
             </div>
         </div>
     </div>

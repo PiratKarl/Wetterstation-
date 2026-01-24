@@ -1,42 +1,31 @@
 * { box-sizing: border-box; }
 body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; width: 1024px; height: 600px; overflow: hidden; }
 
-/* MODAL FIX */
-#settings-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); display: none; z-index: 99999; overflow-y: auto; }
-.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 600px; margin: 10px auto; padding: 20px; border-radius: 12px; }
-.cyan-title { background: #00ffcc; color: #000; padding: 10px; border-radius: 6px; font-size: 22px; font-weight: bold; }
+/* KOPFZEILE VERKLEINERT */
+#clock { font-size: 80px; font-weight: bold; line-height: 1; }
+#temp-display { font-size: 85px; font-weight: bold; }
+.degree-unit { font-size: 40px; color: #00ffcc; vertical-align: top; }
+#feels-like { font-size: 22px; font-weight: bold; }
 
-/* MENÜ STRUKTUR */
-.menu-item { background: #222; border: 1px solid #444; color: #00ffcc; padding: 12px; margin-top: 8px; border-radius: 8px; text-align: left; cursor: pointer; font-size: 18px; font-weight: bold; }
-.sub-sect { background: #181818; padding: 15px; border: 1px solid #333; border-top: none; display: none; text-align: left; color: #ccc; border-radius: 0 0 8px 8px; line-height: 1.4; }
+/* TICKER VERKLEINERT */
+.ticker-box { height: 65px; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; }
+marquee { line-height: 65px; font-size: 32px; color: #00ffcc; font-weight: bold; }
 
-/* PAYPAL */
+/* ASTRO */
+.astro-line { font-size: 26px; font-weight: bold; }
+.fa-gear { font-size: 45px; color: #fff; }
+
+/* VORHERSAGE KOMPAKTER */
+.forecast-area { width: 100%; margin-top: 5px; }
+.f-item { text-align: center; padding: 2px 15px; } /* Weniger vertikaler Abstand */
+.f-day-name { font-size: 16px; color: #00ffcc; font-weight: bold; }
+.f-temp-line { font-size: 21px; font-weight: bold; }
+
+/* MODAL & PAYPAL */
+#settings-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.98); display: none; z-index: 100000; overflow-y: scroll; padding: 10px; }
+.modal { background: #111; border: 1px solid #333; width: 90%; margin: 0 auto; padding: 15px; border-radius: 12px; }
 .paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 12px; border-radius: 25px; display: block; text-align: center; font-weight: bold; margin-top: 10px; }
+.btn-save { width: 100%; padding: 15px; background: #00ffcc; font-weight: bold; font-size: 20px; border-radius: 8px; margin-top: 15px; }
 
-/* HAUPT-ELEMENTE */
-#clock { font-size: 85px; font-weight: bold; line-height: 1; }
-#date { font-size: 20px; color: #00ffcc; }
-#temp-display { font-size: 95px; font-weight: bold; }
-.degree-unit { font-size: 45px; color: #00ffcc; vertical-align: top; }
-#city-title { color: #555; font-size: 15px; letter-spacing: 2px; }
-#feels-like { font-size: 24px; font-weight: bold; }
-
-/* ASTRO & GEAR */
-.astro-line { font-size: 30px; font-weight: bold; margin-bottom: 5px; }
-.fa-gear { font-size: 50px; color: #fff; cursor: pointer; }
-
-/* TICKER & VORHERSAGE */
-.ticker-box { height: 85px; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; }
-marquee { line-height: 85px; font-size: 36px; color: #00ffcc; font-weight: bold; }
-
-.table-container { width: 100%; text-align: center; }
-#hourly-table, #daily-table { margin: 0 auto; display: table; }
-.f-item { text-align: center; padding: 5px 25px; }
-.f-day-name { font-size: 18px; color: #00ffcc; font-weight: bold; text-transform: uppercase; }
-.f-temp-line { font-size: 24px; font-weight: bold; }
-
-.btn-save { width: 100%; padding: 15px; background: #00ffcc; border: none; font-weight: bold; font-size: 22px; border-radius: 8px; margin-top: 15px; }
-.btn-close { width: 100%; padding: 10px; background: #333; color: #fff; border: none; margin-top: 8px; border-radius: 8px; }
-
-.live-indicator { display: inline-block; width: 12px; height: 12px; background-color: #ff4d4d; border-radius: 50%; -webkit-animation: blink 2s infinite; }
+.live-indicator { display: inline-block; width: 10px; height: 10px; background-color: #ff4d4d; border-radius: 50%; -webkit-animation: blink 2s infinite; }
 @-webkit-keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
