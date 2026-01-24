@@ -1,40 +1,31 @@
 * { box-sizing: border-box; }
 body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; width: 1024px; height: 600px; overflow: hidden; }
 
-/* Menü-Fix */
+/* MODAL & MENÜ */
 #settings-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); display: none; z-index: 99999; overflow-y: auto; }
-.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 500px; margin: 10px auto; padding: 15px; border-radius: 10px; text-align: center; }
-.cyan-title { background: #00ffcc; color: #000; padding: 8px; margin: 0 0 10px 0; border-radius: 4px; font-size: 20px; }
+.modal { background: #111; border: 1px solid #333; width: 90%; max-width: 600px; margin: 10px auto; padding: 20px; border-radius: 15px; text-align: center; }
+.cyan-title { background: #00ffcc; color: #000; padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 22px; font-weight: bold; }
 
-/* Haupt-Elemente */
-#clock { font-size: 80px; font-weight: bold; line-height: 1; }
-#date { font-size: 18px; color: #00ffcc; }
-#temp-display { font-size: 90px; font-weight: bold; }
-.degree-unit { font-size: 40px; color: #00ffcc; vertical-align: top; }
-#city-title { color: #555; font-size: 14px; letter-spacing: 2px; }
-#feels-like { font-size: 20px; font-weight: bold; color: #eee; }
+.menu-item { background: #222; border: 1px solid #444; color: #00ffcc; padding: 12px; margin-top: 8px; border-radius: 8px; text-align: left; cursor: pointer; font-weight: bold; font-size: 18px; }
+.sub-sect { background: #181818; padding: 15px; border: 1px solid #333; border-top: none; display: none; text-align: left; color: #ccc; line-height: 1.4; border-radius: 0 0 8px 8px; margin-bottom: 5px; }
 
-/* ASTRO-BEREICH (RECHTS) - JETZT GRÖSSER */
-.astro-line { font-size: 28px; font-weight: bold; margin-bottom: 6px; }
-#moon-display { font-size: 17px; color: #888; margin-top: 5px; }
-.fa-gear { font-size: 38px; color: #fff; cursor: pointer; }
+/* Schriften */
+#clock { font-size: 85px; font-weight: bold; line-height: 1; }
+#date { font-size: 20px; color: #00ffcc; }
+#temp-display { font-size: 95px; font-weight: bold; }
+.degree-unit { font-size: 45px; color: #00ffcc; vertical-align: top; }
+.astro-line { font-size: 28px; font-weight: bold; }
 
-/* Ticker */
+/* Ticker & Forecast */
 .ticker-box { height: 80px; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; }
 marquee { line-height: 80px; font-size: 34px; color: #00ffcc; font-weight: bold; }
-
-/* VORHERSAGE - JETZT MAXIMIERT */
-.f-item { text-align: center; vertical-align: middle; padding: 2px; width: 20%; }
-.f-day-name { font-size: 17px; color: #00ffcc; font-weight: bold; display: block; margin-bottom: 3px; text-transform: uppercase; }
+.f-day-name { font-size: 17px; color: #00ffcc; font-weight: bold; display: block; text-transform: uppercase; }
 .f-temp-line { font-size: 23px; font-weight: bold; white-space: nowrap; }
-.f-rain-info { color: #00d9ff; font-size: 15px; font-weight: bold; }
-.f-hour { color: #00ffcc; font-size: 18px; font-weight: bold; }
 
-/* Buttons & Status */
-.donation-card { background: #0a0a0a; border-left: 4px solid #0070ba; padding: 10px; text-align: left; margin: 10px 0; font-size: 14px; }
-.paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 10px; border-radius: 20px; display: block; text-align: center; font-weight: bold; }
-.btn-save { width: 100%; padding: 12px; background: #00ffcc; font-weight: bold; border: none; font-size: 18px; border-radius: 5px; }
-.btn-close { width: 100%; padding: 8px; background: #333; color: #fff; border: none; margin-top: 8px; border-radius: 5px; }
+/* Support */
+.paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 12px 20px; border-radius: 30px; display: block; text-align: center; font-weight: bold; margin-top: 15px; font-size: 18px; }
+.btn-save { width: 100%; padding: 15px; background: #00ffcc; font-weight: bold; border: none; font-size: 22px; border-radius: 10px; margin-top: 20px; }
+.btn-close { width: 100%; padding: 10px; background: #333; color: #fff; border: none; margin-top: 10px; border-radius: 8px; }
 
-.live-indicator { display: inline-block; width: 10px; height: 10px; background-color: #ff4d4d; border-radius: 50%; -webkit-animation: blink 2s infinite; }
+.live-indicator { display: inline-block; width: 12px; height: 12px; background-color: #ff4d4d; border-radius: 50%; -webkit-animation: blink 2s infinite; }
 @-webkit-keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }

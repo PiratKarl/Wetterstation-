@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.53 Expert</title>
+    <title>Aura Weather V1.55 PREMIUM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#000; margin:0; overflow:hidden;" onclick="activateWakeLock()">
+<body onclick="activateWakeLock()">
 
     <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
@@ -15,30 +15,56 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">STATION SETUP</h2>
-            <div class="input-group">
-                <label style="color:#fff; display:block; margin-bottom:5px;">Standort eingabe</label>
-                <input type="text" id="city-input" placeholder="Stadt eingeben">
-            </div>
-            <div class="settings-sect">
-                <b>NACHT-MODUS:</b><br>
+            <h2 class="cyan-title">STATION CONTROL</h2>
+            
+            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
+            <div id="sect-setup" class="sub-sect">
+                <label>Standort eingabe</label>
+                <input type="text" id="city-input">
+                <label style="margin-top:10px; display:block;">Nachtmodus Zeiten</label>
                 VON <input type="time" id="s-start"> BIS <input type="time" id="s-end">
-                <div id="menu-sleep-info" style="color:#00ffcc; margin-top:10px; font-weight:bold;">--:--</div>
             </div>
-            <div class="donation-card">
-                <b>DIGITALER DENKMALSCHUTZ</b><br>
-                <p>Diese App rettet Hardware. Deine Spende hält Karls Projekt am Leben!</p>
+
+            <div class="menu-item" onclick="toggleSub('sect-guide')"><i class="fa fa-book"></i> ANLEITUNG</div>
+            <div id="sect-guide" class="sub-sect">
+                • <b>Start:</b> Einmal Display tippen aktiviert den Wachhalte-Modus.<br>
+                • <b>Vollbild:</b> Das Tippen schaltet automatisch in den Fullscreen.<br>
+                • <b>Nachtmodus:</b> Schaltet das Display schwarz mit gedimmter Uhrzeit.<br>
+                • <b>Ticker:</b> Wische von rechts nach links für alle Profi-Wetterdaten.
+            </div>
+
+            <div class="menu-item" onclick="toggleSub('sect-tips')"><i class="fa fa-lightbulb-o"></i> TIPPS & TRICKS</div>
+            <div id="sect-tips" class="sub-sect">
+                • <b>Helligkeit:</b> In Android-Settings auf 100% (App regelt Nachtmodus).<br>
+                • <b>Entwickleroptionen:</b> "Wachbleiben beim Laden" in Android aktivieren.<br>
+                • <b>WLAN:</b> Statische IP vergeben für schnellere Re-Connects.<br>
+                • <b>Kühlung:</b> Tablet nicht in geschlossene Rahmen verbauen (Hitzestau).
+            </div>
+
+            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart"></i> KAFFEEKASSE</div>
+            <div id="sect-coffee" class="sub-sect">
+                <b>Projekt: Digitaler Denkmalschutz</b><br>
+                Diese App ist das Ergebnis leidenschaftlicher Arbeit, um alte Hardware vor dem Schrott zu retten. Wenn dir meine Arbeit gefällt, freue ich mich über einen virtuellen Kaffee!
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                    <i class="fa fa-paypal"></i> Kaffeekasse Piratkarl
+                    <i class="fa fa-paypal"></i> Kaffeekasse öffnen
                 </a>
             </div>
-            <button onclick="saveAll()" class="btn-save">SPEICHERN</button>
-            <button onclick="toggleSettings()" class="btn-close">ZURÜCK</button>
+
+            <div class="menu-item" onclick="toggleSub('sect-legal')"><i class="fa fa-balance-scale"></i> RECHTLICHES</div>
+            <div id="sect-legal" class="sub-sect">
+                <b>Impressum:</b><br>
+                Karl Pirat<br>Lohengrinstraße 25<br>38106 Braunschweig<br><br>
+                <b>Datenschutz:</b><br>
+                Diese App erhebt keine persönlichen Daten. Die Standortabfrage dient nur dem Abruf der Wetterdaten über OpenWeatherMap. Es werden keine Cookies gespeichert.
+            </div>
+
+            <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
+            <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
         </div>
     </div>
 
     <div class="app-shell">
-        <table width="100%" height="250" border="0" cellpadding="0" cellspacing="0">
+        <table width="100%" height="260" border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <td width="33%" align="center">
                     <div id="clock">00:00</div>
@@ -46,7 +72,7 @@
                     <img src="logo.png" height="65">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V1.53 PRO</span>
+                        <span class="ver-label">V1.55 PREMIUM</span>
                     </div>
                 </td>
                 <td width="34%" align="center">
@@ -55,7 +81,7 @@
                         <span id="main-icon-container"></span>
                         <span id="temp-display">--</span><span class="degree-unit">°</span>
                     </div>
-                    <div id="feels-like">--</div>
+                    <div id="feels-like" style="font-size:24px; font-weight:bold;">--</div>
                 </td>
                 <td width="33%" align="center">
                     <div class="top-btns">
@@ -72,12 +98,12 @@
         </table>
 
         <div class="ticker-box">
-            <marquee id="info-ticker" scrollamount="5">+++ BITTE TIPPEN ZUM AKTIVIEREN +++</marquee>
+            <marquee id="info-ticker" scrollamount="6">+++ BITTE TIPPEN ZUM AKTIVIEREN +++</marquee>
         </div>
 
         <div class="forecast-area">
             <table width="100%" height="110" id="hourly-table" border="0"></table>
-            <table width="100%" height="130" id="daily-table" border="0" style="border-top:1px solid #222;"></table>
+            <table width="100%" height="135" id="daily-table" border="0" style="border-top:1px solid #222;"></table>
         </div>
     </div>
 

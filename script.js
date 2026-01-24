@@ -7,6 +7,7 @@ var timeOffset = 0;
 var lastSuccess = Date.now();
 var isActivated = false;
 var tickerData = { main: "", wind: "", uv: "UV: --", forecast: "", astro: "" };
+var uvValue = 0;
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
 
@@ -19,6 +20,17 @@ function formatUnix(unix, timezone) {
 function getWindDir(deg) {
     var dirs = ['N', 'NO', 'O', 'SO', 'S', 'SW', 'W', 'NW'];
     return dirs[Math.round(deg / 45) % 8];
+}
+
+// MENÜ LOGIK
+function toggleSub(id) {
+    var el = document.getElementById(id);
+    var isVisible = el.style.display === 'block';
+    // Alle anderen schließen
+    var all = document.getElementsByClassName('sub-sect');
+    for(var i=0; i<all.length; i++) all[i].style.display = 'none';
+    // Aktuelles umschalten
+    el.style.display = isVisible ? 'none' : 'block';
 }
 
 function activateWakeLock() {
@@ -54,15 +66,24 @@ function fetchWeather() {
             var sTime = xhr.getResponseHeader('Date');
             if(sTime) timeOffset = new Date(sTime).getTime() - Date.now();
             
-            document.getElementById('temp-display').innerText = Math.round(d.main.temp);
-            document.getElementById('city-title').innerText = d.name.toUpperCase();
-            document.getElementById('main-icon-container').innerHTML = '<img src="' + d.weather[0].icon + '.gif" width="100">';
-            document.getElementById('feels-like').innerHTML = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
+            var realTemp = Math.round(d.main.temp);
+            var feelsTemp = Math.round(d.main.feels_like);
             
+            document.getElementById('temp-display').innerText = realTemp;
+            document.getElementById('city-title').innerText = d.name.toUpperCase();
+            document.getElementById('main-icon-container').innerHTML = '<img src="' + d.weather[0].icon + '.gif" width="105">';
+            
+            // LOGIK: GEFÜHLTE TEMPERATUR FARBE
+            var fl = document.getElementById('feels-like');
+            fl.innerText = "GEFÜHLT " + feelsTemp + "°";
+            if (feelsTemp > realTemp) { fl.style.color = "#ff4d4d"; } // Rot
+            else if (feelsTemp < realTemp) { fl.style.color = "#00d9ff"; } // Blau
+            else { fl.style.color = "#ffffff"; } // Weiß
+
             document.getElementById('sunrise-val').innerText = formatUnix(d.sys.sunrise, d.timezone);
             document.getElementById('sunset-val').innerText = formatUnix(d.sys.sunset, d.timezone);
             
-            tickerData.main = d.weather[0].description.toUpperCase() + " (" + d.main.humidity + "% FEUCHTE)";
+            tickerData.main = d.weather[0].description.toUpperCase();
             tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H " + getWindDir(d.wind.deg);
             tickerData.astro = "DRUCK: " + d.main.pressure + " HPA";
 
@@ -78,10 +99,22 @@ function fetchUV(lat, lon) {
     xhr.open("GET", "https://api.openweathermap.org/data/2.5/uvi?lat="+lat+"&lon="+lon+"&appid="+API_KEY, true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
-            tickerData.uv = "UV-INDEX: " + Math.round(JSON.parse(xhr.responseText).value);
+            uvValue = Math.round(JSON.parse(xhr.responseText).value);
+            tickerData.uv = "UV-INDEX: " + uvValue;
         }
     };
     xhr.send();
+}
+
+function buildTicker() {
+    var tickerEl = document.getElementById('info-ticker');
+    var fullText = "+++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.uv + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
+    
+    // UV-WARNUNG FARBE
+    if(uvValue > 5) { tickerEl.style.color = "#ffcc00"; } // Gelb/Orange
+    else { tickerEl.style.color = "#00ffcc"; } // Standard Cyan
+    
+    tickerEl.innerHTML = fullText.toUpperCase();
 }
 
 function fetchForecast() {
@@ -94,7 +127,7 @@ function fetchForecast() {
             for(var i=0; i<5; i++) {
                 var it = f.list[i];
                 var pop = it.pop ? Math.round(it.pop * 100) : 0;
-                hRow += '<td class="f-item"><span class="f-hour">'+new Date(it.dt*1000).getHours()+':00</span><br><img src="'+it.weather[0].icon+'.gif" width="45"><br><span class="f-temp-line">'+Math.round(it.main.temp)+'°</span><br><span class="f-rain-info">☂️'+pop+'%</span></td>';
+                hRow += '<td class="f-item"><span style="color:#00ffcc;font-size:17px;font-weight:bold;">'+new Date(it.dt*1000).getHours()+':00</span><br><img src="'+it.weather[0].icon+'.gif" width="45"><br><span class="f-temp-line">'+Math.round(it.main.temp)+'°</span><br><span style="color:#00d9ff;font-size:14px;">☂️'+pop+'%</span></td>';
             }
             document.getElementById('hourly-table').innerHTML = hRow + "</tr>";
             
@@ -109,15 +142,14 @@ function fetchForecast() {
             var dRow = "<tr>"; var c = 0;
             for(var day in days) {
                 if(c > 0 && c < 6) {
-                    dRow += '<td class="f-item"><span class="f-day-name">'+day+'</span><img src="'+days[day].icon+'.gif" width="48"><br><span class="f-temp-line"><span style="color:#ff4d4d">'+Math.round(days[day].max)+'°</span> <span style="color:#00d9ff">'+Math.round(days[day].min)+'°</span></span><br><span class="f-rain-info">☂️'+Math.round(days[day].pop * 100)+'%</span></td>';
+                    dRow += '<td class="f-item"><span class="f-day-name">'+day+'</span><img src="'+days[day].icon+'.gif" width="50"><br><span class="f-temp-line"><span style="color:#ff4d4d">'+Math.round(days[day].max)+'°</span> <span style="color:#00d9ff">'+Math.round(days[day].min)+'°</span></span><br><span style="color:#00d9ff;font-size:14px;">☂️'+Math.round(days[day].pop * 100)+'%</span></td>';
                 }
                 c++;
             }
             document.getElementById('daily-table').innerHTML = dRow + "</tr>";
             
-            tickerData.forecast = "VORSCHAU " + new Date(f.list[1].dt*1000).getHours() + " UHR: " + f.list[1].weather[0].description.toUpperCase() + " (☂️" + Math.round(f.list[1].pop * 100) + "%)";
-            
-            document.getElementById('info-ticker').innerHTML = "+++ " + tickerData.main + " +++ " + tickerData.wind + " +++ " + tickerData.uv + " +++ " + tickerData.forecast + " +++ " + tickerData.astro + " +++";
+            tickerData.forecast = "VORSCHAU " + new Date(f.list[1].dt*1000).getHours() + " UHR: " + f.list[1].weather[0].description.toUpperCase();
+            buildTicker(); 
         }
     };
     xhr.send();
