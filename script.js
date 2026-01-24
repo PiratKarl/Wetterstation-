@@ -85,7 +85,7 @@ function fetchWeather() {
             
             tickerData.current = d.weather[0].description + " (" + d.main.humidity + "% FEUCHTE)";
             tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H " + getWindDir(d.wind.deg);
-            tickerData.astro = "LUFTDRUCK: " + d.main.pressure + " HPA";
+            tickerData.astro = "DRUCK: " + d.main.pressure + " HPA";
 
             fetchUV(d.coord.lat, d.coord.lon);
             fetchForecast();
@@ -131,7 +131,7 @@ function fetchForecast() {
             var dRow = "<tr>"; var c = 0;
             for(var d in days) {
                 if(c > 0 && c < 6) {
-                    dRow += '<td class="f-item"><span class="f-day-name">'+d+'</span><img src="'+days[d].icon+'.gif" width="50"><br><span class="f-temp-line"><span style="color:#ff4d4d">'+Math.round(days[d].max)+'°</span> <span style="color:#00d9ff">'+Math.round(days[d].min)+'°</span></span><br><span style="color:#00d9ff;font-size:14px;">☂️'+Math.round(days[d].pop * 100)+'%</span></td>';
+                    dRow += '<td class="f-item"><span class="f-day-name">'+d+'</span><img src="'+days[d].icon+'.gif" width="55"><br><span class="f-temp-line"><span style="color:#ff4d4d">'+Math.round(days[d].max)+'°</span> <span style="color:#00d9ff">'+Math.round(days[d].min)+'°</span></span><br><span style="color:#00d9ff;font-size:14px;">☂️'+Math.round(days[day].pop * 100)+'%</span></td>';
                 }
                 c++;
             }

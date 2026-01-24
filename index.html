@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.56 Expert</title>
+    <title>Aura Weather V1.57 PRO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -29,22 +29,22 @@
             <div id="sect-guide" class="sub-sect">
                 • Einmal tippen aktiviert Vollbild & Wachhalte-Modus.<br>
                 • Nachtmodus dimmt das Display automatisch.<br>
-                • Ticker zeigt UV-Index & Regenwahrscheinlichkeit.
+                • Der Ticker zeigt UV-Index & Regenwahrscheinlichkeit.
             </div>
 
             <div class="menu-item" onclick="toggleSub('sect-tips')"><i class="fa fa-lightbulb-o"></i> TABLET-TIPPS</div>
             <div id="sect-tips" class="sub-sect">
-                • Dauerstrom ist für den Wachhalte-Modus empfohlen.<br>
+                • Dauerstrom wird für den Wachhalte-Modus empfohlen.<br>
                 • Hintergrund-Apps schließen für flüssige Animationen.<br>
                 • Nachtmodus schützt vor Display-Einbrennen.
             </div>
 
-            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart"></i> SUPPORT</div>
+            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart"></i> KAFFEEKASSE</div>
             <div id="sect-coffee" class="sub-sect">
-                <b>Projekt: Digitaler Denkmalschutz</b><br>
-                Jede Unterstützung hilft, diese Station weiterzuentwickeln!
+                <b style="color:#fff;">Projekt: Digitaler Denkmalschutz</b><br>
+                Diese Station rettet Hardware vor dem Schrottplatz. Jede Unterstützung hilft mir, das Projekt weiterzuentwickeln!
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                    <i class="fa fa-paypal"></i> Kaffeekasse öffnen
+                    <i class="fa fa-paypal"></i> Jetzt Spenden via PayPal
                 </a>
             </div>
 
@@ -65,10 +65,10 @@
                 <td width="33%" align="center">
                     <div id="clock">00:00</div>
                     <div id="date">Lade...</div>
-                    <img src="logo.png" height="60">
+                    <img src="logo.png" height="65">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V1.56 PRO</span>
+                        <span class="ver-label">V1.57 PRO</span>
                     </div>
                 </td>
                 <td width="34%" align="center">
@@ -99,10 +99,10 @@
 
         <div class="forecast-area">
             <div class="table-container">
-                <table id="hourly-table" border="0"></table>
+                <table id="hourly-table" width="98%" border="0"></table>
             </div>
             <div class="table-container" style="border-top:1px solid #222;">
-                <table id="daily-table" border="0"></table>
+                <table id="daily-table" width="98%" border="0"></table>
             </div>
         </div>
     </div>
