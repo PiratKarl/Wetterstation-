@@ -1,5 +1,5 @@
-// AURA WEATHER V2.6 - ULTIMATE EDITION
-// Features: Humidity, Big Layout, Safe UV Math, Donation Incentive
+// AURA WEATHER V2.7 - TOUCH EDITION
+// Mit Start-Screen Logik und größerer Schrift
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
@@ -11,7 +11,6 @@ var timeOffset = 0;
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
 
-// Daten Container
 var tickerData = { main: "", wind: "", clothing: "", uv: "", pressure: "", humidity: "" };
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
@@ -49,8 +48,11 @@ function updateClock() {
 
     if (overlay) {
         if (isSleepTime) {
-            if(overlay.style.display !== 'block') {
-                overlay.style.display = 'block';
+            // Nachtmodus
+            if(overlay.style.display !== 'flex') {
+                overlay.style.display = 'flex';
+                // Auch Startscreen wegmachen, falls er noch da ist
+                document.getElementById('start-overlay').style.display = 'none';
                 document.getElementById('night-clock').innerText = curStr;
             } else {
                 document.getElementById('night-clock').innerText = curStr;
@@ -59,6 +61,7 @@ function updateClock() {
                 video.pause(); video.setAttribute('src', ""); video.load();
             }
         } else {
+            // Tagmodus
             if(overlay.style.display !== 'none') overlay.style.display = 'none';
             if (isActivated) {
                 if(video.getAttribute('src') === "") {
@@ -71,9 +74,16 @@ function updateClock() {
 }
 
 function activateWakeLock() {
+    // 1. Start-Screen entfernen
+    var startScreen = document.getElementById('start-overlay');
+    if(startScreen) startScreen.style.display = 'none';
+
+    // 2. Video starten
     var v = document.getElementById('wake-video');
     if(v.getAttribute('src') === "" || !v.getAttribute('src')) v.setAttribute('src', videoUrl);
     v.play();
+    
+    // 3. System aktivieren
     if (!isActivated) {
         var el = document.documentElement;
         if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
@@ -83,7 +93,7 @@ function activateWakeLock() {
     }
 }
 
-// === WETTER LOGIK ===
+// === WETTER ===
 function fetchWeather() {
     if(!isActivated) return;
     var xhr = new XMLHttpRequest();
@@ -98,7 +108,6 @@ function fetchWeather() {
             document.getElementById('temp-display').innerText = temp;
             document.getElementById('city-title').innerText = d.name.toUpperCase();
             
-            // Icon (GIF)
             var iconCode = d.weather[0].icon;
             document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="110" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
             
@@ -107,28 +116,22 @@ function fetchWeather() {
             elFeel.innerText = "GEFÜHLT " + feel + "°";
             elFeel.style.color = (feel < 10) ? '#00aaff' : (feel > 25 ? '#ff4d4d' : '#ccc');
 
-            // Astro
             var rise = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
             var set = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
-            // Kleidungstipps
             var desc = d.weather[0].description;
             var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1 || desc.indexOf("niesel") !== -1);
             var tips = "";
-            
             if(temp < 5) tips = "❄ WINTERJACKE & MÜTZE";
             else if(temp < 12) tips = "🧥 WARME JACKE";
             else if(temp < 18) tips = "🧣 ÜBERGANGSJACKE";
             else if(temp < 25) tips = "👕 T-SHIRT WETTER";
             else tips = "🕶 KURZE KLEIDUNG";
-            
             if(rain) tips += " + ☂ SCHIRM";
-            
             tickerData.clothing = tips;
             
-            // Symbole für Ticker
             var sym = "";
             if(desc.indexOf("klar")!==-1) sym = "☀";
             else if(desc.indexOf("wolken")!==-1) sym = "☁";
@@ -139,10 +142,8 @@ function fetchWeather() {
             tickerData.main = sym + " " + desc.toUpperCase();
             tickerData.wind = "💨 WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
             tickerData.pressure = "hPa: " + d.main.pressure;
-            // NEU: LUFTFEUCHTIGKEIT
             tickerData.humidity = "💧 LUFT: " + d.main.humidity + "%";
             
-            // UV Berechnen (Lokal)
             calculateApproxUV(d.coord.lat, d.clouds.all);
 
             updateTicker();
@@ -242,7 +243,6 @@ function renderDaily(list) {
 function updateTicker() {
     var t = document.getElementById('info-ticker');
     var uvTxt = tickerData.uv ? "  +++  " + tickerData.uv : "";
-    // Ticker jetzt MIT Luftfeuchtigkeit
     t.innerText = tickerData.clothing + "  +++  " + tickerData.main + uvTxt + "  +++  " + tickerData.humidity + "  +++  " + tickerData.wind + "  +++  " + tickerData.pressure + "  +++  " + city.toUpperCase();
 }
 
