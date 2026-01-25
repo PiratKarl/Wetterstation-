@@ -1,5 +1,5 @@
-// AURA WEATHER V2.8 - GLOBAL EDITION
-// Fixes: UV Calc for Cairo vs Germany, Timezone corrected
+// AURA WEATHER V2.9 - TICKER TALK
+// Features: No UV, Verbose Ticker (Pop & Visibility), Android 4.4 Safe
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
@@ -10,7 +10,9 @@ var sEnd = localStorage.getItem('sleepEnd') || '06:00';
 var timeOffset = 0; 
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
-var tickerData = { main: "", wind: "", clothing: "", uv: "", pressure: "", humidity: "" };
+
+// Daten Container (Jetzt ohne UV, dafür POP und VIS)
+var tickerData = { main: "", wind: "", clothing: "", pressure: "", humidity: "", pop: "", vis: "" };
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
 function timeToMins(t) {
@@ -114,8 +116,9 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
+            // Kleidung
             var desc = d.weather[0].description;
-            var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1);
+            var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1 || desc.indexOf("niesel") !== -1);
             var tips = "";
             if(temp < 5) tips = "❄ WINTERJACKE & MÜTZE";
             else if(temp < 12) tips = "🧥 WARME JACKE";
@@ -125,6 +128,7 @@ function fetchWeather() {
             if(rain) tips += " + ☂ SCHIRM";
             tickerData.clothing = tips;
             
+            // Wetter Symbol für Ticker
             var sym = "";
             if(desc.indexOf("klar")!==-1) sym = "☀";
             else if(desc.indexOf("wolken")!==-1) sym = "☁";
@@ -133,73 +137,26 @@ function fetchWeather() {
             else if(desc.indexOf("gewitter")!==-1) sym = "⚡";
             
             tickerData.main = sym + " " + desc.toUpperCase();
-            tickerData.wind = "💨 WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
-            tickerData.pressure = "hPa: " + d.main.pressure;
-            tickerData.humidity = "💧 LUFT: " + d.main.humidity + "%";
+            tickerData.wind = "💨 WINDGESCHWINDIGKEIT: " + Math.round(d.wind.speed * 3.6) + " KM/H";
+            tickerData.pressure = "LUFTDRUCK: " + d.main.pressure + " hPa";
+            tickerData.humidity = "💧 LUFTFEUCHTIGKEIT: " + d.main.humidity + "%";
             
-            // UV mit Breitengrad und Zeitzone
-            calculateSmartUV(d.coord.lat, d.clouds.all, d.timezone);
+            // Sichtweite (in Meter, umrechnen in KM)
+            var vis = d.visibility;
+            if(vis) {
+                if(vis >= 1000) tickerData.vis = "👁 SICHTWEITE: " + (vis/1000).toFixed(1) + " KM";
+                else tickerData.vis = "👁 SICHTWEITE: " + vis + " METER";
+            } else {
+                tickerData.vis = "";
+            }
 
             updateTicker();
+            // Forecast aufrufen (Dort holen wir jetzt das Regenrisiko)
             fetchForecast(d.coord.lat, d.coord.lon);
             document.getElementById('moon-txt').innerText = getMoonPhaseName(new Date());
         }
     };
     xhr.send();
-}
-
-// === DER NEUE INTELLIGENTE UV RECHNER (V2.8) ===
-function calculateSmartUV(lat, clouds, timezoneOffset) {
-    // 1. Lokale Zeit der Stadt berechnen
-    var nowUTC = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
-    var cityTime = new Date(nowUTC + (timezoneOffset * 1000));
-    var hour = cityTime.getHours();
-    var month = cityTime.getMonth();
-
-    // 2. Breitengrad-Faktor (Je näher am Äquator (0), desto stärker die Sonne)
-    // Deutschland ~52°, Kairo ~30°
-    var absLat = Math.abs(lat);
-    var latFactor = (90 - absLat) / 90; // Bei 0° = 1.0, Bei 90° = 0.0
-
-    // 3. Saison-Faktor
-    var seasonFactor = 0;
-    // Winter Nordhalbkugel (Okt-Feb)
-    if (month >= 9 || month <= 2) {
-        // Im Winter ist der Unterschied extrem:
-        // In Deutschland (Lat > 45) ist die Sonne fast weg (Faktor 0.2)
-        // In Kairo (Lat < 35) ist sie noch moderat (Faktor 0.6)
-        seasonFactor = (absLat > 40) ? 0.2 : 0.6;
-    } else if (month >= 3 && month <= 8) {
-        seasonFactor = 1.0; // Sommer
-    } else {
-        seasonFactor = 0.7; // Übergang
-    }
-
-    // 4. Basis-Maximalwert (Theoretisch)
-    var maxPotential = 12 * latFactor * seasonFactor;
-
-    // 5. Tageszeit (Parabel)
-    var timeFactor = 0;
-    if(hour >= 11 && hour <= 14) timeFactor = 1.0;     
-    else if(hour >= 9 && hour <= 16) timeFactor = 0.7; 
-    else if(hour >= 7 && hour <= 18) timeFactor = 0.3; 
-    
-    // 6. Wolkenabzug
-    var cloudFactor = 1.0 - (clouds / 100 * 0.6); 
-
-    var uv = Math.round(maxPotential * timeFactor * cloudFactor);
-    
-    // Sicherheit: Nachts immer 0
-    if(hour < 6 || hour > 20) uv = 0;
-    
-    // Anzeige
-    var uvEl = document.getElementById('uv-val');
-    uvEl.innerText = uv;
-    if(uv <= 2) uvEl.style.color = "#00ff00"; 
-    else if(uv <= 5) uvEl.style.color = "#ffff00"; 
-    else if(uv <= 7) uvEl.style.color = "#ff9900"; 
-    else uvEl.style.color = "#ff0000"; 
-    tickerData.uv = "UV: " + uv;
 }
 
 function getMoonPhaseName(date) {
@@ -223,6 +180,16 @@ function fetchForecast(lat, lon) {
             var d = JSON.parse(xhr.responseText);
             renderHourly(d.list);
             renderDaily(d.list);
+            
+            // NIEDERSCHLAGSWAHRSCHEINLICHKEIT (POP)
+            // Wir nehmen den ersten Forecast-Wert (nächste 3h)
+            if(d.list && d.list.length > 0) {
+                var pop = d.list[0].pop; // Wert ist 0 bis 1 (z.B. 0.5)
+                var popPerc = Math.round(pop * 100);
+                tickerData.pop = "☔ REGEN-RISIKO: " + popPerc + "%";
+                // Ticker updaten, da wir jetzt neue Daten haben
+                updateTicker();
+            }
         }
     };
     xhr.send();
@@ -263,8 +230,21 @@ function renderDaily(list) {
 
 function updateTicker() {
     var t = document.getElementById('info-ticker');
-    var uvTxt = tickerData.uv ? "  +++  " + tickerData.uv : "";
-    t.innerText = tickerData.clothing + "  +++  " + tickerData.main + uvTxt + "  +++  " + tickerData.humidity + "  +++  " + tickerData.wind + "  +++  " + tickerData.pressure + "  +++  " + city.toUpperCase();
+    
+    // Ticker zusammenbauen (OHNE Stadt am Ende, dafür sehr ausführlich)
+    var text = "";
+    
+    text += tickerData.clothing;
+    text += "  +++  " + tickerData.main;
+    
+    if(tickerData.pop !== "") text += "  +++  " + tickerData.pop;
+    if(tickerData.vis !== "") text += "  +++  " + tickerData.vis;
+    
+    text += "  +++  " + tickerData.humidity;
+    text += "  +++  " + tickerData.wind;
+    text += "  +++  " + tickerData.pressure;
+    
+    t.innerText = text;
 }
 
 function toggleSettings() { var s = document.getElementById('settings-overlay'); s.style.display = (s.style.display==='block')?'none':'block'; if(s.style.display==='block'){ document.getElementById('city-input').value = city; document.getElementById('s-start').value = sStart; document.getElementById('s-end').value = sEnd; } }

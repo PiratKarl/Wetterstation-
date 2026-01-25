@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather 2.8 Global</title>
+    <title>Aura Weather 2.9 Ticker</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,7 +29,7 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">SYSTEM 2.8 GLOBAL</h2>
+            <h2 class="cyan-title">SYSTEM 2.9 TICKER</h2>
             
             <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> GRUNDEINSTELLUNGEN</div>
             <div id="sect-setup" class="sub-sect" style="display:block;">
@@ -39,7 +39,7 @@
                 <div class="coffee-box">
                     <div class="coffee-text">
                         <b>Rette alte Technik! 🌍</b><br>
-                        Ein kleiner Kaffee hält mich wach für Updates!
+                        Gefällt dir die App?<br>Ein Kaffee hält mich wach!
                     </div>
                     <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
                         <i class="fa fa-paypal"></i> Spenden
@@ -53,7 +53,7 @@
                 <div class="info-box">
                     <b style="color:#ff9900;">WICHTIG (SYNC):</b><br>
                     Bild geht <b>10 Min früher</b> aus.<br>
-                    Timeout am Tablet auf 10 Min stellen!
+                    Tablet-Timeout auf <b>10 Min</b> stellen!
                 </div>
                 
                 <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
@@ -77,7 +77,7 @@
                     <img src="logo.png" height="40" style="margin-top:10px; opacity:0.8;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V2.8 GLO</span>
+                        <span class="ver-label">V2.9 TK</span>
                     </div>
                 </td>
                 <td width="34%" align="center" valign="middle">
@@ -95,8 +95,7 @@
                     <div class="astro-box">
                         <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
                         <div class="astro-line"><i class="fa fa-moon-o" style="color:#aaa"></i> <span id="sunset-val">--:--</span></div>
-                        <div style="margin-top:8px; font-size:18px; font-weight:bold;">UV: <span id="uv-val" style="color:#fff">--</span></div>
-                        <div id="moon-txt" style="font-size:14px; color:#888; margin-top:5px; text-transform:uppercase;"></div>
+                        <div id="moon-txt" style="font-size:14px; color:#888; margin-top:10px; text-transform:uppercase;"></div>
                     </div>
                 </td>
             </tr>
