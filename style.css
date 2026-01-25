@@ -28,7 +28,7 @@ body {
 .top-btns { position: absolute; top: 10px; right: 10px; cursor: pointer; z-index: 50; }
 .fa-gear { font-size: 40px; color: #555; }
 
-/* TICKER VERKLEINERT */
+/* TICKER KOMPAKT (60px) */
 .ticker-box { 
     height: 60px; 
     background: #080808; 
@@ -46,7 +46,6 @@ marquee { line-height: 60px; font-size: 28px; color: #00ffcc; font-weight: bold;
 .f-time, .f-day-name { font-size: 16px; color: #888; margin-bottom: 2px; }
 .f-icon-img { width: 40px; height: 40px; }
 .f-temp-line { font-size: 20px; font-weight: bold; color: #fff; }
-.f-pop { font-size: 12px; color: #00aaff; }
 
 /* EINSTELLUNGEN MODAL */
 #settings-overlay { 
@@ -81,13 +80,24 @@ input[type="text"], input[type="time"] {
 .btn-test { width: 100%; padding: 10px; background: #ff9900; color: #000; font-weight: bold; font-size: 16px; border: none; border-radius: 5px; margin-top: 15px; cursor: pointer; }
 .paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 12px; border-radius: 25px; display: block; text-align: center; font-weight: bold; margin-top: 10px; }
 
-/* NACHT OVERLAY (MUSS GANZ OBEN SEIN) */
+/* NACHT OVERLAY (MAXIMALE SICHERHEIT) */
 #night-overlay { 
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: #000; z-index: 99999; display: none; 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    position: fixed; 
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%; 
+    background-color: #000000 !important; 
+    z-index: 2147483647; 
+    display: none; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
 }
-#night-clock { font-size: 120px; color: #111; font-family: monospace; }
+#night-clock { 
+    font-size: 80px; 
+    color: #1a1a1a; /* Sehr dunkles Grau gegen Blenden */
+    font-family: monospace; 
+    font-weight: bold;
+}
 
 /* STATUS LICHT */
 .live-indicator { display: inline-block; width: 10px; height: 10px; background-color: #555; border-radius: 50%; }
