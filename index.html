@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather 2.7 Final</title>
+    <title>Aura Weather 2.8 Global</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,13 +29,23 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">SYSTEM 2.7 FINAL</h2>
+            <h2 class="cyan-title">SYSTEM 2.8 GLOBAL</h2>
             
-            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
+            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> GRUNDEINSTELLUNGEN</div>
             <div id="sect-setup" class="sub-sect" style="display:block;">
                 <label>Stadt:</label> 
                 <input type="text" id="city-input" value="Braunschweig">
                 
+                <div class="coffee-box">
+                    <div class="coffee-text">
+                        <b>Rette alte Technik! 🌍</b><br>
+                        Ein kleiner Kaffee hält mich wach für Updates!
+                    </div>
+                    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
+                        <i class="fa fa-paypal"></i> Spenden
+                    </a>
+                </div>
+
                 <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS</label>
                 VON: <input type="time" id="s-start"> 
                 BIS: <input type="time" id="s-end">
@@ -43,24 +53,10 @@
                 <div class="info-box">
                     <b style="color:#ff9900;">WICHTIG (SYNC):</b><br>
                     Bild geht <b>10 Min früher</b> aus.<br>
-                    Tablet-Timeout auf <b>10 Min</b> stellen!
+                    Timeout am Tablet auf 10 Min stellen!
                 </div>
                 
                 <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
-            </div>
-
-            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> PROJEKT FÖRDERN</div>
-            <div id="sect-coffee" class="sub-sect">
-                <div class="coffee-box">
-                    <div class="coffee-text">
-                        <b>Rette alte Technik! 🌍</b><br><br>
-                        Gefällt dir die Wiederbelebung deines Tablets?<br>
-                        Ein kleiner Kaffee hält mich wach für Updates!<br><br>
-                    </div>
-                    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                        <i class="fa fa-paypal"></i> Spenden
-                    </a>
-                </div>
             </div>
 
             <div class="menu-item" onclick="toggleSub('sect-info')"><i class="fa fa-info-circle"></i> INFO & RESET</div>
@@ -81,7 +77,7 @@
                     <img src="logo.png" height="40" style="margin-top:10px; opacity:0.8;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V2.7 FIN</span>
+                        <span class="ver-label">V2.8 GLO</span>
                     </div>
                 </td>
                 <td width="34%" align="center" valign="middle">

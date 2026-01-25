@@ -1,5 +1,5 @@
-// AURA WEATHER V2.7 - FINAL TOUCH
-// Features: Start-Screen, Donation Link, Big Layout
+// AURA WEATHER V2.8 - GLOBAL EDITION
+// Fixes: UV Calc for Cairo vs Germany, Timezone corrected
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
@@ -10,7 +10,6 @@ var sEnd = localStorage.getItem('sleepEnd') || '06:00';
 var timeOffset = 0; 
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
-
 var tickerData = { main: "", wind: "", clothing: "", uv: "", pressure: "", humidity: "" };
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
@@ -20,7 +19,7 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === UHR & NACHTMODUS ===
+// === UHR ===
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours();
@@ -49,10 +48,9 @@ function updateClock() {
 
     if (overlay) {
         if (isSleepTime) {
-            // Nachtmodus
             if(overlay.style.display !== 'block') {
                 overlay.style.display = 'block';
-                if(startOv) startOv.style.display = 'none'; // Startscreen auch nachts weg
+                if(startOv) startOv.style.display = 'none';
                 document.getElementById('night-clock').innerText = curStr;
             } else {
                 document.getElementById('night-clock').innerText = curStr;
@@ -61,33 +59,26 @@ function updateClock() {
                 video.pause(); video.setAttribute('src', ""); video.load();
             }
         } else {
-            // Tagmodus
             if(overlay.style.display !== 'none') overlay.style.display = 'none';
             if (isActivated) {
-                // Wenn aktiv, Video an und Startscreen weg
                 if(startOv) startOv.style.display = 'none';
                 if(video.getAttribute('src') === "") {
                     video.setAttribute('src', videoUrl); video.load();
                 }
                 if(video.paused) video.play().catch(function(e){});
             }
-            // Wenn NICHT aktiv, bleibt Startscreen da (HTML Standard)
         }
     }
 }
 
-// === START LOGIK ===
 function activateWakeLock() {
-    // 1. Start-Screen ausblenden
     var startScreen = document.getElementById('start-overlay');
     if(startScreen) startScreen.style.display = 'none';
 
-    // 2. Video starten
     var v = document.getElementById('wake-video');
     if(v.getAttribute('src') === "" || !v.getAttribute('src')) v.setAttribute('src', videoUrl);
     v.play();
     
-    // 3. System aktivieren
     if (!isActivated) {
         var el = document.documentElement;
         if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
@@ -116,17 +107,15 @@ function fetchWeather() {
             document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="110" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
             
             var feel = Math.round(d.main.feels_like);
-            var elFeel = document.getElementById('feels-like');
-            elFeel.innerText = "GEFÜHLT " + feel + "°";
-            elFeel.style.color = (feel < 10) ? '#00aaff' : (feel > 25 ? '#ff4d4d' : '#ccc');
-
+            document.getElementById('feels-like').innerText = "GEFÜHLT " + feel + "°";
+            
             var rise = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
             var set = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
             var desc = d.weather[0].description;
-            var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1 || desc.indexOf("niesel") !== -1);
+            var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1);
             var tips = "";
             if(temp < 5) tips = "❄ WINTERJACKE & MÜTZE";
             else if(temp < 12) tips = "🧥 WARME JACKE";
@@ -148,7 +137,8 @@ function fetchWeather() {
             tickerData.pressure = "hPa: " + d.main.pressure;
             tickerData.humidity = "💧 LUFT: " + d.main.humidity + "%";
             
-            calculateApproxUV(d.coord.lat, d.clouds.all);
+            // UV mit Breitengrad und Zeitzone
+            calculateSmartUV(d.coord.lat, d.clouds.all, d.timezone);
 
             updateTicker();
             fetchForecast(d.coord.lat, d.coord.lon);
@@ -158,24 +148,51 @@ function fetchWeather() {
     xhr.send();
 }
 
-function calculateApproxUV(lat, clouds) {
-    var now = new Date();
-    var hour = now.getHours();
-    var month = now.getMonth(); 
-    var seasonalBase = 3;
-    if(month >= 10 || month <= 1) seasonalBase = 1; 
-    else if(month >= 3 && month <= 8) seasonalBase = 7; 
-    
+// === DER NEUE INTELLIGENTE UV RECHNER (V2.8) ===
+function calculateSmartUV(lat, clouds, timezoneOffset) {
+    // 1. Lokale Zeit der Stadt berechnen
+    var nowUTC = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
+    var cityTime = new Date(nowUTC + (timezoneOffset * 1000));
+    var hour = cityTime.getHours();
+    var month = cityTime.getMonth();
+
+    // 2. Breitengrad-Faktor (Je näher am Äquator (0), desto stärker die Sonne)
+    // Deutschland ~52°, Kairo ~30°
+    var absLat = Math.abs(lat);
+    var latFactor = (90 - absLat) / 90; // Bei 0° = 1.0, Bei 90° = 0.0
+
+    // 3. Saison-Faktor
+    var seasonFactor = 0;
+    // Winter Nordhalbkugel (Okt-Feb)
+    if (month >= 9 || month <= 2) {
+        // Im Winter ist der Unterschied extrem:
+        // In Deutschland (Lat > 45) ist die Sonne fast weg (Faktor 0.2)
+        // In Kairo (Lat < 35) ist sie noch moderat (Faktor 0.6)
+        seasonFactor = (absLat > 40) ? 0.2 : 0.6;
+    } else if (month >= 3 && month <= 8) {
+        seasonFactor = 1.0; // Sommer
+    } else {
+        seasonFactor = 0.7; // Übergang
+    }
+
+    // 4. Basis-Maximalwert (Theoretisch)
+    var maxPotential = 12 * latFactor * seasonFactor;
+
+    // 5. Tageszeit (Parabel)
     var timeFactor = 0;
-    if(hour >= 11 && hour <= 15) timeFactor = 1.0;     
-    else if(hour >= 9 && hour <= 17) timeFactor = 0.6; 
-    else if(hour >= 7 && hour <= 19) timeFactor = 0.2; 
+    if(hour >= 11 && hour <= 14) timeFactor = 1.0;     
+    else if(hour >= 9 && hour <= 16) timeFactor = 0.7; 
+    else if(hour >= 7 && hour <= 18) timeFactor = 0.3; 
     
-    var maxPotential = seasonalBase * timeFactor;
-    var cloudFactor = 1.0 - (clouds / 100 * 0.7); 
-    var uv = Math.round(maxPotential * cloudFactor);
-    if(hour < 8 || hour > 19) uv = 0;
+    // 6. Wolkenabzug
+    var cloudFactor = 1.0 - (clouds / 100 * 0.6); 
+
+    var uv = Math.round(maxPotential * timeFactor * cloudFactor);
     
+    // Sicherheit: Nachts immer 0
+    if(hour < 6 || hour > 20) uv = 0;
+    
+    // Anzeige
     var uvEl = document.getElementById('uv-val');
     uvEl.innerText = uv;
     if(uv <= 2) uvEl.style.color = "#00ff00"; 
