@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather 2.1 Hybrid</title>
+    <title>Aura Weather 2.2 Visual</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(function(err) { console.log(err); });
-      }
-    </script>
 </head>
 <body onclick="activateWakeLock()">
 
@@ -24,26 +19,19 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">SYSTEM 2.1 HYBRID</h2>
-            
+            <h2 class="cyan-title">SYSTEM 2.2 VISUAL</h2>
             <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
             <div id="sect-setup" class="sub-sect" style="display:block;">
-                <label>Standort:</label> 
-                <input type="text" id="city-input" value="Braunschweig">
-                
+                <label>Standort:</label> <input type="text" id="city-input" value="Braunschweig">
                 <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS</label>
-                VON: <input type="time" id="s-start"> 
-                BIS: <input type="time" id="s-end">
-                
+                VON: <input type="time" id="s-start"> BIS: <input type="time" id="s-end">
                 <div class="info-box">
-                    <b style="color:#ff9900;">WICHTIG:</b><br>
-                    Das Bild wird automatisch <b>10 Minuten früher</b> schwarz (Sync).<br>
-                    Bitte stelle "Bildschirm-Timeout" am Tablet auf <b>10 Minuten</b>.
+                    <b style="color:#ff9900;">SYNC:</b> Bild geht 10 Min früher aus.<br>
+                    Timeout am Tablet auf 10 Min stellen!
                 </div>
                 <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
             </div>
-
-            <button onclick="toggleSettings()" class="btn-close">ABBRECHEN</button>
+            <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
         </div>
     </div>
 
@@ -56,10 +44,9 @@
                     <img src="logo.png" height="40" style="margin-top:10px; opacity:0.8;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V2.1 HYBRID</span>
+                        <span class="ver-label">V2.2 VISUAL</span>
                     </div>
                 </td>
-                
                 <td width="34%" align="center" valign="middle">
                     <div id="city-title">...</div>
                     <div class="temp-row">
@@ -68,7 +55,6 @@
                     </div>
                     <div id="feels-like">--</div>
                 </td>
-                
                 <td width="33%" align="center" valign="middle" style="position:relative;">
                     <div class="top-btns">
                         <i class="fa fa-gear" onclick="toggleSettings(); event.stopPropagation();"></i>
@@ -76,11 +62,7 @@
                     <div class="astro-box">
                         <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
                         <div class="astro-line"><i class="fa fa-moon-o" style="color:#aaa"></i> <span id="sunset-val">--:--</span></div>
-                        
-                        <div style="margin-top:10px; font-size:18px; font-weight:bold;">
-                            UV-INDEX: <span id="uv-val" style="color:#fff">--</span>
-                        </div>
-                        
+                        <div style="margin-top:10px; font-size:18px; font-weight:bold;">UV: <span id="uv-val" style="color:#fff">--</span></div>
                         <div id="moon-txt" style="font-size:14px; color:#888; margin-top:5px; text-transform:uppercase;"></div>
                     </div>
                 </td>
@@ -104,7 +86,7 @@
     <video id="wake-video" playsinline muted loop style="position:fixed; top:0; left:0; width:1px; height:1px; opacity:0.01; z-index:-1; pointer-events:none;">
         <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
     </video>
-
+    
     <script src="script.js"></script>
 </body>
 </html>
