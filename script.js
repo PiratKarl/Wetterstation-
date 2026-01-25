@@ -1,17 +1,18 @@
-// AURA WEATHER V2.9 - TICKER TALK
+// AURA WEATHER V2.9 - TICKER TALK (SAFE START EDITION)
 // Features: No UV, Verbose Ticker (Pop & Visibility), Android 4.4 Safe
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
+// ÄNDERUNG: Wir laden die Werte, aber ohne automatische "22:00" Voreinstellung im System
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
-var sStart = localStorage.getItem('sleepStart') || '22:00';
-var sEnd = localStorage.getItem('sleepEnd') || '06:00';
+var sStart = localStorage.getItem('sleepStart'); // Kein Standardwert mehr
+var sEnd = localStorage.getItem('sleepEnd');     // Kein Standardwert mehr
 
 var timeOffset = 0; 
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
 
-// Daten Container (Jetzt ohne UV, dafür POP und VIS)
+// Daten Container
 var tickerData = { main: "", wind: "", clothing: "", pressure: "", humidity: "", pop: "", vis: "" };
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
@@ -21,7 +22,7 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === UHR ===
+// === UHR & NACHTMODUS ===
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours();
@@ -32,16 +33,20 @@ function updateClock() {
     if(document.getElementById('clock')) document.getElementById('clock').innerText = curStr;
     if(document.getElementById('date')) document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short' });
 
-    var startMins = timeToMins(sStart);
-    var endMins = timeToMins(sEnd);
-    var effectiveStart = startMins - 10; 
-    if (effectiveStart < 0) effectiveStart = 1440 + effectiveStart;
-
     var isSleepTime = false;
-    if (effectiveStart > endMins) {
-        if (nowMins >= effectiveStart || nowMins < endMins) isSleepTime = true;
-    } else {
-        if (nowMins >= effectiveStart && nowMins < endMins) isSleepTime = true;
+
+    // SICHERUNG: Nur wenn sStart UND sEnd existieren, wird die Nacht-Logik überhaupt ausgeführt
+    if (sStart && sEnd) {
+        var startMins = timeToMins(sStart);
+        var endMins = timeToMins(sEnd);
+        var effectiveStart = startMins - 10; 
+        if (effectiveStart < 0) effectiveStart = 1440 + effectiveStart;
+
+        if (effectiveStart > endMins) {
+            if (nowMins >= effectiveStart || nowMins < endMins) isSleepTime = true;
+        } else {
+            if (nowMins >= effectiveStart && nowMins < endMins) isSleepTime = true;
+        }
     }
 
     var overlay = document.getElementById('night-overlay');
@@ -116,7 +121,6 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
-            // Kleidung
             var desc = d.weather[0].description;
             var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1 || desc.indexOf("niesel") !== -1);
             var tips = "";
@@ -128,7 +132,6 @@ function fetchWeather() {
             if(rain) tips += " + ☂ SCHIRM";
             tickerData.clothing = tips;
             
-            // Wetter Symbol für Ticker
             var sym = "";
             if(desc.indexOf("klar")!==-1) sym = "☀";
             else if(desc.indexOf("wolken")!==-1) sym = "☁";
@@ -141,17 +144,13 @@ function fetchWeather() {
             tickerData.pressure = "LUFTDRUCK: " + d.main.pressure + " hPa";
             tickerData.humidity = "💧 LUFTFEUCHTIGKEIT: " + d.main.humidity + "%";
             
-            // Sichtweite (in Meter, umrechnen in KM)
             var vis = d.visibility;
             if(vis) {
                 if(vis >= 1000) tickerData.vis = "👁 SICHTWEITE: " + (vis/1000).toFixed(1) + " KM";
                 else tickerData.vis = "👁 SICHTWEITE: " + vis + " METER";
-            } else {
-                tickerData.vis = "";
-            }
+            } else { tickerData.vis = ""; }
 
             updateTicker();
-            // Forecast aufrufen (Dort holen wir jetzt das Regenrisiko)
             fetchForecast(d.coord.lat, d.coord.lon);
             document.getElementById('moon-txt').innerText = getMoonPhaseName(new Date());
         }
@@ -180,14 +179,10 @@ function fetchForecast(lat, lon) {
             var d = JSON.parse(xhr.responseText);
             renderHourly(d.list);
             renderDaily(d.list);
-            
-            // NIEDERSCHLAGSWAHRSCHEINLICHKEIT (POP)
-            // Wir nehmen den ersten Forecast-Wert (nächste 3h)
             if(d.list && d.list.length > 0) {
-                var pop = d.list[0].pop; // Wert ist 0 bis 1 (z.B. 0.5)
+                var pop = d.list[0].pop;
                 var popPerc = Math.round(pop * 100);
                 tickerData.pop = "☔ REGEN-RISIKO: " + popPerc + "%";
-                // Ticker updaten, da wir jetzt neue Daten haben
                 updateTicker();
             }
         }
@@ -230,26 +225,40 @@ function renderDaily(list) {
 
 function updateTicker() {
     var t = document.getElementById('info-ticker');
-    
-    // Ticker zusammenbauen (OHNE Stadt am Ende, dafür sehr ausführlich)
     var text = "";
-    
     text += tickerData.clothing;
     text += "  +++  " + tickerData.main;
-    
     if(tickerData.pop !== "") text += "  +++  " + tickerData.pop;
     if(tickerData.vis !== "") text += "  +++  " + tickerData.vis;
-    
     text += "  +++  " + tickerData.humidity;
     text += "  +++  " + tickerData.wind;
     text += "  +++  " + tickerData.pressure;
-    
     t.innerText = text;
 }
 
-function toggleSettings() { var s = document.getElementById('settings-overlay'); s.style.display = (s.style.display==='block')?'none':'block'; if(s.style.display==='block'){ document.getElementById('city-input').value = city; document.getElementById('s-start').value = sStart; document.getElementById('s-end').value = sEnd; } }
+function toggleSettings() { 
+    var s = document.getElementById('settings-overlay'); 
+    s.style.display = (s.style.display==='block')?'none':'block'; 
+    if(s.style.display==='block'){ 
+        document.getElementById('city-input').value = city; 
+        // Beim Öffnen der Settings zeigen wir die 22/06 als Vorschlag, falls noch nichts gespeichert ist
+        document.getElementById('s-start').value = sStart || '22:00'; 
+        document.getElementById('s-end').value = sEnd || '06:00'; 
+    } 
+}
+
 function toggleSub(id) { var el = document.getElementById(id); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
-function saveAll() { city = document.getElementById('city-input').value; sStart = document.getElementById('s-start').value; sEnd = document.getElementById('s-end').value; localStorage.setItem('selectedCity', city); localStorage.setItem('sleepStart', sStart); localStorage.setItem('sleepEnd', sEnd); location.reload(); }
+
+function saveAll() { 
+    city = document.getElementById('city-input').value; 
+    sStart = document.getElementById('s-start').value; 
+    sEnd = document.getElementById('s-end').value; 
+    localStorage.setItem('selectedCity', city); 
+    localStorage.setItem('sleepStart', sStart); 
+    localStorage.setItem('sleepEnd', sEnd); 
+    location.reload(); 
+}
+
 function fullReset() { if(confirm("Wirklich alles zurücksetzen?")) { localStorage.clear(); location.reload(); } }
 
 setInterval(updateClock, 1000); 
