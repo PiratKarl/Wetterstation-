@@ -1,35 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.60 Master</title>
+    <title>Aura Weather V1.63 Master</title>
     <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#000000">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-      }
-    </script>
 </head>
 <body onclick="activateWakeLock()">
 
     <div id="night-overlay" onclick="this.style.display='none'">
         <div id="night-clock">00:00</div>
+        <div style="font-size:20px; color:#555; margin-top:10px;">Tippen zum Aufwecken</div>
     </div>
 
     <div id="settings-overlay">
         <div class="modal">
             <h2 class="cyan-title">STATION MASTER CONTROL</h2>
+            
             <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
-            <div id="sect-setup" class="sub-sect">
-                <label>Stadt:</label> <input type="text" id="city-input">
-                <label style="margin-top:10px; display:block;">Nachtmodus:</label>
+            <div id="sect-setup" class="sub-sect" style="display:block;">
+                <label>Stadt:</label> <input type="text" id="city-input" value="Braunschweig">
+                
+                <label style="margin-top:15px; display:block; color:#00ffcc;">NACHTMODUS (Bildschirm schwarz)</label>
                 VON <input type="time" id="s-start"> BIS <input type="time" id="s-end">
+                
+                <button onclick="testNightMode()" class="btn-test"><i class="fa fa-eye"></i> TEST: SOFORT SCHWARZ (5 Sek)</button>
             </div>
+
             <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> UNTERSTÜTZUNG</div>
             <div id="sect-coffee" class="sub-sect">
                 <b>Projekt: Digitaler Denkmalschutz</b><br>
@@ -38,8 +40,9 @@
                     <i class="fa fa-paypal"></i> PayPal Kaffeekasse
                 </a>
             </div>
-            <button onclick="saveAll()" class="btn-save">SPEICHERN & START</button>
-            <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
+
+            <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
+            <button onclick="toggleSettings()" class="btn-close">ABBRECHEN</button>
         </div>
     </div>
 
@@ -49,14 +52,14 @@
                 <td width="33%" align="center">
                     <div id="clock">00:00</div>
                     <div id="date">Lade...</div>
-                    <img src="logo.png" height="50">
+                    <img src="logo.png" height="50" style="margin-top:5px;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V1.60 MASTER</span>
+                        <span class="ver-label">V1.63 MASTER</span>
                     </div>
                 </td>
                 <td width="34%" align="center">
-                    <div id="city-title">STANDORT</div>
+                    <div id="city-title">LADE WETTER...</div>
                     <div class="temp-row">
                         <span id="main-icon-container"></span>
                         <span id="temp-display">--</span><span class="degree-unit">°</span>
@@ -70,14 +73,14 @@
                     <div class="astro-box">
                         <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
                         <div class="astro-line"><i class="fa fa-moon-o" style="color:#FF8C00"></i> <span id="sunset-val">--:--</span></div>
-                        <div id="moon-display">Mond...</div>
+                        <div id="moon-display" style="font-size:16px; margin-top:5px; color:#aaa;">Mond...</div>
                     </div>
                 </td>
             </tr>
         </table>
 
         <div class="ticker-box">
-            <marquee id="info-ticker" scrollamount="6">+++ BITTE TIPPEN +++</marquee>
+            <marquee id="info-ticker" scrollamount="6">+++ BITTE DISPLAY TIPPEN UM STATION ZU AKTIVIEREN +++</marquee>
         </div>
 
         <div class="forecast-area">
@@ -90,7 +93,7 @@
         </div>
     </div>
 
-    <video id="wake-video" playsinline muted loop style="position:fixed; width:1px; height:1px; opacity:0.01;">
+    <video id="wake-video" playsinline muted loop style="position:fixed; top:0; left:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
         <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
     </video>
 
