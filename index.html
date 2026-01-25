@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather 2.7 Touch</title>
+    <title>Aura Weather 2.7 Final</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,11 +14,13 @@
 <body onclick="activateWakeLock()">
 
     <div id="start-overlay">
-        <div id="start-msg">
-            <i class="fa fa-hand-pointer-o"></i><br>
-            SYSTEM BEREIT<br>BITTE TIPPEN
+        <div id="start-content">
+            <div id="start-msg">
+                <i class="fa fa-hand-pointer-o"></i><br>
+                BITTE TIPPEN
+            </div>
+            <div id="start-sub">System wird gestartet...</div>
         </div>
-        <div id="start-sub">Wetterstation wird geladen...</div>
     </div>
 
     <div id="night-overlay" style="display:none;">
@@ -27,21 +29,21 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">SYSTEM 2.7 TOUCH</h2>
+            <h2 class="cyan-title">SYSTEM 2.7 FINAL</h2>
             
             <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
             <div id="sect-setup" class="sub-sect" style="display:block;">
                 <label>Stadt:</label> 
                 <input type="text" id="city-input" value="Braunschweig">
                 
-                <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS (SCHLAFZEIT)</label>
+                <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS</label>
                 VON: <input type="time" id="s-start"> 
                 BIS: <input type="time" id="s-end">
                 
                 <div class="info-box">
                     <b style="color:#ff9900;">WICHTIG (SYNC):</b><br>
-                    Das Bild geht automatisch <b>10 Min früher</b> aus.<br>
-                    Tablet-Timeout muss auf <b>10 Min</b> stehen.
+                    Bild geht <b>10 Min früher</b> aus.<br>
+                    Tablet-Timeout auf <b>10 Min</b> stellen!
                 </div>
                 
                 <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
@@ -52,12 +54,11 @@
                 <div class="coffee-box">
                     <div class="coffee-text">
                         <b>Rette alte Technik! 🌍</b><br><br>
-                        Diese Software macht aus Elektroschrott nützliche Helfer.<br>
-                        Deine Unterstützung hält die Server am Laufen und motiviert mich für Updates!<br><br>
-                        <b>Ist dir das einen Kaffee wert? ☕</b>
+                        Gefällt dir die Wiederbelebung deines Tablets?<br>
+                        Ein kleiner Kaffee hält mich wach für Updates!<br><br>
                     </div>
                     <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                        <i class="fa fa-paypal"></i> Jetzt Spenden
+                        <i class="fa fa-paypal"></i> Spenden
                     </a>
                 </div>
             </div>
@@ -80,7 +81,7 @@
                     <img src="logo.png" height="40" style="margin-top:10px; opacity:0.8;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V2.7 TCH</span>
+                        <span class="ver-label">V2.7 FIN</span>
                     </div>
                 </td>
                 <td width="34%" align="center" valign="middle">

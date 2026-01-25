@@ -50,10 +50,10 @@ marquee {
     font-family: "Courier New", monospace; 
 }
 
-/* === VORHERSAGE (MAXIMALE GRÖSSE) === */
+/* === VORHERSAGE (JETZT MAXIMAL GROSS) === */
 .forecast-area { width: 100%; margin-top: 2px; }
 .table-container { width: 100%; text-align: center; }
-.f-item { text-align: center; padding: 2px 0; }
+.f-item { text-align: center; padding: 0 2px; }
 
 /* Zeit & Tag */
 .f-time, .f-day-name { 
@@ -64,17 +64,17 @@ marquee {
     text-transform: uppercase;
 }
 
-/* Icons */
+/* Icons riesig */
 .f-icon-img { 
-    width: 60px; /* Noch größer */
-    height: 60px; 
+    width: 65px; 
+    height: 65px; 
     display:block; 
     margin:0 auto; 
 }
 
 /* Temperatur Zeilen */
 .f-temp-line { 
-    font-size: 35px; /* RIESIG */
+    font-size: 38px; /* Sehr groß */
     font-weight: bold; 
     color: #fff; 
     margin-top: 0px;
@@ -82,19 +82,26 @@ marquee {
 }
 
 /* Min/Max Farben */
-.temp-high { color: #ff4d4d; font-weight:bold; font-size:32px; } 
-.temp-low { color: #00aaff; font-weight:bold; font-size:32px; } 
+.temp-high { color: #ff4d4d; font-weight:bold; font-size:34px; } 
+.temp-low { color: #00aaff; font-weight:bold; font-size:34px; } 
 .temp-sep { color: #444; font-size:24px; margin: 0 4px; }
 
-/* === OVERLAYS (Start & Nacht) === */
+/* === SYSTEM OVERLAYS (Start & Nacht) === */
 #night-overlay, #start-overlay { 
     position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
     background-color: #000000 !important; 
     z-index: 99999; 
-    display: flex; /* Zentriert Inhalt */
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    display: block; /* Sicher für Android 4.4 */
+}
+
+/* Zentrierung für Start & Nacht (Die sicherste Methode für alte Tablets) */
+#start-content, #night-clock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
 }
 
 /* Start Screen Text */
@@ -102,41 +109,36 @@ marquee {
     font-size: 40px;
     color: #00ffcc;
     font-weight: bold;
-    text-align: center;
     animation: blink 2s infinite;
+    margin-bottom: 20px;
 }
-#start-sub {
-    font-size: 20px;
-    color: #888;
-    margin-top: 20px;
-}
+#start-sub { font-size: 20px; color: #888; }
 
-/* Nacht Uhr */
 #night-clock { font-size: 100px; color: #080808; font-family: monospace; font-weight: bold; }
 
-/* Menü */
+/* === MENÜ === */
 #settings-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); display: none; z-index: 2000; overflow-y: auto; padding: 10px; }
 .modal { background: #111; border: 1px solid #333; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; }
 .cyan-title { color: #00ffcc; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 15px; font-size: 24px; }
-.menu-item { padding: 15px; background: #222; margin-bottom: 8px; font-size: 20px; cursor: pointer; border-radius: 5px; font-weight:bold; }
+.menu-item { padding: 15px; background: #222; margin-bottom: 8px; font-size: 20px; cursor: pointer; border-radius: 5px; font-weight:bold; border:1px solid #333; }
 .sub-sect { display: none; padding: 15px; background: #151515; margin-bottom: 10px; border: 1px solid #222; }
 input[type="text"], input[type="time"] { width: 100%; padding: 15px; font-size: 24px; background: #000; color: #fff; border: 1px solid #444; margin-top: 5px; border-radius: 4px; }
 
 /* Kaffeekasse Highlight */
 .coffee-box {
-    background: linear-gradient(45deg, #1a1a1a, #222);
+    background: #1a1a1a;
     border: 2px solid #0070ba;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 .coffee-text { font-size: 18px; color: #eee; margin-bottom: 15px; line-height: 1.5; }
 
 .btn-save { width: 100%; padding: 15px; background: #00ffcc; color: #000; font-weight: bold; font-size: 22px; border: none; border-radius: 8px; margin-top: 20px; }
 .btn-reset { width: 100%; padding: 15px; background: #ff4444; color: #fff; font-weight: bold; font-size: 18px; border: none; border-radius: 8px; margin-top: 10px; }
 .btn-close { width: 100%; padding: 15px; background: #333; color: #fff; font-weight: bold; font-size: 18px; border: none; border-radius: 8px; margin-top: 10px; }
-.paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 15px; border-radius: 30px; display: block; text-align: center; font-weight: bold; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+.paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 15px; border-radius: 30px; display: block; text-align: center; font-weight: bold; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0 auto; width: 80%; }
 .info-box { background: #1a1a1a; border-left: 5px solid #ff9900; padding: 15px; margin-top: 15px; font-size: 16px; color: #ccc; line-height: 1.5; }
 .live-indicator { display: inline-block; width: 12px; height: 12px; background-color: #555; border-radius: 50%; margin-right:5px; }
 

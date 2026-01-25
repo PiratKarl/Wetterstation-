@@ -1,5 +1,5 @@
-// AURA WEATHER V2.7 - TOUCH EDITION
-// Mit Start-Screen Logik und größerer Schrift
+// AURA WEATHER V2.7 - FINAL TOUCH
+// Features: Start-Screen, Donation Link, Big Layout
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
@@ -44,15 +44,15 @@ function updateClock() {
     }
 
     var overlay = document.getElementById('night-overlay');
+    var startOv = document.getElementById('start-overlay');
     var video = document.getElementById('wake-video');
 
     if (overlay) {
         if (isSleepTime) {
             // Nachtmodus
-            if(overlay.style.display !== 'flex') {
-                overlay.style.display = 'flex';
-                // Auch Startscreen wegmachen, falls er noch da ist
-                document.getElementById('start-overlay').style.display = 'none';
+            if(overlay.style.display !== 'block') {
+                overlay.style.display = 'block';
+                if(startOv) startOv.style.display = 'none'; // Startscreen auch nachts weg
                 document.getElementById('night-clock').innerText = curStr;
             } else {
                 document.getElementById('night-clock').innerText = curStr;
@@ -64,17 +64,21 @@ function updateClock() {
             // Tagmodus
             if(overlay.style.display !== 'none') overlay.style.display = 'none';
             if (isActivated) {
+                // Wenn aktiv, Video an und Startscreen weg
+                if(startOv) startOv.style.display = 'none';
                 if(video.getAttribute('src') === "") {
                     video.setAttribute('src', videoUrl); video.load();
                 }
                 if(video.paused) video.play().catch(function(e){});
             }
+            // Wenn NICHT aktiv, bleibt Startscreen da (HTML Standard)
         }
     }
 }
 
+// === START LOGIK ===
 function activateWakeLock() {
-    // 1. Start-Screen entfernen
+    // 1. Start-Screen ausblenden
     var startScreen = document.getElementById('start-overlay');
     if(startScreen) startScreen.style.display = 'none';
 
