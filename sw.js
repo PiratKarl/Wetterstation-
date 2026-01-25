@@ -1,5 +1,11 @@
-var cacheName = 'aura-weather-v159';
-var filesToCache = ['./', './index.html', './style.css', './script.js', './logo.png'];
+var cacheName = 'aura-v2-final';
+var filesToCache = [
+  './',
+  './index.html',
+  './style.css',
+  './script.js',
+  './logo.png'
+];
 
 self.addEventListener('install', function(e) {
   e.waitUntil(

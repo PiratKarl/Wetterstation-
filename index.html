@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V1.67 Master</title>
+    <title>Aura Weather 2.0 Final</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,99 +12,106 @@
     <link rel="stylesheet" href="style.css">
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
+        navigator.serviceWorker.register('sw.js').catch(function(err) {
+          console.log('SW Error:', err);
+        });
       }
     </script>
 </head>
 <body onclick="activateWakeLock()">
 
-    <div id="night-overlay" onclick="this.style.display='none'">
+    <div id="night-overlay">
         <div id="night-clock">00:00</div>
-        <div style="font-size:20px; color:#555; margin-top:10px;"></div>
+        <div style="position:absolute; bottom:10px; width:100%; text-align:center; color:#111;">System Sleep</div>
     </div>
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">STATION MASTER CONTROL</h2>
+            <h2 class="cyan-title">SYSTEM STEUERUNG 2.0</h2>
             
             <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
             <div id="sect-setup" class="sub-sect" style="display:block;">
-                <label>Stadt:</label> <input type="text" id="city-input" value="Braunschweig">
+                <label>Standort:</label> 
+                <input type="text" id="city-input" value="Braunschweig">
                 
-                <label style="margin-top:15px; display:block; color:#00ffcc;">NACHTMODUS</label>
-                VON <input type="time" id="s-start"> BIS <input type="time" id="s-end">
+                <label style="margin-top:20px; display:block; color:#00ffcc; border-bottom:1px solid #333;">NACHTMODUS (ZEITPLAN)</label>
+                <div style="margin-top:5px; font-size:14px; color:#aaa;">Wann soll das Tablet ausgehen?</div>
                 
-                <div style="background:#222; border-left: 3px solid #ff9900; padding:10px; margin-top:15px; font-size:14px; color:#ccc; line-height:1.4;">
-                    <b style="color:#ff9900;">WICHTIGE HINWEISE:</b><br><br>
-                    1. Aus technischen Gründen schaltet das Bild <b>10 Minuten FRÜHER</b> schwarz (Vorlauf).<br><br>
-                    2. Stelle den "Bildschirm-Timeout" in den Android-Einstellungen auf exakt <b>10 Minuten</b>.<br><br>
-                    3. Morgens muss die <b>Power-Taste</b> gedrückt werden, um die Station zu wecken.
+                VON: <input type="time" id="s-start"> 
+                BIS: <input type="time" id="s-end">
+                
+                <div class="info-box">
+                    <b style="color:#ff9900;">WICHTIG FÜR TAB 2:</b><br>
+                    Damit das Tablet pünktlich ausgeht, schaltet diese App das Bild automatisch <b>10 Minuten früher</b> schwarz.<br><br>
+                    <b>Deine Aufgabe:</b> Stelle in den Android-Einstellungen (Anzeige) den "Bildschirm-Timeout" auf exakt <b>10 Minuten</b>.
                 </div>
 
-                <button onclick="toggleSettings(); setTimeout(testNightMode, 500)" class="btn-test"><i class="fa fa-eye"></i> TEST: SOFORT SCHWARZ (5 Sek)</button>
+                <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
             </div>
 
             <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> UNTERSTÜTZUNG</div>
             <div id="sect-coffee" class="sub-sect">
                 <b>Projekt: Digitaler Denkmalschutz</b><br>
-                Hilf mit, alte Hardware zu retten!
+                Rette alte Hardware vor dem Schrott.<br><br>
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                    <i class="fa fa-paypal"></i> PayPal Kaffeekasse
+                    <i class="fa fa-paypal"></i> Zur Kaffeekasse
                 </a>
             </div>
 
-            <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
             <button onclick="toggleSettings()" class="btn-close">ABBRECHEN</button>
         </div>
     </div>
 
     <div class="app-shell">
-        <table width="100%" height="210" border="0" cellpadding="0" cellspacing="0">
+        <table width="100%" height="220" border="0" cellpadding="0" cellspacing="0">
             <tr>
-                <td width="33%" align="center">
+                <td width="33%" align="center" valign="middle">
                     <div id="clock">00:00</div>
                     <div id="date">Lade...</div>
-                    <img src="logo.png" height="50" style="margin-top:5px;">
+                    <img src="logo.png" height="50" style="margin-top:10px; opacity:0.8;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V1.67 MASTER</span>
+                        <span class="ver-label">V2.0 FINAL</span>
                     </div>
                 </td>
-                <td width="34%" align="center">
-                    <div id="city-title">LADE WETTER...</div>
+                
+                <td width="34%" align="center" valign="middle">
+                    <div id="city-title">LADE DATEN...</div>
                     <div class="temp-row">
                         <span id="main-icon-container"></span>
                         <span id="temp-display">--</span><span class="degree-unit">°</span>
                     </div>
                     <div id="feels-like">--</div>
                 </td>
-                <td width="33%" align="center">
+                
+                <td width="33%" align="center" valign="middle" style="position:relative;">
                     <div class="top-btns">
                         <i class="fa fa-gear" onclick="toggleSettings(); event.stopPropagation();"></i>
                     </div>
                     <div class="astro-box">
                         <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
                         <div class="astro-line"><i class="fa fa-moon-o" style="color:#FF8C00"></i> <span id="sunset-val">--:--</span></div>
+                        <div id="moon-txt" style="font-size:14px; color:#666; margin-top:5px;"></div>
                     </div>
                 </td>
             </tr>
         </table>
 
         <div class="ticker-box">
-            <marquee id="info-ticker" scrollamount="6">+++ BITTE DISPLAY TIPPEN UM STATION ZU AKTIVIEREN +++</marquee>
+            <marquee id="info-ticker" scrollamount="6">+++ BITTE DISPLAY TIPPEN UM STATION ZU STARTEN +++</marquee>
         </div>
 
         <div class="forecast-area">
             <div class="table-container">
-                <table id="hourly-table" width="98%"></table>
+                <table id="hourly-table" width="100%"></table>
             </div>
-            <div class="table-container" style="border-top:1px solid #222; margin-top: 2px;">
-                <table id="daily-table" width="98%"></table>
+            <div class="table-container" style="border-top:1px solid #222; margin-top: 4px; padding-top:2px;">
+                <table id="daily-table" width="100%"></table>
             </div>
         </div>
     </div>
 
-    <video id="wake-video" playsinline muted loop style="position:fixed; top:0; left:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
+    <video id="wake-video" playsinline muted loop style="position:fixed; top:0; left:0; width:1px; height:1px; opacity:0.01; z-index:-1; pointer-events:none;">
         <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
     </video>
 
