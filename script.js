@@ -1,5 +1,5 @@
-// AURA WEATHER V2.5 - GRAND MASTER EDITION
-// Stabilisiert für Android 4.4, großer Ticker mit Symbolen, ausführliches Menü
+// AURA WEATHER V2.6 - ULTIMATE EDITION
+// Features: Humidity, Big Layout, Safe UV Math, Donation Incentive
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
@@ -12,7 +12,7 @@ var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
 
 // Daten Container
-var tickerData = { main: "", wind: "", clothing: "", uv: "", pressure: "" };
+var tickerData = { main: "", wind: "", clothing: "", uv: "", pressure: "", humidity: "" };
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
 function timeToMins(t) {
@@ -21,7 +21,7 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === UHR & NACHTMODUS (Bewährtes System) ===
+// === UHR & NACHTMODUS ===
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours();
@@ -100,7 +100,7 @@ function fetchWeather() {
             
             // Icon (GIF)
             var iconCode = d.weather[0].icon;
-            document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="100" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
+            document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="110" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
             
             var feel = Math.round(d.main.feels_like);
             var elFeel = document.getElementById('feels-like');
@@ -113,12 +113,11 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
-            // Kleidungstipps + Symbole
+            // Kleidungstipps
             var desc = d.weather[0].description;
             var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1 || desc.indexOf("niesel") !== -1);
             var tips = "";
             
-            // Emoji für Kleidung wählen (funktioniert als Text im Ticker)
             if(temp < 5) tips = "❄ WINTERJACKE & MÜTZE";
             else if(temp < 12) tips = "🧥 WARME JACKE";
             else if(temp < 18) tips = "🧣 ÜBERGANGSJACKE";
@@ -129,7 +128,7 @@ function fetchWeather() {
             
             tickerData.clothing = tips;
             
-            // Emoji für Wetterzustand
+            // Symbole für Ticker
             var sym = "";
             if(desc.indexOf("klar")!==-1) sym = "☀";
             else if(desc.indexOf("wolken")!==-1) sym = "☁";
@@ -140,6 +139,8 @@ function fetchWeather() {
             tickerData.main = sym + " " + desc.toUpperCase();
             tickerData.wind = "💨 WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
             tickerData.pressure = "hPa: " + d.main.pressure;
+            // NEU: LUFTFEUCHTIGKEIT
+            tickerData.humidity = "💧 LUFT: " + d.main.humidity + "%";
             
             // UV Berechnen (Lokal)
             calculateApproxUV(d.coord.lat, d.clouds.all);
@@ -152,15 +153,13 @@ function fetchWeather() {
     xhr.send();
 }
 
-// UV RECHNER (Safe)
 function calculateApproxUV(lat, clouds) {
     var now = new Date();
     var hour = now.getHours();
     var month = now.getMonth(); 
-    
     var seasonalBase = 3;
-    if(month >= 10 || month <= 1) seasonalBase = 1; // Winter
-    else if(month >= 3 && month <= 8) seasonalBase = 7; // Sommer
+    if(month >= 10 || month <= 1) seasonalBase = 1; 
+    else if(month >= 3 && month <= 8) seasonalBase = 7; 
     
     var timeFactor = 0;
     if(hour >= 11 && hour <= 15) timeFactor = 1.0;     
@@ -170,18 +169,15 @@ function calculateApproxUV(lat, clouds) {
     var maxPotential = seasonalBase * timeFactor;
     var cloudFactor = 1.0 - (clouds / 100 * 0.7); 
     var uv = Math.round(maxPotential * cloudFactor);
-    
     if(hour < 8 || hour > 19) uv = 0;
     
     var uvEl = document.getElementById('uv-val');
     uvEl.innerText = uv;
-    
     if(uv <= 2) uvEl.style.color = "#00ff00"; 
     else if(uv <= 5) uvEl.style.color = "#ffff00"; 
     else if(uv <= 7) uvEl.style.color = "#ff9900"; 
     else uvEl.style.color = "#ff0000"; 
-    
-    tickerData.uv = "UV-INDEX: " + uv;
+    tickerData.uv = "UV: " + uv;
 }
 
 function getMoonPhaseName(date) {
@@ -192,7 +188,7 @@ function getMoonPhaseName(date) {
     var jd = c + e + day - 694039.09; jd /= 29.5305882;
     var b = parseInt(jd); jd -= b; b = Math.round(jd * 8);
     if (b >= 8) b = 0;
-    var phases = ["🌑 NEUMOND", "🌒 ZUNEHMEND", "🌓 HALBMOND (1.)", "🌔 ZUNEHMEND", "🌕 VOLLMOND", "🌖 ABNEHMEND", "🌗 HALBMOND (3.)", "🌘 ABNEHMEND"];
+    var phases = ["🌑 NEUMOND", "🌒 ZUNEHMEND", "🌓 HALBMOND", "🌔 ZUNEHMEND", "🌕 VOLLMOND", "🌖 ABNEHMEND", "🌗 HALBMOND", "🌘 ABNEHMEND"];
     return phases[b];
 }
 
@@ -246,11 +242,10 @@ function renderDaily(list) {
 function updateTicker() {
     var t = document.getElementById('info-ticker');
     var uvTxt = tickerData.uv ? "  +++  " + tickerData.uv : "";
-    // Ausführlicher Ticker Text mit Symbolen
-    t.innerText = tickerData.clothing + "  +++  " + tickerData.main + uvTxt + "  +++  " + tickerData.wind + "  +++  " + tickerData.pressure + "  +++  " + city.toUpperCase();
+    // Ticker jetzt MIT Luftfeuchtigkeit
+    t.innerText = tickerData.clothing + "  +++  " + tickerData.main + uvTxt + "  +++  " + tickerData.humidity + "  +++  " + tickerData.wind + "  +++  " + tickerData.pressure + "  +++  " + city.toUpperCase();
 }
 
-// Menü & Reset
 function toggleSettings() { var s = document.getElementById('settings-overlay'); s.style.display = (s.style.display==='block')?'none':'block'; if(s.style.display==='block'){ document.getElementById('city-input').value = city; document.getElementById('s-start').value = sStart; document.getElementById('s-end').value = sEnd; } }
 function toggleSub(id) { var el = document.getElementById(id); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
 function saveAll() { city = document.getElementById('city-input').value; sStart = document.getElementById('s-start').value; sEnd = document.getElementById('s-end').value; localStorage.setItem('selectedCity', city); localStorage.setItem('sleepStart', sStart); localStorage.setItem('sleepEnd', sEnd); location.reload(); }

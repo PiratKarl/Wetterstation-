@@ -8,18 +8,17 @@ body {
     overflow: hidden; 
 }
 
-/* === KOPFZEILE (Oben) === */
-/* Etwas kompakter, um unten Platz zu schaffen */
-#clock { font-size: 70px; font-weight: bold; line-height: 1; letter-spacing: -2px; }
+/* === KOPFZEILE (Leicht kompakter für mehr Platz unten) === */
+#clock { font-size: 65px; font-weight: bold; line-height: 1; letter-spacing: -2px; }
 #date { font-size: 18px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
-#city-title { font-size: 18px; color: #00ffcc; letter-spacing: 1px; margin-bottom: 5px; font-weight: bold; }
+#city-title { font-size: 18px; color: #00ffcc; letter-spacing: 1px; margin-bottom: 2px; font-weight: bold; }
 
-/* TEMPERATUR */
+/* TEMPERATUR (Groß & Lesbar) */
 #temp-display { 
-    font-size: 100px; /* Minimal kleiner damit unten mehr Platz ist */
+    font-size: 105px; 
     font-weight: bold; 
-    line-height: 0.9; 
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    line-height: 0.85; 
+    text-shadow: 3px 3px 0px #000;
 }
 .degree-unit { font-size: 50px; color: #00ffcc; vertical-align: top; }
 #feels-like { font-size: 18px; font-weight: bold; color: #ccc; margin-top:5px; }
@@ -28,15 +27,15 @@ body {
 .ver-label { margin-left: 5px; }
 
 /* ASTRO & ICONS */
-.astro-box { margin-top: 10px; text-align: left; display: inline-block; }
-.astro-line { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
-.top-btns { position: absolute; top: 10px; right: 15px; cursor: pointer; z-index: 50; }
-.fa-gear { font-size: 40px; color: #555; }
+.astro-box { margin-top: 5px; text-align: left; display: inline-block; }
+.astro-line { font-size: 20px; font-weight: bold; margin-bottom: 4px; }
+.top-btns { position: absolute; top: 5px; right: 10px; cursor: pointer; z-index: 50; }
+.fa-gear { font-size: 42px; color: #555; }
 
-/* === TICKER (Groß & Ausführlich) === */
+/* === TICKER (Breit & Informativ) === */
 .ticker-box { 
-    height: 60px; /* Schön hoch */
-    background: #111; /* Etwas heller für Kontrast */
+    height: 55px; 
+    background: #111; 
     border-top: 2px solid #333; 
     border-bottom: 2px solid #333; 
     overflow: hidden; 
@@ -44,44 +43,48 @@ body {
     margin-top: 5px;
 }
 marquee { 
-    line-height: 60px; 
-    font-size: 28px; /* Große Schrift */
+    line-height: 55px; 
+    font-size: 26px; 
     color: #00ffcc; 
     font-weight: bold; 
     font-family: "Courier New", monospace; 
 }
 
-/* === VORHERSAGE (Die 2 unteren Zeilen) === */
-.forecast-area { width: 100%; margin-top: 5px; }
+/* === VORHERSAGE (JETZT RICHTIG GROSS) === */
+.forecast-area { width: 100%; margin-top: 2px; }
 .table-container { width: 100%; text-align: center; }
-.f-item { text-align: center; padding: 5px 2px; } /* Mehr Abstand */
+.f-item { text-align: center; padding: 2px 2px; }
 
-/* Hier machen wir alles größer */
+/* Zeit & Tag */
 .f-time, .f-day-name { 
-    font-size: 18px; /* Deutlich größer */
-    color: #999; 
-    margin-bottom: 4px; 
+    font-size: 20px; /* Noch größer */
+    color: #aaa; 
+    margin-bottom: 2px; 
     font-weight: bold; 
+    text-transform: uppercase;
 }
 
+/* Icons */
 .f-icon-img { 
-    width: 50px; /* Icons größer */
-    height: 50px; 
+    width: 55px; /* Größer */
+    height: 55px; 
     display:block; 
     margin:0 auto; 
 }
 
+/* Temperatur Zeilen */
 .f-temp-line { 
-    font-size: 24px; /* Temperatur fett und groß */
+    font-size: 28px; /* Sehr groß & fett */
     font-weight: bold; 
     color: #fff; 
-    margin-top: 4px;
+    margin-top: 2px;
+    text-shadow: 1px 1px 2px #000;
 }
 
 /* Min/Max Farben */
-.temp-high { color: #ff4d4d; font-weight:bold; font-size:22px; } 
-.temp-low { color: #00aaff; font-weight:bold; font-size:22px; } 
-.temp-sep { color: #555; font-size:18px; margin: 0 5px; }
+.temp-high { color: #ff4d4d; font-weight:bold; font-size:26px; } 
+.temp-low { color: #00aaff; font-weight:bold; font-size:26px; } 
+.temp-sep { color: #444; font-size:20px; margin: 0 4px; }
 
 /* === SYSTEM & MENÜ === */
 #night-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: #000000 !important; z-index: 99999; display: none; }
@@ -96,11 +99,21 @@ marquee {
 
 input[type="text"], input[type="time"] { width: 100%; padding: 15px; font-size: 24px; background: #000; color: #fff; border: 1px solid #444; margin-top: 5px; border-radius: 4px; }
 
+/* Kaffeekasse Highlight */
+.coffee-box {
+    background: linear-gradient(45deg, #1a1a1a, #222);
+    border: 2px solid #0070ba;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 10px;
+}
+.coffee-text { font-size: 16px; color: #eee; margin-bottom: 15px; line-height: 1.4; }
+
 .btn-save { width: 100%; padding: 15px; background: #00ffcc; color: #000; font-weight: bold; font-size: 22px; border: none; border-radius: 8px; margin-top: 20px; }
 .btn-reset { width: 100%; padding: 15px; background: #ff4444; color: #fff; font-weight: bold; font-size: 18px; border: none; border-radius: 8px; margin-top: 10px; }
 .btn-close { width: 100%; padding: 15px; background: #333; color: #fff; font-weight: bold; font-size: 18px; border: none; border-radius: 8px; margin-top: 10px; }
+.paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 15px; border-radius: 30px; display: block; text-align: center; font-weight: bold; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
 
 .info-box { background: #1a1a1a; border-left: 5px solid #ff9900; padding: 15px; margin-top: 15px; font-size: 16px; color: #ccc; line-height: 1.5; }
-.legend-box { margin-top:10px; font-size:14px; color:#888; border-top:1px solid #333; padding-top:10px; }
-
 .live-indicator { display: inline-block; width: 12px; height: 12px; background-color: #555; border-radius: 50%; margin-right:5px; }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather 2.5 Grand Master</title>
+    <title>Aura Weather 2.6 Ultimate</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,11 +19,11 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">SYSTEM 2.5 GRAND MASTER</h2>
+            <h2 class="cyan-title">SYSTEM 2.6 ULTIMATE</h2>
             
-            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> GRUNDEINSTELLUNGEN</div>
+            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
             <div id="sect-setup" class="sub-sect" style="display:block;">
-                <label>Stadt:</label> 
+                <label>Standort:</label> 
                 <input type="text" id="city-input" value="Braunschweig">
                 
                 <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS (SCHLAFZEIT)</label>
@@ -39,24 +39,27 @@
                 <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
             </div>
 
-            <div class="menu-item" onclick="toggleSub('sect-info')"><i class="fa fa-info-circle"></i> LEGENDE & INFO</div>
-            <div id="sect-info" class="sub-sect">
-                <b>UV-INDEX FARBEN:</b><br>
-                <span style="color:#00ff00">GRÜN</span> = Unbedenklich (0-2)<br>
-                <span style="color:#ffff00">GELB</span> = Mäßig (3-5)<br>
-                <span style="color:#ff9900">ORANGE</span> = Hoch (6-7)<br>
-                <span style="color:#ff0000">ROT</span> = Sehr Hoch (8+)<br>
-                
-                <div class="legend-box">
-                    Version 2.5 (Grand Master)<br>
-                    Optimiert für Android 4.4<br>
-                    Lokale UV-Berechnung
+            <div class="menu-item" onclick="toggleSub('sect-coffee')"><i class="fa fa-heart" style="color:#ff4d4d;"></i> PROJEKT UNTERSTÜTZEN</div>
+            <div id="sect-coffee" class="sub-sect">
+                <div class="coffee-box">
+                    <div class="coffee-text">
+                        <b>Projekt: Digitaler Denkmalschutz</b><br><br>
+                        Dieses System rettet alte Tablets vor dem Elektroschrott! 🌍<br>
+                        Deine Spende hilft mir, die Server zu bezahlen und Updates zu entwickeln.<br><br>
+                        <b>Gib mir einen Kaffee aus! ☕</b>
+                    </div>
+                    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
+                        <i class="fa fa-paypal"></i> PayPal Spende
+                    </a>
                 </div>
-                
-                <button onclick="fullReset()" class="btn-reset">⚠️ SYSTEM RESET (Löschen)</button>
             </div>
 
-            <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
+            <div class="menu-item" onclick="toggleSub('sect-info')"><i class="fa fa-info-circle"></i> INFO & RESET</div>
+            <div id="sect-info" class="sub-sect">
+                 <button onclick="fullReset()" class="btn-reset">⚠️ SYSTEM RESET</button>
+                 <br><br>
+                 <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
+            </div>
         </div>
     </div>
 
@@ -69,7 +72,7 @@
                     <img src="logo.png" height="40" style="margin-top:10px; opacity:0.8;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V2.5 GM</span>
+                        <span class="ver-label">V2.6 ULT</span>
                     </div>
                 </td>
                 <td width="34%" align="center" valign="middle">
