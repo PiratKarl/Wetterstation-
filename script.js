@@ -1,4 +1,6 @@
-// AURA WEATHER V2.2 - VISUAL UPGRADE
+// AURA WEATHER V2.3 - MATH EDITION (Android 4.4 Fix)
+// Keine externen UV-Abrufe mehr, sondern lokale Berechnung!
+
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -9,7 +11,6 @@ var timeOffset = 0;
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
 
-// Daten Container
 var tickerData = { main: "", wind: "", clothing: "", uv: "" };
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
@@ -19,7 +20,7 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === UHR & NACHTMODUS (Bleibt stabil wie in V2.1) ===
+// === UHR & NACHTMODUS ===
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours();
@@ -85,7 +86,6 @@ function activateWakeLock() {
 function fetchWeather() {
     if(!isActivated) return;
     var xhr = new XMLHttpRequest();
-    // Cache Buster
     var url = "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de&t=" + new Date().getTime();
     
     xhr.open("GET", url, true);
@@ -93,14 +93,12 @@ function fetchWeather() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var d = JSON.parse(xhr.responseText);
             
-            // Temperatur Groß
+            // Temperatur & UI
             var temp = Math.round(d.main.temp);
             document.getElementById('temp-display').innerText = temp;
             document.getElementById('city-title').innerText = d.name.toUpperCase();
             
-            // !!! WETTER SYMBOL ALS GIF !!!
-            // Hier wird jetzt .gif statt .png geladen und kein Internet-Pfad mehr genutzt
-            // Du musst z.B. "01d.gif" im gleichen Ordner auf GitHub haben!
+            // Icon (GIF)
             var iconCode = d.weather[0].icon;
             document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="100" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
             
@@ -115,65 +113,81 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
-            // --- NEUE KLEIDUNGS-LOGIK ---
+            // KLEIDUNGSTIPPS
             var desc = d.weather[0].description;
-            var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1);
+            var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1 || desc.indexOf("niesel") !== -1);
             var tips = "";
-            
-            if(temp < 5) tips = "WINTERJACKE & SCHAL";
-            else if(temp < 12) tips = "DICKE JACKE EMPFOHLEN";
+            if(temp < 5) tips = "WINTERJACKE & MÜTZE";
+            else if(temp < 12) tips = "WARME JACKE EMPFOHLEN";
             else if(temp < 18) tips = "PULLI ODER ÜBERGANGSJACKE";
             else if(temp < 25) tips = "T-SHIRT WETTER";
-            else tips = "KURZE KLEIDUNG & SONNENBRILLE";
-            
+            else tips = "KURZE KLEIDUNG";
             if(rain) tips += " + REGENSCHIRM!";
-            
             tickerData.clothing = tips;
+
             tickerData.main = desc.toUpperCase();
             tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
             
+            // UV BERECHNEN (Der neue Mathe-Trick)
+            // Wir nutzen Koordinaten und Wolken (d.clouds.all)
+            calculateApproxUV(d.coord.lat, d.clouds.all);
+
             updateTicker();
             fetchForecast(d.coord.lat, d.coord.lon);
-            fetchExtraData(d.coord.lat, d.coord.lon);
+            
+            // Mondphase berechnen
+            document.getElementById('moon-txt').innerText = getMoonPhaseName(new Date());
         }
     };
     xhr.send();
 }
 
-// UV DATEN (Mit Fallback wenn Android 4.4 blockt)
-function fetchExtraData(lat, lon) {
-    var xhr = new XMLHttpRequest();
-    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=uv_index_max&timezone=auto";
+// === DER NEUE UV RECHNER (Ohne Internet!) ===
+function calculateApproxUV(lat, clouds) {
+    // 1. Datum & Zeit bestimmen
+    var now = new Date();
+    var hour = now.getHours();
+    var month = now.getMonth(); // 0 = Jan, 6 = Juli
     
-    xhr.open("GET", url, true);
-    // Timeout setzen, falls Android 4.4 hängt
-    xhr.timeout = 5000; 
+    // Grund-UV basierend auf Jahreszeit in Deutschland (grobe Schätzung)
+    // Winter (Nov-Feb): 0-1, Übergang: 2-4, Sommer (Mai-Aug): 5-8
+    var seasonalBase = 0;
+    if(month >= 10 || month <= 1) seasonalBase = 1; // Winter
+    else if(month >= 3 && month <= 8) seasonalBase = 7; // Sommer
+    else seasonalBase = 3; // Übergang
     
-    xhr.onload = function() {
-        if (xhr.status == 200) {
-            try {
-                var d = JSON.parse(xhr.responseText);
-                var uv = d.daily.uv_index_max[0];
-                var uvEl = document.getElementById('uv-val');
-                uvEl.innerText = uv;
-                
-                if(uv <= 2) uvEl.style.color = "#00ff00"; 
-                else if(uv <= 5) uvEl.style.color = "#ffff00"; 
-                else if(uv <= 7) uvEl.style.color = "#ff9900"; 
-                else uvEl.style.color = "#ff0000"; 
-                
-                tickerData.uv = "UV: " + uv;
-                updateTicker();
-            } catch(e) { console.log("UV Parse Error"); }
-        }
-    };
-    // Wenn Android 4.4 die Verbindung blockt, zeigen wir Fragezeichen statt Striche
-    xhr.onerror = function() { document.getElementById('uv-val').innerText = "?"; };
-    xhr.ontimeout = function() { document.getElementById('uv-val').innerText = "?"; };
-    xhr.send();
+    // Tageszeit-Faktor (Nachts 0, Mittags 100%)
+    // Wir machen eine simple Kurve: Mittags hoch, morgens/abends null
+    var timeFactor = 0;
+    if(hour >= 11 && hour <= 15) timeFactor = 1.0;     // Mittagshitze
+    else if(hour >= 9 && hour <= 17) timeFactor = 0.6; // Vormittag/Nachmittag
+    else if(hour >= 7 && hour <= 19) timeFactor = 0.2; // Morgens/Abends
+    else timeFactor = 0; // Nachts
     
-    // Mondphase berechnen (lokal, ohne Internet, funktioniert IMMER)
-    document.getElementById('moon-txt').innerText = getMoonPhaseName(new Date());
+    // Wenn Sommer und Mittag, kann es bis zu 8 werden
+    var maxPotential = seasonalBase * timeFactor;
+    
+    // Wolken-Faktor abziehen (OpenWeatherMap liefert clouds.all in %)
+    // 100% Wolken reduzieren UV stark, aber nicht auf 0
+    var cloudFactor = 1.0 - (clouds / 100 * 0.7); // Selbst bei 100% Wolken kommen noch 30% UV durch
+    
+    // Ergebnis berechnen & Runden
+    var uv = Math.round(maxPotential * cloudFactor);
+    
+    // Sicherheit: Im Winter nachts nie UV anzeigen
+    if(hour < 8 || hour > 19) uv = 0;
+    
+    // Anzeigen
+    var uvEl = document.getElementById('uv-val');
+    uvEl.innerText = uv;
+    
+    // Farbe setzen
+    if(uv <= 2) uvEl.style.color = "#00ff00"; 
+    else if(uv <= 5) uvEl.style.color = "#ffff00"; 
+    else if(uv <= 7) uvEl.style.color = "#ff9900"; 
+    else uvEl.style.color = "#ff0000"; 
+    
+    tickerData.uv = "UV-INDEX: " + uv;
 }
 
 function getMoonPhaseName(date) {
@@ -208,7 +222,7 @@ function renderHourly(list) {
     for(var i=0; i<4; i++) {
         var item = list[i];
         var time = new Date(item.dt * 1000);
-        // Auch hier GIFs nutzen
+        // GIFs im Stundentakt
         var ic = item.weather[0].icon;
         html += '<td class="f-item"><div class="f-time">' + z(time.getHours()) + ' UHR</div><img class="f-icon-img" src="' + ic + '.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+ic+'.png\'"><div class="f-temp-line">' + Math.round(item.main.temp) + '°</div></td>';
     }
@@ -216,51 +230,31 @@ function renderHourly(list) {
     document.getElementById('hourly-table').innerHTML = html;
 }
 
-// NEU: ECHTE MIN/MAX BERECHNUNG FÜR DEN TAG
 function renderDaily(list) {
     var html = "<tr>";
-    // Wir nehmen die nächsten 4 Tage. Ein Tag hat 8 Einträge (3h x 8 = 24h)
-    // Wir suchen in jedem 8er Block das Minimum und Maximum
-    
     var daysProcessed = 0;
-    // Startindex: Wir überspringen den heutigen Resttag und fangen morgen an (ca. Index 6-8)
-    // Einfachheitshalber nehmen wir immer Blöcke von 8
-    
     for(var i=0; i<list.length - 8; i+=8) {
         if(daysProcessed >= 4) break;
-        
-        // Suche Min und Max in diesem 24h Block
-        var minT = 100; var maxT = -100;
-        var dayName = "";
-        var iconStr = "";
-        
-        // Scanne 8 Schritte (24h)
+        var minT = 100; var maxT = -100; var dayName = ""; var iconStr = "";
         for(var k=0; k<8; k++) {
             var idx = i + k;
             if(idx >= list.length) break;
             var it = list[idx];
-            
             if(it.main.temp_min < minT) minT = it.main.temp_min;
             if(it.main.temp_max > maxT) maxT = it.main.temp_max;
-            
-            // Nimm das Icon von Mittags (ca. Index 4 im Block)
             if(k==4) {
                 dayName = new Date(it.dt * 1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
                 iconStr = it.weather[0].icon;
             }
         }
-        
-        // Fallback falls Schleife komisch war
         if(dayName === "") dayName = new Date(list[i].dt * 1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
         if(iconStr === "") iconStr = list[i].weather[0].icon;
 
         html += '<td class="f-item">';
         html += '<div class="f-day-name">' + dayName + '</div>';
         html += '<img class="f-icon-img" src="' + iconStr + '.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconStr+'.png\'">';
-        // HIER IST DIE BUNTE ANZEIGE
         html += '<div><span class="temp-high">' + Math.round(maxT) + '°</span><span class="temp-sep">/</span><span class="temp-low">' + Math.round(minT) + '°</span></div>';
         html += '</td>';
-        
         daysProcessed++;
     }
     html += "</tr>";
@@ -270,7 +264,6 @@ function renderDaily(list) {
 function updateTicker() {
     var t = document.getElementById('info-ticker');
     var uvTxt = tickerData.uv ? " +++ " + tickerData.uv : "";
-    // Ticker Text mit Kleidungstipp
     t.innerText = tickerData.clothing + "  +++  " + tickerData.main + uvTxt + "  +++  " + tickerData.wind + "  +++  " + city.toUpperCase();
 }
 
