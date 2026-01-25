@@ -1,5 +1,5 @@
-// AURA WEATHER V2.3 - MATH EDITION (Android 4.4 Fix)
-// Keine externen UV-Abrufe mehr, sondern lokale Berechnung!
+// AURA WEATHER V2.4 - SLIM & MATH EDITION
+// Fixes: Ticker Size & UV Question Mark
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
@@ -82,10 +82,11 @@ function activateWakeLock() {
     }
 }
 
-// === WETTER LOGIK ===
+// === WETTER LOGIK (MIT UV MATHE) ===
 function fetchWeather() {
     if(!isActivated) return;
     var xhr = new XMLHttpRequest();
+    // Neuer Cache Buster
     var url = "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de&t=" + new Date().getTime();
     
     xhr.open("GET", url, true);
@@ -93,7 +94,6 @@ function fetchWeather() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var d = JSON.parse(xhr.responseText);
             
-            // Temperatur & UI
             var temp = Math.round(d.main.temp);
             document.getElementById('temp-display').innerText = temp;
             document.getElementById('city-title').innerText = d.name.toUpperCase();
@@ -107,81 +107,64 @@ function fetchWeather() {
             elFeel.innerText = "GEFÜHLT " + feel + "°";
             elFeel.style.color = (feel < 10) ? '#00aaff' : (feel > 25 ? '#ff4d4d' : '#ccc');
 
-            // Astro
             var rise = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
             var set = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
-            // KLEIDUNGSTIPPS
+            // Kleidung
             var desc = d.weather[0].description;
             var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1 || desc.indexOf("niesel") !== -1);
             var tips = "";
-            if(temp < 5) tips = "WINTERJACKE & MÜTZE";
-            else if(temp < 12) tips = "WARME JACKE EMPFOHLEN";
-            else if(temp < 18) tips = "PULLI ODER ÜBERGANGSJACKE";
+            if(temp < 5) tips = "WINTERJACKE";
+            else if(temp < 12) tips = "WARME JACKE";
+            else if(temp < 18) tips = "PULLI/JACKE";
             else if(temp < 25) tips = "T-SHIRT WETTER";
             else tips = "KURZE KLEIDUNG";
-            if(rain) tips += " + REGENSCHIRM!";
+            if(rain) tips += " + SCHIRM";
             tickerData.clothing = tips;
 
             tickerData.main = desc.toUpperCase();
             tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
             
-            // UV BERECHNEN (Der neue Mathe-Trick)
-            // Wir nutzen Koordinaten und Wolken (d.clouds.all)
+            // === UV BERECHNUNG (Lokal) ===
+            // Keine Internetabfrage mehr -> Kein Fragezeichen Fehler mehr!
             calculateApproxUV(d.coord.lat, d.clouds.all);
 
             updateTicker();
             fetchForecast(d.coord.lat, d.coord.lon);
-            
-            // Mondphase berechnen
             document.getElementById('moon-txt').innerText = getMoonPhaseName(new Date());
         }
     };
     xhr.send();
 }
 
-// === DER NEUE UV RECHNER (Ohne Internet!) ===
 function calculateApproxUV(lat, clouds) {
-    // 1. Datum & Zeit bestimmen
     var now = new Date();
     var hour = now.getHours();
-    var month = now.getMonth(); // 0 = Jan, 6 = Juli
+    var month = now.getMonth(); 
     
-    // Grund-UV basierend auf Jahreszeit in Deutschland (grobe Schätzung)
-    // Winter (Nov-Feb): 0-1, Übergang: 2-4, Sommer (Mai-Aug): 5-8
-    var seasonalBase = 0;
+    // Jahreszeit
+    var seasonalBase = 3;
     if(month >= 10 || month <= 1) seasonalBase = 1; // Winter
     else if(month >= 3 && month <= 8) seasonalBase = 7; // Sommer
-    else seasonalBase = 3; // Übergang
     
-    // Tageszeit-Faktor (Nachts 0, Mittags 100%)
-    // Wir machen eine simple Kurve: Mittags hoch, morgens/abends null
+    // Tageszeit
     var timeFactor = 0;
-    if(hour >= 11 && hour <= 15) timeFactor = 1.0;     // Mittagshitze
-    else if(hour >= 9 && hour <= 17) timeFactor = 0.6; // Vormittag/Nachmittag
-    else if(hour >= 7 && hour <= 19) timeFactor = 0.2; // Morgens/Abends
-    else timeFactor = 0; // Nachts
+    if(hour >= 11 && hour <= 15) timeFactor = 1.0;     
+    else if(hour >= 9 && hour <= 17) timeFactor = 0.6; 
+    else if(hour >= 7 && hour <= 19) timeFactor = 0.2; 
     
-    // Wenn Sommer und Mittag, kann es bis zu 8 werden
     var maxPotential = seasonalBase * timeFactor;
-    
-    // Wolken-Faktor abziehen (OpenWeatherMap liefert clouds.all in %)
-    // 100% Wolken reduzieren UV stark, aber nicht auf 0
-    var cloudFactor = 1.0 - (clouds / 100 * 0.7); // Selbst bei 100% Wolken kommen noch 30% UV durch
-    
-    // Ergebnis berechnen & Runden
+    // Wolken abziehen
+    var cloudFactor = 1.0 - (clouds / 100 * 0.7); 
     var uv = Math.round(maxPotential * cloudFactor);
     
-    // Sicherheit: Im Winter nachts nie UV anzeigen
     if(hour < 8 || hour > 19) uv = 0;
     
-    // Anzeigen
     var uvEl = document.getElementById('uv-val');
     uvEl.innerText = uv;
     
-    // Farbe setzen
     if(uv <= 2) uvEl.style.color = "#00ff00"; 
     else if(uv <= 5) uvEl.style.color = "#ffff00"; 
     else if(uv <= 7) uvEl.style.color = "#ff9900"; 
@@ -205,7 +188,6 @@ function getMoonPhaseName(date) {
 function fetchForecast(lat, lon) {
     var xhr = new XMLHttpRequest();
     var url = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + API_KEY + "&units=metric&lang=de&t=" + new Date().getTime();
-    
     xhr.open("GET", url, true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -222,7 +204,6 @@ function renderHourly(list) {
     for(var i=0; i<4; i++) {
         var item = list[i];
         var time = new Date(item.dt * 1000);
-        // GIFs im Stundentakt
         var ic = item.weather[0].icon;
         html += '<td class="f-item"><div class="f-time">' + z(time.getHours()) + ' UHR</div><img class="f-icon-img" src="' + ic + '.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+ic+'.png\'"><div class="f-temp-line">' + Math.round(item.main.temp) + '°</div></td>';
     }
@@ -237,24 +218,14 @@ function renderDaily(list) {
         if(daysProcessed >= 4) break;
         var minT = 100; var maxT = -100; var dayName = ""; var iconStr = "";
         for(var k=0; k<8; k++) {
-            var idx = i + k;
-            if(idx >= list.length) break;
-            var it = list[idx];
+            var idx = i + k; if(idx >= list.length) break; var it = list[idx];
             if(it.main.temp_min < minT) minT = it.main.temp_min;
             if(it.main.temp_max > maxT) maxT = it.main.temp_max;
-            if(k==4) {
-                dayName = new Date(it.dt * 1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
-                iconStr = it.weather[0].icon;
-            }
+            if(k==4) { dayName = new Date(it.dt * 1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase(); iconStr = it.weather[0].icon; }
         }
         if(dayName === "") dayName = new Date(list[i].dt * 1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
         if(iconStr === "") iconStr = list[i].weather[0].icon;
-
-        html += '<td class="f-item">';
-        html += '<div class="f-day-name">' + dayName + '</div>';
-        html += '<img class="f-icon-img" src="' + iconStr + '.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconStr+'.png\'">';
-        html += '<div><span class="temp-high">' + Math.round(maxT) + '°</span><span class="temp-sep">/</span><span class="temp-low">' + Math.round(minT) + '°</span></div>';
-        html += '</td>';
+        html += '<td class="f-item"><div class="f-day-name">' + dayName + '</div><img class="f-icon-img" src="' + iconStr + '.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconStr+'.png\'"><div><span class="temp-high">' + Math.round(maxT) + '°</span><span class="temp-sep">/</span><span class="temp-low">' + Math.round(minT) + '°</span></div></td>';
         daysProcessed++;
     }
     html += "</tr>";
