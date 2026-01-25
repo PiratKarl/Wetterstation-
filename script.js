@@ -1,5 +1,5 @@
-// AURA WEATHER V2.4 - SLIM & MATH EDITION
-// Fixes: Ticker Size & UV Question Mark
+// AURA WEATHER V2.5 - GRAND MASTER EDITION
+// Stabilisiert für Android 4.4, großer Ticker mit Symbolen, ausführliches Menü
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
@@ -11,7 +11,8 @@ var timeOffset = 0;
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
 
-var tickerData = { main: "", wind: "", clothing: "", uv: "" };
+// Daten Container
+var tickerData = { main: "", wind: "", clothing: "", uv: "", pressure: "" };
 
 function z(n) { return (n < 10 ? '0' : '') + n; }
 function timeToMins(t) {
@@ -20,7 +21,7 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === UHR & NACHTMODUS ===
+// === UHR & NACHTMODUS (Bewährtes System) ===
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours();
@@ -82,11 +83,10 @@ function activateWakeLock() {
     }
 }
 
-// === WETTER LOGIK (MIT UV MATHE) ===
+// === WETTER LOGIK ===
 function fetchWeather() {
     if(!isActivated) return;
     var xhr = new XMLHttpRequest();
-    // Neuer Cache Buster
     var url = "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de&t=" + new Date().getTime();
     
     xhr.open("GET", url, true);
@@ -107,28 +107,41 @@ function fetchWeather() {
             elFeel.innerText = "GEFÜHLT " + feel + "°";
             elFeel.style.color = (feel < 10) ? '#00aaff' : (feel > 25 ? '#ff4d4d' : '#ccc');
 
+            // Astro
             var rise = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
             var set = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
-            // Kleidung
+            // Kleidungstipps + Symbole
             var desc = d.weather[0].description;
             var rain = (desc.indexOf("regen") !== -1 || desc.indexOf("schnee") !== -1 || desc.indexOf("niesel") !== -1);
             var tips = "";
-            if(temp < 5) tips = "WINTERJACKE";
-            else if(temp < 12) tips = "WARME JACKE";
-            else if(temp < 18) tips = "PULLI/JACKE";
-            else if(temp < 25) tips = "T-SHIRT WETTER";
-            else tips = "KURZE KLEIDUNG";
-            if(rain) tips += " + SCHIRM";
-            tickerData.clothing = tips;
-
-            tickerData.main = desc.toUpperCase();
-            tickerData.wind = "WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
             
-            // === UV BERECHNUNG (Lokal) ===
-            // Keine Internetabfrage mehr -> Kein Fragezeichen Fehler mehr!
+            // Emoji für Kleidung wählen (funktioniert als Text im Ticker)
+            if(temp < 5) tips = "❄ WINTERJACKE & MÜTZE";
+            else if(temp < 12) tips = "🧥 WARME JACKE";
+            else if(temp < 18) tips = "🧣 ÜBERGANGSJACKE";
+            else if(temp < 25) tips = "👕 T-SHIRT WETTER";
+            else tips = "🕶 KURZE KLEIDUNG";
+            
+            if(rain) tips += " + ☂ SCHIRM";
+            
+            tickerData.clothing = tips;
+            
+            // Emoji für Wetterzustand
+            var sym = "";
+            if(desc.indexOf("klar")!==-1) sym = "☀";
+            else if(desc.indexOf("wolken")!==-1) sym = "☁";
+            else if(desc.indexOf("regen")!==-1) sym = "🌧";
+            else if(desc.indexOf("schnee")!==-1) sym = "❄";
+            else if(desc.indexOf("gewitter")!==-1) sym = "⚡";
+            
+            tickerData.main = sym + " " + desc.toUpperCase();
+            tickerData.wind = "💨 WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
+            tickerData.pressure = "hPa: " + d.main.pressure;
+            
+            // UV Berechnen (Lokal)
             calculateApproxUV(d.coord.lat, d.clouds.all);
 
             updateTicker();
@@ -139,24 +152,22 @@ function fetchWeather() {
     xhr.send();
 }
 
+// UV RECHNER (Safe)
 function calculateApproxUV(lat, clouds) {
     var now = new Date();
     var hour = now.getHours();
     var month = now.getMonth(); 
     
-    // Jahreszeit
     var seasonalBase = 3;
     if(month >= 10 || month <= 1) seasonalBase = 1; // Winter
     else if(month >= 3 && month <= 8) seasonalBase = 7; // Sommer
     
-    // Tageszeit
     var timeFactor = 0;
     if(hour >= 11 && hour <= 15) timeFactor = 1.0;     
     else if(hour >= 9 && hour <= 17) timeFactor = 0.6; 
     else if(hour >= 7 && hour <= 19) timeFactor = 0.2; 
     
     var maxPotential = seasonalBase * timeFactor;
-    // Wolken abziehen
     var cloudFactor = 1.0 - (clouds / 100 * 0.7); 
     var uv = Math.round(maxPotential * cloudFactor);
     
@@ -181,7 +192,7 @@ function getMoonPhaseName(date) {
     var jd = c + e + day - 694039.09; jd /= 29.5305882;
     var b = parseInt(jd); jd -= b; b = Math.round(jd * 8);
     if (b >= 8) b = 0;
-    var phases = ["NEUMOND", "ZUNEHMEND", "HALBMOND (1.)", "ZUNEHMEND", "VOLLMOND", "ABNEHMEND", "HALBMOND (3.)", "ABNEHMEND"];
+    var phases = ["🌑 NEUMOND", "🌒 ZUNEHMEND", "🌓 HALBMOND (1.)", "🌔 ZUNEHMEND", "🌕 VOLLMOND", "🌖 ABNEHMEND", "🌗 HALBMOND (3.)", "🌘 ABNEHMEND"];
     return phases[b];
 }
 
@@ -234,13 +245,16 @@ function renderDaily(list) {
 
 function updateTicker() {
     var t = document.getElementById('info-ticker');
-    var uvTxt = tickerData.uv ? " +++ " + tickerData.uv : "";
-    t.innerText = tickerData.clothing + "  +++  " + tickerData.main + uvTxt + "  +++  " + tickerData.wind + "  +++  " + city.toUpperCase();
+    var uvTxt = tickerData.uv ? "  +++  " + tickerData.uv : "";
+    // Ausführlicher Ticker Text mit Symbolen
+    t.innerText = tickerData.clothing + "  +++  " + tickerData.main + uvTxt + "  +++  " + tickerData.wind + "  +++  " + tickerData.pressure + "  +++  " + city.toUpperCase();
 }
 
+// Menü & Reset
 function toggleSettings() { var s = document.getElementById('settings-overlay'); s.style.display = (s.style.display==='block')?'none':'block'; if(s.style.display==='block'){ document.getElementById('city-input').value = city; document.getElementById('s-start').value = sStart; document.getElementById('s-end').value = sEnd; } }
 function toggleSub(id) { var el = document.getElementById(id); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
 function saveAll() { city = document.getElementById('city-input').value; sStart = document.getElementById('s-start').value; sEnd = document.getElementById('s-end').value; localStorage.setItem('selectedCity', city); localStorage.setItem('sleepStart', sStart); localStorage.setItem('sleepEnd', sEnd); location.reload(); }
+function fullReset() { if(confirm("Wirklich alles zurücksetzen?")) { localStorage.clear(); location.reload(); } }
 
 setInterval(updateClock, 1000); 
 setInterval(fetchWeather, 600000);

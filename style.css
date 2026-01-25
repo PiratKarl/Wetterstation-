@@ -8,63 +8,99 @@ body {
     overflow: hidden; 
 }
 
-/* KOPFZEILE */
-#clock { font-size: 75px; font-weight: bold; line-height: 1; letter-spacing: -2px; }
+/* === KOPFZEILE (Oben) === */
+/* Etwas kompakter, um unten Platz zu schaffen */
+#clock { font-size: 70px; font-weight: bold; line-height: 1; letter-spacing: -2px; }
 #date { font-size: 18px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
 #city-title { font-size: 18px; color: #00ffcc; letter-spacing: 1px; margin-bottom: 5px; font-weight: bold; }
 
 /* TEMPERATUR */
 #temp-display { 
-    font-size: 110px; 
+    font-size: 100px; /* Minimal kleiner damit unten mehr Platz ist */
     font-weight: bold; 
-    line-height: 0.8; 
+    line-height: 0.9; 
     text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
 }
 .degree-unit { font-size: 50px; color: #00ffcc; vertical-align: top; }
-#feels-like { font-size: 18px; font-weight: bold; color: #ccc; margin-top:10px; }
+#feels-like { font-size: 18px; font-weight: bold; color: #ccc; margin-top:5px; }
 
 .status-row { margin-top: 5px; font-size: 11px; color: #444; }
 .ver-label { margin-left: 5px; }
 
 /* ASTRO & ICONS */
-.astro-box { margin-top: 15px; text-align: left; display: inline-block; }
-.astro-line { font-size: 22px; font-weight: bold; margin-bottom: 6px; }
+.astro-box { margin-top: 10px; text-align: left; display: inline-block; }
+.astro-line { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
 .top-btns { position: absolute; top: 10px; right: 15px; cursor: pointer; z-index: 50; }
-.fa-gear { font-size: 35px; color: #555; }
+.fa-gear { font-size: 40px; color: #555; }
 
-/* TICKER (Schlanker gemacht) */
+/* === TICKER (Groß & Ausführlich) === */
 .ticker-box { 
-    height: 50px; /* War 55px */
-    background: #080808; 
-    border-top: 1px solid #222; border-bottom: 1px solid #222; 
-    overflow: hidden; white-space: nowrap;
+    height: 60px; /* Schön hoch */
+    background: #111; /* Etwas heller für Kontrast */
+    border-top: 2px solid #333; 
+    border-bottom: 2px solid #333; 
+    overflow: hidden; 
+    white-space: nowrap;
+    margin-top: 5px;
 }
-/* Schriftgröße etwas kleiner (24px) für mehr Übersicht */
-marquee { line-height: 50px; font-size: 24px; color: #00ffcc; font-weight: bold; font-family: "Courier New", monospace; }
+marquee { 
+    line-height: 60px; 
+    font-size: 28px; /* Große Schrift */
+    color: #00ffcc; 
+    font-weight: bold; 
+    font-family: "Courier New", monospace; 
+}
 
-/* VORHERSAGE */
+/* === VORHERSAGE (Die 2 unteren Zeilen) === */
 .forecast-area { width: 100%; margin-top: 5px; }
 .table-container { width: 100%; text-align: center; }
-.f-item { text-align: center; padding: 3px 2px; }
-.f-time, .f-day-name { font-size: 14px; color: #777; margin-bottom: 2px; font-weight: bold; }
-.f-icon-img { width: 40px; height: 40px; display:block; margin:0 auto; }
+.f-item { text-align: center; padding: 5px 2px; } /* Mehr Abstand */
+
+/* Hier machen wir alles größer */
+.f-time, .f-day-name { 
+    font-size: 18px; /* Deutlich größer */
+    color: #999; 
+    margin-bottom: 4px; 
+    font-weight: bold; 
+}
+
+.f-icon-img { 
+    width: 50px; /* Icons größer */
+    height: 50px; 
+    display:block; 
+    margin:0 auto; 
+}
+
+.f-temp-line { 
+    font-size: 24px; /* Temperatur fett und groß */
+    font-weight: bold; 
+    color: #fff; 
+    margin-top: 4px;
+}
 
 /* Min/Max Farben */
-.temp-high { color: #ff4d4d; font-weight:bold; font-size:18px; } 
-.temp-low { color: #00aaff; font-weight:bold; font-size:18px; } 
-.temp-sep { color: #555; font-size:14px; margin: 0 3px; }
+.temp-high { color: #ff4d4d; font-weight:bold; font-size:22px; } 
+.temp-low { color: #00aaff; font-weight:bold; font-size:22px; } 
+.temp-sep { color: #555; font-size:18px; margin: 0 5px; }
 
-/* SYSTEM STYLES */
+/* === SYSTEM & MENÜ === */
 #night-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: #000000 !important; z-index: 99999; display: none; }
 #night-clock { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; color: #080808; font-family: monospace; font-weight: bold; }
+
 #settings-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); display: none; z-index: 2000; overflow-y: auto; padding: 10px; }
-.modal { background: #111; border: 1px solid #333; max-width: 550px; margin: 0 auto; padding: 15px; border-radius: 10px; }
-.cyan-title { color: #00ffcc; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
-.menu-item { padding: 12px; background: #222; margin-bottom: 5px; font-size: 18px; cursor: pointer; border-radius: 5px; }
+.modal { background: #111; border: 1px solid #333; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; }
+.cyan-title { color: #00ffcc; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 15px; font-size: 24px; }
+
+.menu-item { padding: 15px; background: #222; margin-bottom: 8px; font-size: 20px; cursor: pointer; border-radius: 5px; font-weight:bold; }
 .sub-sect { display: none; padding: 15px; background: #151515; margin-bottom: 10px; border: 1px solid #222; }
-input[type="text"], input[type="time"] { width: 100%; padding: 12px; font-size: 22px; background: #000; color: #fff; border: 1px solid #444; margin-top: 5px; border-radius: 4px; }
-.btn-save { width: 100%; padding: 15px; background: #00ffcc; color: #000; font-weight: bold; font-size: 20px; border: none; border-radius: 8px; margin-top: 20px; }
+
+input[type="text"], input[type="time"] { width: 100%; padding: 15px; font-size: 24px; background: #000; color: #fff; border: 1px solid #444; margin-top: 5px; border-radius: 4px; }
+
+.btn-save { width: 100%; padding: 15px; background: #00ffcc; color: #000; font-weight: bold; font-size: 22px; border: none; border-radius: 8px; margin-top: 20px; }
+.btn-reset { width: 100%; padding: 15px; background: #ff4444; color: #fff; font-weight: bold; font-size: 18px; border: none; border-radius: 8px; margin-top: 10px; }
 .btn-close { width: 100%; padding: 15px; background: #333; color: #fff; font-weight: bold; font-size: 18px; border: none; border-radius: 8px; margin-top: 10px; }
-.paypal-btn { background: #0070ba; color: #fff; text-decoration: none; padding: 12px; border-radius: 25px; display: block; text-align: center; font-weight: bold; margin-top: 10px; }
-.live-indicator { display: inline-block; width: 10px; height: 10px; background-color: #555; border-radius: 50%; }
-.info-box { background: #1a1a1a; border-left: 4px solid #ff9900; padding: 12px; margin-top: 15px; font-size: 15px; color: #ccc; line-height: 1.4; }
+
+.info-box { background: #1a1a1a; border-left: 5px solid #ff9900; padding: 15px; margin-top: 15px; font-size: 16px; color: #ccc; line-height: 1.5; }
+.legend-box { margin-top:10px; font-size:14px; color:#888; border-top:1px solid #333; padding-top:10px; }
+
+.live-indicator { display: inline-block; width: 12px; height: 12px; background-color: #555; border-radius: 50%; margin-right:5px; }

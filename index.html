@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather 2.4 Slim</title>
+    <title>Aura Weather 2.5 Grand Master</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,18 +19,43 @@
 
     <div id="settings-overlay">
         <div class="modal">
-            <h2 class="cyan-title">SYSTEM 2.4 SLIM</h2>
-            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> EINSTELLUNGEN</div>
+            <h2 class="cyan-title">SYSTEM 2.5 GRAND MASTER</h2>
+            
+            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> GRUNDEINSTELLUNGEN</div>
             <div id="sect-setup" class="sub-sect" style="display:block;">
-                <label>Standort:</label> <input type="text" id="city-input" value="Braunschweig">
-                <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS</label>
-                VON: <input type="time" id="s-start"> BIS: <input type="time" id="s-end">
+                <label>Stadt:</label> 
+                <input type="text" id="city-input" value="Braunschweig">
+                
+                <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS (SCHLAFZEIT)</label>
+                VON: <input type="time" id="s-start"> 
+                BIS: <input type="time" id="s-end">
+                
                 <div class="info-box">
-                    <b style="color:#ff9900;">SYNC:</b> Bild geht 10 Min früher aus.<br>
-                    Timeout am Tablet auf 10 Min stellen!
+                    <b style="color:#ff9900;">WICHTIG (SYNC):</b><br>
+                    Das Bild wird automatisch <b>10 Minuten früher</b> schwarz als eingestellt.<br>
+                    Stelle den "Bildschirm-Timeout" am Tablet auf exakt <b>10 Minuten</b>.
                 </div>
+                
                 <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
             </div>
+
+            <div class="menu-item" onclick="toggleSub('sect-info')"><i class="fa fa-info-circle"></i> LEGENDE & INFO</div>
+            <div id="sect-info" class="sub-sect">
+                <b>UV-INDEX FARBEN:</b><br>
+                <span style="color:#00ff00">GRÜN</span> = Unbedenklich (0-2)<br>
+                <span style="color:#ffff00">GELB</span> = Mäßig (3-5)<br>
+                <span style="color:#ff9900">ORANGE</span> = Hoch (6-7)<br>
+                <span style="color:#ff0000">ROT</span> = Sehr Hoch (8+)<br>
+                
+                <div class="legend-box">
+                    Version 2.5 (Grand Master)<br>
+                    Optimiert für Android 4.4<br>
+                    Lokale UV-Berechnung
+                </div>
+                
+                <button onclick="fullReset()" class="btn-reset">⚠️ SYSTEM RESET (Löschen)</button>
+            </div>
+
             <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
         </div>
     </div>
@@ -44,7 +69,7 @@
                     <img src="logo.png" height="40" style="margin-top:10px; opacity:0.8;">
                     <div class="status-row">
                         <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V2.4 SLIM</span>
+                        <span class="ver-label">V2.5 GM</span>
                     </div>
                 </td>
                 <td width="34%" align="center" valign="middle">
@@ -62,7 +87,7 @@
                     <div class="astro-box">
                         <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
                         <div class="astro-line"><i class="fa fa-moon-o" style="color:#aaa"></i> <span id="sunset-val">--:--</span></div>
-                        <div style="margin-top:10px; font-size:18px; font-weight:bold;">UV: <span id="uv-val" style="color:#fff">--</span></div>
+                        <div style="margin-top:8px; font-size:18px; font-weight:bold;">UV: <span id="uv-val" style="color:#fff">--</span></div>
                         <div id="moon-txt" style="font-size:14px; color:#888; margin-top:5px; text-transform:uppercase;"></div>
                     </div>
                 </td>
@@ -70,14 +95,14 @@
         </table>
 
         <div class="ticker-box">
-            <marquee id="info-ticker" scrollamount="6">+++ SYSTEM STARTET +++</marquee>
+            <marquee id="info-ticker" scrollamount="5">+++ SYSTEM STARTET +++</marquee>
         </div>
 
         <div class="forecast-area">
             <div class="table-container">
                 <table id="hourly-table" width="100%"></table>
             </div>
-            <div class="table-container" style="border-top:1px solid #222; margin-top: 4px; padding-top:2px;">
+            <div class="table-container" style="border-top:2px solid #222; margin-top: 5px; padding-top:4px;">
                 <table id="daily-table" width="100%"></table>
             </div>
         </div>
