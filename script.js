@@ -3,6 +3,10 @@ var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('sleepStart'), sEnd = localStorage.getItem('sleepEnd');
 var active = false, grace = false;
 
+// Weltstädte Konfiguration
+var worldCities = ["New York", "Sydney", "Cape Town", "San Francisco", "Hong Kong", "Tokyo", "Berlin", "London"];
+var worldData = "";
+
 function z(n){return (n<10?'0':'')+n;}
 
 function startApp() {
@@ -12,7 +16,15 @@ function startApp() {
     else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     document.getElementById('wake-video').play().catch(function(e){});
     grace = true; setTimeout(function(){ grace = false; }, 60000);
-    if(!active) { active=true; loadWeather(); update(); setInterval(update,1000); setInterval(loadWeather,600000); }
+    if(!active) { 
+        active=true; 
+        loadWeather(); 
+        loadWorldWeather();
+        update(); 
+        setInterval(update,1000); 
+        setInterval(loadWeather,600000); 
+        setInterval(loadWorldWeather,1800000); // Weltwetter alle 30 Min
+    }
 }
 
 function getClothes(temp, rain) {
@@ -23,18 +35,30 @@ function getClothes(temp, rain) {
     return "👕 T-SHIRT WETTER";
 }
 
+function getWeatherSymbol(desc) {
+    desc = desc.toLowerCase();
+    if(desc.includes("sonne") || desc.includes("klar")) return "☀️";
+    if(desc.includes("wolken")) return "☁️";
+    if(desc.includes("regen")) return "🌧️";
+    if(desc.includes("gewitter")) return "⛈️";
+    if(desc.includes("schnee")) return "❄️";
+    return "🌤️";
+}
+
 function update() {
     var now = new Date();
     document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
     var days=['SO','MO','DI','MI','DO','FR','SA'], months=['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
     
+    // Mondphasen
     var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate();
     if(month<3){year--;month+=12;}++month;
     var jd = (365.25*year) + (30.6*month) + day - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
     var p=["🌑 NEUMOND","🌒 ZUN. SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 ABN. SICHEL"];
     document.getElementById('moon').innerText = p[b];
 
+    // Nachtmodus
     var sleep = false;
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes();
@@ -56,17 +80,30 @@ function loadWeather() {
         document.getElementById('temp-display').innerText = temp + "°";
         document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
         document.getElementById('city-title').innerText = d.name.toUpperCase();
-        var ic = d.weather[0].icon;
-        document.getElementById('current-weather-icon').src = ic + ".gif";
+        document.getElementById('current-weather-icon').src = d.weather[0].icon + ".gif";
         var rT = new Date((d.sys.sunrise + d.timezone - 3600) * 1000), sT = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
         document.getElementById('sunrise').innerText = z(rT.getHours()) + ":" + z(rT.getMinutes());
         document.getElementById('sunset').innerText = z(sT.getHours()) + ":" + z(sT.getMinutes());
-        loadFore(d.coord.lat, d.coord.lon, temp);
+        loadFore(d.coord.lat, d.coord.lon, temp, d.weather[0].description.toUpperCase());
     };
     x.send();
 }
 
-function loadFore(lat, lon, currentTemp) {
+function loadWorldWeather() {
+    worldData = "";
+    worldCities.forEach(function(c) {
+        var x = new XMLHttpRequest();
+        x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric&lang=de", true);
+        x.onload = function() {
+            var d = JSON.parse(x.responseText);
+            var sym = getWeatherSymbol(d.weather[0].description);
+            worldData += " +++ " + d.name.toUpperCase() + ": " + sym + " " + Math.round(d.main.temp) + "°";
+        };
+        x.send();
+    });
+}
+
+function loadFore(lat, lon, currentTemp, currentDesc) {
     var url = "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de";
     var x = new XMLHttpRequest();
     x.open("GET", url, true);
@@ -86,7 +123,10 @@ function loadFore(lat, lon, currentTemp) {
         }
         document.getElementById('hourly-table').innerHTML = h + "</tr>";
         document.getElementById('daily-table').innerHTML = dy + "</tr>";
-        document.getElementById('ticker').innerText = d.list[0].weather[0].description.toUpperCase() + " +++ REGENRISIKO: " + rainNext + "% +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H";
+        
+        // Ticker zusammensetzen: Lokal + Welt
+        var localTicker = currentDesc + " +++ REGENRISIKO: " + rainNext + "% +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H";
+        document.getElementById('ticker').innerText = localTicker + worldData;
     };
     x.send();
 }
