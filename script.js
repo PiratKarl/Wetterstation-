@@ -1,4 +1,4 @@
-// AURA WEATHER V2.9 - FINAL (SAFE START)
+// AURA WEATHER V2.9 - FINAL LOGIC
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -8,8 +8,6 @@ var sEnd = localStorage.getItem('sleepEnd');
 var timeOffset = 0; 
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
-
-// Gnadenfrist Variable
 var isGracePeriod = false; 
 
 var tickerData = { main: "", wind: "", clothing: "", pressure: "", humidity: "", pop: "", vis: "" };
@@ -21,30 +19,30 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === WICHTIG: START FUNKTION ===
+// === START LOGIK ===
 function activateWakeLock() {
-    // 1. Start Screen ausblenden
+    // Start Overlay ausblenden
     var startScreen = document.getElementById('start-overlay');
     if(startScreen) startScreen.style.display = 'none';
 
-    // 2. Video starten (Wake Lock)
+    // Wake Lock starten
     var v = document.getElementById('wake-video');
     if(v.getAttribute('src') === "" || !v.getAttribute('src')) v.setAttribute('src', videoUrl);
     v.play().catch(function(e){ console.log("Video Error", e); });
     
-    // 3. Vollbild anfordern
+    // Vollbild
     var el = document.documentElement;
     if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     if (el.requestFullscreen) el.requestFullscreen();
 
-    // 4. Gnadenfrist starten (60 Sekunden)
+    // Gnadenfrist starten
     isGracePeriod = true;
     setTimeout(function() {
         isGracePeriod = false;
-        updateClock(); // Sofort prüfen
+        updateClock(); 
     }, 60000);
 
-    // 5. App aktivieren
+    // App Logik starten
     if (!isActivated) {
         isActivated = true;
         fetchWeather();
@@ -75,7 +73,7 @@ function updateClock() {
         }
     }
 
-    // Gnadenfrist Check
+    // Grace Period Logik
     if (isSleepTime && isGracePeriod) {
         isSleepTime = false;
         showGraceNote(true);
@@ -83,19 +81,16 @@ function updateClock() {
         showGraceNote(false);
     }
 
-    // Video & Vorhang Steuerung
+    // Video & Vorhang
     var video = document.getElementById('wake-video');
-    
     if (isActivated && video) {
          if(video.paused) video.play().catch(function(e){});
          
          if (isSleepTime) {
-             // NACHT
              if (!video.classList.contains('video-sleep-mode')) {
                  video.classList.add('video-sleep-mode');
              }
          } else {
-             // TAG
              if (video.classList.contains('video-sleep-mode')) {
                  video.classList.remove('video-sleep-mode');
              }
@@ -143,7 +138,6 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
-            // Ticker Info
             var desc = d.weather[0].description.toUpperCase();
             var wind = Math.round(d.wind.speed * 3.6);
             var hum = d.main.humidity;
@@ -210,12 +204,15 @@ function renderDaily(list) {
 
 function toggleSettings() { 
     var s = document.getElementById('settings-overlay'); 
-    s.style.display = (s.style.display==='block')?'none':'block'; 
-    if(s.style.display==='block'){ 
+    // Hier prüfen wir einfach den aktuellen Status und drehen ihn um
+    if (s.style.display === 'block') {
+        s.style.display = 'none';
+    } else {
+        s.style.display = 'block';
         document.getElementById('city-input').value = city; 
         document.getElementById('s-start').value = sStart || '22:00'; 
         document.getElementById('s-end').value = sEnd || '06:00'; 
-    } 
+    }
 }
 
 function saveAll() { 
