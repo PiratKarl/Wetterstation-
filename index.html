@@ -3,122 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather 2.9 Ticker</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#000000">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Aura Weather Professional - V12.0 World Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body onclick="activateWakeLock()">
+<body>
+    <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
-    <div id="start-overlay">
-        <div id="start-content">
-            <div id="start-msg">
-                <i class="fa fa-hand-pointer-o"></i><br>
-                BITTE TIPPEN
-            </div>
-            <div id="start-sub">System wird gestartet...</div>
-        </div>
+    <div id="start-overlay" onclick="startApp()">
+        <div style="font-size: 10vh;">👆</div>
+        <h1 style="color:#00eaff;">START AURA WORLD V12</h1>
     </div>
 
-    <div id="night-overlay" style="display:none;">
-        <div id="night-clock">00:00</div>
+    <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
+
+    <div id="main-container">
+        <div class="top-section">
+            <div class="box-left">
+                <div id="clock">--:--</div>
+                <div id="date">LADE...</div>
+                <img src="logo.png" class="aura-logo" alt="Logo"> 
+            </div>
+            
+            <div class="box-center">
+                <div id="city-title">...</div>
+                <div class="temp-row">
+                    <img id="current-weather-icon" src="" style="width:14vh; height:14vh;">
+                    <div id="temp-display">--°</div>
+                </div>
+                <div id="feels-like">--</div>
+                <div id="clothes-advice">--</div>
+            </div>
+            
+            <div class="box-right">
+                <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
+                <div class="astro-row">☾ <span id="sunset">--:--</span></div>
+                <div id="moon" class="moon-row">MOND</div>
+            </div>
+        </div>
+
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">GLOBALE DATEN WERDEN ABGERUFEN...</div></div>
+
+        <div class="tables-area">
+            <table id="hourly-table"></table>
+            <div style="border-top:1px dashed #333; margin:10px 0;"></div>
+            <table id="daily-table"></table>
+        </div>
     </div>
 
     <div id="settings-overlay">
-        <div class="modal">
-            <h2 class="cyan-title">SYSTEM 2.9 TICKER</h2>
-            
-            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> GRUNDEINSTELLUNGEN</div>
-            <div id="sect-setup" class="sub-sect" style="display:block;">
-                <label>Stadt:</label> 
-                <input type="text" id="city-input" value="Braunschweig">
-                
-                <div class="coffee-box">
-                    <div class="coffee-text">
-                        <b>Rette alte Technik! 🌍</b><br>
-                        Gefällt dir die App?<br>Ein Kaffee hält mich wach!
-                    </div>
-                    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
-                        <i class="fa fa-paypal"></i> Spenden
-                    </a>
-                </div>
-
-                <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS</label>
-                VON: <input type="time" id="s-start"> 
-                BIS: <input type="time" id="s-end">
-                
-                <div class="info-box">
-                    <b style="color:#ff9900;">WICHTIG (SYNC):</b><br>
-                    Bild geht <b>10 Min früher</b> aus.<br>
-                    Tablet-Timeout auf <b>10 Min</b> stellen!
-                </div>
-                
-                <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
-            </div>
-
-            <div class="menu-item" onclick="toggleSub('sect-info')"><i class="fa fa-info-circle"></i> INFO & RESET</div>
-            <div id="sect-info" class="sub-sect">
-                 <button onclick="fullReset()" class="btn-reset">⚠️ SYSTEM RESET</button>
-                 <br><br>
-                 <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
-            </div>
+        <h2 style="color:#00eaff;">AURA SETUP</h2>
+        <input type="text" id="city-in" placeholder="Stadt eingeben">
+        <div style="display:flex; gap:10px; margin:10px;">
+            <input type="time" id="time-start"> <input type="time" id="time-end">
         </div>
+        <button onclick="save()" class="save-btn">SPEICHERN</button>
+        <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:10px 20px; border-radius:10px;">ZURÜCK</button>
+        <div class="copyright-tag">© Code-Werft Karl Altmannshofer 2026</div>
     </div>
 
-    <div class="app-shell">
-        <table width="100%" height="220" border="0" cellpadding="0" cellspacing="0">
-            <tr>
-                <td width="33%" align="center" valign="middle">
-                    <div id="clock">00:00</div>
-                    <div id="date">Lade...</div>
-                    <img src="logo.png" height="40" style="margin-top:10px; opacity:0.8;">
-                    <div class="status-row">
-                        <div id="wake-status" class="live-indicator"></div>
-                        <span class="ver-label">V2.9 TK</span>
-                    </div>
-                </td>
-                <td width="34%" align="center" valign="middle">
-                    <div id="city-title">...</div>
-                    <div class="temp-row">
-                        <span id="main-icon-container"></span>
-                        <span id="temp-display">--</span><span class="degree-unit">°</span>
-                    </div>
-                    <div id="feels-like">--</div>
-                </td>
-                <td width="33%" align="center" valign="middle" style="position:relative;">
-                    <div class="top-btns">
-                        <i class="fa fa-gear" onclick="toggleSettings(); event.stopPropagation();"></i>
-                    </div>
-                    <div class="astro-box">
-                        <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
-                        <div class="astro-line"><i class="fa fa-moon-o" style="color:#aaa"></i> <span id="sunset-val">--:--</span></div>
-                        <div id="moon-txt" style="font-size:14px; color:#888; margin-top:10px; text-transform:uppercase;"></div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-
-        <div class="ticker-box">
-            <marquee id="info-ticker" scrollamount="5">+++ WARTE AUF START +++</marquee>
-        </div>
-
-        <div class="forecast-area">
-            <div class="table-container">
-                <table id="hourly-table" width="100%"></table>
-            </div>
-            <div class="table-container" style="border-top:2px solid #222; margin-top: 5px; padding-top:4px;">
-                <table id="daily-table" width="100%"></table>
-            </div>
-        </div>
-    </div>
-
-    <video id="wake-video" playsinline muted loop style="position:fixed; top:0; left:0; width:1px; height:1px; opacity:0.01; z-index:-1; pointer-events:none;">
-        <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
-    </video>
-    
     <script src="script.js"></script>
 </body>
 </html>
