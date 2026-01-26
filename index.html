@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Pro - V12.1 Color Edition</title>
+    <title>Aura Weather Pro V13</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <div style="font-size: 10vh;">👆</div>
-        <h1 style="color:#00eaff;">START AURA V12.1</h1>
+        <h1 style="color:#00eaff;">START AURA V13</h1>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
@@ -23,7 +22,6 @@
                 <div id="date">LADE...</div>
                 <img src="logo.png" class="aura-logo" alt="Logo"> 
             </div>
-            
             <div class="box-center">
                 <div id="city-title">...</div>
                 <div class="temp-row">
@@ -33,16 +31,13 @@
                 <div id="feels-like">--</div>
                 <div id="clothes-advice">--</div>
             </div>
-            
             <div class="box-right">
                 <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
                 <div class="astro-row">☾ <span id="sunset">--:--</span></div>
                 <div id="moon" class="moon-row">MOND</div>
             </div>
         </div>
-
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">GLOBALE DATEN WERDEN GELADEN...</div></div>
-
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">BITTE WARTEN...</div></div>
         <div class="tables-area">
             <table id="hourly-table"></table>
             <div style="border-top:1px dashed #333; margin:5px 0;"></div>
@@ -51,14 +46,39 @@
     </div>
 
     <div id="settings-overlay">
-        <h2 style="color:#00eaff;">AURA SETUP</h2>
-        <input type="text" id="city-in" placeholder="Stadt eingeben">
-        <div style="display:flex; gap:10px; margin:10px;">
-            <input type="time" id="time-start"> <input type="time" id="time-end">
+        <h1 style="color:#00eaff;">AURA PROFESSIONAL SETUP</h1>
+        
+        <div class="menu-section">
+            <div class="menu-title">STANDORT & SCHLAF-TIMER</div>
+            <input type="text" id="city-in" placeholder="Stadt (z.B. Braunschweig)">
+            <p style="font-size: 1.8vh; color: #888;">Bildschirm aus von - bis:</p>
+            <div style="display:flex; justify-content: space-around;">
+                <input type="time" id="time-start" style="width: 40%;">
+                <input type="time" id="time-end" style="width: 40%;">
+            </div>
+            <button onclick="save()" class="save-btn">SPEICHERN & NEUSTART</button>
         </div>
-        <button onclick="save()" class="save-btn">SPEICHERN</button>
-        <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:10px 20px; border-radius:10px;">ZURÜCK</button>
-        <div class="copyright-tag">© Code-Werft Karl Altmannshofer 2026</div>
+
+        <div class="menu-section">
+            <div class="menu-title">SUPPORT & ANLEITUNG</div>
+            <p class="legal-text"><b>Tricks für alte Geräte:</b> Deaktiviere die Google-Hintergrunddienste für mehr Speed. Nutze den Chrome-Browser für beste Performance unter Android 4.4.</p>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" class="btn-link" style="border-color: #ffcc00; color: #ffcc00;">☕ KAFFEE SPENDIEREN</a>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-title">KONTAKT</div>
+            <p class="legal-text">Fragen oder Wünsche an die Code-Werft?</p>
+            <a href="mailto:webmaster@code-werft.de?subject=Nutzeranfrage&body=Absender: " class="btn-link">📧 NACHRICHT SENDEN</a>
+        </div>
+
+        <div class="menu-section legal-text">
+            <div class="menu-title">RECHTLICHES</div>
+            <p><b>Impressum:</b> Code-Werft Karl Altmannshofer<br>E-Mail: webmaster@code-werft.de</p>
+            <p><b>Datenschutz:</b> Diese App speichert Einstellungen nur lokal auf deinem Gerät. Es werden keine Nutzerdaten an uns übertragen.</p>
+            <p><b>Copyright:</b> © 2026 Code-Werft Karl Altmannshofer. Alle Rechte vorbehalten. Wetterdaten von OpenWeatherMap.</p>
+        </div>
+
+        <button onclick="closeMenu()" class="back-btn">ZURÜCK ZUR ANZEIGE</button>
     </div>
 
     <script src="script.js"></script>
