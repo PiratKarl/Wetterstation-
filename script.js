@@ -16,8 +16,8 @@ function startApp() {
 }
 
 function getClothes(temp, rain) {
-    if (rain > 30) return "🌂 REGENSCHIRM";
-    if (temp < 5) return "🧥 WINTERJACKE";
+    if (rain > 30) return "🌂 REGENSCHIRM EINPACKEN";
+    if (temp < 5) return "🧥 DICKE WINTERJACKE";
     if (temp < 15) return "🧥 ÜBERGANGSJACKE";
     if (temp < 22) return "👕 PULLOVER / LANGARM";
     return "👕 T-SHIRT WETTER";
@@ -53,17 +53,13 @@ function loadWeather() {
         document.getElementById('temp-display').innerText = temp + "°";
         document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
         document.getElementById('city-title').innerText = d.name.toUpperCase();
-        
         var ic = d.weather[0].icon;
         document.getElementById('current-weather-icon').src = ic + ".gif";
-        
-        var sunrise = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
-        var sunset = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
-        document.getElementById('sunrise').innerText = z(sunrise.getHours()) + ":" + z(sunrise.getMinutes());
-        document.getElementById('sunset').innerText = z(sunset.getHours()) + ":" + z(sunset.getMinutes());
-
+        var rT = new Date((d.sys.sunrise + d.timezone - 3600) * 1000), sT = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
+        document.getElementById('sunrise').innerText = z(rT.getHours()) + ":" + z(rT.getMinutes());
+        document.getElementById('sunset').innerText = z(sT.getHours()) + ":" + z(sT.getMinutes());
         loadFore(d.coord.lat, d.coord.lon, temp);
-    });
+    }).catch(e => console.log("Fehler beim Laden"));
 }
 
 function loadFore(lat, lon, currentTemp) {
@@ -71,24 +67,18 @@ function loadFore(lat, lon, currentTemp) {
     .then(r => r.json()).then(d => {
         var h = "<tr>", dy = "<tr>";
         var rainNext = Math.round(d.list[0].pop * 100);
-        
-        // Kleidungsempfehlung basierend auf aktueller Temp und Regen der nächsten 3h
         document.getElementById('clothes-advice').innerText = getClothes(currentTemp, rainNext);
 
         for(var i=0; i<4; i++) {
-            var it = d.list[i], t = new Date(it.dt*1000);
-            var p = Math.round(it.pop * 100);
-            h += `<td>${z(t.getHours())}h<br><img class="t-icon" src="${it.weather[0].icon}.gif"><br>${Math.round(it.main.temp)}°<br><span class="t-pop">💧${p}%</span></td>`;
+            var it = d.list[i], t = new Date(it.dt*1000), p = Math.round(it.pop * 100);
+            h += `<td>${z(t.getHours())}h<br><img class="t-icon" src="${it.weather[0].icon}.gif" alt="w"><br>${Math.round(it.main.temp)}°<br><span class="t-pop">💧${p}%</span></td>`;
         }
         for(var i=0; i<32; i+=8) {
-            var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
-            var p = Math.round(it.pop * 100);
-            dy += `<td>${day.substr(0,2)}<br><img class="t-icon" src="${it.weather[0].icon}.gif"><br>${Math.round(it.main.temp)}°<br><span class="t-pop">💧${p}%</span></td>`;
+            var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase(), p = Math.round(it.pop * 100);
+            dy += `<td>${day.substr(0,2)}<br><img class="t-icon" src="${it.weather[0].icon}.gif" alt="w"><br>${Math.round(it.main.temp)}°<br><span class="t-pop">💧${p}%</span></td>`;
         }
         document.getElementById('hourly-table').innerHTML = h + "</tr>";
         document.getElementById('daily-table').innerHTML = dy + "</tr>";
-
-        // Ticker mit Regeninfo
         document.getElementById('ticker').innerText = `${d.list[0].weather[0].description.toUpperCase()} +++ REGENRISIKO: ${rainNext}% +++ WIND: ${Math.round(d.list[0].wind.speed*3.6)} KM/H +++ FEUCHTE: ${d.list[0].main.humidity}%`;
     });
 }
