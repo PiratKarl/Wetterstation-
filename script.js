@@ -10,8 +10,8 @@ function startApp() {
     var el = document.documentElement;
     if(el.requestFullscreen) el.requestFullscreen();
     else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    document.getElementById('wake-video').play().catch(e=>{});
-    grace = true; setTimeout(() => { grace = false; }, 60000);
+    document.getElementById('wake-video').play().catch(function(e){});
+    grace = true; setTimeout(function(){ grace = false; }, 60000);
     if(!active) { active=true; loadWeather(); update(); setInterval(update,1000); setInterval(loadWeather,600000); }
 }
 
@@ -47,8 +47,11 @@ function update() {
 }
 
 function loadWeather() {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API}&units=metric&lang=de`)
-    .then(r => r.json()).then(d => {
+    var url = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API+"&units=metric&lang=de";
+    var x = new XMLHttpRequest();
+    x.open("GET", url, true);
+    x.onload = function() {
+        var d = JSON.parse(x.responseText);
         var temp = Math.round(d.main.temp);
         document.getElementById('temp-display').innerText = temp + "°";
         document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
@@ -59,28 +62,33 @@ function loadWeather() {
         document.getElementById('sunrise').innerText = z(rT.getHours()) + ":" + z(rT.getMinutes());
         document.getElementById('sunset').innerText = z(sT.getHours()) + ":" + z(sT.getMinutes());
         loadFore(d.coord.lat, d.coord.lon, temp);
-    }).catch(e => console.log("Fehler beim Laden"));
+    };
+    x.send();
 }
 
 function loadFore(lat, lon, currentTemp) {
-    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API}&units=metric&lang=de`)
-    .then(r => r.json()).then(d => {
+    var url = "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de";
+    var x = new XMLHttpRequest();
+    x.open("GET", url, true);
+    x.onload = function() {
+        var d = JSON.parse(x.responseText);
         var h = "<tr>", dy = "<tr>";
         var rainNext = Math.round(d.list[0].pop * 100);
         document.getElementById('clothes-advice').innerText = getClothes(currentTemp, rainNext);
 
         for(var i=0; i<4; i++) {
             var it = d.list[i], t = new Date(it.dt*1000), p = Math.round(it.pop * 100);
-            h += `<td>${z(t.getHours())}h<br><img class="t-icon" src="${it.weather[0].icon}.gif" alt="w"><br>${Math.round(it.main.temp)}°<br><span class="t-pop">💧${p}%</span></td>`;
+            h += "<td>"+z(t.getHours())+"h<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<br><span class='t-pop'>💧"+p+"%</span></td>";
         }
         for(var i=0; i<32; i+=8) {
             var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase(), p = Math.round(it.pop * 100);
-            dy += `<td>${day.substr(0,2)}<br><img class="t-icon" src="${it.weather[0].icon}.gif" alt="w"><br>${Math.round(it.main.temp)}°<br><span class="t-pop">💧${p}%</span></td>`;
+            dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<br><span class='t-pop'>💧"+p+"%</span></td>";
         }
         document.getElementById('hourly-table').innerHTML = h + "</tr>";
         document.getElementById('daily-table').innerHTML = dy + "</tr>";
-        document.getElementById('ticker').innerText = `${d.list[0].weather[0].description.toUpperCase()} +++ REGENRISIKO: ${rainNext}% +++ WIND: ${Math.round(d.list[0].wind.speed*3.6)} KM/H +++ FEUCHTE: ${d.list[0].main.humidity}%`;
-    });
+        document.getElementById('ticker').innerText = d.list[0].weather[0].description.toUpperCase() + " +++ REGENRISIKO: " + rainNext + "% +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H";
+    };
+    x.send();
 }
 
 function openMenu() { document.getElementById('settings-overlay').style.display='flex'; }
