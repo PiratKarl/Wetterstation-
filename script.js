@@ -1,4 +1,4 @@
-// AURA WEATHER V3.0 - LOGIC
+// AURA WEATHER V3.1 - GEAR FIX & ICONS
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -10,8 +10,6 @@ var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
 var isGracePeriod = false; 
 
-var tickerData = { main: "", wind: "", clothing: "", pressure: "", humidity: "", pop: "", vis: "" };
-
 function z(n) { return (n < 10 ? '0' : '') + n; }
 function timeToMins(t) {
     if(!t || t.indexOf(':') === -1) return 0;
@@ -19,10 +17,9 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === START FUNKTION ===
+// START & WAKE LOCK
 function activateWakeLock() {
     document.getElementById('settings-overlay').style.display = 'none';
-    
     var startScreen = document.getElementById('start-overlay');
     if(startScreen) startScreen.style.display = 'none';
 
@@ -35,19 +32,12 @@ function activateWakeLock() {
     if (el.requestFullscreen) el.requestFullscreen();
 
     isGracePeriod = true;
-    setTimeout(function() {
-        isGracePeriod = false;
-        updateClock(); 
-    }, 60000);
+    setTimeout(function() { isGracePeriod = false; updateClock(); }, 60000);
 
-    if (!isActivated) {
-        isActivated = true;
-        fetchWeather();
-        updateClock();
-    }
+    if (!isActivated) { isActivated = true; fetchWeather(); updateClock(); }
 }
 
-// === MENÜ STEUERUNG ===
+// MENÜ
 function openSettings() {
     document.getElementById('settings-overlay').style.display = 'flex';
     document.getElementById('city-input').value = city; 
@@ -55,26 +45,21 @@ function openSettings() {
     document.getElementById('s-end').value = sEnd || '06:00'; 
 }
 
-function closeSettings() {
-    document.getElementById('settings-overlay').style.display = 'none';
-}
+function closeSettings() { document.getElementById('settings-overlay').style.display = 'none'; }
 
 function switchTab(tabId) {
     var contents = document.getElementsByClassName('tab-content');
-    for(var i=0; i<contents.length; i++) {
-        contents[i].classList.remove('active-tab');
-    }
+    for(var i=0; i<contents.length; i++) contents[i].classList.remove('active-tab');
     var btns = document.getElementsByClassName('nav-btn');
-    for(var i=0; i<btns.length; i++) {
-        btns[i].classList.remove('active');
-    }
+    for(var i=0; i<btns.length; i++) btns[i].classList.remove('active');
+    
     document.getElementById(tabId).classList.add('active-tab');
     if(tabId === 'tab-setup') btns[0].classList.add('active');
     if(tabId === 'tab-tips') btns[1].classList.add('active');
     if(tabId === 'tab-coffee') btns[2].classList.add('active');
 }
 
-// === UHR & SLEEP LOGIK ===
+// UHR & SLEEP
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours(); var m = now.getMinutes();
@@ -97,27 +82,20 @@ function updateClock() {
             if (nowMins >= startMins && nowMins < endMins) isSleepTime = true;
         }
     }
-
-    if (isSleepTime && isGracePeriod) {
-        isSleepTime = false;
-    }
+    if (isSleepTime && isGracePeriod) isSleepTime = false;
 
     var video = document.getElementById('wake-video');
     if (isActivated && video) {
          if(video.paused) video.play().catch(function(e){});
-         
          if (isSleepTime) {
-             if (!video.classList.contains('video-sleep-mode')) {
-                 video.classList.add('video-sleep-mode');
-             }
+             if (!video.classList.contains('video-sleep-mode')) video.classList.add('video-sleep-mode');
          } else {
-             if (video.classList.contains('video-sleep-mode')) {
-                 video.classList.remove('video-sleep-mode');
-             }
+             if (video.classList.contains('video-sleep-mode')) video.classList.remove('video-sleep-mode');
          }
     }
 }
 
+// WETTER
 function fetchWeather() {
     if(!isActivated) return;
     var xhr = new XMLHttpRequest();
@@ -139,15 +117,16 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
+            // === HIER SIND DIE NEUEN TICKER-DATEN MIT SYMBOLEN ===
             var desc = d.weather[0].description.toUpperCase();
             var wind = Math.round(d.wind.speed * 3.6);
             var hum = d.main.humidity;
+            var press = d.main.pressure;
             
-            var tText = desc + " +++ WIND: " + wind + " KM/H +++ FEUCHTE: " + hum + "% +++ DRUCK: " + d.main.pressure + " HPA +++ VORSCHAU";
+            var tText = desc + " +++ 💨 WIND: " + wind + " KM/H +++ 💧 FEUCHTE: " + hum + "% +++ 🌡 DRUCK: " + press + " HPA +++ 👁 VORSCHAU";
             document.getElementById('info-ticker').innerText = tText;
 
             fetchForecast(d.coord.lat, d.coord.lon);
-            document.getElementById('moon-txt').innerText = "Mondphase"; 
         }
     };
     xhr.send();
@@ -195,7 +174,6 @@ function renderDaily(list) {
             if(it.pop > popMax) popMax = it.pop;
         }
         if(iconStr === "") iconStr = list[i].weather[0].icon;
-        
         html += '<td><div class="f-day-name">' + dayName.substr(0,2) + '</div><img class="f-icon-img" src="' + iconStr + '.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconStr+'.png\'"><div><span class="temp-high">' + Math.round(maxT) + '°</span> <span class="temp-low">' + Math.round(minT) + '°</span></div><div style="font-size:0.7em; color:#00eaff;">' + Math.round(popMax*100) + '%</div></td>';
         daysProcessed++;
     }
@@ -215,6 +193,5 @@ function saveAll() {
 
 function fullReset() { if(confirm("Reset?")) { localStorage.clear(); location.reload(); } }
 
-// Intervalle
 setInterval(updateClock, 1000); 
 setInterval(fetchWeather, 600000);

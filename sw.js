@@ -1,6 +1,6 @@
-// AURA WEATHER SERVICE WORKER V3.0
-// ÄNDERUNG DER VERSION ZWINGT ZUM UPDATE
-var cacheName = 'aura-weather-v3.0-big-ticker';
+// AURA WEATHER SERVICE WORKER V3.1
+// VERSION ERHÖHT -> ZWINGT TABLET ZUM UPDATE
+var cacheName = 'aura-weather-v3.1-fix-gear';
 
 var filesToCache = [
   './',

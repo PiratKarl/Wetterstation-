@@ -1,11 +1,8 @@
-/* AURA WEATHER V3.0 - STYLE */
+/* AURA WEATHER V3.1 - FIXES */
 body {
-    background-color: #000;
-    color: #fff;
-    font-family: sans-serif;
-    margin: 0; padding: 0;
-    overflow: hidden;
-    height: 100vh; width: 100vw;
+    background-color: #000; color: #fff;
+    font-family: sans-serif; margin: 0; padding: 0;
+    overflow: hidden; height: 100vh; width: 100vw;
 }
 
 /* START VORHANG */
@@ -24,31 +21,44 @@ body {
 
 /* LAYOUT */
 #main-container { display: flex; flex-direction: column; height: 100%; padding: 5px; box-sizing: border-box; }
-.top-section { display: flex; justify-content: space-between; align-items: flex-start; height: 35%; }
+.top-section { display: flex; justify-content: space-between; align-items: flex-start; height: 35%; position: relative; }
+
 .top-left { text-align: left; width: 30%; }
 #clock { font-size: 3.5em; font-weight: bold; line-height: 1; }
 #date { font-size: 1.1em; color: #00eaff; margin-top: 5px; font-weight: bold; text-transform: uppercase; }
+
 .top-center { text-align: center; width: 40%; }
 #city-title { font-size: 0.9em; color: #888; letter-spacing: 2px; font-weight: bold; margin-top: 5px;}
 .center-row { display: flex; justify-content: center; align-items: center; }
 #temp-display { font-size: 4.5em; font-weight: bold; margin-left: 10px; }
 #feels-like { color: #00eaff; font-weight: bold; font-size: 1.2em; text-transform: uppercase; }
-.top-right { text-align: right; width: 30%; font-size: 0.9em; }
 
-/* === TICKER (RIESIG) === */
+/* RECHTS OBEN - ZAHNRAD FIX */
+.top-right { text-align: right; width: 30%; font-size: 0.9em; position: relative; z-index: 5000; }
+.gear-icon {
+    font-size: 4em; /* Sehr groß zum Treffen */
+    padding: 10px;
+    cursor: pointer;
+    color: #fff;
+    /* Animation beim Drücken */
+}
+.gear-icon:active { color: #00eaff; transform: scale(0.9); }
+
+/* === TICKER (FIX: CYAN & RIESIG) === */
 .ticker-wrap {
     width: 100%; overflow: hidden; background: #000; 
-    height: 80px; /* HÖHE ERHÖHT */
-    line-height: 80px;
+    height: 90px; /* Noch höher */
+    line-height: 90px;
     white-space: nowrap; margin: 5px 0; 
     border-top: 1px solid #333; border-bottom: 1px solid #333;
 }
 .ticker-content {
     display: inline-block; padding-left: 100%; animation: ticker 25s linear infinite;
-    color: #00eaff; font-weight: bold; 
-    font-size: 3.5em; /* SCHRIFTGRÖSSE ERHÖHT */
+    color: #00eaff !important; /* WICHTIG: Farbe erzwingen */
+    font-weight: bold; 
+    font-size: 4.5em; /* WICHTIG: Riesig */
     text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(0, 234, 255, 0.3);
+    text-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
 }
 @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
@@ -62,48 +72,29 @@ td { text-align: center; vertical-align: middle; }
 .temp-low { color: #00eaff; font-size: 0.9em; font-weight: bold; }
 .f-icon-img { width: 40px; height: 40px; margin: 2px 0; }
 
-/* === MENÜ SYSTEM === */
+/* MENÜ */
 .overlay-screen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #0d0d0d; z-index: 21000; display: none; flex-direction: column;
 }
-
-/* Tab Navigation */
 .nav-bar { display: flex; width: 100%; height: 70px; border-bottom: 2px solid #00eaff; background: #000; }
 .nav-btn { flex: 1; background: #000; color: #666; border: none; font-size: 1.4em; font-weight: bold; cursor: pointer; }
 .nav-btn.active { background: #00eaff; color: #000; }
-
-/* Inhalte */
 .tab-content { display: none; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px; text-align: center; height: 100%; overflow-y: auto; }
 .active-tab { display: flex; }
-
 h3 { color: #00eaff; margin-bottom: 30px; border-bottom: 1px dashed #333; padding-bottom: 15px; width: 100%; letter-spacing: 2px; }
-
-/* Inputs & Buttons */
 input { background: #222; border: 1px solid #444; color: #fff; padding: 15px; font-size: 1.4em; text-align: center; margin-bottom: 20px; width: 80%; }
 .time-row { display: flex; justify-content: space-around; width: 100%; margin-bottom: 20px; }
-.time-row div { width: 45%; }
-.time-row input { width: 90%; }
-
+.time-row div { width: 45%; } .time-row input { width: 90%; }
 .action-btn { padding: 20px 40px; font-size: 1.4em; font-weight: bold; margin: 10px; border: none; cursor: pointer; width: 80%; max-width: 300px; border-radius: 10px; }
-.save { background: #00eaff; color: #000; }
-.cancel { background: #333; color: #fff; }
+.save { background: #00eaff; color: #000; } .cancel { background: #333; color: #fff; }
 .small-btn { background: none; border: 1px solid #555; color: #555; padding: 10px 20px; font-size: 0.9em; margin-top: 40px; }
-
-/* Tipps */
 .scroll-text { text-align: left; font-size: 1.1em; line-height: 1.6; color: #ccc; max-width: 90%; padding-bottom: 50px;}
 .scroll-text p { margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-.scroll-text strong { color: #fff; }
-
-/* PayPal */
+.paypal-btn { display: inline-block; background: #ffcc00; color: #000; padding: 25px 50px; text-decoration: none; font-weight: bold; font-size: 1.5em; border-radius: 50px; box-shadow: 0 0 20px rgba(255, 204, 0, 0.4); border: 2px solid #fff; }
 .coffee-text { font-size: 1.2em; line-height: 1.5; margin-bottom: 40px; max-width: 80%; }
-.paypal-btn {
-    display: inline-block; background: #ffcc00; color: #000;
-    padding: 25px 50px; text-decoration: none; font-weight: bold; font-size: 1.5em;
-    border-radius: 50px; box-shadow: 0 0 20px rgba(255, 204, 0, 0.4); border: 2px solid #fff;
-}
 
-/* VIDEOS & SLEEP */
+/* VIDEO */
 #wake-video { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0.01; z-index: -1; pointer-events: none; }
 .video-sleep-mode {
     position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
