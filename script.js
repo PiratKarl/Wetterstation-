@@ -1,4 +1,4 @@
-// AURA WEATHER V2.9 - FIXED START & BIG TICKER
+// AURA WEATHER V2.9 - FINAL (SAFE START)
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -22,7 +22,6 @@ function timeToMins(t) {
 }
 
 // === WICHTIG: START FUNKTION ===
-// Wird ausgelöst, wenn man auf den Start-Screen tippt
 function activateWakeLock() {
     // 1. Start Screen ausblenden
     var startScreen = document.getElementById('start-overlay');
@@ -76,7 +75,7 @@ function updateClock() {
         }
     }
 
-    // Wenn Gnadenfrist aktiv ist -> KEIN Schlafmodus, aber Warnung zeigen
+    // Gnadenfrist Check
     if (isSleepTime && isGracePeriod) {
         isSleepTime = false;
         showGraceNote(true);
@@ -84,10 +83,9 @@ function updateClock() {
         showGraceNote(false);
     }
 
-    // Video Steuerung & Vorhang
+    // Video & Vorhang Steuerung
     var video = document.getElementById('wake-video');
     
-    // Nur steuern, wenn App aktiviert wurde
     if (isActivated && video) {
          if(video.paused) video.play().catch(function(e){});
          
@@ -136,7 +134,7 @@ function fetchWeather() {
             document.getElementById('city-title').innerText = d.name.toUpperCase();
             
             var iconCode = d.weather[0].icon;
-            document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="90" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
+            document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="110" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
             
             document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
             
