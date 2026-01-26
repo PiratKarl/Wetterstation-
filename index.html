@@ -3,34 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Professional</title>
+    <title>Aura Weather V10</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <video id="wake-video" loop playsinline muted>
-        <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
-    </video>
+    <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
-    <div id="start-overlay" onclick="startApp()" ontouchstart="startApp()">
-        <div class="finger">👆</div>
-        <h1>BITTE TIPPEN</h1>
-    </div>
+    <div id="start-overlay" onclick="startApp()"><h1>START V10</h1></div>
 
-    <div id="gear-btn" onclick="openMenu()" ontouchstart="openMenu()">⚙ SETUP</div>
+    <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
 
     <div id="main-container">
         <div class="top-section">
             <div class="box-left">
                 <div id="clock">--:--</div>
                 <div id="date">LADE...</div>
-                <div id="current-icon-container"></div>
-            </div>
+                <img src="logo.png" class="aura-logo"> </div>
+            
             <div class="box-center">
                 <div id="city-title">...</div>
-                <div id="temp-display">--°</div>
+                <div class="temp-row">
+                    <img id="current-weather-icon" src=""> <div id="temp-display">--°</div>
+                </div>
                 <div id="feels-like">--</div>
             </div>
+            
             <div class="box-right">
                 <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
                 <div class="astro-row">☾ <span id="sunset">--:--</span></div>
@@ -38,27 +35,30 @@
             </div>
         </div>
 
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">LADE WETTERDATEN...</div></div>
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">...</div></div>
 
         <div class="tables-area">
             <table id="hourly-table"></table>
-            <div class="divider"></div>
+            <div style="border-top:1px dashed #333; margin:10px 0;"></div>
             <table id="daily-table"></table>
         </div>
     </div>
 
-    <div id="settings-overlay">
-        <h2>EINSTELLUNGEN</h2>
-        <input type="text" id="city-in" placeholder="Stadt">
-        <div class="time-inputs">
-            <div><label>Nacht ab</label><br><input type="time" id="time-start"></div>
-            <div><label>Nacht bis</label><br><input type="time" id="time-end"></div>
+    <div id="settings-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#111; flex-direction:column; align-items:center; justify-content:center; z-index:20000;">
+        <h2 style="color:#00eaff;">SETUP</h2>
+        <input type="text" id="city-in" placeholder="Stadt" style="font-size:3vh; padding:10px; margin:10px; background:#333; color:#fff; border:1px solid #00eaff;">
+        <div style="display:flex; gap:10px; margin:10px;">
+            <input type="time" id="time-start"> <input type="time" id="time-end">
         </div>
-        <button class="btn-save" onclick="save()">SPEICHERN</button>
-        <button class="btn-cancel" onclick="closeMenu()">ZURÜCK</button>
-        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR&item_name=AuraWeather+Spende" class="paypal">☕ SPENDE</a>
+        <button onclick="save()" style="background:#00eaff; color:#000; padding:15px 40px; font-size:3vh; font-weight:bold; border:none; border-radius:10px; margin:10px;">SPEICHERN</button>
+        <button onclick="closeMenu()" style="background:#333; color:#fff; padding:10px 30px; font-size:2.5vh; border:none; border-radius:10px;">ZURÜCK</button>
+        
+        <p class="coffee-text">Gefällt dir Aura? Ein kleiner Kaffee hält den Code am Laufen! ☕</p>
+        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" style="color:#ffcc00; font-size:3vh; font-weight:bold; text-decoration:none; border:2px solid #ffcc00; padding:10px 20px; border-radius:50px;">Kaffee spendieren</a>
+        
+        <div class="copyright">© Code-Werft Karl Altmannshofer 2026</div>
     </div>
 
     <script src="script.js"></script>
 </body>
-</html>
+</html> 
