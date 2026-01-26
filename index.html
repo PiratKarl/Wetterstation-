@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V10.2</title>
+    <title>Aura Weather V10.3</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
-    <div id="start-overlay" onclick="startApp()" ontouchstart="startApp()">
+    <div id="start-overlay" onclick="startApp()">
         <div style="font-size: 10vh;">👆</div>
-        <h1>START V10.2</h1>
+        <h1>START V10.3</h1>
     </div>
 
-    <div id="gear-btn" onclick="openMenu()" ontouchstart="openMenu()">⚙ SETUP</div>
+    <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
 
     <div id="main-container">
         <div class="top-section">
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">LADE WETTERDATEN...</div></div>
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">LADE DATEN...</div></div>
 
         <div class="tables-area">
             <table id="hourly-table"></table>
@@ -57,14 +57,11 @@
         </div>
         <button onclick="save()" class="save-btn">SPEICHERN</button>
         <button onclick="closeMenu()" class="back-btn">ZURÜCK</button>
-        
         <p class="coffee-text">Gefällt dir Aura? Ein kleiner Kaffee hält den Code am Laufen! ☕</p>
         <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" class="paypal-link">Kaffee spendieren</a>
-        
         <div class="copyright-tag">© Code-Werft Karl Altmannshofer 2026</div>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
- 
