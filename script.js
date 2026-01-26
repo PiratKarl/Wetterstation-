@@ -1,6 +1,4 @@
-// AURA WEATHER V2.9 - MASTER EDITION
-// Features: Blue Design Logic, Video Sleep Curtain, 60s Grace Period
-
+// AURA WEATHER V2.9 - FIXED START & BIG TICKER
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -11,12 +9,8 @@ var timeOffset = 0;
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
 
-// 1. GNADENFRIST-LOGIK: Beim Start true, nach 60s false
-var isGracePeriod = true; 
-setTimeout(function() {
-    isGracePeriod = false;
-    updateClock(); // Sofort prüfen, ob Vorhang fallen soll
-}, 60000);
+// Gnadenfrist Variable
+var isGracePeriod = false; 
 
 var tickerData = { main: "", wind: "", clothing: "", pressure: "", humidity: "", pop: "", vis: "" };
 
@@ -27,17 +21,48 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// UHR & SLEEP STEUERUNG
+// === WICHTIG: START FUNKTION ===
+// Wird ausgelöst, wenn man auf den Start-Screen tippt
+function activateWakeLock() {
+    // 1. Start Screen ausblenden
+    var startScreen = document.getElementById('start-overlay');
+    if(startScreen) startScreen.style.display = 'none';
+
+    // 2. Video starten (Wake Lock)
+    var v = document.getElementById('wake-video');
+    if(v.getAttribute('src') === "" || !v.getAttribute('src')) v.setAttribute('src', videoUrl);
+    v.play().catch(function(e){ console.log("Video Error", e); });
+    
+    // 3. Vollbild anfordern
+    var el = document.documentElement;
+    if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    if (el.requestFullscreen) el.requestFullscreen();
+
+    // 4. Gnadenfrist starten (60 Sekunden)
+    isGracePeriod = true;
+    setTimeout(function() {
+        isGracePeriod = false;
+        updateClock(); // Sofort prüfen
+    }, 60000);
+
+    // 5. App aktivieren
+    if (!isActivated) {
+        isActivated = true;
+        fetchWeather();
+        updateClock();
+    }
+}
+
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours(); var m = now.getMinutes();
     var nowMins = (h * 60) + m;
     
     if(document.getElementById('clock')) document.getElementById('clock').innerText = z(h) + ":" + z(m);
-    // Datum Format: SA., 24. JAN.
-    var days = ['So.','Mo.','Di.','Mi.','Do.','Fr.','Sa.'];
-    var months = ['Jan.','Feb.','März','Apr.','Mai','Juni','Juli','Aug.','Sep.','Okt.','Nov.','Dez.'];
-    var dateStr = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()].toUpperCase();
+    
+    var days = ['SO.','MO.','DI.','MI.','DO.','FR.','SA.'];
+    var months = ['JAN.','FEB.','MÄRZ','APR.','MAI','JUNI','JULI','AUG.','SEP.','OKT.','NOV.','DEZ.'];
+    var dateStr = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
     if(document.getElementById('date')) document.getElementById('date').innerText = dateStr;
 
     var isSleepTime = false;
@@ -51,7 +76,7 @@ function updateClock() {
         }
     }
 
-    // Wenn Grace Period aktiv ist, Schlafmodus unterdrücken & Warnung zeigen
+    // Wenn Gnadenfrist aktiv ist -> KEIN Schlafmodus, aber Warnung zeigen
     if (isSleepTime && isGracePeriod) {
         isSleepTime = false;
         showGraceNote(true);
@@ -59,30 +84,27 @@ function updateClock() {
         showGraceNote(false);
     }
 
-    // Video Steuerung
+    // Video Steuerung & Vorhang
     var video = document.getElementById('wake-video');
     
-    // Immer abspielen für WakeLock
-    if (video) {
+    // Nur steuern, wenn App aktiviert wurde
+    if (isActivated && video) {
          if(video.paused) video.play().catch(function(e){});
-         if(!video.getAttribute('src') || video.getAttribute('src') === "") {
-             video.setAttribute('src', videoUrl); video.load();
+         
+         if (isSleepTime) {
+             // NACHT
+             if (!video.classList.contains('video-sleep-mode')) {
+                 video.classList.add('video-sleep-mode');
+             }
+         } else {
+             // TAG
+             if (video.classList.contains('video-sleep-mode')) {
+                 video.classList.remove('video-sleep-mode');
+             }
          }
-    }
-
-    // Vorhang Logik
-    if (isSleepTime) {
-        if (video && !video.classList.contains('video-sleep-mode')) {
-            video.classList.add('video-sleep-mode');
-        }
-    } else {
-        if (video && video.classList.contains('video-sleep-mode')) {
-            video.classList.remove('video-sleep-mode');
-        }
     }
 }
 
-// HINWEIS EINBLENDUNG
 function showGraceNote(show) {
     var note = document.getElementById('grace-note');
     if (show) {
@@ -91,9 +113,9 @@ function showGraceNote(show) {
             note.id = 'grace-note';
             note.style.position = 'fixed'; note.style.top = '0'; note.style.left = '0';
             note.style.width = '100%'; note.style.background = '#b71c1c'; 
-            note.style.color = '#fff'; note.style.textAlign = 'center'; note.style.padding = '5px';
-            note.style.zIndex = '10000'; note.style.fontWeight = 'bold';
-            note.innerText = '⏳ NACHT-PAUSE (1 MIN)';
+            note.style.color = '#fff'; note.style.textAlign = 'center'; note.style.padding = '10px';
+            note.style.zIndex = '9500'; note.style.fontWeight = 'bold'; note.style.fontSize = '1.2em';
+            note.innerText = '⏳ NACHTMODUS PAUSE (1 MIN)';
             document.body.appendChild(note);
         }
         note.style.display = 'block';
@@ -103,6 +125,7 @@ function showGraceNote(show) {
 }
 
 function fetchWeather() {
+    if(!isActivated) return;
     var xhr = new XMLHttpRequest();
     var url = "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + API_KEY + "&units=metric&lang=de&t=" + new Date().getTime();
     xhr.open("GET", url, true);
@@ -127,12 +150,10 @@ function fetchWeather() {
             var wind = Math.round(d.wind.speed * 3.6);
             var hum = d.main.humidity;
             
-            // Ticker Text wie im Bild (Cyan)
             var tText = desc + " +++ WIND: " + wind + " KM/H +++ FEUCHTE: " + hum + "% +++ DRUCK: " + d.main.pressure + " HPA +++ VORSCHAU";
             document.getElementById('info-ticker').innerText = tText;
 
             fetchForecast(d.coord.lat, d.coord.lon);
-            // Mondphase (vereinfacht)
             document.getElementById('moon-txt').innerText = "Mondphase"; 
         }
     };
@@ -155,7 +176,6 @@ function fetchForecast(lat, lon) {
 
 function renderHourly(list) {
     var html = "<tr>";
-    // Zeige 5 Spalten wie im Bild
     for(var i=0; i<5; i++) {
         var item = list[i];
         var time = new Date(item.dt * 1000);
@@ -169,7 +189,6 @@ function renderHourly(list) {
 function renderDaily(list) {
     var html = "<tr>";
     var daysProcessed = 0;
-    // Zeige 5 Tage wie im Bild
     for(var i=0; i<list.length - 8; i+=8) {
         if(daysProcessed >= 5) break;
         var minT = 100; var maxT = -100; var iconStr = ""; var popMax = 0;
@@ -184,7 +203,6 @@ function renderDaily(list) {
         }
         if(iconStr === "") iconStr = list[i].weather[0].icon;
         
-        // Layout wie im Bild: Tag oben, Icon mitte, Temp unten (Weiß/Blau)
         html += '<td><div class="f-day-name">' + dayName.substr(0,2) + '</div><img class="f-icon-img" src="' + iconStr + '.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconStr+'.png\'"><div><span class="temp-high">' + Math.round(maxT) + '°</span> <span class="temp-low">' + Math.round(minT) + '°</span></div><div style="font-size:0.7em; color:#00eaff;">' + Math.round(popMax*100) + '%</div></td>';
         daysProcessed++;
     }
@@ -214,8 +232,6 @@ function saveAll() {
 
 function fullReset() { if(confirm("Reset?")) { localStorage.clear(); location.reload(); } }
 
-// Start
-fetchWeather();
-setInterval(updateClock, 1000);
+// Intervalle
+setInterval(updateClock, 1000); 
 setInterval(fetchWeather, 600000);
-updateClock();
