@@ -1,6 +1,6 @@
-// AURA WEATHER SERVICE WORKER V3.1
-// VERSION ERHÖHT -> ZWINGT TABLET ZUM UPDATE
-var cacheName = 'aura-weather-v3.1-fix-gear';
+// AURA WEATHER SERVICE WORKER V3.2
+// UPDATE ZWANG: V3.2
+var cacheName = 'aura-weather-v3.2-moon-fix';
 
 var filesToCache = [
   './',

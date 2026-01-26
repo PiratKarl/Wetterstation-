@@ -1,4 +1,4 @@
-// AURA WEATHER V3.1 - GEAR FIX & ICONS
+// AURA WEATHER V3.2 - FINAL FINAL
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -17,7 +17,7 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// START & WAKE LOCK
+// START
 function activateWakeLock() {
     document.getElementById('settings-overlay').style.display = 'none';
     var startScreen = document.getElementById('start-overlay');
@@ -59,6 +59,19 @@ function switchTab(tabId) {
     if(tabId === 'tab-coffee') btns[2].classList.add('active');
 }
 
+// MONDPHASE BERECHNEN
+function getMoonPhaseName(date) {
+    var year = date.getFullYear(); var month = date.getMonth() + 1; var day = date.getDate();
+    if (month < 3) { year--; month += 12; }
+    ++month;
+    var c = 365.25 * year; var e = 30.6 * month;
+    var jd = c + e + day - 694039.09; jd /= 29.5305882;
+    var b = parseInt(jd); jd -= b; b = Math.round(jd * 8);
+    if (b >= 8) b = 0;
+    var phases = ["🌑 NEUMOND", "🌒 ZUN. SICHEL", "🌓 ERSTES VIERTEL", "🌔 ZUN. MOND", "🌕 VOLLMOND", "🌖 ABN. MOND", "🌗 LETZTES VIERTEL", "🌘 ABN. SICHEL"];
+    return phases[b];
+}
+
 // UHR & SLEEP
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
@@ -71,6 +84,11 @@ function updateClock() {
     var months = ['JAN.','FEB.','MÄRZ','APR.','MAI','JUNI','JULI','AUG.','SEP.','OKT.','NOV.','DEZ.'];
     var dateStr = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
     if(document.getElementById('date')) document.getElementById('date').innerText = dateStr;
+
+    // Mondphase anzeigen
+    if(document.getElementById('moon-txt')) {
+        document.getElementById('moon-txt').innerText = getMoonPhaseName(now);
+    }
 
     var isSleepTime = false;
     if (sStart && sEnd) {
@@ -117,7 +135,6 @@ function fetchWeather() {
             document.getElementById('sunrise-val').innerText = z(rise.getHours()) + ":" + z(rise.getMinutes());
             document.getElementById('sunset-val').innerText = z(set.getHours()) + ":" + z(set.getMinutes());
             
-            // === HIER SIND DIE NEUEN TICKER-DATEN MIT SYMBOLEN ===
             var desc = d.weather[0].description.toUpperCase();
             var wind = Math.round(d.wind.speed * 3.6);
             var hum = d.main.humidity;
