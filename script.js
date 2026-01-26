@@ -1,7 +1,6 @@
-// script.js - V10.0
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
-var sStart = localStorage.getItem('sStart'), sEnd = localStorage.getItem('sEnd');
+var sStart = localStorage.getItem('sleepStart'), sEnd = localStorage.getItem('sleepEnd');
 var active = false, grace = false;
 
 function z(n){return (n<10?'0':'')+n;}
@@ -23,14 +22,14 @@ function update() {
     var days=['SO','MO','DI','MI','DO','FR','SA'], months=['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
     
-    // Mond
+    // Mondphasen-Rechner
     var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate();
     if(month<3){year--;month+=12;}++month;
     var jd = (365.25*year) + (30.6*month) + day - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
     var p=["🌑 NEUMOND","🌒 ZUN. SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 ABN. SICHEL"];
     document.getElementById('moon').innerText = p[b];
 
-    // Nachtmodus
+    // Schlafmodus
     var sleep = false;
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes();
@@ -49,11 +48,9 @@ function loadWeather() {
         document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
         document.getElementById('city-title').innerText = d.name.toUpperCase();
         
-        // Wettersymbol neben der Temperatur
         var ic = d.weather[0].icon;
         document.getElementById('current-weather-icon').src = ic + ".gif";
         
-        // Sonnenzeiten
         var sunrise = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
         var sunset = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
         document.getElementById('sunrise').innerText = z(sunrise.getHours()) + ":" + z(sunrise.getMinutes());
@@ -68,12 +65,10 @@ function loadFore(lat, lon) {
     fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API}&units=metric&lang=de`)
     .then(r => r.json()).then(d => {
         var h = "<tr>", dy = "<tr>";
-        // 4 Stunden vorhersagen
         for(var i=0; i<4; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
             h += `<td>${z(t.getHours())}h<br><img class="t-icon" src="${it.weather[0].icon}.gif"><br>${Math.round(it.main.temp)}°<br><span class="t-pop">${Math.round(it.pop*100)}%</span></td>`;
         }
-        // 4 Tage vorhersagen
         for(var i=0; i<32; i+=8) {
             var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
             dy += `<td>${day.substr(0,2)}<br><img class="t-icon" src="${it.weather[0].icon}.gif"><br>${Math.round(it.main.temp)}°</td>`;
@@ -87,7 +82,7 @@ function openMenu() { document.getElementById('settings-overlay').style.display=
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
 function save() {
     localStorage.setItem('city', document.getElementById('city-in').value);
-    localStorage.setItem('sStart', document.getElementById('time-start').value);
-    localStorage.setItem('sEnd', document.getElementById('time-end').value);
+    localStorage.setItem('sleepStart', document.getElementById('time-start').value);
+    localStorage.setItem('sleepEnd', document.getElementById('time-end').value);
     location.reload();
 }

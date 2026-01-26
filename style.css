@@ -1,7 +1,6 @@
-/* style.css - V10.0 Finale Optik */
 body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; overflow: hidden; height: 100vh; }
 
-/* SETUP BUTTON - Jetzt oben rechts fixiert */
+/* SETUP BUTTON */
 #gear-btn {
     position: fixed; top: 10px; right: 10px; background: rgba(0,234,255,0.2);
     border: 2px solid #00eaff; color: #00eaff; padding: 12px 24px;
@@ -10,22 +9,36 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0;
 
 .top-section { display: flex; justify-content: space-between; height: 42vh; padding: 20px; box-sizing: border-box; }
 
-/* LINKS: Uhr & Aura Logo */
+/* BOX LINKS: Uhr & Logo */
 .box-left { width: 30%; display: flex; flex-direction: column; align-items: flex-start; }
 #clock { font-size: 13vh; font-weight: bold; line-height: 1; }
-#date { font-size: 3vh; color: #00eaff; text-transform: uppercase; margin-bottom: 10px; }
-.aura-logo { width: 12vh; height: auto; opacity: 0.8; } /* Das Aura Weather Logo */
+#date { font-size: 3vh; color: #00eaff; text-transform: uppercase; margin-bottom: 5px; }
 
-/* MITTE: Aktuelles Wetter */
+/* LOGO & ANIMATION */
+.aura-logo { 
+    width: auto; 
+    height: 8vh; /* Dezent unter der Uhr */
+    opacity: 0.9; 
+    margin-top: 10px;
+    display: block;
+}
+.anim-fade-in {
+    animation: fadeIn 2s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 0.9; transform: translateY(0); }
+}
+
+/* MITTE */
 .box-center { width: 40%; text-align: center; }
 #city-title { font-size: 3vh; color: #888; letter-spacing: 2px; margin-bottom: 5px; }
 .temp-row { display: flex; justify-content: center; align-items: center; }
-#current-weather-icon { width: 15vh; height: 15vh; } /* Wettersymbol neben Temperatur */
 #temp-display { font-size: 18vh; font-weight: bold; margin-left: 10px; }
 #feels-like { font-size: 3.5vh; color: #00eaff; font-weight: bold; }
 
-/* RECHTS: Astro (Sonnenzeiten unter dem Button) */
-.box-right { width: 30%; text-align: right; padding-top: 80px; } /* Platz wegen Setup-Button */
+/* RECHTS */
+.box-right { width: 30%; text-align: right; padding-top: 70px; }
 .astro-row { font-size: 3.5vh; margin-bottom: 1vh; font-weight: bold; }
 .moon-row { font-size: 3vh; color: #00eaff; margin-top: 1vh; }
 
@@ -34,13 +47,22 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0;
 .ticker-content { display: inline-block; padding-left: 100%; animation: ticker 30s linear infinite; font-size: 4.5vh; color: #00eaff; line-height: 7vh; font-weight: bold; }
 @keyframes ticker { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
-/* TABELLEN: Jetzt 4 pro Zeile & VIEL größer */
+/* TABELLEN */
 .tables-area { height: 40vh; display: flex; flex-direction: column; justify-content: space-around; padding: 10px; }
 table { width: 100%; table-layout: fixed; }
-td { font-size: 3.5vh; font-weight: bold; padding: 5px; }
+td { text-align: center; font-size: 3.5vh; font-weight: bold; padding: 5px; }
 .t-icon { width: 8vh; height: 8vh; }
 .t-pop { color: #00eaff; font-size: 2.5vh; }
 
-/* SETUP MENÜ TEXTE */
-.coffee-text { font-style: italic; color: #ffcc00; margin: 20px 0; font-size: 2.5vh; }
-.copyright { font-size: 1.8vh; color: #555; margin-top: 30px; }
+/* OVERLAYS & SETUP */
+#start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50000; cursor: pointer; }
+#settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#111; flex-direction:column; align-items:center; justify-content:center; z-index:20000; }
+input { font-size:3vh; padding:10px; margin:10px; background:#333; color:#fff; border:1px solid #00eaff; text-align: center; }
+.save-btn { background:#00eaff; color:#000; padding:15px 40px; font-size:3vh; font-weight:bold; border:none; border-radius:10px; margin:10px; cursor: pointer; }
+.back-btn { background:#333; color:#fff; padding:10px 30px; font-size:2.5vh; border:none; border-radius:10px; cursor: pointer; }
+.coffee-text { font-style: italic; color: #ffcc00; margin: 20px 0; font-size: 2.5vh; text-align: center; }
+.paypal-link { color:#ffcc00; font-size:3vh; font-weight:bold; text-decoration:none; border:2px solid #ffcc00; padding:10px 20px; border-radius:50px; }
+.copyright-tag { font-size: 1.8vh; color: #555; margin-top: 30px; }
+
+#wake-video { position: fixed; width: 1px; opacity: 0.01; z-index: -1; }
+.sleep-mode { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; background:black !important; z-index:15000 !important; opacity:1 !important; }
