@@ -1,6 +1,6 @@
-// AURA WEATHER SERVICE WORKER V3.2
-// UPDATE ZWANG: V3.2
-var cacheName = 'aura-weather-v3.2-moon-fix';
+// AURA WEATHER SERVICE WORKER V3.3
+// ZWINGT ZUM UPDATE: V3.3
+var cacheName = 'aura-weather-v3.3-touch-fix';
 
 var filesToCache = [
   './',

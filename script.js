@@ -1,4 +1,4 @@
-// AURA WEATHER V3.2 - FINAL FINAL
+// AURA WEATHER V3.3 - TOUCH LOGIC
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -59,7 +59,7 @@ function switchTab(tabId) {
     if(tabId === 'tab-coffee') btns[2].classList.add('active');
 }
 
-// MONDPHASE BERECHNEN
+// MOND
 function getMoonPhaseName(date) {
     var year = date.getFullYear(); var month = date.getMonth() + 1; var day = date.getDate();
     if (month < 3) { year--; month += 12; }
@@ -85,7 +85,6 @@ function updateClock() {
     var dateStr = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
     if(document.getElementById('date')) document.getElementById('date').innerText = dateStr;
 
-    // Mondphase anzeigen
     if(document.getElementById('moon-txt')) {
         document.getElementById('moon-txt').innerText = getMoonPhaseName(now);
     }

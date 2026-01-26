@@ -1,29 +1,32 @@
-/* AURA WEATHER V3.2 - FINAL FIX */
+/* AURA WEATHER V3.3 - TOUCH FIX */
 body {
     background-color: #000; color: #fff;
     font-family: sans-serif; margin: 0; padding: 0;
     overflow: hidden; height: 100vh; width: 100vw;
 }
 
-/* === DAS SCHWEBENDE ZAHNRAD (WICHTIG!) === */
-#floating-gear {
-    position: fixed; /* Löst es vom Rest */
-    top: 10px;
-    right: 10px;
-    font-size: 4em;
-    z-index: 30000; /* Höher als alles andere (außer Vorhang) */
+/* === DER NEUE MENÜ BUTTON (SICHTBAR & KLICKBAR) === */
+#emergency-gear {
+    position: fixed; /* Klebt am Bildschirm */
+    top: 0;
+    right: 0;
+    width: 120px; /* Schön breit */
+    height: 60px; /* Schön hoch */
+    background-color: rgba(0, 234, 255, 0.3); /* Leicht Transparentes Blau */
+    border: 2px solid #00eaff;
+    border-radius: 0 0 0 15px; /* Ecke abrunden */
+    z-index: 30000; /* Ganz weit oben */
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.5em; font-weight: bold; color: #fff;
     cursor: pointer;
-    background: rgba(0,0,0,0.5); /* Kleiner Hintergrund damit man es besser trifft */
-    padding: 10px;
-    border-radius: 50%;
-    border: 2px solid #333;
+    box-shadow: 0 0 10px #00eaff;
 }
-#floating-gear:active { color: #00eaff; border-color: #00eaff; }
+#emergency-gear:active { background-color: #00eaff; color: #000; }
 
 /* START VORHANG */
 #start-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #000; z-index: 50000; /* Das allerhöchste */
+    background-color: #000; z-index: 50000;
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
     cursor: pointer; text-align: center;
@@ -50,19 +53,20 @@ body {
 
 .top-right { text-align: right; width: 30%; font-size: 0.9em; }
 
-/* === TICKER (GIGANTISCH) === */
+/* === TICKER (JETZT IN PROZENT %) === */
+/* Wir nutzen VH (Viewport Height) statt EM. Das skaliert brutaler. */
 .ticker-wrap {
     width: 100%; overflow: hidden; background: #000; 
-    height: 150px; /* Extrem hoch */
-    line-height: 150px; /* Text vertikal zentrieren */
+    height: 18vh; /* 18% der gesamten Bildschirmhöhe */
+    line-height: 18vh;
     white-space: nowrap; margin: 0; 
-    border-top: 1px solid #333; border-bottom: 1px solid #333;
+    border-top: 2px solid #333; border-bottom: 2px solid #333;
 }
 .ticker-content {
     display: inline-block; padding-left: 100%; animation: ticker 25s linear infinite;
     color: #00eaff !important; 
     font-weight: bold; 
-    font-size: 6em; /* RIESIG (ca. 100px hoch) */
+    font-size: 12vh; /* 12% der Bildschirmhöhe = RIESIG */
     text-transform: uppercase;
     text-shadow: 0 0 20px rgba(0, 234, 255, 0.5);
 }
