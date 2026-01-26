@@ -40,15 +40,14 @@ function updateClock() {
     if (sStart && sEnd) {
         var startMins = timeToMins(sStart);
         var endMins = timeToMins(sEnd);
-        // Wir ziehen 10 Minuten als Puffer ab (falls Tablet langsam ist)
-        var effectiveStart = startMins; 
         
-        if (effectiveStart > endMins) {
+        // Logik ohne Puffer: Exakte Zeitprüfung
+        if (startMins > endMins) {
             // Nacht geht über Mitternacht (z.B. 22:00 bis 06:00)
-            if (nowMins >= effectiveStart || nowMins < endMins) isSleepTime = true;
+            if (nowMins >= startMins || nowMins < endMins) isSleepTime = true;
         } else {
             // Nacht am selben Tag (z.B. 01:00 bis 05:00)
-            if (nowMins >= effectiveStart && nowMins < endMins) isSleepTime = true;
+            if (nowMins >= startMins && nowMins < endMins) isSleepTime = true;
         }
     }
 
