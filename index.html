@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V10.9</title>
+    <title>Aura Weather V11.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,7 +21,7 @@
             <div class="box-left">
                 <div id="clock">--:--</div>
                 <div id="date">LADE...</div>
-                <img src="logo.png" class="aura-logo anim-fade-in"> 
+                <img src="logo.png" class="aura-logo"> 
             </div>
             
             <div class="box-center">
@@ -31,7 +31,7 @@
                     <div id="temp-display">--°</div>
                 </div>
                 <div id="feels-like">--</div>
-            </div>
+                <div id="clothes-advice">--</div> </div>
             
             <div class="box-right">
                 <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">DATEN WERDEN GELADEN...</div></div>
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">LADE WETTER...</div></div>
 
         <div class="tables-area">
             <table id="hourly-table"></table>
@@ -57,8 +57,6 @@
         </div>
         <button onclick="save()" class="save-btn">SPEICHERN</button>
         <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:10px 20px; border-radius:10px;">ZURÜCK</button>
-        <p class="coffee-text">Gefällt dir Aura? Ein kleiner Kaffee hält den Code am Laufen! ☕</p>
-        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" style="color:#ffcc00; font-size:2.5vh; font-weight:bold; text-decoration:none; border:2px solid #ffcc00; padding:10px 20px; border-radius:50px;">Kaffee spendieren</a>
         <div class="copyright-tag">© Code-Werft Karl Altmannshofer 2026</div>
     </div>
 
