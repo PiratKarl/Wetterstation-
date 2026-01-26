@@ -1,12 +1,12 @@
-// AURA WEATHER V2.9 - TICKER TALK (SAFE START EDITION)
-// Features: No UV, Verbose Ticker (Pop & Visibility), Android 4.4 Safe
+// AURA WEATHER V2.9 - TICKER TALK (SAFE SLEEP EDITION)
+// Features: Fullscreen Video Curtain, Safe Start, KitKat Optimized
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
-// ÄNDERUNG: Wir laden die Werte, aber ohne automatische "22:00" Voreinstellung im System
+// Einstellungen laden
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
-var sStart = localStorage.getItem('sleepStart'); // Kein Standardwert mehr
-var sEnd = localStorage.getItem('sleepEnd');     // Kein Standardwert mehr
+var sStart = localStorage.getItem('sleepStart'); // Kein Standardwert = Safe Start
+var sEnd = localStorage.getItem('sleepEnd');
 
 var timeOffset = 0; 
 var isActivated = false;
@@ -22,7 +22,7 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === UHR & NACHTMODUS ===
+// === UHR & NEUE SLEEP-FUNKTION ===
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours();
@@ -30,50 +30,54 @@ function updateClock() {
     var curStr = z(h) + ":" + z(m);
     var nowMins = (h * 60) + m;
     
+    // Uhrzeit im UI aktualisieren (nur sichtbar, wenn kein Sleep-Mode)
     if(document.getElementById('clock')) document.getElementById('clock').innerText = curStr;
     if(document.getElementById('date')) document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short' });
 
     var isSleepTime = false;
 
-    // SICHERUNG: Nur wenn sStart UND sEnd existieren, wird die Nacht-Logik überhaupt ausgeführt
+    // Nur prüfen, wenn Zeiten gespeichert sind (Safe Start)
     if (sStart && sEnd) {
         var startMins = timeToMins(sStart);
         var endMins = timeToMins(sEnd);
-        var effectiveStart = startMins - 10; 
-        if (effectiveStart < 0) effectiveStart = 1440 + effectiveStart;
-
+        // Wir ziehen 10 Minuten als Puffer ab (falls Tablet langsam ist)
+        var effectiveStart = startMins; 
+        
         if (effectiveStart > endMins) {
+            // Nacht geht über Mitternacht (z.B. 22:00 bis 06:00)
             if (nowMins >= effectiveStart || nowMins < endMins) isSleepTime = true;
         } else {
+            // Nacht am selben Tag (z.B. 01:00 bis 05:00)
             if (nowMins >= effectiveStart && nowMins < endMins) isSleepTime = true;
         }
     }
 
-    var overlay = document.getElementById('night-overlay');
-    var startOv = document.getElementById('start-overlay');
+    // Video-Element holen
     var video = document.getElementById('wake-video');
+    var startOv = document.getElementById('start-overlay');
+    
+    // Sicherheits-Check: Video muss immer laufen für Wake-Lock!
+    if (isActivated && video) {
+         if(video.paused) video.play().catch(function(e){});
+         if(!video.getAttribute('src') || video.getAttribute('src') === "") {
+             video.setAttribute('src', videoUrl); 
+             video.load();
+         }
+    }
 
-    if (overlay) {
-        if (isSleepTime) {
-            if(overlay.style.display !== 'block') {
-                overlay.style.display = 'block';
-                if(startOv) startOv.style.display = 'none';
-                document.getElementById('night-clock').innerText = curStr;
-            } else {
-                document.getElementById('night-clock').innerText = curStr;
-            }
-            if(video.getAttribute('src') !== "") {
-                video.pause(); video.setAttribute('src', ""); video.load();
-            }
-        } else {
-            if(overlay.style.display !== 'none') overlay.style.display = 'none';
-            if (isActivated) {
-                if(startOv) startOv.style.display = 'none';
-                if(video.getAttribute('src') === "") {
-                    video.setAttribute('src', videoUrl); video.load();
-                }
-                if(video.paused) video.play().catch(function(e){});
-            }
+    if (isSleepTime) {
+        // === NACHT-MODUS (Der Video-Vorhang) ===
+        // Wir machen das Video groß und schwarz. Es deckt ALLES ab.
+        if (video && !video.classList.contains('video-sleep-mode')) {
+            video.classList.add('video-sleep-mode');
+            // Zur Sicherheit Start-Overlay ausblenden
+            if(startOv) startOv.style.display = 'none';
+        }
+    } else {
+        // === TAG-MODUS ===
+        // Video wieder klein machen
+        if (video && video.classList.contains('video-sleep-mode')) {
+            video.classList.remove('video-sleep-mode');
         }
     }
 }
@@ -83,6 +87,7 @@ function activateWakeLock() {
     if(startScreen) startScreen.style.display = 'none';
 
     var v = document.getElementById('wake-video');
+    // Video starten
     if(v.getAttribute('src') === "" || !v.getAttribute('src')) v.setAttribute('src', videoUrl);
     v.play();
     
@@ -95,7 +100,7 @@ function activateWakeLock() {
     }
 }
 
-// === WETTER ===
+// === WETTER (Unverändert stabil) ===
 function fetchWeather() {
     if(!isActivated) return;
     var xhr = new XMLHttpRequest();
@@ -111,6 +116,7 @@ function fetchWeather() {
             document.getElementById('city-title').innerText = d.name.toUpperCase();
             
             var iconCode = d.weather[0].icon;
+            // Versucht GIF zu laden, Fallback auf PNG
             document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="110" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
             
             var feel = Math.round(d.main.feels_like);
@@ -140,14 +146,14 @@ function fetchWeather() {
             else if(desc.indexOf("gewitter")!==-1) sym = "⚡";
             
             tickerData.main = sym + " " + desc.toUpperCase();
-            tickerData.wind = "💨 WINDGESCHWINDIGKEIT: " + Math.round(d.wind.speed * 3.6) + " KM/H";
-            tickerData.pressure = "LUFTDRUCK: " + d.main.pressure + " hPa";
-            tickerData.humidity = "💧 LUFTFEUCHTIGKEIT: " + d.main.humidity + "%";
+            tickerData.wind = "💨 WIND: " + Math.round(d.wind.speed * 3.6) + " KM/H";
+            tickerData.pressure = "DRUCK: " + d.main.pressure + " hPa";
+            tickerData.humidity = "💧 FEUCHTIGKEIT: " + d.main.humidity + "%";
             
             var vis = d.visibility;
             if(vis) {
-                if(vis >= 1000) tickerData.vis = "👁 SICHTWEITE: " + (vis/1000).toFixed(1) + " KM";
-                else tickerData.vis = "👁 SICHTWEITE: " + vis + " METER";
+                if(vis >= 1000) tickerData.vis = "👁 SICHT: " + (vis/1000).toFixed(1) + " KM";
+                else tickerData.vis = "👁 SICHT: " + vis + " METER";
             } else { tickerData.vis = ""; }
 
             updateTicker();
@@ -241,7 +247,6 @@ function toggleSettings() {
     s.style.display = (s.style.display==='block')?'none':'block'; 
     if(s.style.display==='block'){ 
         document.getElementById('city-input').value = city; 
-        // Beim Öffnen der Settings zeigen wir die 22/06 als Vorschlag, falls noch nichts gespeichert ist
         document.getElementById('s-start').value = sStart || '22:00'; 
         document.getElementById('s-end').value = sEnd || '06:00'; 
     } 
@@ -261,6 +266,7 @@ function saveAll() {
 
 function fullReset() { if(confirm("Wirklich alles zurücksetzen?")) { localStorage.clear(); location.reload(); } }
 
+// Intervalle
 setInterval(updateClock, 1000); 
 setInterval(fetchWeather, 600000);
 updateClock();
