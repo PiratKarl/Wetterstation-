@@ -3,279 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Aura V9.0 BEAUTY</title>
-    
-    <script>
-        if(window.navigator && navigator.serviceWorker) {
-            navigator.serviceWorker.getRegistrations().then(function(r) {
-                for(let i of r) i.unregister();
-            });
-        }
-    </script>
-
-    <style>
-        /* BASIS */
-        body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw; }
-
-        /* HEADER (Uhr, Wetter, Astro) */
-        #main-container { display: flex; flex-direction: column; height: 100%; padding: 10px; box-sizing: border-box; }
-        .top-section { display: flex; justify-content: space-between; height: 45%; width: 100%; }
-
-        /* LINKS: UHR & DATUM & HEUTE ICON */
-        .box-left { width: 30%; text-align: left; display: flex; flex-direction: column; }
-        #clock { font-size: 14vh; font-weight: bold; line-height: 1; margin-bottom: 5px; }
-        #date { font-size: 3.5vh; color: #00eaff; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
-        /* Das Bild unter dem Datum */
-        #current-icon-container img { width: 10vh; height: 10vh; }
-
-        /* MITTE: GROSSE TEMPERATUR */
-        .box-center { width: 40%; text-align: center; padding-top: 2vh; }
-        #city-title { font-size: 3vh; color: #aaa; letter-spacing: 2px; font-weight: bold; margin-bottom: 10px; }
-        #temp-display { font-size: 20vh; font-weight: bold; line-height: 1; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        #feels-like { font-size: 3vh; color: #00eaff; font-weight: bold; margin-top: 10px; }
-
-        /* RECHTS: ASTRO & MENÜ */
-        .box-right { width: 30%; text-align: right; position: relative; }
-        .astro-row { font-size: 3.5vh; margin-bottom: 1vh; font-weight: bold; color: #ddd; }
-        
-        /* DER NEUE MENÜ BUTTON (Dezent aber klickbar) */
-        #menu-btn {
-            position: absolute; top: 0; right: 0;
-            background: rgba(0, 234, 255, 0.2); /* Transparentes Blau */
-            border: 2px solid #00eaff;
-            color: #00eaff;
-            padding: 10px 20px;
-            font-size: 2.5vh;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            z-index: 10000;
-        }
-        #menu-btn:active { background: #00eaff; color: #000; }
-
-        /* TICKER (Schlank und Schick) */
-        .ticker-wrap {
-            width: 100%; height: 8vh; 
-            background: #111; border-top: 2px solid #333; border-bottom: 2px solid #333;
-            overflow: hidden; white-space: nowrap; margin-top: 10px;
-        }
-        .ticker-content {
-            display: inline-block; padding-left: 100%;
-            animation: ticker 30s linear infinite;
-            font-size: 5vh; color: #00eaff; font-weight: bold; line-height: 8vh;
-            text-transform: uppercase;
-        }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-
-        /* TABELLEN BEREICH (Unten) */
-        .tables-area { 
-            flex-grow: 1; display: flex; flex-direction: column; justify-content: space-evenly; 
-            margin-top: 10px; border-top: 1px solid #222; 
-        }
-        
-        /* Tabellen Design */
-        table { width: 100%; border-collapse: collapse; }
-        td { text-align: center; vertical-align: middle; padding: 2px; }
-        .t-head { font-size: 2vh; color: #888; font-weight: bold; }
-        .t-temp { font-size: 3.5vh; font-weight: bold; }
-        .t-pop { font-size: 2vh; color: #00eaff; }
-        .t-icon { width: 5vh; height: 5vh; }
-        
-        /* Tages Vorhersage (Untere Tabelle) */
-        .day-name { font-size: 2.5vh; color: #fff; font-weight: bold; border-bottom: 1px solid #333; }
-
-        /* OVERLAYS (Start & Settings) */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;}
-        #settings-overlay { background: #111; display: none; padding-top: 20px; z-index: 40000;}
-        
-        input { font-size: 3vh; padding: 10px; width: 60%; margin: 10px; text-align: center; background: #333; color: white; border: 1px solid #00eaff; }
-        .btn { font-size: 3vh; padding: 15px 30px; margin: 15px; border-radius: 10px; border: none; font-weight: bold; width: 70%; }
-        .save { background: #00eaff; color: black; }
-        .cancel { background: #333; color: white; }
-        .paypal { color: #ffcc00; font-size: 2.5vh; text-decoration: none; display: block; margin-top: 20px; border: 1px solid #ffcc00; padding: 10px; border-radius: 20px; width: 50%; margin-left: auto; margin-right: auto;}
-
-        /* VIDEO */
-        #wake-video { position: fixed; width: 1px; opacity: 0.01; z-index: -1; }
-        .sleep-mode { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; background:black !important; z-index:10000 !important; opacity:1 !important; }
-    </style>
+    <title>Aura Weather 2.9 Ticker</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onclick="activateWakeLock()">
 
-    <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
-
-    <div id="start-overlay" class="overlay" onclick="startApp()" ontouchstart="startApp()">
-        <div style="font-size: 10vh;">👆</div>
-        <h1 style="color: #00eaff; font-size: 4vh;">STARTEN</h1>
-        <p style="color: #666;">V9.0</p>
+    <div id="start-overlay">
+        <div id="start-content">
+            <div id="start-msg">
+                <i class="fa fa-hand-pointer-o"></i><br>
+                BITTE TIPPEN
+            </div>
+            <div id="start-sub">System wird gestartet...</div>
+        </div>
     </div>
 
-    <div id="main-container">
-        <div class="top-section">
-            <div class="box-left">
-                <div id="clock">--:--</div>
-                <div id="date">LADE...</div>
-                <div id="current-icon-container"></div>
-            </div>
+    <div id="night-overlay" style="display:none;">
+        <div id="night-clock">00:00</div>
+    </div>
+
+    <div id="settings-overlay">
+        <div class="modal">
+            <h2 class="cyan-title">SYSTEM 2.9 TICKER</h2>
             
-            <div class="box-center">
-                <div id="city-title">...</div>
-                <div id="temp-display">--°</div>
-                <div id="feels-like">--</div>
-            </div>
-            
-            <div class="box-right">
-                <div id="menu-btn" onclick="openMenu()" ontouchstart="openMenu()">⚙ SETUP</div>
+            <div class="menu-item" onclick="toggleSub('sect-setup')"><i class="fa fa-gear"></i> GRUNDEINSTELLUNGEN</div>
+            <div id="sect-setup" class="sub-sect" style="display:block;">
+                <label>Stadt:</label> 
+                <input type="text" id="city-input" value="Braunschweig">
                 
-                <div style="margin-top: 6vh;">
-                    <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
-                    <div class="astro-row">☾ <span id="sunset">--:--</span></div>
-                    <div class="astro-row" style="color:#00eaff; font-size:2.5vh;" id="moon">MOND</div>
+                <div class="coffee-box">
+                    <div class="coffee-text">
+                        <b>Rette alte Technik! 🌍</b><br>
+                        Gefällt dir die App?<br>Ein Kaffee hält mich wach!
+                    </div>
+                    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Digitaler+Denkmalschutz" target="_blank" class="paypal-btn">
+                        <i class="fa fa-paypal"></i> Spenden
+                    </a>
                 </div>
+
+                <label style="margin-top:20px; display:block; color:#00ffcc;">NACHTMODUS</label>
+                VON: <input type="time" id="s-start"> 
+                BIS: <input type="time" id="s-end">
+                
+                <div class="info-box">
+                    <b style="color:#ff9900;">WICHTIG (SYNC):</b><br>
+                    Bild geht <b>10 Min früher</b> aus.<br>
+                    Tablet-Timeout auf <b>10 Min</b> stellen!
+                </div>
+                
+                <button onclick="saveAll()" class="btn-save">SPEICHERN & NEUSTART</button>
+            </div>
+
+            <div class="menu-item" onclick="toggleSub('sect-info')"><i class="fa fa-info-circle"></i> INFO & RESET</div>
+            <div id="sect-info" class="sub-sect">
+                 <button onclick="fullReset()" class="btn-reset">⚠️ SYSTEM RESET</button>
+                 <br><br>
+                 <button onclick="toggleSettings()" class="btn-close">SCHLIESSEN</button>
             </div>
         </div>
+    </div>
 
-        <div class="ticker-wrap"><div class="ticker-content" id="ticker">LADE DATEN...</div></div>
+    <div class="app-shell">
+        <table width="100%" height="220" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td width="33%" align="center" valign="middle">
+                    <div id="clock">00:00</div>
+                    <div id="date">Lade...</div>
+                    <img src="logo.png" height="40" style="margin-top:10px; opacity:0.8;">
+                    <div class="status-row">
+                        <div id="wake-status" class="live-indicator"></div>
+                        <span class="ver-label">V2.9 TK</span>
+                    </div>
+                </td>
+                <td width="34%" align="center" valign="middle">
+                    <div id="city-title">...</div>
+                    <div class="temp-row">
+                        <span id="main-icon-container"></span>
+                        <span id="temp-display">--</span><span class="degree-unit">°</span>
+                    </div>
+                    <div id="feels-like">--</div>
+                </td>
+                <td width="33%" align="center" valign="middle" style="position:relative;">
+                    <div class="top-btns">
+                        <i class="fa fa-gear" onclick="toggleSettings(); event.stopPropagation();"></i>
+                    </div>
+                    <div class="astro-box">
+                        <div class="astro-line"><i class="fa fa-sun-o" style="color:#FFD700"></i> <span id="sunrise-val">--:--</span></div>
+                        <div class="astro-line"><i class="fa fa-moon-o" style="color:#aaa"></i> <span id="sunset-val">--:--</span></div>
+                        <div id="moon-txt" style="font-size:14px; color:#888; margin-top:10px; text-transform:uppercase;"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
-        <div class="tables-area">
-            <table id="hourly-table"></table>
-            <div style="border-top: 1px dashed #333; margin: 5px 0;"></div>
-            <table id="daily-table"></table>
+        <div class="ticker-box">
+            <marquee id="info-ticker" scrollamount="5">+++ WARTE AUF START +++</marquee>
+        </div>
+
+        <div class="forecast-area">
+            <div class="table-container">
+                <table id="hourly-table" width="100%"></table>
+            </div>
+            <div class="table-container" style="border-top:2px solid #222; margin-top: 5px; padding-top:4px;">
+                <table id="daily-table" width="100%"></table>
+            </div>
         </div>
     </div>
 
-    <div id="settings-overlay" class="overlay">
-        <h2 style="color:#00eaff;">EINSTELLUNGEN</h2>
-        <input type="text" id="city-in" placeholder="Stadt">
-        <br>
-        <div style="display:flex; justify-content:center; gap:10px;">
-            <div><label style="color:#888;">Nacht Start</label><input type="time" id="time-start" style="width:100px;"></div>
-            <div><label style="color:#888;">Nacht Ende</label><input type="time" id="time-end" style="width:100px;"></div>
-        </div>
-        
-        <button class="btn save" onclick="save()" ontouchstart="save()">SPEICHERN</button>
-        <button class="btn cancel" onclick="closeMenu()" ontouchstart="closeMenu()">ZURÜCK</button>
-        
-        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR&item_name=AuraWeather+Spende" class="paypal">
-            ☕ SPENDE
-        </a>
-        <br>
-        <button style="background:none; border:none; color:#555; margin-top:20px;" onclick="resetApp()">RESET</button>
-    </div>
-
-    <script>
-        var API = '518e81d874739701f08842c1a55f6588';
-        var city = localStorage.getItem('city') || 'Braunschweig';
-        var sStart = localStorage.getItem('sStart'), sEnd = localStorage.getItem('sEnd');
-        var active = false, grace = false;
-
-        function z(n){return (n<10?'0':'')+n;}
-        function startApp() {
-            document.getElementById('start-overlay').style.display='none';
-            document.getElementById('wake-video').play().catch(e=>{});
-            var e = document.documentElement;
-            if(e.requestFullscreen) e.requestFullscreen();
-            grace = true; setTimeout(function(){ grace=false; update(); }, 60000);
-            if(!active) { active=true; loadWeather(); update(); setInterval(update,1000); setInterval(loadWeather,600000); }
-        }
-        function openMenu() {
-            document.getElementById('settings-overlay').style.display='flex';
-            document.getElementById('city-in').value = city;
-            document.getElementById('time-start').value = sStart || '22:00';
-            document.getElementById('time-end').value = sEnd || '06:00';
-        }
-        function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-        function save() {
-            localStorage.setItem('city', document.getElementById('city-in').value);
-            localStorage.setItem('sStart', document.getElementById('time-start').value);
-            localStorage.setItem('sEnd', document.getElementById('time-end').value);
-            location.reload();
-        }
-        function resetApp() { if(confirm("Reset?")) { localStorage.clear(); location.reload(); } }
-
-        function update() {
-            var now = new Date();
-            document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
-            var days=['SO','MO','DI','MI','DO','FR','SA'], months=['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
-            document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
-            
-            // Mond
-            var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate();
-            if(month<3){year--;month+=12;}++month;
-            var c=365.25*year, e=30.6*month, jd=c+e+day-694039.09; jd/=29.53; var b=parseInt(jd); jd-=b; b=Math.round(jd*8); if(b>=8)b=0;
-            var p=["🌑 NEUMOND","🌒 ZUN. SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 ABN. SICHEL"];
-            document.getElementById('moon').innerText = p[b];
-
-            // Sleep
-            var sleep = false;
-            if(sStart && sEnd) {
-                var n = now.getHours()*60 + now.getMinutes();
-                var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
-                var e = parseInt(sEnd.split(':')[0])*60 + parseInt(sEnd.split(':')[1]);
-                if(s > e) { if(n >= s || n < e) sleep = true; } else { if(n >= s && n < e) sleep = true; }
-            }
-            if(sleep && grace) sleep = false;
-            var v = document.getElementById('wake-video');
-            if(sleep) { if(!v.classList.contains('sleep-mode')) v.classList.add('sleep-mode'); }
-            else { if(v.classList.contains('sleep-mode')) v.classList.remove('sleep-mode'); }
-        }
-
-        function loadWeather() {
-            var x = new XMLHttpRequest();
-            x.open('GET', 'https://api.openweathermap.org/data/2.5/weather?q='+city+'&appid='+API+'&units=metric&lang=de', true);
-            x.onload = function() {
-                var d = JSON.parse(x.responseText);
-                document.getElementById('temp-display').innerText = Math.round(d.main.temp)+"°";
-                document.getElementById('city-title').innerText = d.name.toUpperCase();
-                document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like)+"°";
-                
-                // Icon unter Datum
-                var ic = d.weather[0].icon;
-                document.getElementById('current-icon-container').innerHTML = '<img src="'+ic+'.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+ic+'@2x.png\'">';
-                
-                var r = new Date((d.sys.sunrise+d.timezone-3600)*1000), s = new Date((d.sys.sunset+d.timezone-3600)*1000);
-                document.getElementById('sunrise').innerText = z(r.getHours())+':'+z(r.getMinutes());
-                document.getElementById('sunset').innerText = z(s.getHours())+':'+z(s.getMinutes());
-
-                var t = d.weather[0].description.toUpperCase() + " +++ 💨 WIND: " + Math.round(d.wind.speed*3.6) + " KM/H +++ 💧 FEUCHTE: " + d.main.humidity + "% +++ 🌡 DRUCK: " + d.main.pressure + " HPA";
-                document.getElementById('ticker').innerText = t;
-                loadFore(d.coord.lat, d.coord.lon);
-            };
-            x.send();
-        }
-        
-        function loadFore(lat, lon) {
-            var x = new XMLHttpRequest();
-            x.open('GET', 'https://api.openweathermap.org/data/2.5/forecast?lat='+lat+'&lon='+lon+'&appid='+API+'&units=metric&lang=de', true);
-            x.onload = function() {
-                var d = JSON.parse(x.responseText);
-                
-                // STÜNDLICH (Obere Tabelle)
-                var h = "<tr>";
-                for(var i=0; i<5; i++) {
-                    var it = d.list[i], t = new Date(it.dt*1000);
-                    h += '<td><div class="t-head">'+z(t.getHours())+'h</div><img class="t-icon" src="'+it.weather[0].icon+'.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+it.weather[0].icon+'.png\'"><div class="t-temp">'+Math.round(it.main.temp)+'°</div><div class="t-pop">'+Math.round(it.pop*100)+'%</div></td>';
-                }
-                h += "</tr>";
-                document.getElementById('hourly-table').innerHTML = h;
-
-                // TÄGLICH (Untere Tabelle)
-                var dy = "<tr>";
-                var count = 0;
-                for(var i=0; i<d.list.length; i+=8) {
-                    if(count >= 5) break;
-                    var it = d.list[i];
-                    var dayName = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
-                    dy += '<td><div class="day-name">'+dayName.substr(0,2)+'</div><img class="t-icon" src="'+it.weather[0].icon+'.gif" onerror="this.src=\'https://openweathermap.org/img/wn/'+it.weather[0].icon+'.png\'"><div class="t-temp">'+Math.round(it.main.temp)+'°</div><div class="t-pop">'+Math.round(it.pop*100)+'%</div></td>';
-                    count++;
-                }
-                dy += "</tr>";
-                document.getElementById('daily-table').innerHTML = dy;
-            };
-            x.send();
-        }
-    </script>
+    <video id="wake-video" playsinline muted loop style="position:fixed; top:0; left:0; width:1px; height:1px; opacity:0.01; z-index:-1; pointer-events:none;">
+        <source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4">
+    </video>
+    
+    <script src="script.js"></script>
 </body>
 </html>
