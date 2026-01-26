@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SYSTEM CLEANER</title>
+    <style>
+        body { background: #b71c1c; color: white; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        button { font-size: 2em; padding: 20px; background: white; border: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>AURA WEATHER CLEANER</h1>
+    <p>Wir löschen jetzt den alten Cache und den Service Worker.</p>
+    <br>
+    <button onclick="killSwitch()">JETZT LÖSCHEN</button>
+    <div id="status" style="margin-top: 20px;"></div>
+
+    <script>
+        function killSwitch() {
+            var out = document.getElementById('status');
+            out.innerHTML = "Starte Löschvorgang...";
+            
+            // 1. Service Worker töten
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                        out.innerHTML += "<br>Service Worker: GELÖSCHT!";
+                    }
+                    if(registrations.length === 0) out.innerHTML += "<br>Kein Service Worker gefunden (Gut!)";
+                });
+            }
+
+            // 2. Cache Speicher leeren
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) {
+                        caches.delete(name);
+                        out.innerHTML += "<br>Cache " + name + ": GELÖSCHT!";
+                    }
+                    out.innerHTML += "<br><br><b>FERTIG! Du kannst jetzt die index.html wieder öffnen.</b>";
+                });
+            } else {
+                out.innerHTML += "<br>Cache Speicher nicht verfügbar.";
+            }
+        }
+    </script>
+</body>
+</html>
