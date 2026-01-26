@@ -1,4 +1,4 @@
-// AURA WEATHER V2.9 - FINAL LOGIC
+// AURA WEATHER V2.9 - FINAL COMMAND CENTER
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -19,30 +19,32 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === START LOGIK ===
+// === START FUNKTION ===
 function activateWakeLock() {
-    // Start Overlay ausblenden
+    // Menü schließen (sicher ist sicher)
+    document.getElementById('settings-overlay').style.display = 'none';
+    
+    // Start Overlay weg
     var startScreen = document.getElementById('start-overlay');
     if(startScreen) startScreen.style.display = 'none';
 
     // Wake Lock starten
     var v = document.getElementById('wake-video');
     if(v.getAttribute('src') === "" || !v.getAttribute('src')) v.setAttribute('src', videoUrl);
-    v.play().catch(function(e){ console.log("Video Error", e); });
+    v.play().catch(function(e){});
     
     // Vollbild
     var el = document.documentElement;
     if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     if (el.requestFullscreen) el.requestFullscreen();
 
-    // Gnadenfrist starten
+    // UNSICHTBARE Gnadenfrist (60 Sekunden)
     isGracePeriod = true;
     setTimeout(function() {
         isGracePeriod = false;
         updateClock(); 
     }, 60000);
 
-    // App Logik starten
     if (!isActivated) {
         isActivated = true;
         fetchWeather();
@@ -50,6 +52,40 @@ function activateWakeLock() {
     }
 }
 
+// === MENÜ STEUERUNG ===
+function openSettings() {
+    document.getElementById('settings-overlay').style.display = 'flex';
+    document.getElementById('city-input').value = city; 
+    document.getElementById('s-start').value = sStart || '22:00'; 
+    document.getElementById('s-end').value = sEnd || '06:00'; 
+}
+
+function closeSettings() {
+    document.getElementById('settings-overlay').style.display = 'none';
+}
+
+function switchTab(tabId) {
+    // Inhalte verstecken
+    var contents = document.getElementsByClassName('tab-content');
+    for(var i=0; i<contents.length; i++) {
+        contents[i].classList.remove('active-tab');
+    }
+    // Buttons resetten
+    var btns = document.getElementsByClassName('nav-btn');
+    for(var i=0; i<btns.length; i++) {
+        btns[i].classList.remove('active');
+    }
+    
+    // Gewählten Tab zeigen
+    document.getElementById(tabId).classList.add('active-tab');
+    
+    // Button hervorheben
+    if(tabId === 'tab-setup') btns[0].classList.add('active');
+    if(tabId === 'tab-tips') btns[1].classList.add('active');
+    if(tabId === 'tab-coffee') btns[2].classList.add('active');
+}
+
+// === UHR & SLEEP LOGIK ===
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours(); var m = now.getMinutes();
@@ -73,12 +109,9 @@ function updateClock() {
         }
     }
 
-    // Grace Period Logik
+    // Wenn Gnadenfrist aktiv ist -> KEIN Schlafmodus
     if (isSleepTime && isGracePeriod) {
         isSleepTime = false;
-        showGraceNote(true);
-    } else {
-        showGraceNote(false);
     }
 
     // Video & Vorhang
@@ -95,25 +128,6 @@ function updateClock() {
                  video.classList.remove('video-sleep-mode');
              }
          }
-    }
-}
-
-function showGraceNote(show) {
-    var note = document.getElementById('grace-note');
-    if (show) {
-        if (!note) {
-            note = document.createElement('div');
-            note.id = 'grace-note';
-            note.style.position = 'fixed'; note.style.top = '0'; note.style.left = '0';
-            note.style.width = '100%'; note.style.background = '#b71c1c'; 
-            note.style.color = '#fff'; note.style.textAlign = 'center'; note.style.padding = '10px';
-            note.style.zIndex = '9500'; note.style.fontWeight = 'bold'; note.style.fontSize = '1.2em';
-            note.innerText = '⏳ NACHTMODUS PAUSE (1 MIN)';
-            document.body.appendChild(note);
-        }
-        note.style.display = 'block';
-    } else {
-        if (note) note.style.display = 'none';
     }
 }
 
@@ -200,19 +214,6 @@ function renderDaily(list) {
     }
     html += "</tr>";
     document.getElementById('daily-table').innerHTML = html;
-}
-
-function toggleSettings() { 
-    var s = document.getElementById('settings-overlay'); 
-    // Hier prüfen wir einfach den aktuellen Status und drehen ihn um
-    if (s.style.display === 'block') {
-        s.style.display = 'none';
-    } else {
-        s.style.display = 'block';
-        document.getElementById('city-input').value = city; 
-        document.getElementById('s-start').value = sStart || '22:00'; 
-        document.getElementById('s-end').value = sEnd || '06:00'; 
-    }
 }
 
 function saveAll() { 
