@@ -10,7 +10,6 @@ function startApp() {
     var el = document.documentElement;
     if(el.requestFullscreen) el.requestFullscreen();
     else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    
     document.getElementById('wake-video').play().catch(e=>{});
     grace = true; setTimeout(() => { grace = false; }, 60000);
     if(!active) { active=true; loadWeather(); update(); setInterval(update,1000); setInterval(loadWeather,600000); }
@@ -22,14 +21,12 @@ function update() {
     var days=['SO','MO','DI','MI','DO','FR','SA'], months=['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
     
-    // Mondphasen-Rechner
     var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate();
     if(month<3){year--;month+=12;}++month;
     var jd = (365.25*year) + (30.6*month) + day - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
     var p=["🌑 NEUMOND","🌒 ZUN. SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 ABN. SICHEL"];
     document.getElementById('moon').innerText = p[b];
 
-    // Schlafmodus
     var sleep = false;
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes();
@@ -47,15 +44,12 @@ function loadWeather() {
         document.getElementById('temp-display').innerText = Math.round(d.main.temp)+"°";
         document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
         document.getElementById('city-title').innerText = d.name.toUpperCase();
-        
         var ic = d.weather[0].icon;
         document.getElementById('current-weather-icon').src = ic + ".gif";
-        
         var sunrise = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
         var sunset = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
         document.getElementById('sunrise').innerText = z(sunrise.getHours()) + ":" + z(sunrise.getMinutes());
         document.getElementById('sunset').innerText = z(sunset.getHours()) + ":" + z(sunset.getMinutes());
-
         document.getElementById('ticker').innerText = `${d.weather[0].description.toUpperCase()} +++ WIND: ${Math.round(d.wind.speed*3.6)} KM/H +++ FEUCHTE: ${d.main.humidity}% +++ DRUCK: ${d.main.pressure} HPA`;
         loadFore(d.coord.lat, d.coord.lon);
     });
