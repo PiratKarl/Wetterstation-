@@ -35,7 +35,6 @@ td { text-align: center; font-size: 3vh; font-weight: bold; padding: 3px; }
 .temp-max { color: #ff4444; }
 .temp-min { color: #00eaff; }
 
-/* SETUP MENÜ NEU */
 #settings-overlay { 
     display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
     background:rgba(0,0,0,0.98); flex-direction:column; align-items:center; 
