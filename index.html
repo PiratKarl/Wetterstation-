@@ -3,7 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather V11.0</title>
+    
+    <title>Aura Weather Professional - Deine smarte Wetterstation</title>
+    <meta name="description" content="Aura Weather: Die elegante Wetterstation für Tablets. Mit Echtzeit-Daten, Kleidungsempfehlungen und Astro-Infos von Code-Werft.">
+    <meta name="keywords" content="Wetterstation, Aura Weather, Code-Werft, Karl Altmannshofer, Tablet Wetter, Smart Home">
+    <meta name="author" content="Karl Altmannshofer - Code-Werft">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:title" content="Aura Weather Professional">
+    <meta property="og:description" content="Elegante Wetteranzeige mit Ticker & Kleidungstipps.">
+    <meta property="og:image" content="https://piratkarl.github.io/Wetterstation-/logo.png">
+    <meta property="og:url" content="https://piratkarl.github.io/Wetterstation-/">
+    <meta property="og:type" content="website">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +25,7 @@
 
     <div id="start-overlay" onclick="startApp()">
         <div style="font-size: 10vh;">👆</div>
-        <h1 style="color:#00eaff;">START AURA</h1>
+        <h1 style="color:#00eaff;">AURA STARTEN</h1>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
@@ -21,17 +35,18 @@
             <div class="box-left">
                 <div id="clock">--:--</div>
                 <div id="date">LADE...</div>
-                <img src="logo.png" class="aura-logo"> 
+                <img src="logo.png" class="aura-logo" alt="Aura Logo"> 
             </div>
             
             <div class="box-center">
                 <div id="city-title">...</div>
                 <div class="temp-row">
-                    <img id="current-weather-icon" src="" style="width:14vh; height:14vh;">
+                    <img id="current-weather-icon" src="" style="width:14vh; height:14vh;" alt="Wetter">
                     <div id="temp-display">--°</div>
                 </div>
                 <div id="feels-like">--</div>
-                <div id="clothes-advice">--</div> </div>
+                <div id="clothes-advice">--</div>
+            </div>
             
             <div class="box-right">
                 <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
@@ -40,7 +55,7 @@
             </div>
         </div>
 
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">LADE WETTER...</div></div>
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">VORBEREITUNG...</div></div>
 
         <div class="tables-area">
             <table id="hourly-table"></table>
@@ -50,12 +65,12 @@
     </div>
 
     <div id="settings-overlay">
-        <h2 style="color:#00eaff;">SETUP</h2>
-        <input type="text" id="city-in" placeholder="Stadt">
+        <h2 style="color:#00eaff;">AURA SETUP</h2>
+        <input type="text" id="city-in" placeholder="Stadt eingeben">
         <div style="display:flex; gap:10px; margin:10px;">
             <input type="time" id="time-start"> <input type="time" id="time-end">
         </div>
-        <button onclick="save()" class="save-btn">SPEICHERN</button>
+        <button onclick="save()" class="save-btn">ÄNDERUNGEN SPEICHERN</button>
         <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:10px 20px; border-radius:10px;">ZURÜCK</button>
         <div class="copyright-tag">© Code-Werft Karl Altmannshofer 2026</div>
     </div>
