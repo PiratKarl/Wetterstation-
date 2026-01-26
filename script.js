@@ -1,5 +1,5 @@
-// AURA WEATHER V2.9 - TICKER TALK (SAFE SLEEP EDITION)
-// Features: Fullscreen Video Curtain, Safe Start, KitKat Optimized
+// AURA WEATHER V2.9 - TICKER TALK (SAFE SLEEP & GRACE PERIOD)
+// Features: Fullscreen Video Curtain, Safe Start, 60s Delay on Restart
 
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
@@ -12,6 +12,15 @@ var timeOffset = 0;
 var isActivated = false;
 var videoUrl = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
 
+// === NEU: GNADENFRIST VARIABLE ===
+var isGracePeriod = true; // Startet immer mit "Ja"
+// Nach 60 Sekunden (60000 ms) wird die Gnadenfrist beendet
+setTimeout(function() {
+    isGracePeriod = false;
+    // Wir erzwingen ein Update, damit der Vorhang sofort fällt
+    updateClock();
+}, 60000);
+
 // Daten Container
 var tickerData = { main: "", wind: "", clothing: "", pressure: "", humidity: "", pop: "", vis: "" };
 
@@ -22,7 +31,7 @@ function timeToMins(t) {
     return (parseInt(p[0], 10) * 60) + parseInt(p[1], 10);
 }
 
-// === UHR & NEUE SLEEP-FUNKTION ===
+// === UHR & INTELLIGENTE SLEEP-FUNKTION ===
 function updateClock() {
     var now = new Date(Date.now() + timeOffset);
     var h = now.getHours();
@@ -30,32 +39,38 @@ function updateClock() {
     var curStr = z(h) + ":" + z(m);
     var nowMins = (h * 60) + m;
     
-    // Uhrzeit im UI aktualisieren (nur sichtbar, wenn kein Sleep-Mode)
+    // Uhrzeit im UI aktualisieren
     if(document.getElementById('clock')) document.getElementById('clock').innerText = curStr;
     if(document.getElementById('date')) document.getElementById('date').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short' });
 
     var isSleepTime = false;
 
-    // Nur prüfen, wenn Zeiten gespeichert sind (Safe Start)
+    // Nur prüfen, wenn Zeiten gespeichert sind
     if (sStart && sEnd) {
         var startMins = timeToMins(sStart);
         var endMins = timeToMins(sEnd);
         
-        // Logik ohne Puffer: Exakte Zeitprüfung
         if (startMins > endMins) {
-            // Nacht geht über Mitternacht (z.B. 22:00 bis 06:00)
             if (nowMins >= startMins || nowMins < endMins) isSleepTime = true;
         } else {
-            // Nacht am selben Tag (z.B. 01:00 bis 05:00)
             if (nowMins >= startMins && nowMins < endMins) isSleepTime = true;
         }
+    }
+
+    // === HIER GREIFT DIE GNADENFRIST ===
+    // Wenn Schlafenszeit ist, ABER wir noch in der ersten Minute sind: WACH BLEIBEN!
+    if (isSleepTime && isGracePeriod) {
+        isSleepTime = false; // Wir tun so, als wäre es Tag
+        showGraceNote(true); // Zeige Warnhinweis
+    } else {
+        showGraceNote(false); // Warnhinweis weg
     }
 
     // Video-Element holen
     var video = document.getElementById('wake-video');
     var startOv = document.getElementById('start-overlay');
     
-    // Sicherheits-Check: Video muss immer laufen für Wake-Lock!
+    // Sicherheits-Check: Video muss immer laufen!
     if (isActivated && video) {
          if(video.paused) video.play().catch(function(e){});
          if(!video.getAttribute('src') || video.getAttribute('src') === "") {
@@ -65,19 +80,44 @@ function updateClock() {
     }
 
     if (isSleepTime) {
-        // === NACHT-MODUS (Der Video-Vorhang) ===
-        // Wir machen das Video groß und schwarz. Es deckt ALLES ab.
+        // === NACHT-MODUS (Vorhang zu) ===
         if (video && !video.classList.contains('video-sleep-mode')) {
             video.classList.add('video-sleep-mode');
-            // Zur Sicherheit Start-Overlay ausblenden
             if(startOv) startOv.style.display = 'none';
         }
     } else {
-        // === TAG-MODUS ===
-        // Video wieder klein machen
+        // === TAG-MODUS (Vorhang auf) ===
         if (video && video.classList.contains('video-sleep-mode')) {
             video.classList.remove('video-sleep-mode');
         }
+    }
+}
+
+// === HILFSFUNKTION FÜR DEN HINWEIS ===
+// Erzeugt automatisch eine kleine rote Box oben im Bild
+function showGraceNote(show) {
+    var note = document.getElementById('grace-note');
+    if (show) {
+        if (!note) {
+            note = document.createElement('div');
+            note.id = 'grace-note';
+            note.style.position = 'fixed';
+            note.style.top = '0';
+            note.style.left = '0';
+            note.style.width = '100%';
+            note.style.backgroundColor = '#b71c1c'; // Dunkelrot
+            note.style.color = '#fff';
+            note.style.textAlign = 'center';
+            note.style.padding = '5px';
+            note.style.zIndex = '10000'; // Ganz weit oben
+            note.style.fontWeight = 'bold';
+            note.style.fontSize = '1.2em';
+            note.innerText = '⏳ NACHTMODUS PAUSE (1 MIN)';
+            document.body.appendChild(note);
+        }
+        note.style.display = 'block';
+    } else {
+        if (note) note.style.display = 'none';
     }
 }
 
@@ -86,7 +126,6 @@ function activateWakeLock() {
     if(startScreen) startScreen.style.display = 'none';
 
     var v = document.getElementById('wake-video');
-    // Video starten
     if(v.getAttribute('src') === "" || !v.getAttribute('src')) v.setAttribute('src', videoUrl);
     v.play();
     
@@ -99,7 +138,7 @@ function activateWakeLock() {
     }
 }
 
-// === WETTER (Unverändert stabil) ===
+// === WETTER ===
 function fetchWeather() {
     if(!isActivated) return;
     var xhr = new XMLHttpRequest();
@@ -115,7 +154,6 @@ function fetchWeather() {
             document.getElementById('city-title').innerText = d.name.toUpperCase();
             
             var iconCode = d.weather[0].icon;
-            // Versucht GIF zu laden, Fallback auf PNG
             document.getElementById('main-icon-container').innerHTML = '<img src="' + iconCode + '.gif" width="110" onerror="this.src=\'https://openweathermap.org/img/wn/'+iconCode+'@2x.png\'">';
             
             var feel = Math.round(d.main.feels_like);
