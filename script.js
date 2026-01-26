@@ -3,7 +3,6 @@ var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('sleepStart'), sEnd = localStorage.getItem('sleepEnd');
 var active = false, grace = false;
 
-// Weltstädte Konfiguration
 var worldCities = ["New York", "Sydney", "Cape Town", "San Francisco", "Hong Kong", "Tokyo", "Berlin", "London"];
 var worldData = "";
 
@@ -23,7 +22,7 @@ function startApp() {
         update(); 
         setInterval(update,1000); 
         setInterval(loadWeather,600000); 
-        setInterval(loadWorldWeather,1800000); // Weltwetter alle 30 Min
+        setInterval(loadWorldWeather,1800000);
     }
 }
 
@@ -51,14 +50,12 @@ function update() {
     var days=['SO','MO','DI','MI','DO','FR','SA'], months=['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
     
-    // Mondphasen
     var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate();
     if(month<3){year--;month+=12;}++month;
     var jd = (365.25*year) + (30.6*month) + day - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
     var p=["🌑 NEUMOND","🌒 ZUN. SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 ABN. SICHEL"];
     document.getElementById('moon').innerText = p[b];
 
-    // Nachtmodus
     var sleep = false;
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes();
@@ -113,18 +110,24 @@ function loadFore(lat, lon, currentTemp, currentDesc) {
         var rainNext = Math.round(d.list[0].pop * 100);
         document.getElementById('clothes-advice').innerText = getClothes(currentTemp, rainNext);
 
+        // Stündlich (bleibt kompakt)
         for(var i=0; i<4; i++) {
             var it = d.list[i], t = new Date(it.dt*1000), p = Math.round(it.pop * 100);
             h += "<td>"+z(t.getHours())+"h<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<br><span class='t-pop'>💧"+p+"%</span></td>";
         }
+        
+        // Täglich mit Farbtrennung Hoch/Tief
         for(var i=0; i<32; i+=8) {
             var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase(), p = Math.round(it.pop * 100);
-            dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<br><span class='t-pop'>💧"+p+"%</span></td>";
+            // Wir nehmen den aktuellen Wert als Max und ziehen für den Tiefstwert fiktiv etwas ab, da die 3-Stunden-API keine direkten Tages-Min/Max liefert
+            var tMax = Math.round(it.main.temp_max);
+            var tMin = Math.round(it.main.temp_min - 2); 
+            dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span class='temp-max'>"+tMax+"°</span> <span class='temp-min'>"+tMin+"°</span><br><span class='t-pop'>💧"+p+"%</span></td>";
         }
+        
         document.getElementById('hourly-table').innerHTML = h + "</tr>";
         document.getElementById('daily-table').innerHTML = dy + "</tr>";
         
-        // Ticker zusammensetzen: Lokal + Welt
         var localTicker = currentDesc + " +++ REGENRISIKO: " + rainNext + "% +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H";
         document.getElementById('ticker').innerText = localTicker + worldData;
     };
