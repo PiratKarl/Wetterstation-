@@ -2,7 +2,6 @@ var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('sleepStart'), sEnd = localStorage.getItem('sleepEnd');
 var active = false, grace = false;
-
 var worldCities = ["New York", "Sydney", "Cape Town", "San Francisco", "Hong Kong", "Tokyo", "Berlin", "London"];
 var worldData = "";
 
@@ -110,31 +109,27 @@ function loadFore(lat, lon, currentTemp, currentDesc) {
         var rainNext = Math.round(d.list[0].pop * 100);
         document.getElementById('clothes-advice').innerText = getClothes(currentTemp, rainNext);
 
-        // Stündlich (bleibt kompakt)
         for(var i=0; i<4; i++) {
             var it = d.list[i], t = new Date(it.dt*1000), p = Math.round(it.pop * 100);
             h += "<td>"+z(t.getHours())+"h<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<br><span class='t-pop'>💧"+p+"%</span></td>";
         }
-        
-        // Täglich mit Farbtrennung Hoch/Tief
         for(var i=0; i<32; i+=8) {
             var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase(), p = Math.round(it.pop * 100);
-            // Wir nehmen den aktuellen Wert als Max und ziehen für den Tiefstwert fiktiv etwas ab, da die 3-Stunden-API keine direkten Tages-Min/Max liefert
-            var tMax = Math.round(it.main.temp_max);
-            var tMin = Math.round(it.main.temp_min - 2); 
-            dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span class='temp-max'>"+tMax+"°</span> <span class='temp-min'>"+tMin+"°</span><br><span class='t-pop'>💧"+p+"%</span></td>";
+            dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span class='temp-max'>"+Math.round(it.main.temp_max)+"°</span> <span class='temp-min'>"+Math.round(it.main.temp_min - 2)+"°</span><br><span class='t-pop'>💧"+p+"%</span></td>";
         }
-        
         document.getElementById('hourly-table').innerHTML = h + "</tr>";
         document.getElementById('daily-table').innerHTML = dy + "</tr>";
-        
-        var localTicker = currentDesc + " +++ REGENRISIKO: " + rainNext + "% +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H";
-        document.getElementById('ticker').innerText = localTicker + worldData;
+        document.getElementById('ticker').innerText = currentDesc + " +++ REGEN: " + rainNext + "% +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H" + worldData;
     };
     x.send();
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='flex'; }
+function openMenu() { 
+    document.getElementById('city-in').value = city;
+    document.getElementById('time-start').value = sStart || "";
+    document.getElementById('time-end').value = sEnd || "";
+    document.getElementById('settings-overlay').style.display='flex'; 
+}
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
 function save() {
     localStorage.setItem('city', document.getElementById('city-in').value);
