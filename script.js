@@ -1,4 +1,4 @@
-// AURA WEATHER V2.9 - FINAL COMMAND CENTER
+// AURA WEATHER V3.0 - LOGIC
 var API_KEY = '518e81d874739701f08842c1a55f6588';
 
 var city = localStorage.getItem('selectedCity') || 'Braunschweig';
@@ -21,24 +21,19 @@ function timeToMins(t) {
 
 // === START FUNKTION ===
 function activateWakeLock() {
-    // Menü schließen (sicher ist sicher)
     document.getElementById('settings-overlay').style.display = 'none';
     
-    // Start Overlay weg
     var startScreen = document.getElementById('start-overlay');
     if(startScreen) startScreen.style.display = 'none';
 
-    // Wake Lock starten
     var v = document.getElementById('wake-video');
     if(v.getAttribute('src') === "" || !v.getAttribute('src')) v.setAttribute('src', videoUrl);
     v.play().catch(function(e){});
     
-    // Vollbild
     var el = document.documentElement;
     if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     if (el.requestFullscreen) el.requestFullscreen();
 
-    // UNSICHTBARE Gnadenfrist (60 Sekunden)
     isGracePeriod = true;
     setTimeout(function() {
         isGracePeriod = false;
@@ -65,21 +60,15 @@ function closeSettings() {
 }
 
 function switchTab(tabId) {
-    // Inhalte verstecken
     var contents = document.getElementsByClassName('tab-content');
     for(var i=0; i<contents.length; i++) {
         contents[i].classList.remove('active-tab');
     }
-    // Buttons resetten
     var btns = document.getElementsByClassName('nav-btn');
     for(var i=0; i<btns.length; i++) {
         btns[i].classList.remove('active');
     }
-    
-    // Gewählten Tab zeigen
     document.getElementById(tabId).classList.add('active-tab');
-    
-    // Button hervorheben
     if(tabId === 'tab-setup') btns[0].classList.add('active');
     if(tabId === 'tab-tips') btns[1].classList.add('active');
     if(tabId === 'tab-coffee') btns[2].classList.add('active');
@@ -109,12 +98,10 @@ function updateClock() {
         }
     }
 
-    // Wenn Gnadenfrist aktiv ist -> KEIN Schlafmodus
     if (isSleepTime && isGracePeriod) {
         isSleepTime = false;
     }
 
-    // Video & Vorhang
     var video = document.getElementById('wake-video');
     if (isActivated && video) {
          if(video.paused) video.play().catch(function(e){});
