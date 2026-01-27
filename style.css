@@ -1,58 +1,66 @@
-/* Verhindert das Herauszoomen auf Android 4.4 */
 html, body { 
     width: 100%; height: 100%; margin: 0; padding: 0; 
-    background: #000; color: #fff; font-family: Arial, sans-serif; overflow: hidden; 
+    background: #000; color: #fff; font-family: 'Arial Narrow', Arial, sans-serif; overflow: hidden; 
 }
 
-#gear-btn {
-    position: fixed; top: 15px; right: 15px; background: rgba(0,234,255,0.2);
-    border: 2px solid #00eaff; color: #00eaff; padding: 12px 20px;
-    font-size: 20px; font-weight: bold; border-radius: 10px; z-index: 10000; cursor: pointer;
+/* Haupt-Layout: 3 Spalten */
+.dashboard { display: flex; height: 55vh; padding: 15px; box-sizing: border-box; }
+
+/* LINKS: Kompakt */
+.col-left { width: 32%; display: flex; flex-direction: column; }
+#clock { font-size: 100px; font-weight: bold; line-height: 0.9; letter-spacing: -2px; }
+#date { font-size: 22px; color: #00eaff; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
+.logo-img { width: 180px; margin-top: 20px; opacity: 0.8; }
+
+/* MITTE: Der Fokus */
+.col-center { width: 38%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+#city-name { font-size: 16px; letter-spacing: 4px; color: #888; margin-bottom: 5px; }
+.weather-group { display: flex; align-items: center; justify-content: center; }
+#w-icon { width: 100px; height: 100px; }
+#temp { font-size: 110px; font-weight: bold; line-height: 1; margin: 0 10px; }
+.pop-box { display: flex; flex-direction: column; justify-content: center; }
+#pop { font-size: 35px; color: #00eaff; font-weight: bold; }
+#w-desc { font-size: 26px; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+#w-feels { font-size: 20px; color: #aaa; margin-top: 2px; }
+#clothing { font-size: 26px; color: #ffcc00; font-weight: bold; margin-top: 10px; border: 1px solid #ffcc00; padding: 5px 15px; border-radius: 20px; display: inline-block; }
+
+/* RECHTS: Die Kontroll-Leiste (Wie auf dem Foto) */
+.col-right { width: 30%; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; padding-top: 10px; }
+.ctrl-box { 
+    border: 1px solid #00eaff; border-radius: 8px; padding: 10px 15px; 
+    width: 240px; text-align: right; box-sizing: border-box; cursor: pointer;
+    background: rgba(0, 234, 255, 0.05); transition: background 0.2s;
 }
+.ctrl-box:active { background: rgba(0, 234, 255, 0.2); }
+.ctrl-title { font-size: 14px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+.ctrl-val { font-size: 18px; color: #fff; font-weight: bold; margin-top: 2px; display: flex; align-items: center; justify-content: flex-end; }
+.icon-s { margin-right: 8px; font-size: 18px; }
 
-.top-section { display: flex; justify-content: space-between; height: 45vh; padding: 25px; box-sizing: border-box; position: relative; }
+/* Setup Button speziell */
+#btn-setup { background: #00eaff; color: #000; border: none; font-weight: bold; text-align: center; padding: 12px; font-size: 18px; }
 
-/* LINKS: Uhrzeit massiv vergrößert */
-.box-left { width: 40%; display: flex; flex-direction: column; align-items: flex-start; }
-#clock { font-size: 110px; font-weight: bold; line-height: 0.9; margin-bottom: 10px; }
-#date { font-size: 24px; color: #00eaff; font-weight: bold; text-transform: uppercase; }
-.aura-logo { width: 220px; margin-top: 20px; }
-
-/* MITTE: Regen-Fix (Groß & Cyan) */
-.box-center { 
-    position: absolute; left: 50%; transform: translateX(-50%);
-    width: 40%; display: flex; flex-direction: column; align-items: center; text-align: center;
-}
-.temp-row { display: flex; align-items: center; justify-content: center; margin-top: -10px; }
-#current-weather-icon { width: 140px; height: 140px; }
-#main-pop { font-size: 45px; color: #00eaff; font-weight: 900; margin-left: 15px; }
-#temp-display { font-size: 130px; font-weight: bold; line-height: 1; }
-#weather-status { font-size: 32px; font-weight: bold; text-transform: uppercase; margin: 10px 0; color: #fff; }
-#clothes-advice { font-size: 30px; margin-top: 10px; color: #ffcc00; font-weight: bold; }
-
-/* RECHTS: Astro (Abstand zum Zahnrad) */
-.box-right { width: 20%; text-align: right; padding-top: 100px; } 
-.astro-row { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
-#moon { font-size: 24px; color: #00eaff; margin-top: 10px; }
+/* Astro Info unten rechts */
+.astro-box { margin-top: 15px; text-align: right; }
+.astro-line { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
 
 /* TICKER */
-.ticker-wrap { width: 100%; height: 60px; background: #111; border-top: 3px solid #333; border-bottom: 3px solid #333; overflow: hidden; white-space: nowrap; }
-#ticker { display: inline-block; padding-left: 100%; animation: ticker 80s linear infinite; font-size: 35px; color: #00eaff; line-height: 60px; font-weight: bold; }
-#ticker img { width: 40px; height: 40px; vertical-align: middle; margin: 0 10px; }
-@keyframes ticker { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
+.ticker-area { height: 40px; background: #111; border-top: 1px solid #333; border-bottom: 1px solid #333; overflow: hidden; white-space: nowrap; margin-bottom: 10px; }
+#ticker-text { display: inline-block; padding-left: 100%; animation: tick 80s linear infinite; font-size: 24px; line-height: 40px; color: #00eaff; font-weight: bold; }
+#ticker-text img { vertical-align: middle; width: 30px; margin: 0 5px; }
+@keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
-/* TABELLEN: Formatfüllend gestreckt */
-.tables-area { height: 40vh; display: flex; flex-direction: column; justify-content: center; padding: 20px; box-sizing: border-box; }
-table { width: 100%; height: 100%; table-layout: fixed; }
-td { text-align: center; font-size: 32px; font-weight: bold; padding: 10px; vertical-align: middle; }
-.t-icon { width: 75px; height: 75px; }
-.t-pop { color: #00eaff; font-size: 22px; font-weight: 900; }
+/* TABELLEN */
+.forecast-area { display: flex; flex-direction: column; height: 35vh; padding: 0 15px; }
+.f-row { display: flex; justify-content: space-between; width: 100%; height: 50%; align-items: center; border-bottom: 1px solid #222; }
+.f-item { text-align: center; flex: 1; font-size: 20px; font-weight: bold; }
+.f-icon { width: 50px; height: 50px; vertical-align: middle; }
+.f-pop { font-size: 14px; color: #00eaff; }
 
-/* MENÜ: 18px Texte */
-#settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.99); flex-direction:column; align-items:center; z-index:20000; padding: 30px; box-sizing: border-box; overflow-y: auto; }
-.sub-content { display: none; width: 100%; max-width: 700px; text-align: left; }
-.sub-content p, .sub-content li { font-size: 18px; line-height: 1.6; color: #ccc; margin-bottom: 15px; }
+/* VIDEO LAYERS (Wach & Schlaf) */
+#wake-vid { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0.01; z-index: -1; }
+#sleep-vid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; display: none; }
 
-/* UPDATE & SLEEP */
-#update-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:50000; display:none; flex-direction:column; align-items:center; justify-content:center; border: 15px solid #00eaff; }
-.sleep-mode { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; background:black !important; z-index:15000 !important; }
+/* MENÜ & OVERLAYS */
+#start-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:60000; display:flex; justify-content:center; align-items:center; flex-direction:column; }
+#settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:55000; padding:30px; }
+.sub-c { display: none; }
