@@ -4,38 +4,48 @@
     <meta charset="UTF-8">
     <style>
         body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; overflow: hidden; text-align: center; }
-        #gear-btn { position: fixed; top: 10px; right: 10px; background: rgba(0,234,255,0.1); border: 1px solid #00eaff; color: #00eaff; padding: 10px; border-radius: 8px; font-weight: bold; z-index: 1000; }
+        #gear-btn { position: fixed; top: 10px; right: 10px; background: rgba(0,234,255,0.1); border: 1px solid #00eaff; color: #00eaff; padding: 12px; border-radius: 8px; font-weight: bold; z-index: 1000; }
         
         .top-section { display: flex; justify-content: space-between; height: 45vh; padding: 15px; position: relative; }
         
+        /* LINKS */
         .box-left { width: 35%; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
         #clock { font-size: 13vh; font-weight: bold; line-height: 1; }
-        #date { font-size: 2.4vh; color: #00eaff; font-weight: bold; margin-top: 5px; }
+        #date { font-size: 2.5vh; color: #00eaff; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
+        #bat-box { font-size: 2.2vh; margin-top: 10px; color: #fff; }
         
-        .box-center { position: absolute; left: 50%; transform: translateX(-50%); width: 42%; display: flex; flex-direction: column; align-items: center; }
+        /* ZENTRUM - Generalüberholt */
+        .box-center { position: absolute; left: 50%; transform: translateX(-50%); width: 45%; display: flex; flex-direction: column; align-items: center; }
         .temp-row { display: flex; align-items: center; justify-content: center; }
-        #current-icon { width: 16vh; height: 16vh; }
-        #main-pop { font-size: 2.2vh; color: #00eaff; margin-left: 10px; }
+        #curr-icon { width: 16vh; height: 16vh; }
+        #main-pop { font-size: 2.4vh; color: #00eaff; margin-left: 10px; font-weight: bold; }
         #temp-display { font-size: 18vh; font-weight: bold; line-height: 1; }
-        #weather-desc { font-size: 3vh; font-weight: bold; text-transform: uppercase; margin: 5px 0; }
-        #clothes { font-size: 3vh; color: #ffcc00; font-weight: bold; }
+        #weather-desc { font-size: 3.2vh; font-weight: bold; text-transform: uppercase; margin: 5px 0; color: #fff; }
+        #feels-like { font-size: 2.6vh; color: #00eaff; font-weight: bold; }
+        #clothes { font-size: 3.2vh; color: #ffcc00; font-weight: bold; margin-top: 8px; }
 
-        .box-right { width: 25%; text-align: right; padding-top: 20px; }
-        .astro { font-size: 3vh; font-weight: bold; }
-        .info-gray { color: #888; font-size: 1.6vh; line-height: 1.4; border-top: 1px solid #333; padding-top: 10px; margin-top: 15px; }
+        /* RECHTS - Überlapp-Fix */
+        .box-right { width: 25%; text-align: right; padding-top: 8vh; } /* Fix für Zahnrad-Überlapp */
+        .astro { font-size: 3.2vh; font-weight: bold; margin-bottom: 5px; }
+        #moon { color: #00eaff; font-size: 2.8vh; margin: 10px 0; }
+        .info-gray { color: #777; font-size: 1.6vh; line-height: 1.4; border-top: 1px solid #333; padding-top: 10px; margin-top: 15px; }
 
+        /* TICKER */
         .ticker-wrap { width: 100%; height: 7vh; background: #111; border-top: 2px solid #333; overflow: hidden; white-space: nowrap; }
-        #ticker { display: inline-block; padding-left: 100%; animation: t 60s linear infinite; font-size: 3.5vh; color: #00eaff; line-height: 7vh; font-weight: bold; }
+        #ticker { display: inline-block; padding-left: 100%; animation: t 60s linear infinite; font-size: 3.8vh; color: #00eaff; line-height: 7vh; font-weight: bold; }
         @keyframes t { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
+        /* TABELLEN - 13 Uhr Format */
         table { width: 100%; height: 38vh; table-layout: fixed; }
-        td { text-align: center; font-size: 2.8vh; font-weight: bold; }
+        td { text-align: center; font-size: 3vh; font-weight: bold; vertical-align: middle; }
         .t-icon { width: 6vh; height: 6vh; }
+        .t-pop { color: #00eaff; font-size: 2vh; display: block; }
 
+        /* SETUP MENÜ - Restauration */
         #menu-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); flex-direction:column; align-items:center; z-index:2000; padding-top: 20px; }
-        .menu-btn { background: #111; border: 1px solid #333; color: #fff; padding: 18px; margin: 6px; width: 90%; max-width: 500px; border-radius: 12px; font-size: 2.4vh; font-weight: bold; display: flex; justify-content: space-between; text-decoration: none; box-sizing: border-box; }
+        .menu-btn { background: #111; border: 1px solid #333; color: #fff; padding: 18px; margin: 6px; width: 90%; max-width: 500px; border-radius: 12px; font-size: 2.5vh; font-weight: bold; display: flex; justify-content: space-between; text-decoration: none; box-sizing: border-box; cursor: pointer; }
         .sub { display:none; width: 90%; max-width: 500px; }
-        input { width: 100%; padding: 15px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin: 10px 0; }
+        input { width: 100%; padding: 15px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin: 10px 0; font-size: 2vh; }
     </style>
 </head>
 <body>
@@ -44,29 +54,29 @@
         <div class="box-left">
             <div id="clock">--:--</div>
             <div id="date">...</div>
-            <div id="bat" style="display:none; color:#fff; font-size:2.2vh; margin-top:10px;">🔋 <span id="bat-lv">--%</span></div>
-            <img src="logo.png" style="width:200px; margin-top:20px;">
+            <div id="bat-box" style="display:none;">🔋 <span id="bat-lv">--%</span></div>
+            <img src="logo.png" style="width:200px; margin-top:15px;">
         </div>
         <div class="box-center">
-            <div id="city-title" style="color:#888; letter-spacing:2px; font-size:2.2vh;">--</div>
+            <div id="city-title" style="color:#888; letter-spacing:2px; font-size:2.4vh;">--</div>
             <div class="temp-row">
-                <img id="current-icon" src=""><div id="temp-display">--°</div><span id="main-pop">💧--%</span>
+                <img id="curr-icon" src=""><div id="temp-display">--°</div><span id="main-pop">💧--%</span>
             </div>
             <div id="weather-desc">--</div>
-            <div id="feels-like" style="color:#00eaff; font-weight:bold; font-size:2.5vh;">--</div>
+            <div id="feels-like">--</div>
             <div id="clothes">--</div>
         </div>
         <div class="box-right">
             <div class="astro">☀ <span id="sr">--:--</span></div>
             <div class="astro">☾ <span id="ss">--:--</span></div>
-            <div id="moon" style="color:#00eaff; margin: 10px 0; font-size: 2.6vh;">--</div>
+            <div id="moon">--</div>
             <div class="info-gray">
-                Web App Update: Build V18.0<br>
+                Web App Update: Build V18.1<br>
                 Wetter Update: <span id="up-d">--.--</span> | <span id="up-t">--:--</span>
             </div>
         </div>
     </div>
-    <div class="ticker-wrap"><div id="ticker">LADE DATEN...</div></div>
+    <div class="ticker-wrap"><div id="ticker">LADE WELTWETTER...</div></div>
     <table id="forecast"></table>
 
     <div id="menu-overlay">
@@ -76,14 +86,14 @@
             <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="menu-btn" style="color:#ffcc00; border-color:#ffcc00;">☕ KAFFEE-SPENDE <span>❯</span></a>
             <div class="menu-btn" onclick="showS('s-help')">📖 HILFE & TRICKS <span>❯</span></div>
             <div class="menu-btn" onclick="showS('s-con')">📧 KONTAKT & WEB <span>❯</span></div>
-            <button onclick="closeM()" style="background:#333; color:#fff; border:none; padding:15px; border-radius:10px; margin-top:20px; width:90%; max-width:500px; font-weight:bold;">SCHLIESSEN</button>
+            <button onclick="closeM()" style="background:#333; color:#fff; border:none; padding:18px; border-radius:12px; margin-top:20px; width:90%; max-width:500px; font-weight:bold;">SCHLIESSEN</button>
         </div>
         <div id="s-cfg" class="sub">
             <h2 style="color:#00eaff;">KONFIGURATION</h2>
             <input type="text" id="city-in" placeholder="Stadt">
             <div style="display:flex; gap:10px;"><input type="time" id="ts"> <input type="time" id="te"></div>
-            <button onclick="save()" style="background:#00eaff; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold; margin-top:10px;">SPEICHERN</button>
-            <button onclick="showM()" style="background:#333; color:#fff; border:none; padding:10px; border-radius:10px; margin-top:15px; width:100%;">ZURÜCK</button>
+            <button onclick="save()" style="background:#00eaff; border:none; padding:18px; width:100%; border-radius:10px; font-weight:bold; margin-top:10px;">SPEICHERN</button>
+            <button onclick="showM()" style="background:#333; color:#fff; border:none; padding:12px; border-radius:10px; margin-top:15px; width:100%;">ZURÜCK</button>
         </div>
         <div id="s-con" class="sub">
             <h2 style="color:#00eaff;">KONTAKT</h2>
@@ -94,17 +104,16 @@
     </div>
 
     <script>
-        var API = '518e81d874739701f08842c1a55f6588';
-        var city = localStorage.getItem('city') || 'Braunschweig';
+        var API = '518e81d874739701f08842c1a55f6588', city = localStorage.getItem('city') || 'Braunschweig';
+        var worldCities = ["New York", "Sydney", "Tokyo", "London", "Berlin"], worldData = "";
         function z(n){return (n<10?'0':'')+n;}
 
         function update() {
-            var now = new Date();
-            document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
-            var d = ['So','Mo','Di','Mi','Do','Fr','Sa'], m = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-            document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
-            
-            var y=now.getFullYear(), mo=now.getMonth()+1, da=now.getDate(); if(mo<3){y--;mo+=12;}++mo;
+            var n = new Date();
+            document.getElementById('clock').innerText = z(n.getHours())+':'+z(n.getMinutes());
+            var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+            document.getElementById('date').innerText = d[n.getDay()] + ". " + n.getDate() + ". " + m[n.getMonth()];
+            var y=n.getFullYear(), mo=n.getMonth()+1, da=n.getDate(); if(mo<3){y--;mo+=12;}++mo;
             var jd = (365.25*y) + (30.6*mo) + da - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
             document.getElementById('moon').innerText = ["🌑 NEUMOND","🌒 SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 SICHEL"][b];
         }
@@ -118,35 +127,42 @@
                 document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
                 document.getElementById('weather-desc').innerText = d.weather[0].description.toUpperCase();
                 document.getElementById('city-title').innerText = d.name.toUpperCase();
-                document.getElementById('current-icon').src = d.weather[0].icon + ".gif";
+                document.getElementById('curr-icon').src = d.weather[0].icon + ".gif";
                 var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000), s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
                 document.getElementById('sr').innerText = z(r.getHours())+":"+z(r.getMinutes());
                 document.getElementById('ss').innerText = z(s.getHours())+":"+z(s.getMinutes());
                 var n = new Date(); document.getElementById('up-d').innerText = z(n.getDate())+"."+z(n.getMonth()+1); document.getElementById('up-t').innerText = z(n.getHours())+":"+z(n.getMinutes());
-                loadF(d.coord.lat, d.coord.lon, d.main.temp);
+                loadW(); loadF(d.coord.lat, d.coord.lon, d.main.temp);
             };
             x.send();
+        }
+
+        function loadW() {
+            worldData = ""; var icons = {"Clouds":"☁️","Clear":"☀️","Rain":"🌧️","Snow":"❄️"};
+            worldCities.forEach(function(c) {
+                var x = new XMLHttpRequest(); x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric", false); x.send();
+                var d = JSON.parse(x.responseText); worldData += " +++ " + d.name.toUpperCase() + ": " + (icons[d.weather[0].main] || "🌡️") + " " + Math.round(d.main.temp) + "°";
+            });
         }
 
         function loadF(lat, lon, ct) {
             var x = new XMLHttpRequest();
             x.open("GET", "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de", true);
             x.onload = function() {
-                var d = JSON.parse(x.responseText);
-                var rN = Math.round(d.list[0].pop * 100);
+                var d = JSON.parse(x.responseText), rN = Math.round(d.list[0].pop * 100);
                 document.getElementById('main-pop').innerText = "💧"+rN+"%";
                 document.getElementById('clothes').innerText = rN > 30 ? "🌂 REGENSCHIRM" : (ct < 5 ? "🧥 WINTERJACKE" : (ct < 15 ? "🧥 ÜBERGANGSJACKE" : "👕 T-SHIRT"));
                 var h = "<tr>", dy = "<tr>";
                 for(var i=0; i<4; i++) {
                     var it = d.list[i], t = new Date(it.dt*1000);
-                    h += "<td>"+t.getHours()+" Uhr<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°</td>";
+                    h += "<td>"+t.getHours()+" Uhr<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<span class='t-pop'>💧"+Math.round(it.pop*100)+"%</span></td>";
                 }
                 for(var i=0; i<32; i+=8) {
                     var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE',{weekday:'short'}).toUpperCase();
-                    dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span style='color:#ff4444'>"+Math.round(it.main.temp_max)+"°</span> <span style='color:#00eaff'>"+Math.round(it.main.temp_min-2)+"°</span></td>";
+                    dy += "<td>"+day+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span style='color:#ff4444'>"+Math.round(it.main.temp_max)+"°</span> <span style='color:#00eaff'>"+Math.round(it.main.temp_min-2)+"°</span></td>";
                 }
                 document.getElementById('forecast').innerHTML = h + "</tr>" + dy + "</tr>";
-                document.getElementById('ticker').innerText = d.list[0].weather[0].description.toUpperCase() + " +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H";
+                document.getElementById('ticker').innerText = d.list[0].weather[0].description.toUpperCase() + " +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H" + worldData;
             };
             x.send();
         }
@@ -154,18 +170,10 @@
         function openM() { document.getElementById('menu-overlay').style.display='flex'; showM(); }
         function closeM() { document.getElementById('menu-overlay').style.display='none'; }
         function showM() { document.getElementById('m-main').style.display='flex'; var s=document.getElementsByClassName('sub'); for(var i=0; i<s.length; i++) s[i].style.display='none'; }
-        function showSub(id) { document.getElementById('m-main').style.display='none'; document.getElementById(id).style.display='block'; }
-        function save() { 
-            localStorage.setItem('city', document.getElementById('city-in').value); 
-            localStorage.setItem('sleepStart', document.getElementById('ts').value); 
-            localStorage.setItem('sleepEnd', document.getElementById('te').value); 
-            window.parent.location.reload(); 
-        }
+        function showS(id) { document.getElementById('m-main').style.display='none'; document.getElementById(id).style.display='block'; }
+        function save() { localStorage.setItem('city', document.getElementById('city-in').value); localStorage.setItem('sleepStart', document.getElementById('ts').value); localStorage.setItem('sleepEnd', document.getElementById('te').value); window.parent.location.reload(); }
 
-        if(navigator.getBattery) navigator.getBattery().then(function(b){ 
-            var f = function(){ document.getElementById('bat').style.display='block'; document.getElementById('bat-lv').innerText=Math.round(b.level*100)+"%"; };
-            f(); b.onlevelchange=f;
-        });
+        if(navigator.getBattery) navigator.getBattery().then(function(b){ var f = function(){ document.getElementById('bat-box').style.display='block'; document.getElementById('bat-lv').innerText=Math.round(b.level*100)+"%"; }; f(); b.onlevelchange=f; });
         update(); setInterval(update, 1000); load(); setInterval(load, 600000);
     </script>
 </body>
