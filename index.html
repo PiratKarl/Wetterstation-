@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V20.1 Dashboard</title>
-    <link rel="stylesheet" href="style.css?v=20.1">
+    <title>Aura V20.2</title>
+    <link rel="stylesheet" href="style.css?v=20.2">
 </head>
 <body>
     <video id="wake-vid" loop playsinline muted></video>
-    <video id="sleep-vid" loop playsinline muted></video>
+    <audio id="wake-aud" loop playsinline></audio> <video id="sleep-vid" loop playsinline muted></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <img src="logo.png" style="width:200px; margin-bottom:20px;">
-        <div style="border: 2px solid #00eaff; color: #00eaff; padding: 15px 40px; font-size: 24px; font-weight: bold; border-radius: 30px;">TIPPEN ZUM STARTEN</div>
+        <img src="logo.png" style="width:220px; margin-bottom:30px;">
+        <div style="border: 3px solid #00eaff; color: #00eaff; padding: 20px 50px; font-size: 30px; font-weight: bold; border-radius: 40px; box-shadow: 0 0 20px rgba(0,234,255,0.3);">STARTEN</div>
+        <div style="color:#555; margin-top:20px; font-size:16px;">(Tippen für Vollbild & Sound)</div>
     </div>
 
-    <div id="update-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:60000; flex-direction:column; justify-content:center; align-items:center;" onclick="location.reload(true)">
-        <h1 style="color:#00eaff;">UPDATE V20.1</h1>
-        <div style="background:#00eaff; color:#000; padding:20px; font-weight:bold; border-radius:10px;">LADEN</div>
+    <div id="update-overlay" onclick="location.reload(true)">
+        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V20.2</h1>
+        <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; margin-top:20px; font-size:24px;">LADEN</div>
     </div>
 
     <div class="dashboard">
@@ -33,7 +34,7 @@
                 <img id="w-icon" src="">
                 <div id="temp">--°</div>
                 <div class="pop-box">
-                    <div style="font-size:30px; color:#00eaff;">💧</div>
+                    <div style="font-size:35px; color:#00eaff;">💧</div>
                     <div id="pop">--%</div>
                 </div>
             </div>
@@ -43,21 +44,12 @@
         </div>
 
         <div class="col-right">
-            <div class="ctrl-box" id="btn-setup" onclick="openMenu()">⚙ SETUP</div>
+            <div id="btn-setup" onclick="openMenu()">⚙ MENÜ</div>
             
-            <div class="ctrl-box" onclick="showSub('sub-config')">
-                <div class="ctrl-title">Standort & Timer</div>
-                <div class="ctrl-val"><span class="icon-s">📍</span> Konfigurieren</div>
-            </div>
-            
-            <div class="ctrl-box" style="border-color:#ffcc00;" onclick="showSub('sub-donation')">
-                <div class="ctrl-title" style="color:#ffeebb;">Unterstützung</div>
-                <div class="ctrl-val" style="color:#ffcc00;"><span class="icon-s">☕</span> Kaffee Spende</div>
-            </div>
-
             <div class="astro-box">
-                <div class="astro-line"><span style="color:#00eaff;">☾</span> <span id="moon-txt">...</span></div>
-                <div class="astro-line">☀ <span id="sunrise">--:--</span> ☾ <span id="sunset">--:--</span></div>
+                <div class="astro-big"><span style="color:#00eaff;">☀</span> <span id="sunrise">--:--</span></div>
+                <div class="astro-big"><span style="color:#aaa;">☾</span> <span id="sunset">--:--</span></div>
+                <div class="moon-phase" style="margin-top:10px;"><span id="moon-icon"></span> <span id="moon-txt">...</span></div>
             </div>
         </div>
     </div>
@@ -72,29 +64,38 @@
     </div>
 
     <div id="settings-overlay">
-        <div id="menu-main">
-            <h1 style="color:#00eaff;">EINSTELLUNGEN</h1>
-            <div class="ctrl-box" style="width:100%; text-align:left; margin-bottom:10px;" onclick="showSub('sub-config')">📍 STANDORT & TIMER</div>
-            <div class="ctrl-box" style="width:100%; text-align:left; margin-bottom:10px; border-color:#ffcc00; color:#ffcc00;" onclick="showSub('sub-donation')">☕ KAFFEE-SPENDE</div>
-            <button onclick="closeMenu()" style="width:100%; padding:20px; font-size:20px; background:#333; color:#fff; border:none; margin-top:20px;">ZURÜCK</button>
+        <div id="menu-main" style="text-align:center;">
+            <h1 style="color:#00eaff; font-size:40px; margin-bottom:30px;">EINSTELLUNGEN</h1>
+            
+            <div onclick="showSub('sub-config')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
+                <span>📍 STANDORT & TIMER</span> <span>❯</span>
+            </div>
+            
+            <div onclick="showSub('sub-donation')" style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
+                <span>☕ KAFFEE-SPENDE</span> <span>❯</span>
+            </div>
+
+            <button onclick="closeMenu()" style="width:100%; max-width:400px; padding:20px; font-size:20px; background:#333; color:#fff; border:none; margin-top:20px; border-radius:10px;">SCHLIESSEN</button>
         </div>
 
         <div id="sub-config" class="sub-c">
-            <h2>STANDORT</h2>
-            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:20px; background:#222; color:#fff; border:1px solid #444;">
-            <h2>SCHLAF-TIMER (Schwarzes Video)</h2>
-            <input type="time" id="t-start" style="font-size:20px; padding:10px;"> bis <input type="time" id="t-end" style="font-size:20px; padding:10px;">
-            <button onclick="save()" style="width:100%; padding:20px; font-size:20px; background:#00eaff; border:none; font-weight:bold; margin-top:20px;">SPEICHERN</button>
+            <h2 style="color:#00eaff;">STANDORT</h2>
+            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444; border-radius:5px;">
+            <h2 style="color:#00eaff; margin-top:20px;">SCHLAF-TIMER</h2>
+            <p style="color:#aaa; font-size:18px;">In dieser Zeit läuft ein schwarzes Video (spart Strom & hält wach).</p>
+            <input type="time" id="t-start" style="font-size:22px; padding:10px;"> bis <input type="time" id="t-end" style="font-size:22px; padding:10px;">
+            <button onclick="save()" style="width:100%; padding:20px; font-size:22px; background:#00eaff; border:none; font-weight:bold; margin-top:30px; border-radius:10px;">SPEICHERN</button>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ZURÜCK</button>
         </div>
 
         <div id="sub-donation" class="sub-c">
             <h2 style="color:#ffcc00;">KAFFEE SPENDE</h2>
-            <p style="font-size:18px;">Das Projekt unterstützen via PayPal:</p>
-            <p style="font-size:20px; color:#00eaff; font-weight:bold;">piratkarl@web.de</p>
-            <button onclick="showMain()" style="width:100%; padding:15px; background:#333; color:#fff; border:none;">ZURÜCK</button>
+            <p style="font-size:18px; line-height:1.5; color:#ddd;">Vielen Dank, dass du AURA auf deinen Tablets nutzt! Das Projekt ist rein privat. Eine kleine Spende hilft, die Server und Wetterdaten zu bezahlen.</p>
+            <div style="background:#ffcc00; color:#000; padding:20px; font-weight:bold; font-size:20px; text-align:center; border-radius:10px; margin-top:20px;">PayPal: piratkarl@web.de</div>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=20.1"></script>
+    <script src="script.js?v=20.2"></script>
 </body>
-                                                                                </html> 
+                </html> 
