@@ -1,4 +1,4 @@
-var currentVer = 17.7;
+var currentVer = 17.8;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('sleepStart'), sEnd = localStorage.getItem('sleepEnd');
@@ -15,8 +15,15 @@ function checkUpdate() {
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.version > currentVer) {
+                // Popup anzeigen
+                document.getElementById('update-popup').style.display = 'block';
+                // Video kurz triggern für "Wachbleiben"
+                var v = document.getElementById('wake-video');
+                v.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
+                v.play().catch(function(e){});
+                
                 localStorage.setItem('autoStart', 'true');
-                setTimeout(function(){ location.reload(true); }, 2000);
+                setTimeout(function(){ location.reload(true); }, 3000);
             }
         }
     };
@@ -97,7 +104,7 @@ function loadWeather() {
         document.getElementById('last-up-date').innerText = z(now.getDate()) + "." + z(now.getMonth()+1) + "." + now.getFullYear().toString().substr(2,2);
         document.getElementById('last-up-time').innerText = z(now.getHours()) + ":" + z(now.getMinutes());
 
-        loadWorldWeather(); // Weltwetter laden
+        loadWorldWeather(); 
         loadFore(d.coord.lat, d.coord.lon, d.main.temp);
     };
     x.send();
@@ -108,7 +115,7 @@ function loadWorldWeather() {
     var icons = {"Clouds":"☁️","Clear":"☀️","Rain":"🌧️","Drizzle":"🌦️","Thunderstorm":"⛈️","Snow":"❄️","Mist":"🌫️"};
     worldCities.forEach(function(c) {
         var x = new XMLHttpRequest();
-        x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric&lang=de", false); // Synchron für Ticker-Bau
+        x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric&lang=de", false);
         x.send();
         var d = JSON.parse(x.responseText);
         var icon = icons[d.weather[0].main] || "🌡️";
