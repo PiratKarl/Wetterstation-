@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura World Edition V18.3</title>
-    <link rel="stylesheet" href="style.css?v=18.3">
+    <title>Aura Weather Station V18.4</title>
+    <link rel="stylesheet" href="style.css?v=18.4">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted style="position:fixed; width:1px; opacity:0.01;"></video>
@@ -49,13 +49,13 @@
             <div class="astro-row">☾ <span id="sunset">--:--</span></div>
             <div id="moon">...</div>
             <div class="update-info">
-                Web App: V18.3 (World)<br>
+                Web App: V18.4<br>
                 Update: <span id="up-date">--.--</span> | <span id="up-time">--:--</span> Uhr
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker">GLOBALE DATEN WERDEN SYNCHRONISIERT...</div></div>
+    <div class="ticker-wrap"><div id="ticker">GLOBALE DATEN WERDEN GELADEN...</div></div>
 
     <div class="tables-area">
         <table id="hourly-table"></table>
@@ -75,7 +75,7 @@
 
         <div id="sub-config" class="sub-content">
             <h2 style="color:#00eaff;">EINSTELLUNGEN</h2>
-            <input type="text" id="city-in" placeholder="Deine Stadt">
+            <input type="text" id="city-in" placeholder="Stadt eingeben">
             <div style="display:flex; gap:10px;"><input type="time" id="t-start"> <input type="time" id="t-end"></div>
             <button onclick="save()" style="background:#00eaff; border:none; padding:18px; width:100%; border-radius:12px; font-weight:bold; margin-top:10px;">SPEICHERN</button>
             <button onclick="showMain()" style="background:#333; color:#fff; border:none; padding:12px; border-radius:10px; margin-top:15px; width:100%;">ZURÜCK</button>
@@ -86,11 +86,8 @@
             <a href="https://code-werft.de" target="_blank" class="menu-item">🌐 UNSERE WEBSEITE <span>❯</span></a>
             <button onclick="showMain()" style="margin-top:20px;">ZURÜCK</button>
         </div>
-        
-        <div id="sub-help" class="sub-content"><h2 style="color:#00eaff;">INFO</h2><p>Nach einem Update erscheint ein blauer Button. Bitte diesen kurz antippen, damit das Tablet wach bleibt.</p><button onclick="showMain()">ZURÜCK</button></div>
     </div>
 
-    <script src="script.js?v=18.3"></script>
+    <script src="script.js?v=18.4"></script>
 </body>
 </html>
- 
