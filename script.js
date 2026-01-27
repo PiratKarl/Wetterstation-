@@ -1,4 +1,4 @@
-var currentVer = 20.2;
+var currentVer = 20.3;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
@@ -19,24 +19,26 @@ function checkUpdate() {
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
     
-    // 1. VOLLBILD ERZWINGEN (ALLE METHODEN)
+    // 1. VOLLBILD VERSUCHEN (ALLE METHODEN)
     var elem = document.documentElement;
     if (elem.requestFullscreen) { elem.requestFullscreen(); } 
-    else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } /* Wichtig für altes Android */
-    else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+    else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
 
-    // 2. MEDIEN STARTEN (Video + Audio + SleepVideo Vorbereitung)
+    // 2. DIE WACHHALTE-MASCHINE
     var wV = document.getElementById('wake-vid');
     var sV = document.getElementById('sleep-vid');
     var wA = document.getElementById('wake-aud');
     
+    // Tag-Video (Big Buck Bunny, transparent)
     wV.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
+    // Nacht-Video (Schwarz)
     sV.src = "https://github.com/intel-iot-devkit/sample-videos/raw/master/black.mp4";
-    // Lautloses Audio (Base64)
+    // AUDIO (Der Dimmer-Killer!)
     wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
 
     wV.play();
-    wA.play(); // Audio muss laufen für Android 4.4 Wachbleiben!
+    wA.volume = 1.0; // Wichtig: System muss denken, es läuft Ton!
+    wA.play();
 
     loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000); setInterval(checkUpdate, 1800000);
 }
@@ -78,7 +80,6 @@ function loadWeather() {
         document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
         document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
 
-        // Mondphase
         var year=new Date().getFullYear(), mo=new Date().getMonth()+1, da=new Date().getDate(); if(mo<3){year--;mo+=12;}++mo;
         var jd = (365.25*year) + (30.6*mo) + da - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
         var moonTxt = ["NEUMOND","SICHEL","1. VIERTEL","ZUN. MOND","VOLLMOND","ABN. MOND","3. VIERTEL","SICHEL"];
@@ -111,7 +112,6 @@ function loadFore(lat, lon, ct) {
         document.getElementById('hourly-row').innerHTML = h;
         document.getElementById('daily-row').innerHTML = dy;
 
-        // Ticker
         var caps = ["Berlin", "Paris", "Rome", "London", "Tokyo", "Cairo"]; var wd = "";
         caps.forEach(c => { var r=new XMLHttpRequest(); r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric",false); r.send(); if(r.status===200){var j=JSON.parse(r.responseText); wd+=` ◈ ${j.name.toUpperCase()}: <img src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°`;} });
         document.getElementById('ticker-text').innerHTML = wd;

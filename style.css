@@ -3,11 +3,15 @@ html, body {
     background: #000; color: #fff; font-family: 'Arial Narrow', Arial, sans-serif; overflow: hidden; 
 }
 
-/* Haupt-Layout */
+/* WICHTIG: Damit das Video als "sichtbar" gilt, darf es nicht display:none sein */
+#wake-vid { position: fixed; top: 0; left: 0; width: 5px; height: 5px; opacity: 0.01; z-index: -10; pointer-events: none; }
+#sleep-vid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: none; object-fit: fill; }
+
+/* Dashboard Layout */
 .dashboard { display: flex; height: 55vh; padding: 10px 20px; box-sizing: border-box; }
 
 /* LINKS */
-.col-left { width: 30%; display: flex; flex-direction: column; justify-content: flex-start; }
+.col-left { width: 30%; display: flex; flex-direction: column; }
 #clock { font-size: 110px; font-weight: bold; line-height: 0.85; letter-spacing: -3px; margin-left: -5px; }
 #date { font-size: 24px; color: #00eaff; font-weight: bold; margin-top: 8px; text-transform: uppercase; }
 .logo-img { width: 160px; margin-top: 15px; opacity: 0.7; }
@@ -24,38 +28,27 @@ html, body {
 #w-feels { font-size: 22px; color: #aaa; }
 #clothing { font-size: 28px; color: #ffcc00; font-weight: bold; margin-top: 8px; border: 2px solid #ffcc00; padding: 4px 20px; border-radius: 25px; }
 
-/* RECHTS: Aufgeräumt & Astro-Fokus */
+/* RECHTS */
 .col-right { width: 25%; display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; padding-top: 10px; }
-
-/* Der kleine Setup-Knopf */
 #btn-setup { 
     background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; 
     padding: 10px 20px; font-size: 20px; font-weight: bold; border-radius: 8px; 
     cursor: pointer; text-transform: uppercase;
 }
-
-/* Astro-Bereich (Jetzt viel Platz) */
 .astro-box { text-align: right; margin-bottom: 10px; }
 .astro-big { font-size: 26px; font-weight: bold; color: #fff; margin-bottom: 5px; }
-.astro-small { font-size: 22px; color: #aaa; margin-bottom: 5px; }
 .moon-phase { color: #00eaff; font-size: 22px; font-weight: bold; }
 
-/* TICKER */
+/* TICKER & TABLES */
 .ticker-area { height: 45px; background: #080808; border-top: 1px solid #222; border-bottom: 1px solid #222; overflow: hidden; white-space: nowrap; margin-bottom: 5px; }
 #ticker-text { display: inline-block; padding-left: 100%; animation: tick 85s linear infinite; font-size: 26px; line-height: 45px; color: #00eaff; font-weight: bold; }
 #ticker-text img { vertical-align: middle; width: 35px; margin: 0 8px; }
 @keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
-/* TABELLEN */
 .forecast-area { display: flex; flex-direction: column; height: 35vh; padding: 0 10px; }
 .f-row { display: flex; justify-content: space-between; width: 100%; height: 50%; align-items: center; border-bottom: 1px solid #111; }
 .f-item { text-align: center; flex: 1; font-size: 22px; font-weight: bold; }
 .f-icon { width: 55px; height: 55px; vertical-align: middle; margin: 2px 0; }
-
-/* VIDEO & AUDIO LAYERS */
-#wake-vid { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0.01; z-index: -1; }
-#wake-aud { display: none; }
-#sleep-vid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; display: none; }
 
 /* OVERLAYS */
 #start-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:60000; display:flex; justify-content:center; align-items:center; flex-direction:column; }
