@@ -2,13 +2,20 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Aura Weather Station V17.7</title>
-    <link rel="stylesheet" href="style.css?v=17.7">
+    <title>Aura Weather Station V17.8</title>
+    <link rel="stylesheet" href="style.css?v=17.8">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted></video>
+
+    <div id="update-popup">
+        <h1 style="color:#00eaff;">HURRA!</h1>
+        <p style="font-size:3vh;">Eine neue Version ist da!</p>
+        <div style="font-size:5vh; margin:20px;">🔄</div>
+        <p style="color:#888;">Update wird ausgeführt...</p>
+    </div>
 
     <div id="start-overlay" onclick="startApp(false)">
         <img src="logo.png" style="width:300px;">
@@ -31,7 +38,7 @@
             </div>
             
             <div class="box-center">
-                <div id="city-title">LADE...</div>
+                <div id="city-title">...</div>
                 <div class="temp-row">
                     <img id="current-weather-icon" src="">
                     <div id="temp-display">--°</div>
@@ -47,13 +54,13 @@
                 <div class="astro-row">☾ <span id="sunset">--:--</span></div>
                 <div id="moon" class="moon-row">MOND</div>
                 <div class="info-block">
-                    <span class="info-label">Web App Update:</span>Build V17.7
+                    <span class="info-label">Web App Update:</span>Build V17.8
                     <span class="info-label">Wetter Update:</span><span id="last-up-date">--.--.--</span> | <span id="last-up-time">--:--</span>
                 </div>
             </div>
         </div>
 
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">SYNCHRONISIERE DATEN...</div></div>
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">BITTE WARTEN...</div></div>
 
         <div class="tables-area">
             <table id="hourly-table"></table>
@@ -66,29 +73,21 @@
         <div id="menu-main" class="menu-list">
             <div style="text-align:center;"><img src="logo.png" style="width:150px; margin-bottom:15px;"></div>
             <div class="menu-item-btn" onclick="showSub('sub-config')">📍 Standort & Timer <span>❯</span></div>
-            <div class="menu-item-btn" onclick="showSub('sub-coffee')">☕ Kaffee-Spende <span>❯</span></div>
             <div class="menu-item-btn" onclick="showSub('sub-help')">📖 Hilfe & Tricks <span>❯</span></div>
             <div class="menu-item-btn" onclick="showSub('sub-contact')">📧 Kontakt & Web <span>❯</span></div>
-            <div class="menu-item-btn" onclick="showSub('sub-legal')">⚖️ Rechtliches <span>❯</span></div>
             <button onclick="closeMenu()" style="background:#333; color:white; padding:15px; border:none; border-radius:10px; margin-top:10px;">SCHLIESSEN</button>
         </div>
 
         <div id="sub-config" class="sub-content">
-            <h3 style="color:#00eaff;">STANDORT & TIMER</h3>
+            <h3 style="color:#00eaff;">KONFIGURATION</h3>
             <input type="text" id="city-in" placeholder="Stadt">
             <div style="display:flex; gap:10px; width:100%;"><input type="time" id="time-start"> <input type="time" id="time-end"></div>
-            <button onclick="save()" class="save-btn">SPEICHERN</button>
+            <button onclick="save()" class="save-btn" style="background:#00eaff; padding:15px; border-radius:10px; border:none;">SPEICHERN</button>
             <button onclick="showMain()" style="background:#333; color:white; padding:10px; border-radius:10px; border:none; margin-top:15px; width:100%;">ZURÜCK</button>
         </div>
+    </div>
 
-        <div id="sub-contact" class="sub-content">
-            <h3 style="color:#00eaff;">KONTAKT</h3>
-            <a href="https://code-werft.de" target="_blank" style="color:#00eaff; text-decoration:none; display:block; padding:15px; border:1px solid #00eaff; border-radius:10px; width:100%; box-sizing:border-box;">🌐 UNSERE HOMEPAGE</a>
-            <button onclick="showMain()" style="background:#333; color:white; padding:10px; border-radius:10px; border:none; margin-top:15px; width:100%;">ZURÜCK</button>
-        </div>
-        </div>
-
-    <script src="script.js?v=17.7"></script>
+    <script src="script.js?v=17.8"></script>
 </body>
 </html>
  
