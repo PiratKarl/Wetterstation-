@@ -1,4 +1,4 @@
-var currentVer = 21.0;
+var currentVer = 21.1;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
@@ -57,7 +57,7 @@ function loadWeather() {
     x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API+"&units=metric&lang=de", true);
     x.onload = function() {
         var d = JSON.parse(x.responseText);
-        myLat = d.coord.lat; myLon = d.coord.lon; // Koordinaten für Warnung speichern
+        myLat = d.coord.lat; myLon = d.coord.lon;
         
         document.getElementById('city-name').innerText = d.name.toUpperCase();
         document.getElementById('temp').innerText = Math.round(d.main.temp) + "°";
@@ -78,7 +78,7 @@ function loadWeather() {
         document.getElementById('moon-icon').innerText = moonIco[b];
 
         loadFore(d.coord.lat, d.coord.lon, d.main.temp);
-        checkWarnings(d.coord.lat, d.coord.lon); // NEU: Warnungen prüfen
+        checkWarnings(d.coord.lat, d.coord.lon);
     };
     x.send();
 }
@@ -92,12 +92,13 @@ function loadFore(lat, lon, ct) {
         document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
 
         var h = "", dy = "";
-        for(var i=0; i<4; i++) {
+        // 5 STUNDEN
+        for(var i=0; i<5; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
-            // NEU: "13 Uhr" Format
             h += `<div class='f-item'>${t.getHours()} Uhr<br><img class='f-icon' src='${it.weather[0].icon}.gif'><br>${Math.round(it.main.temp)}°</div>`;
         }
-        for(var i=0; i<32; i+=8) {
+        // 5 TAGE
+        for(var i=0; i<40; i+=8) {
             var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE',{weekday:'short'});
             dy += `<div class='f-item'>${day.toUpperCase()}<br><img class='f-icon' src='${it.weather[0].icon}.gif'><br><span style='color:#ff4444'>${Math.round(it.main.temp_max)}°</span> <span style='color:#00eaff'>${Math.round(it.main.temp_min)}°</span></div>`;
         }
@@ -107,10 +108,8 @@ function loadFore(lat, lon, ct) {
     x.send();
 }
 
-// NEU: Warn-Funktion via DWD/Brightsky
 function checkWarnings(lat, lon) {
     var x = new XMLHttpRequest();
-    // Nutzt Brightsky (DWD Wrapper) - kostenlos, kein Key nötig
     x.open("GET", "https://api.brightsky.dev/alerts?lat="+lat+"&lon="+lon, true);
     x.onload = function() {
         var box = document.getElementById('ticker-box');
@@ -119,23 +118,20 @@ function checkWarnings(lat, lon) {
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.alerts && data.alerts.length > 0) {
-                // ALARM MODUS AKTIVIEREN
                 box.className = "ticker-area ticker-alert";
                 txt.className = "text-alert";
-                
                 var warnText = "";
                 for(var i=0; i<data.alerts.length; i++) {
                     warnText += " +++ ⚠️ AMTLICHE WARNUNG: " + data.alerts[i].event_de.toUpperCase() + " (" + data.alerts[i].headline_de + ") ";
                 }
                 txt.innerHTML = warnText + " +++";
             } else {
-                // KEINE WARNUNG -> Normaler Welt-Ticker
                 box.className = "ticker-area";
                 txt.className = "";
                 loadWorldTicker();
             }
         } else {
-            loadWorldTicker(); // Fallback falls API down
+            loadWorldTicker();
         }
     };
     x.send();
@@ -143,20 +139,13 @@ function checkWarnings(lat, lon) {
 
 function loadWorldTicker() {
     var caps = ["Berlin", "Paris", "London", "New York", "Tokyo", "Dubai"]; 
-    var wd = "";
-    var done = 0;
+    var wd = ""; var done = 0;
     caps.forEach(c => { 
         var r=new XMLHttpRequest(); 
         r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric",true); 
         r.onload = function() {
-            if(r.status===200){
-                var j=JSON.parse(r.responseText); 
-                wd+=` ◈ ${j.name.toUpperCase()}: <img src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°`;
-            }
-            done++;
-            if(done === caps.length) {
-                document.getElementById('ticker-text').innerHTML = wd;
-            }
+            if(r.status===200){ var j=JSON.parse(r.responseText); wd+=` ◈ ${j.name.toUpperCase()}: <img src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°`; }
+            done++; if(done === caps.length) { document.getElementById('ticker-text').innerHTML = wd; }
         };
         r.send(); 
     });
