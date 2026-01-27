@@ -1,16 +1,16 @@
-var currentVer = 18.5;
+var currentVer = 18.7;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
-var active = false, worldData = "";
+var active = false, worldData = "", wakeLock = null;
 
-var caps = ["Berlin", "Paris", "Rome", "Madrid", "London", "Tokyo", "Washington", "Ottawa", "Canberra", "Brasilia", "Stockholm", "Oslo", "Vienna", "Athens", "Lisbon"];
+var caps = ["Berlin", "Paris", "Rome", "Madrid", "London", "Tokyo", "Washington", "Ottawa", "Canberra", "Stockholm", "Vienna", "Lisbon"];
 
 function z(n){return (n<10?'0':'')+n;}
 
 function checkUpdate() {
     var x = new XMLHttpRequest();
-    x.open("GET", "version.json?n=" + Date.now(), true);
+    x.open("GET", "version.json?nocache=" + Date.now(), true);
     x.onload = function() {
         if (x.status === 200 && JSON.parse(x.responseText).version > currentVer) {
             document.getElementById('update-overlay').style.display = 'flex';
@@ -19,11 +19,26 @@ function checkUpdate() {
     x.send();
 }
 
-function startApp() {
+async function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
-    var v = document.getElementById('wake-video');
-    v.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
-    v.play().catch(function(e){});
+    
+    // Säule 1: Audio/Video Herzschlag
+    var vW = document.getElementById('wake-video');
+    var aW = document.getElementById('wake-audio');
+    vW.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
+    aW.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=="; // Silent Audio
+    vW.play().catch(e => {}); aW.play().catch(e => {});
+
+    // Säule 2: Modern Wake Lock
+    if ('wakeLock' in navigator) {
+        try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
+    }
+
+    // Säule 3: Pixel Wiggle (CPU Aktivität simulieren)
+    var canvas = document.getElementById('wiggle-canvas');
+    var ctx = canvas.getContext('2d');
+    setInterval(() => { ctx.fillStyle = `rgb(${Math.random()*255},0,0)`; ctx.fillRect(0,0,1,1); }, 1000);
+
     if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
     if(!active) { active = true; loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000); setInterval(checkUpdate, 1800000); }
 }
@@ -41,9 +56,9 @@ function update() {
     var sleep = false;
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes(), s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]), e = parseInt(sEnd.split(':')[0])*60 + parseInt(sEnd.split(':')[1]);
-        if(s > e) { if(n >= s || n < e) sleep = true; } else { if(n >= s && n < e) sleep = true; }
+        sleep = (s > e) ? (n >= s || n < e) : (n >= s && n < e);
     }
-    document.getElementById('wake-video').className = sleep ? 'sleep-mode' : '';
+    document.body.style.filter = sleep ? "brightness(0.05)" : "none";
 }
 
 function loadWeather() {
@@ -69,13 +84,8 @@ function loadWorld() {
     worldData = "";
     var shuffle = caps.sort(() => 0.5 - Math.random()).slice(0, 10);
     shuffle.forEach(function(c) {
-        var x = new XMLHttpRequest();
-        x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric", false);
-        x.send();
-        if(x.status === 200) {
-            var d = JSON.parse(x.responseText);
-            worldData += " ◈ " + d.name.toUpperCase() + ": <img src='" + d.weather[0].icon + ".gif'> " + Math.round(d.main.temp) + "°";
-        }
+        var x = new XMLHttpRequest(); x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric", false); x.send();
+        if(x.status === 200) { var d = JSON.parse(x.responseText); worldData += " ◈ " + d.name.toUpperCase() + ": <img src='" + d.weather[0].icon + ".gif'> " + Math.round(d.main.temp) + "°"; }
     });
 }
 
@@ -101,9 +111,9 @@ function loadFore(lat, lon, ct) {
     x.send();
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='flex'; showMain(); }
+function openMenu() { document.getElementById('settings-overlay').style.display='flex'; }
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-function showMain() { document.getElementById('menu-main').style.display='flex'; var s=document.getElementsByClassName('sub-content'); for(var i=0; i<s.length; i++) s[i].style.display='none'; }
+function showMain() { document.getElementById('menu-main').style.display='flex'; document.getElementById('sub-config').style.display='none'; }
 function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
 function save() { localStorage.setItem('city', document.getElementById('city-in').value); localStorage.setItem('t-start', document.getElementById('t-start').value); localStorage.setItem('t-end', document.getElementById('t-end').value); location.reload(); }
 
