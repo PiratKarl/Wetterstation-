@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Professional - V14.0 Status Edition</title>
+    <title>Aura Weather Pro V15</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <h1 style="color:#00eaff;">START AURA V14</h1>
+        <h1 style="color:#00eaff;">AURA STARTEN V15</h1>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
@@ -21,35 +21,24 @@
                 <div id="clock">--:--</div>
                 <div class="status-bar">
                     <div id="date">...</div>
-                    <div id="bat-box" class="icon-status" style="display:none;">
-                        <span id="bat-icon">🔋</span> <span id="bat-level">--%</span>
-                    </div>
-                    <div id="wifi-box" class="icon-status">
-                        <span id="wifi-icon" class="online">📶</span>
-                    </div>
+                    <div id="bat-box" class="icon-status" style="display:none;"><span id="bat-icon">🔋</span> <span id="bat-level">--%</span></div>
+                    <div id="wifi-box" class="icon-status"><span id="wifi-icon" class="online">📶</span></div>
                 </div>
                 <img src="logo.png" class="aura-logo" alt="Logo"> 
             </div>
-            
             <div class="box-center">
                 <div id="city-title">...</div>
-                <div class="temp-row">
-                    <img id="current-weather-icon" src="" style="width:14vh; height:14vh;">
-                    <div id="temp-display">--°</div>
-                </div>
+                <div class="temp-row"><img id="current-weather-icon" src=""><div id="temp-display">--°</div></div>
                 <div id="feels-like">--</div>
                 <div id="clothes-advice">--</div>
             </div>
-            
             <div class="box-right">
                 <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
                 <div class="astro-row">☾ <span id="sunset">--:--</span></div>
                 <div id="moon" class="moon-row">MOND</div>
             </div>
         </div>
-
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">SYNCHRONISIERE DATEN...</div></div>
-
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">SYNCHRONISIERE...</div></div>
         <div class="tables-area">
             <table id="hourly-table"></table>
             <div style="border-top:1px dashed #333; margin:5px 0;"></div>
@@ -58,27 +47,58 @@
     </div>
 
     <div id="settings-overlay">
-        <h1 style="color:#00eaff;">AURA SETUP</h1>
-        <div class="menu-section">
-            <div class="menu-title">KONFIGURATION</div>
-            <input type="text" id="city-in" placeholder="Stadt eingeben">
-            <p style="font-size: 1.8vh; color: #888;">Schlafmodus von - bis:</p>
-            <div style="display:flex; justify-content: space-around;">
-                <input type="time" id="time-start" style="width: 45%;">
-                <input type="time" id="time-end" style="width: 45%;">
+        
+        <div id="menu-main" class="menu-list">
+            <h2 style="color:#00eaff; text-align:center;">AURA SETUP</h2>
+            <div class="menu-item-btn" onclick="showSub('sub-config')">📍 Standort & Timer <span>❯</span></div>
+            <div class="menu-item-btn" onclick="showSub('sub-coffee')">☕ Kaffee-Spende <span>❯</span></div>
+            <div class="menu-item-btn" onclick="showSub('sub-help')">📖 Hilfe & Tricks <span>❯</span></div>
+            <div class="menu-item-btn" onclick="showSub('sub-contact')">📧 Kontakt <span>❯</span></div>
+            <div class="menu-item-btn" onclick="showSub('sub-legal')">⚖️ Rechtliches <span>❯</span></div>
+            <button onclick="closeMenu()" class="back-btn" style="background:transparent; border: 1px solid #444;">SCHLIESSEN</button>
+        </div>
+
+        <div id="sub-config" class="sub-content">
+            <div class="menu-title">STANDORT / TIMER</div>
+            <input type="text" id="city-in">
+            <p style="color:#888;">Schlafmodus von - bis:</p>
+            <div style="display:flex; gap:10px; width:100%;">
+                <input type="time" id="time-start"> <input type="time" id="time-end">
             </div>
-            <button onclick="save()" class="save-btn">SPEICHERN & NEUSTART</button>
+            <button onclick="save()" class="save-btn">SPEICHERN & REBOOT</button>
+            <button onclick="showMain()" class="back-btn">ZURÜCK</button>
         </div>
-        <div class="menu-section">
+
+        <div id="sub-coffee" class="sub-content">
             <div class="menu-title">KAFFEE-SPENDE</div>
-            <p class="legal-text">Unterstütze die Code-Werft mit einem virtuellen Kaffee!</p>
-            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="btn-link" style="border-color: #ffcc00; color: #ffcc00;">☕ KAFFEE SPENDIEREN</a>
+            <p class="legal-text">Aura wird komplett werbefrei und kostenlos für dich entwickelt. Wenn du unsere Arbeit magst, spendier uns doch einen Kaffee!</p>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="btn-link" style="border-color:#ffcc00; color:#ffcc00;">☕ PER PAYPAL SPENDEN</a>
+            <button onclick="showMain()" class="back-btn">ZURÜCK</button>
         </div>
-        <div class="menu-section legal-text">
+
+        <div id="sub-help" class="sub-content">
+            <div class="menu-title">TRICKS</div>
+            <p class="legal-text"><b>Performance:</b> Nutze unter Android 4.4 den Chrome-Browser für beste Ergebnisse.<br><br><b>Batterie:</b> Lasse das Tablet am Netzteil. Der Schlafmodus schont das Display bei Nacht.</p>
+            <button onclick="showMain()" class="back-btn">ZURÜCK</button>
+        </div>
+
+        <div id="sub-contact" class="sub-content">
+            <div class="menu-title">KONTAKT</div>
+            <p class="legal-text">Fragen oder Feedback an die Code-Werft?</p>
+            <a href="mailto:webmaster@code-werft.de?subject=Nutzeranfrage Aura&body=Absender: " class="btn-link">📧 NACHRICHT SENDEN</a>
+            <button onclick="showMain()" class="back-btn">ZURÜCK</button>
+        </div>
+
+        <div id="sub-legal" class="sub-content">
             <div class="menu-title">RECHTLICHES</div>
-            <p>© 2026 Code-Werft Karl Altmannshofer<br>webmaster@code-werft.de</p>
+            <div class="legal-text">
+                <p><b>Impressum:</b> Code-Werft Karl Altmannshofer, webmaster@code-werft.de</p>
+                <p><b>Datenschutz:</b> Daten werden nur lokal gespeichert. Keine Cloud-Übertragung.</p>
+                <p>© 2026 Code-Werft Karl Altmannshofer</p>
+            </div>
+            <button onclick="showMain()" class="back-btn">ZURÜCK</button>
         </div>
-        <button onclick="closeMenu()" class="back-btn">ZURÜCK</button>
+
     </div>
 
     <script src="script.js"></script>
