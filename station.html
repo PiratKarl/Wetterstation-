@@ -2,45 +2,40 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Aura Station UI</title>
     <style>
-        body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; overflow: hidden; }
-        #gear-btn { position: fixed; top: 10px; right: 10px; background: rgba(0,234,255,0.1); border: 1px solid #00eaff; color: #00eaff; padding: 10px 15px; border-radius: 8px; font-weight: bold; z-index: 1000; }
+        body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; overflow: hidden; text-align: center; }
+        #gear-btn { position: fixed; top: 10px; right: 10px; background: rgba(0,234,255,0.1); border: 1px solid #00eaff; color: #00eaff; padding: 10px; border-radius: 8px; font-weight: bold; z-index: 1000; }
+        
         .top-section { display: flex; justify-content: space-between; height: 45vh; padding: 15px; position: relative; }
         
-        .box-left { width: 35%; display: flex; flex-direction: column; align-items: flex-start; }
+        .box-left { width: 35%; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
         #clock { font-size: 13vh; font-weight: bold; line-height: 1; }
-        .status-bar { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
-        #date { font-size: 2.4vh; color: #00eaff; font-weight: bold; text-transform: uppercase; }
+        #date { font-size: 2.4vh; color: #00eaff; font-weight: bold; margin-top: 5px; }
         
-        /* ZENTRUM */
-        .box-center { position: absolute; left: 50%; transform: translateX(-50%); width: 42%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .box-center { position: absolute; left: 50%; transform: translateX(-50%); width: 42%; display: flex; flex-direction: column; align-items: center; }
         .temp-row { display: flex; align-items: center; justify-content: center; }
         #current-icon { width: 16vh; height: 16vh; }
-        #main-pop { font-size: 2.2vh; color: #00eaff; margin-left: 5px; font-weight: bold; }
+        #main-pop { font-size: 2.2vh; color: #00eaff; margin-left: 10px; }
         #temp-display { font-size: 18vh; font-weight: bold; line-height: 1; }
         #weather-desc { font-size: 3vh; font-weight: bold; text-transform: uppercase; margin: 5px 0; }
-        #feels-like { font-size: 2.5vh; color: #00eaff; font-weight: bold; }
-        #clothes { font-size: 3vh; color: #ffcc00; font-weight: bold; margin-top: 5px; }
+        #clothes { font-size: 3vh; color: #ffcc00; font-weight: bold; }
 
         .box-right { width: 25%; text-align: right; padding-top: 20px; }
-        .astro { font-size: 3vh; font-weight: bold; margin-bottom: 5px; }
-        #moon { color: #00eaff; font-size: 2.6vh; margin-bottom: 15px; }
-        .info-gray { color: #888; font-size: 1.6vh; line-height: 1.4; border-top: 1px solid #333; padding-top: 5px; }
+        .astro { font-size: 3vh; font-weight: bold; }
+        .info-gray { color: #888; font-size: 1.6vh; line-height: 1.4; border-top: 1px solid #333; padding-top: 10px; margin-top: 15px; }
 
         .ticker-wrap { width: 100%; height: 7vh; background: #111; border-top: 2px solid #333; overflow: hidden; white-space: nowrap; }
         #ticker { display: inline-block; padding-left: 100%; animation: t 60s linear infinite; font-size: 3.5vh; color: #00eaff; line-height: 7vh; font-weight: bold; }
         @keyframes t { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        table { width: 100%; height: 38vh; table-layout: fixed; border-collapse: collapse; }
+        table { width: 100%; height: 38vh; table-layout: fixed; }
         td { text-align: center; font-size: 2.8vh; font-weight: bold; }
         .t-icon { width: 6vh; height: 6vh; }
 
-        /* MENÜ */
         #menu-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); flex-direction:column; align-items:center; z-index:2000; padding-top: 20px; }
-        .menu-btn { background: #111; border: 1px solid #333; color: #fff; padding: 15px; margin: 5px; width: 90%; max-width: 500px; border-radius: 10px; font-size: 2.5vh; font-weight: bold; display: flex; justify-content: space-between; }
-        .sub { display:none; width: 90%; max-width: 500px; text-align: center; }
-        input { width: 100%; padding: 15px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin: 10px 0; font-size: 2vh; }
+        .menu-btn { background: #111; border: 1px solid #333; color: #fff; padding: 18px; margin: 6px; width: 90%; max-width: 500px; border-radius: 12px; font-size: 2.4vh; font-weight: bold; display: flex; justify-content: space-between; text-decoration: none; box-sizing: border-box; }
+        .sub { display:none; width: 90%; max-width: 500px; }
+        input { width: 100%; padding: 15px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -48,29 +43,26 @@
     <div class="top-section">
         <div class="box-left">
             <div id="clock">--:--</div>
-            <div class="status-bar">
-                <div id="date">...</div>
-                <div id="bat" style="display:none; color:#fff; font-size:2.2vh;">🔋<span id="bat-lv">--%</span></div>
-                <div id="wifi" style="color:#00ff00;">📶</div>
-            </div>
-            <a href="https://code-werft.de" target="_blank"><img src="logo.png" style="width:200px; margin-top:10px;"></a>
+            <div id="date">...</div>
+            <div id="bat" style="display:none; color:#fff; font-size:2.2vh; margin-top:10px;">🔋 <span id="bat-lv">--%</span></div>
+            <img src="logo.png" style="width:200px; margin-top:20px;">
         </div>
         <div class="box-center">
-            <div id="city-title" style="color:#888; letter-spacing:2px;">--</div>
+            <div id="city-title" style="color:#888; letter-spacing:2px; font-size:2.2vh;">--</div>
             <div class="temp-row">
                 <img id="current-icon" src=""><div id="temp-display">--°</div><span id="main-pop">💧--%</span>
             </div>
             <div id="weather-desc">--</div>
-            <div id="feels-like">--</div>
+            <div id="feels-like" style="color:#00eaff; font-weight:bold; font-size:2.5vh;">--</div>
             <div id="clothes">--</div>
         </div>
         <div class="box-right">
             <div class="astro">☀ <span id="sr">--:--</span></div>
             <div class="astro">☾ <span id="ss">--:--</span></div>
-            <div id="moon">--</div>
+            <div id="moon" style="color:#00eaff; margin: 10px 0; font-size: 2.6vh;">--</div>
             <div class="info-gray">
-                <b>Web App Update:</b> Build V17.9<br>
-                <b>Wetter Update:</b> <span id="up-d">--.--</span> | <span id="up-t">--:--</span>
+                Web App Update: Build V18.0<br>
+                Wetter Update: <span id="up-d">--.--</span> | <span id="up-t">--:--</span>
             </div>
         </div>
     </div>
@@ -81,20 +73,24 @@
         <div id="m-main" style="width:100%; display:flex; flex-direction:column; align-items:center;">
             <img src="logo.png" style="width:150px; margin-bottom:20px;">
             <div class="menu-btn" onclick="showS('s-cfg')">📍 STANDORT & TIMER <span>❯</span></div>
-            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="menu-btn" style="text-decoration:none; color:#ffcc00; border-color:#ffcc00;">☕ KAFFEE-SPENDE <span>❯</span></a>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="menu-btn" style="color:#ffcc00; border-color:#ffcc00;">☕ KAFFEE-SPENDE <span>❯</span></a>
             <div class="menu-btn" onclick="showS('s-help')">📖 HILFE & TRICKS <span>❯</span></div>
             <div class="menu-btn" onclick="showS('s-con')">📧 KONTAKT & WEB <span>❯</span></div>
-            <button onclick="closeM()" style="background:#333; color:#fff; border:none; padding:15px; border-radius:10px; margin-top:10px; width:90%; max-width:500px;">SCHLIESSEN</button>
+            <button onclick="closeM()" style="background:#333; color:#fff; border:none; padding:15px; border-radius:10px; margin-top:20px; width:90%; max-width:500px; font-weight:bold;">SCHLIESSEN</button>
         </div>
         <div id="s-cfg" class="sub">
-            <h2 style="color:#00eaff;">STANDORT & TIMER</h2>
+            <h2 style="color:#00eaff;">KONFIGURATION</h2>
             <input type="text" id="city-in" placeholder="Stadt">
             <div style="display:flex; gap:10px;"><input type="time" id="ts"> <input type="time" id="te"></div>
-            <button onclick="save()" style="background:#00eaff; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold;">SPEICHERN</button>
-            <button onclick="showM()" style="background:#333; color:#fff; border:none; padding:10px; border-radius:10px; margin-top:10px; width:100%;">ZURÜCK</button>
+            <button onclick="save()" style="background:#00eaff; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold; margin-top:10px;">SPEICHERN</button>
+            <button onclick="showM()" style="background:#333; color:#fff; border:none; padding:10px; border-radius:10px; margin-top:15px; width:100%;">ZURÜCK</button>
         </div>
-        <div id="s-help" class="sub"><h2 style="color:#00eaff;">HILFE</h2><p>Updates erfolgen automatisch. Tippe im Schlafmodus zum Aufwachen.</p><button onclick="showM()">ZURÜCK</button></div>
-        <div id="s-con" class="sub"><h2 style="color:#00eaff;">KONTAKT</h2><a href="https://code-werft.de" style="color:#00eaff;">WWW.CODE-WERFT.DE</a><button onclick="showM()" style="margin-top:20px;">ZURÜCK</button></div>
+        <div id="s-con" class="sub">
+            <h2 style="color:#00eaff;">KONTAKT</h2>
+            <a href="https://code-werft.de" target="_blank" class="menu-btn">🌐 WEBSITE ÖFFNEN <span>❯</span></a>
+            <button onclick="showM()" style="margin-top:20px;">ZURÜCK</button>
+        </div>
+        <div id="s-help" class="sub"><h2 style="color:#00eaff;">INFO</h2><p>Tippe im Schlafmodus zum Aufwachen.</p><button onclick="showM()">ZURÜCK</button></div>
     </div>
 
     <script>
@@ -150,9 +146,7 @@
                     dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span style='color:#ff4444'>"+Math.round(it.main.temp_max)+"°</span> <span style='color:#00eaff'>"+Math.round(it.main.temp_min-2)+"°</span></td>";
                 }
                 document.getElementById('forecast').innerHTML = h + "</tr>" + dy + "</tr>";
-                var w = ["New York","Sydney","Tokyo","London"]; var tickerText = d.list[0].weather[0].description.toUpperCase();
-                document.getElementById('ticker').innerText = tickerText + " +++ WELTWETTER LÄDT...";
-                // Weltwetter-Logik hier einfügen...
+                document.getElementById('ticker').innerText = d.list[0].weather[0].description.toUpperCase() + " +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H";
             };
             x.send();
         }
@@ -160,8 +154,13 @@
         function openM() { document.getElementById('menu-overlay').style.display='flex'; showM(); }
         function closeM() { document.getElementById('menu-overlay').style.display='none'; }
         function showM() { document.getElementById('m-main').style.display='flex'; var s=document.getElementsByClassName('sub'); for(var i=0; i<s.length; i++) s[i].style.display='none'; }
-        function showS(id) { document.getElementById('m-main').style.display='none'; document.getElementById(id).style.display='block'; }
-        function save() { localStorage.setItem('city', document.getElementById('city-in').value); localStorage.setItem('sleepStart', document.getElementById('ts').value); localStorage.setItem('sleepEnd', document.getElementById('te').value); location.reload(); }
+        function showSub(id) { document.getElementById('m-main').style.display='none'; document.getElementById(id).style.display='block'; }
+        function save() { 
+            localStorage.setItem('city', document.getElementById('city-in').value); 
+            localStorage.setItem('sleepStart', document.getElementById('ts').value); 
+            localStorage.setItem('sleepEnd', document.getElementById('te').value); 
+            window.parent.location.reload(); 
+        }
 
         if(navigator.getBattery) navigator.getBattery().then(function(b){ 
             var f = function(){ document.getElementById('bat').style.display='block'; document.getElementById('bat-lv').innerText=Math.round(b.level*100)+"%"; };
