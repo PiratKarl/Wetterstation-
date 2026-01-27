@@ -8,33 +8,32 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0;
 
 .top-section { display: flex; justify-content: space-between; height: 45vh; padding: 20px; box-sizing: border-box; position: relative; }
 
-/* ZENTRUM - Regen-Fix */
+/* ZENTRUM: Regen-Fix */
 .box-center { position: absolute; left: 50%; transform: translateX(-50%); width: 45%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .temp-row { display: flex; align-items: center; justify-content: center; }
-#main-pop { font-size: 4.5vh; color: #00eaff; font-weight: 900; margin-left: 15px; }
+#main-pop { font-size: 4.8vh; color: #00eaff; font-weight: 900; margin-left: 15px; text-shadow: 2px 2px 5px #000; }
 #temp-display { font-size: 18vh; font-weight: bold; line-height: 1; }
 #weather-status { font-size: 3.5vh; font-weight: bold; text-transform: uppercase; margin: 8px 0; }
+#clothes-advice { font-size: 3.4vh; margin-top: 15px; color: #ffcc00; font-weight: bold; }
 
-/* RECHTS - Astro (Sicherheitsabstand) */
+/* RECHTS: Astro (Genug Abstand zum Zahnrad) */
 .box-right { width: 25%; text-align: right; padding-top: 100px; } 
 
-/* TICKER */
+/* TICKER & TABELLEN */
 .ticker-wrap { width: 100%; height: 7vh; background: #111; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; }
 #ticker { display: inline-block; padding-left: 100%; animation: ticker 85s linear infinite; font-size: 3.8vh; color: #00eaff; line-height: 7vh; font-weight: bold; }
 #ticker img { width: 4.5vh; height: 4.5vh; vertical-align: middle; margin: 0 8px; }
 @keyframes ticker { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
-/* MENÜ - Die neue Inhalts-Logik */
+/* MENÜ-INHALTE auf 18px */
 #settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); flex-direction:column; align-items:center; z-index:20000; padding: 20px; overflow-y: auto; box-sizing: border-box; }
-.menu-list { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 10px; }
-.menu-item { background: #111; border: 1px solid #333; color: #fff; padding: 18px 20px; font-size: 2.5vh; font-weight: bold; border-radius: 12px; display: flex; justify-content: space-between; text-decoration: none; cursor: pointer; }
-
-/* Inhalts-Texte auf 18px */
-.sub-content { display: none; width: 100%; max-width: 600px; text-align: left; background: #050505; border: 1px solid #222; padding: 20px; border-radius: 15px; box-sizing: border-box; }
-.sub-content h2 { color: #00eaff; margin-top: 0; font-size: 3vh; }
-.sub-content p, .sub-content li { font-size: 18px; line-height: 1.6; color: #ccc; }
+.sub-content { display: none; width: 100%; max-width: 650px; text-align: left; background: #080808; border: 1px solid #222; padding: 25px; border-radius: 15px; box-sizing: border-box; }
+.sub-content h2 { color: #00eaff; margin-top: 0; font-size: 3.2vh; border-bottom: 1px solid #222; padding-bottom: 10px; }
+.sub-content p, .sub-content li { font-size: 18px; line-height: 1.6; color: #ddd; margin-bottom: 15px; }
 .highlight { color: #00eaff; font-weight: bold; }
 
-/* WACHHALTE-ELEMENTE */
-#wake-video, #wake-audio, #wiggle-canvas { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0.01; pointer-events: none; z-index: 1; }
-#update-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 6px solid #00eaff; }
+/* OVERLAYS */
+#start-overlay, #update-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; text-align: center; }
+#update-overlay { background: rgba(0,0,0,0.99); border: 8px solid #00eaff; display: none; }
+
+#wake-video, #wake-audio, #wiggle-canvas { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0.01; pointer-events: none; }

@@ -1,19 +1,23 @@
-var currentVer = 18.7;
+var currentVer = 18.8;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
-var active = false, worldData = "", wakeLock = null;
+var active = false;
 
 var caps = ["Berlin", "Paris", "Rome", "Madrid", "London", "Tokyo", "Washington", "Ottawa", "Canberra", "Stockholm", "Vienna", "Lisbon"];
 
 function z(n){return (n<10?'0':'')+n;}
 
+// Aggressiver Update-Check mit Cache-Buster
 function checkUpdate() {
     var x = new XMLHttpRequest();
-    x.open("GET", "version.json?nocache=" + Date.now(), true);
+    x.open("GET", "version.json?timestamp=" + new Date().getTime(), true);
     x.onload = function() {
-        if (x.status === 200 && JSON.parse(x.responseText).version > currentVer) {
-            document.getElementById('update-overlay').style.display = 'flex';
+        if (x.status === 200) {
+            var data = JSON.parse(x.responseText);
+            if (data.version > currentVer) {
+                document.getElementById('update-overlay').style.display = 'flex';
+            }
         }
     };
     x.send();
@@ -21,22 +25,15 @@ function checkUpdate() {
 
 async function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
-    
-    // Säule 1: Audio/Video Herzschlag
     var vW = document.getElementById('wake-video');
     var aW = document.getElementById('wake-audio');
     vW.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
-    aW.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=="; // Silent Audio
+    aW.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=="; 
     vW.play().catch(e => {}); aW.play().catch(e => {});
 
-    // Säule 2: Modern Wake Lock
-    if ('wakeLock' in navigator) {
-        try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
-    }
+    if ('wakeLock' in navigator) { try { await navigator.wakeLock.request('screen'); } catch (err) {} }
 
-    // Säule 3: Pixel Wiggle (CPU Aktivität simulieren)
-    var canvas = document.getElementById('wiggle-canvas');
-    var ctx = canvas.getContext('2d');
+    var ctx = document.getElementById('wiggle-canvas').getContext('2d');
     setInterval(() => { ctx.fillStyle = `rgb(${Math.random()*255},0,0)`; ctx.fillRect(0,0,1,1); }, 1000);
 
     if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
@@ -67,35 +64,35 @@ function loadWeather() {
     x.onload = function() {
         var d = JSON.parse(x.responseText);
         document.getElementById('temp-display').innerText = Math.round(d.main.temp) + "°";
-        document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
         document.getElementById('weather-status').innerText = d.weather[0].description.toUpperCase();
         document.getElementById('city-title').innerText = d.name.toUpperCase();
         document.getElementById('current-weather-icon').src = d.weather[0].icon + ".gif";
         var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000), s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
         document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
         document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
-        var n = new Date(); document.getElementById('up-date').innerText = z(n.getDate())+"."+z(n.getMonth()+1); document.getElementById('up-time').innerText = z(n.getHours())+":"+z(n.getMinutes());
         loadWorld(); loadFore(d.coord.lat, d.coord.lon, d.main.temp);
     };
     x.send();
 }
 
 function loadWorld() {
-    worldData = "";
+    var worldData = "";
     var shuffle = caps.sort(() => 0.5 - Math.random()).slice(0, 10);
     shuffle.forEach(function(c) {
         var x = new XMLHttpRequest(); x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric", false); x.send();
         if(x.status === 200) { var d = JSON.parse(x.responseText); worldData += " ◈ " + d.name.toUpperCase() + ": <img src='" + d.weather[0].icon + ".gif'> " + Math.round(d.main.temp) + "°"; }
     });
+    document.getElementById('ticker').innerHTML = worldData;
 }
 
 function loadFore(lat, lon, ct) {
     var x = new XMLHttpRequest();
     x.open("GET", "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de", true);
     x.onload = function() {
-        var d = JSON.parse(x.responseText), rN = Math.round(d.list[0].pop * 100);
-        document.getElementById('main-pop').innerText = "💧"+rN+"%";
-        document.getElementById('clothes-advice').innerText = rN > 30 ? "🌂 REGENSCHIRM" : (ct < 5 ? "🧥 WINTERJACKE" : (ct < 15 ? "🧥 ÜBERGANGSJACKE" : "👕 T-SHIRT"));
+        var d = JSON.parse(x.responseText);
+        document.getElementById('main-pop').innerText = "💧"+Math.round(d.list[0].pop * 100)+"%";
+        document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.list[0].main.feels_like) + "°";
+        document.getElementById('clothes-advice').innerText = (d.list[0].pop > 0.3) ? "🌂 REGENSCHIRM" : (ct < 5 ? "🧥 WINTERJACKE" : (ct < 15 ? "🧥 ÜBERGANGSJACKE" : "👕 T-SHIRT"));
         var h = "<tr>", dy = "<tr>";
         for(var i=0; i<4; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
@@ -106,14 +103,13 @@ function loadFore(lat, lon, ct) {
             dy += "<td>"+day+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span style='color:#ff4444'>"+Math.round(it.main.temp_max)+"°</span> <span style='color:#00eaff'>"+Math.round(it.main.temp_min-2)+"°</span></td>";
         }
         document.getElementById('hourly-table').innerHTML = h + "</tr>"; document.getElementById('daily-table').innerHTML = dy + "</tr>";
-        document.getElementById('ticker').innerHTML = d.list[0].weather[0].description.toUpperCase() + " +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H" + worldData;
     };
     x.send();
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='flex'; }
+function openMenu() { document.getElementById('settings-overlay').style.display='flex'; showMain(); }
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-function showMain() { document.getElementById('menu-main').style.display='flex'; document.getElementById('sub-config').style.display='none'; }
+function showMain() { document.getElementById('menu-main').style.display='flex'; var subs = document.getElementsByClassName('sub-content'); for(var i=0; i<subs.length; i++) subs[i].style.display='none'; }
 function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
 function save() { localStorage.setItem('city', document.getElementById('city-in').value); localStorage.setItem('t-start', document.getElementById('t-start').value); localStorage.setItem('t-end', document.getElementById('t-end').value); location.reload(); }
 
