@@ -2,92 +2,100 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Station V18.9</title>
-    <link rel="stylesheet" href="style.css?v=18.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi">
+    <title>Aura Station V19.0</title>
+    <link rel="stylesheet" href="style.css?v=19.0">
 </head>
 <body>
-    <video id="wake-video" loop playsinline muted></video>
-    <audio id="wake-audio" loop playsinline></audio>
-    <canvas id="wiggle-canvas" width="1" height="1"></canvas>
+    <video id="wake-video" loop playsinline muted style="position:fixed; width:1px; opacity:0.01;"></video>
+    <audio id="wake-audio" loop playsinline style="display:none;"></audio>
 
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:250px;">
-        <div style="font-size:8vh; margin:20px 0;">👆</div>
-        <div style="color:#00eaff; font-size:3.5vh; font-weight:bold;">TIPPEN ZUM STARTEN</div>
+        <div style="font-size:10vh; margin:30px 0;">👆</div>
+        <div style="color:#00eaff; font-size:4vh; font-weight:bold;">STARTEN</div>
     </div>
 
     <div id="update-overlay" onclick="location.reload(true)">
-        <h1 style="color:#00eaff; font-size:7vh;">SYSTEM-UPDATE</h1>
-        <p style="font-size:3.5vh;">V18.9 - Bitte einmal tippen</p>
-        <div style="background:#00eaff; color:#000; padding:25px; border-radius:15px; font-weight:bold; font-size:3.5vh; margin-top:30px;">AKTUALISIEREN</div>
+        <h1 style="color:#00eaff; font-size:8vh;">UPDATE</h1>
+        <div style="background:#00eaff; color:#000; padding:30px; border-radius:20px; font-weight:bold; font-size:4vh; margin-top:40px;">JETZT AKTUALISIEREN</div>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
 
     <div class="top-section">
-        <div class="box-left"><div id="clock">--:--</div><div id="date">...</div><img src="logo.png" class="aura-logo"></div>
-        <div class="box-center">
-            <div id="city-title">...</div>
-            <div class="temp-row"><img id="current-weather-icon" src=""><div id="temp-display">--°</div><span id="main-pop">💧--%</span></div>
-            <div id="weather-status">DATEN LADEN</div><div id="feels-like">--</div><div id="clothes-advice">--</div>
+        <div class="box-left">
+            <div id="clock">--:--</div>
+            <div id="date">...</div>
+            <img src="logo.png" class="aura-logo">
         </div>
-        <div class="box-right"><div class="astro-row">☀ <span id="sunrise">--:--</span></div><div class="astro-row">☾ <span id="sunset">--:--</span></div><div id="moon">...</div></div>
+
+        <div class="box-center">
+            <div id="city-title" style="color:#888; letter-spacing:3px; font-size:20px;">...</div>
+            <div class="temp-row">
+                <img id="current-weather-icon" src="">
+                <div id="temp-display">--°</div>
+                <span id="main-pop">💧--%</span>
+            </div>
+            <div id="weather-status">...</div>
+            <div id="feels-like" style="font-size:24px; color:#00eaff; font-weight:bold;">--</div>
+            <div id="clothes-advice">--</div>
+        </div>
+
+        <div class="box-right">
+            <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
+            <div class="astro-row">☾ <span id="sunset">--:--</span></div>
+            <div id="moon">...</div>
+        </div>
     </div>
-    
-    <div class="ticker-wrap"><div id="ticker">...</div></div>
-    
+
+    <div class="ticker-wrap"><div id="ticker">GLOBALE DATEN WERDEN GELADEN...</div></div>
+
     <div class="tables-area">
         <table id="hourly-table"></table>
-        <div style="border-top:1px dashed #333;"></div>
+        <div style="border-top:2px dashed #333; margin:10px 0;"></div>
         <table id="daily-table"></table>
     </div>
 
     <div id="settings-overlay">
         <div id="menu-main" style="width:100%; display:flex; flex-direction:column; align-items:center;">
-            <h1 style="color:#00eaff;">EINSTELLUNGEN</h1>
-            <div class="menu-item" onclick="showSub('sub-config')" style="background:#111; padding:20px; width:90%; max-width:500px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; border:1px solid #333; font-weight:bold; cursor:pointer;">📍 STANDORT & TIMER <span>❯</span></div>
-            <div class="menu-item" onclick="showSub('sub-donation')" style="background:#111; padding:20px; width:90%; max-width:500px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; border:1px solid #ffcc00; color:#ffcc00; font-weight:bold; cursor:pointer;">☕ KAFFEE-SPENDE <span>❯</span></div>
-            <div class="menu-item" onclick="showSub('sub-help')" style="background:#111; padding:20px; width:90%; max-width:500px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; border:1px solid #333; font-weight:bold; cursor:pointer;">📖 HILFE & TRICKS <span>❯</span></div>
-            <div class="menu-item" onclick="showSub('sub-contact')" style="background:#111; padding:20px; width:90%; max-width:500px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; border:1px solid #333; font-weight:bold; cursor:pointer;">📧 KONTAKT & WEB <span>❯</span></div>
-            <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:18px; border-radius:12px; font-weight:bold; margin-top:20px; width:90%; max-width:500px;">ZURÜCK</button>
+            <h1 style="color:#00eaff; font-size:40px;">EINSTELLUNGEN</h1>
+            <div style="background:#111; border:1px solid #333; padding:25px; width:90%; border-radius:15px; margin:10px; font-size:24px; font-weight:bold; cursor:pointer;" onclick="showSub('sub-config')">📍 STANDORT & TIMER</div>
+            <div style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:25px; width:90%; border-radius:15px; margin:10px; font-size:24px; font-weight:bold; cursor:pointer;" onclick="showSub('sub-donation')">☕ KAFFEE-SPENDE</div>
+            <div style="background:#111; border:1px solid #333; padding:25px; width:90%; border-radius:15px; margin:10px; font-size:24px; font-weight:bold; cursor:pointer;" onclick="showSub('sub-help')">📖 HILFE & TRICKS</div>
+            <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:25px; border-radius:15px; font-weight:bold; margin-top:30px; width:90%; font-size:24px;">ZURÜCK</button>
         </div>
 
         <div id="sub-config" class="sub-content">
-            <h2>STANDORT & TIMER</h2>
-            <p>Passen Sie Ihre Station an Ihren Wohnort an. Geben Sie einfach Ihre Stadt ein, um präzise <span class="highlight">Echtzeit-Daten</span> von OpenWeather zu erhalten.</p>
-            <input type="text" id="city-in" placeholder="Stadt eingeben">
-            <p>Nutzen Sie den Ruhemodus, um das Display nachts abzudunkeln. Dies schont die Hardware Ihrer Tablets (besonders beim Android 15 Modell) und sorgt für eine angenehme Atmosphäre.</p>
-            <div style="display:flex; gap:10px;"><input type="time" id="t-start"> <input type="time" id="t-end"></div>
-            <button onclick="save()" style="background:#00eaff; color:#000; border:none; padding:18px; width:100%; border-radius:12px; font-weight:bold; margin-top:15px;">SPEICHERN</button>
-            <button onclick="showMain()" style="background:none; color:#666; border:none; width:100%; margin-top:10px;">ZURÜCK</button>
+            <h2 style="color:#00eaff; font-size:30px;">STANDORT & TIMER</h2>
+            <p>Geben Sie hier Ihre Stadt für das lokale Wetter ein:</p>
+            <input type="text" id="city-in" style="width:100%; padding:20px; font-size:22px; background:#222; border:1px solid #444; color:#fff; border-radius:10px;">
+            <p>Schlafmodus (Wann soll die Station abdunkeln?):</p>
+            <div style="display:flex; gap:10px;"><input type="time" id="t-start" style="padding:15px; font-size:20px;"> <input type="time" id="t-end" style="padding:15px; font-size:20px;"></div>
+            <button onclick="save()" style="background:#00eaff; border:none; padding:20px; width:100%; border-radius:10px; font-weight:bold; margin-top:20px; font-size:22px;">SPEICHERN</button>
         </div>
 
         <div id="sub-donation" class="sub-content">
-            <h2>DAS PROJEKT UNTERSTÜTZEN</h2>
-            <p>Hallo! Ich freue mich sehr, dass AURA einen Platz auf Ihren Tablets gefunden hat. Die Entwicklung dieser Station ist ein rein privates Herzensprojekt.</p>
-            <p>Jede Version erfordert viele Stunden Arbeit – von der Layout-Anpassung für <span class="highlight">Android 4.4 bis hin zu Android 15</span> bis hin zur Programmierung der Wachhalte-Sicherungen. Um die Kosten für die weltweiten Wetter-Daten (APIs) und das Server-Hosting zu decken, bin ich auf Unterstützung angewiesen.</p>
-            <p>Wenn Ihnen die werbefreie Station gefällt, freue ich mich riesig über einen <span class="highlight">virtuellen Kaffee</span> via PayPal. Damit helfen Sie direkt, die Zukunft von AURA zu sichern.</p>
+            <h2 style="color:#ffcc00; font-size:30px;">KAFFEE-SPENDE</h2>
+            <p>Vielen Dank, dass Sie AURA nutzen! Diese Station ist ein privates Herzensprojekt, speziell angepasst für <span style="color:#00eaff; font-weight:bold;">Android 4.4</span>.</p>
+            <p>Um die Kosten für Wetterdaten und Server zu decken, freue ich mich über einen "virtuellen Kaffee" via PayPal. Jede Hilfe erhält dieses Projekt werbefrei.</p>
             <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" style="text-decoration:none;">
-                <div style="background:#ffcc00; color:#000; padding:25px; border-radius:15px; text-align:center; font-weight:bold; font-size:22px; box-shadow: 0 4px 15px rgba(255,204,0,0.4);">☕ KAFFEE-SPENDE (PAYPAL)</div>
+                <div style="background:#ffcc00; color:#000; padding:25px; border-radius:15px; text-align:center; font-weight:bold; font-size:24px;">☕ JETZT SPENDEN</div>
             </a>
-            <p style="font-size:14px; margin-top:20px; text-align:center; color:#555;">Vielen Dank für Ihre Wertschätzung!</p>
-            <button onclick="showMain()" style="background:none; color:#666; border:none; width:100%; margin-top:10px;">ZURÜCK</button>
+            <button onclick="showMain()" style="margin-top:30px; background:none; border:none; color:#666; width:100%; font-size:20px;">ZURÜCK</button>
         </div>
 
         <div id="sub-help" class="sub-content">
-            <h2>HILFE & TRICKS</h2>
-            <p>Sollte Ihr Display nach einer gewissen Zeit schwarz werden, liegt das oft am aggressiven Energiemanagement moderner Tablets.</p>
+            <h2 style="color:#00eaff; font-size:30px;">ANDROID 4.4 TRICKS</h2>
             <ul>
-                <li><span class="highlight">Wach-Klick:</span> Tippen Sie nach jedem Update zwingend auf den blauen Button. Nur so darf der Browser das Video starten, das den Schlafmodus verhindert.</li>
-                <li><span class="highlight">Android 15:</span> Gehen Sie in die Einstellungen -> Entwickleroptionen und aktivieren Sie "Aktiv lassen beim Laden".</li>
-                <li><span class="highlight">Update-Problem:</span> Wenn eine neue Version nicht lädt, löschen Sie bitte den Browser-Cache Ihres Tablets.</li>
+                <li>Sollte das Display ausgehen, aktivieren Sie in den Android-Einstellungen die <span style="color:#00eaff;">Entwickleroptionen</span> und dort den Punkt "Aktiv lassen beim Laden".</li>
+                <li>Tippen Sie nach jedem Update zwingend auf den Bildschirm, um das Wachhalte-Video zu autorisieren.</li>
+                <li>Das Wetter aktualisiert sich alle 10 Minuten vollautomatisch.</li>
             </ul>
-            <button onclick="showMain()" style="background:none; color:#666; border:none; width:100%; margin-top:10px;">ZURÜCK</button>
+            <button onclick="showMain()" style="margin-top:30px; background:none; border:none; color:#666; width:100%; font-size:20px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=18.9"></script>
+    <script src="script.js?v=19.0"></script>
 </body>
 </html>
- 
