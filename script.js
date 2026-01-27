@@ -7,7 +7,6 @@ var worldData = "";
 
 function z(n){return (n<10?'0':'')+n;}
 
-// NAVI-FUNKTIONEN
 function openMenu() {
     document.getElementById('city-in').value = city;
     document.getElementById('time-start').value = sStart || "";
@@ -15,15 +14,12 @@ function openMenu() {
     showMain();
     document.getElementById('settings-overlay').style.display='flex';
 }
-
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-
 function showMain() {
     document.getElementById('menu-main').style.display = 'flex';
     var subs = document.getElementsByClassName('sub-content');
     for(var i=0; i<subs.length; i++) subs[i].style.display = 'none';
 }
-
 function showSub(id) {
     document.getElementById('menu-main').style.display = 'none';
     document.getElementById(id).style.display = 'flex';
