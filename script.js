@@ -18,11 +18,48 @@ function startApp() {
         active=true; 
         loadWeather(); 
         loadWorldWeather();
+        initStatusHandlers();
         update(); 
         setInterval(update,1000); 
         setInterval(loadWeather,600000); 
         setInterval(loadWorldWeather,1800000);
     }
+}
+
+// NEU: Status-Wächter (Batterie & WLAN)
+function initStatusHandlers() {
+    // WLAN Check
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    
+    // Batterie Check (Android 4.4 safe)
+    if (navigator.getBattery) {
+        navigator.getBattery().then(function(battery) {
+            updateBattery(battery);
+            battery.addEventListener('levelchange', function(){ updateBattery(battery); });
+            battery.addEventListener('chargingchange', function(){ updateBattery(battery); });
+        });
+    } else if (navigator.battery) { // Altes Präfix
+        updateBattery(navigator.battery);
+    }
+}
+
+function updateStatus() {
+    var wifi = document.getElementById('wifi-icon');
+    if (navigator.onLine) {
+        wifi.innerText = "📶";
+        wifi.className = "online";
+    } else {
+        wifi.innerText = "📶";
+        wifi.className = "offline";
+    }
+}
+
+function updateBattery(bat) {
+    document.getElementById('bat-box').style.display = 'flex';
+    var level = Math.round(bat.level * 100);
+    document.getElementById('bat-level').innerText = level + "%";
+    document.getElementById('bat-icon').innerText = bat.charging ? "⚡" : "🔋";
 }
 
 function getClothes(temp, rain) {
@@ -33,22 +70,18 @@ function getClothes(temp, rain) {
     return "👕 T-SHIRT WETTER";
 }
 
-function getWeatherSymbol(desc) {
-    desc = desc.toLowerCase();
-    if(desc.includes("sonne") || desc.includes("klar")) return "☀️";
-    if(desc.includes("wolken")) return "☁️";
-    if(desc.includes("regen")) return "🌧️";
-    if(desc.includes("gewitter")) return "⛈️";
-    if(desc.includes("schnee")) return "❄️";
-    return "🌤️";
-}
-
 function update() {
     var now = new Date();
     document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
-    var days=['SO','MO','DI','MI','DO','FR','SA'], months=['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
-    document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
     
+    // Ausgeschriebenes Datum
+    var days = ['So.','Mo.','Di.','Mi.','Do.','Fr.','Sa.'];
+    var months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    var dateString = days[now.getDay()] + " " + now.getDate() + ". " + months[now.getMonth()] + " " + now.getFullYear();
+    document.getElementById('date').innerText = dateString;
+    
+    updateStatus();
+
     var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate();
     if(month<3){year--;month+=12;}++month;
     var jd = (365.25*year) + (30.6*month) + day - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
@@ -67,9 +100,8 @@ function update() {
 }
 
 function loadWeather() {
-    var url = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API+"&units=metric&lang=de";
     var x = new XMLHttpRequest();
-    x.open("GET", url, true);
+    x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API+"&units=metric&lang=de", true);
     x.onload = function() {
         var d = JSON.parse(x.responseText);
         var temp = Math.round(d.main.temp);
@@ -92,23 +124,20 @@ function loadWorldWeather() {
         x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric&lang=de", true);
         x.onload = function() {
             var d = JSON.parse(x.responseText);
-            var sym = getWeatherSymbol(d.weather[0].description);
-            worldData += " +++ " + d.name.toUpperCase() + ": " + sym + " " + Math.round(d.main.temp) + "°";
+            worldData += " +++ " + d.name.toUpperCase() + ": " + Math.round(d.main.temp) + "°";
         };
         x.send();
     });
 }
 
 function loadFore(lat, lon, currentTemp, currentDesc) {
-    var url = "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de";
     var x = new XMLHttpRequest();
-    x.open("GET", url, true);
+    x.open("GET", "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de", true);
     x.onload = function() {
         var d = JSON.parse(x.responseText);
         var h = "<tr>", dy = "<tr>";
         var rainNext = Math.round(d.list[0].pop * 100);
         document.getElementById('clothes-advice').innerText = getClothes(currentTemp, rainNext);
-
         for(var i=0; i<4; i++) {
             var it = d.list[i], t = new Date(it.dt*1000), p = Math.round(it.pop * 100);
             h += "<td>"+z(t.getHours())+"h<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<br><span class='t-pop'>💧"+p+"%</span></td>";
