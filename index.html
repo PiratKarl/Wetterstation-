@@ -14,13 +14,13 @@
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:250px;">
         <div style="font-size:8vh; margin:20px 0;">👆</div>
-        <div style="color:#00eaff; font-size:3.5vh; font-weight:bold;">STARTEN</div>
+        <div style="color:#00eaff; font-size:3.5vh; font-weight:bold;">TIPPEN ZUM STARTEN</div>
     </div>
 
     <div id="update-overlay" onclick="location.reload(true)">
-        <h1 style="color:#00eaff; font-size:7vh;">UPDATE</h1>
-        <p style="font-size:3vh;">Version 18.8 bereit!</p>
-        <div style="background:#00eaff; color:#000; padding:20px; border-radius:15px; font-weight:bold; margin-top:20px;">JETZT LADEN</div>
+        <h1 style="color:#00eaff; font-size:7vh;">NEUES UPDATE</h1>
+        <p style="font-size:3.5vh;">Version 18.8 (Menu & Text-Fix)</p>
+        <div style="background:#00eaff; color:#000; padding:25px; border-radius:15px; font-weight:bold; font-size:3.5vh; margin-top:30px;">JETZT AKTUALISIEREN</div>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
@@ -34,58 +34,58 @@
         </div>
         <div class="box-right"><div class="astro-row">☀ <span id="sunrise">--:--</span></div><div class="astro-row">☾ <span id="sunset">--:--</span></div><div id="moon">...</div></div>
     </div>
-    <div class="ticker-wrap"><div id="ticker">LADE WELTWEITES WETTER...</div></div>
+    <div class="ticker-wrap"><div id="ticker">...</div></div>
     <div class="tables-area"><table id="hourly-table"></table><table id="daily-table"></table></div>
 
     <div id="settings-overlay">
-        <div id="menu-main" class="menu-list">
-            <h1 style="color:#00eaff; text-align:center;">AURA SETUP</h1>
-            <div class="menu-item" onclick="showSub('sub-config')">📍 STANDORT & TIMER <span>❯</span></div>
-            <div class="menu-item" onclick="showSub('sub-donation')" style="color:#ffcc00; border-color:#ffcc00;">☕ KAFFEE-SPENDE <span>❯</span></div>
-            <div class="menu-item" onclick="showSub('sub-help')">📖 HILFE & TRICKS <span>❯</span></div>
-            <div class="menu-item" onclick="showSub('sub-contact')">📧 KONTAKT & WEB <span>❯</span></div>
-            <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:18px; border-radius:12px; font-weight:bold; margin-top:20px;">ZURÜCK ZUR STATION</button>
+        <div id="menu-main" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+            <h1 style="color:#00eaff; margin-bottom:30px;">EINSTELLUNGEN</h1>
+            <div class="menu-item" onclick="showSub('sub-config')" style="background:#111; border:1px solid #333; color:#fff; padding:18px; width:90%; max-width:500px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; cursor:pointer;">📍 STANDORT & TIMER <span>❯</span></div>
+            <div class="menu-item" onclick="showSub('sub-donation')" style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:18px; width:90%; max-width:500px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; cursor:pointer;">☕ KAFFEE-SPENDE <span>❯</span></div>
+            <div class="menu-item" onclick="showSub('sub-help')" style="background:#111; border:1px solid #333; color:#fff; padding:18px; width:90%; max-width:500px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; cursor:pointer;">📖 HILFE & TRICKS <span>❯</span></div>
+            <div class="menu-item" onclick="showSub('sub-contact')" style="background:#111; border:1px solid #333; color:#fff; padding:18px; width:90%; max-width:500px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; cursor:pointer;">📧 KONTAKT & WEB <span>❯</span></div>
+            <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:18px; border-radius:12px; font-weight:bold; margin-top:20px; width:90%; max-width:500px;">ZURÜCK ZUM WETTER</button>
         </div>
 
         <div id="sub-config" class="sub-content">
             <h2>STANDORT & TIMER</h2>
-            <p>Hier legst du fest, für welchen Ort die Wetterdaten geladen werden und wann die Station nachts in den Ruhemodus gehen soll.</p>
-            <input type="text" id="city-in" placeholder="Stadt eingeben (z.B. Braunschweig)">
-            <p>Schlafmodus (Von - Bis):</p>
+            <p>Hier konfigurieren Sie das Herzstück Ihrer Station. Geben Sie den Namen Ihrer Stadt ein, um lokale Wetterdaten in Echtzeit zu empfangen.</p>
+            <input type="text" id="city-in" placeholder="z.B. Braunschweig">
+            <p>Mit der <span class="highlight">Timer-Funktion</span> definieren Sie, wann die Station nachts automatisch abdunkelt. Das schont das Display und verhindert Blendung im Schlafzimmer.</p>
             <div style="display:flex; gap:10px;"><input type="time" id="t-start"> <input type="time" id="t-end"></div>
-            <button onclick="save()" style="background:#00eaff; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold; margin-top:10px;">DATEN SPEICHERN</button>
-            <button onclick="showMain()" style="background:#222; color:#888; border:none; padding:10px; width:100%; margin-top:10px;">ZURÜCK</button>
+            <button onclick="save()" style="background:#00eaff; color:#000; border:none; padding:18px; width:100%; border-radius:12px; font-weight:bold; margin-top:15px;">SPEICHERN & NEU STARTEN</button>
+            <button onclick="showMain()" style="background:#222; color:#888; border:none; padding:12px; width:100%; margin-top:10px; border-radius:12px;">ZURÜCK</button>
         </div>
 
         <div id="sub-donation" class="sub-content">
-            <h2>UNTERSTÜTZE AURA</h2>
-            <p>Vielen Dank, dass du AURA nutzt! Diese Wetterstation ist ein Herzensprojekt, das in unzähligen Stunden privater Freizeit entwickelt wurde.</p>
-            <p>Um die laufenden Kosten für die <span class="highlight">Wetter-Schnittstellen (API)</span> und die Server zu decken, freue ich mich riesig über eine kleine "Kaffee-Spende". Jede Unterstützung hilft dabei, die App stabil zu halten und neue Funktionen wie den edlen Welt-Ticker weiter auszubauen.</p>
+            <h2>UNTERSTÜTZE DAS PROJEKT</h2>
+            <p>Vielen Dank, dass Sie AURA nutzen! In dieser Wetterstation stecken hunderte Stunden an Programmierung, Layout-Design und intensiver Fehlerbehebung für <span class="highlight">alte und neue Tablets</span>.</p>
+            <p>Um die monatlichen Kosten für die weltweiten Wetter-Schnittstellen (OpenWeather API) und die Server zu decken, freue ich mich riesig über eine kleine Unterstützung.</p>
+            <p>Ein kleiner Betrag für einen <span class="highlight">"virtuellen Kaffee"</span> hilft dabei, dieses Projekt am Leben zu erhalten, werbefrei zu lassen und stetig weiterzuentwickeln.</p>
             <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" style="text-decoration:none;">
-                <div style="background:#ffcc00; color:#000; padding:20px; border-radius:12px; text-align:center; font-weight:bold; font-size:20px;">☕ JETZT KAFFEE SPENDEN</div>
+                <div style="background:#ffcc00; color:#000; padding:25px; border-radius:15px; text-align:center; font-weight:bold; font-size:20px; box-shadow: 0 4px 15px rgba(255,204,0,0.3);">☕ JETZT KAFFEE SPENDEN</div>
             </a>
-            <p style="font-size:14px; margin-top:15px; text-align:center; color:#666;">Ein großes Dankeschön an alle Unterstützer!</p>
-            <button onclick="showMain()" style="background:#222; color:#888; border:none; padding:10px; width:100%; margin-top:10px;">ZURÜCK</button>
+            <p style="font-size:14px; margin-top:20px; text-align:center; color:#555;">Ein herzliches Dankeschön an alle Unterstützer!</p>
+            <button onclick="showMain()" style="background:#222; color:#888; border:none; padding:12px; width:100%; margin-top:10px; border-radius:12px;">ZURÜCK</button>
         </div>
 
         <div id="sub-help" class="sub-content">
             <h2>HILFE & TRICKS</h2>
-            <p>Damit deine Station perfekt läuft, hier die wichtigsten Tipps:</p>
+            <p>Sollte Ihr Display trotz unserer Sicherheitsmechanismen abschalten (besonders bei Android 15), prüfen Sie bitte:</p>
             <ul>
-                <li><span class="highlight">Wachbleiben:</span> Nach jedem App-Update musst du einmal den Bildschirm antippen. Nur so bekommt die App die Erlaubnis, das "Wachhalte-Video" zu starten.</li>
-                <li><span class="highlight">Alte Tablets:</span> Falls das Display trotzdem ausgeht, aktiviere in den Android-Einstellungen die "Entwickleroptionen" und dort den Punkt "Aktiv lassen beim Laden".</li>
-                <li><span class="highlight">Aktualität:</span> Das Wetter wird alle 10 Minuten automatisch synchronisiert. Den Zeitpunkt siehst du rechts unten.</li>
+                <li><span class="highlight">Entwickleroptionen:</span> Aktivieren Sie unter Android den Punkt "Aktiv lassen beim Laden".</li>
+                <li><span class="highlight">Wach-Klick:</span> Nach jedem Update MUSS der blaue Button getippt werden. Nur so bekommt der Browser die Erlaubnis für das Wachhalte-Video.</li>
+                <li><span class="highlight">Cache:</span> Wenn das Update nicht erscheint, laden Sie die Seite einmal händisch neu oder löschen Sie den Browser-Verlauf.</li>
             </ul>
-            <button onclick="showMain()" style="background:#222; color:#888; border:none; padding:10px; width:100%; margin-top:10px;">ZURÜCK</button>
+            <button onclick="showMain()" style="background:#222; color:#888; border:none; padding:12px; width:100%; margin-top:10px; border-radius:12px;">ZURÜCK</button>
         </div>
 
         <div id="sub-contact" class="sub-content">
             <h2>KONTAKT & ENTWICKLUNG</h2>
-            <p>Hast du Anregungen oder Probleme? Wir arbeiten ständig an der Verbesserung von AURA.</p>
-            <p>Besuche uns im Web für weitere Informationen oder kontaktiere uns direkt:</p>
-            <div class="menu-item" onclick="window.open('https://code-werft.de')">🌐 UNSERE WEBSEITE <span>❯</span></div>
-            <p style="margin-top:10px;">Entwickelt mit Leidenschaft für edle Wetter-Stationen.</p>
-            <button onclick="showMain()" style="background:#222; color:#888; border:none; padding:10px; width:100%; margin-top:10px;">ZURÜCK</button>
+            <p>AURA ist ein privates Projekt der Code-Werft. Wir arbeiten ständig an der Verbesserung des Layouts und der Stabilität.</p>
+            <p>Besuchen Sie unsere Webseite für weitere Informationen oder bei technischen Problemen:</p>
+            <div style="background:#111; border:1px solid #333; padding:20px; border-radius:12px; text-align:center; color:#00eaff; font-weight:bold; cursor:pointer;" onclick="window.open('https://code-werft.de')">🌐 CODE-WERFT.DE</div>
+            <button onclick="showMain()" style="background:#222; color:#888; border:none; padding:12px; width:100%; margin-top:10px; border-radius:12px;">ZURÜCK</button>
         </div>
     </div>
 
