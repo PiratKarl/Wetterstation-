@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Professional - V13.1</title>
+    <title>Aura Weather Professional - V14.0 Status Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <h1 style="color:#00eaff;">AURA STARTEN V13.1</h1>
+        <h1 style="color:#00eaff;">START AURA V14</h1>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
@@ -19,9 +19,18 @@
         <div class="top-section">
             <div class="box-left">
                 <div id="clock">--:--</div>
-                <div id="date">LADE...</div>
+                <div class="status-bar">
+                    <div id="date">...</div>
+                    <div id="bat-box" class="icon-status" style="display:none;">
+                        <span id="bat-icon">🔋</span> <span id="bat-level">--%</span>
+                    </div>
+                    <div id="wifi-box" class="icon-status">
+                        <span id="wifi-icon" class="online">📶</span>
+                    </div>
+                </div>
                 <img src="logo.png" class="aura-logo" alt="Logo"> 
             </div>
+            
             <div class="box-center">
                 <div id="city-title">...</div>
                 <div class="temp-row">
@@ -31,13 +40,16 @@
                 <div id="feels-like">--</div>
                 <div id="clothes-advice">--</div>
             </div>
+            
             <div class="box-right">
                 <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
                 <div class="astro-row">☾ <span id="sunset">--:--</span></div>
                 <div id="moon" class="moon-row">MOND</div>
             </div>
         </div>
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">DATEN WERDEN SYNCHRONISIERT...</div></div>
+
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">SYNCHRONISIERE DATEN...</div></div>
+
         <div class="tables-area">
             <table id="hourly-table"></table>
             <div style="border-top:1px dashed #333; margin:5px 0;"></div>
@@ -47,40 +59,29 @@
 
     <div id="settings-overlay">
         <h1 style="color:#00eaff;">AURA SETUP</h1>
-        
         <div class="menu-section">
             <div class="menu-title">KONFIGURATION</div>
-            <input type="text" id="city-in" placeholder="Stadt (z.B. Braunschweig)">
-            <p style="font-size: 1.8vh; color: #888;">Ruhezustand (Bildschirm aus) von - bis:</p>
+            <input type="text" id="city-in" placeholder="Stadt eingeben">
+            <p style="font-size: 1.8vh; color: #888;">Schlafmodus von - bis:</p>
             <div style="display:flex; justify-content: space-around;">
-                <input type="time" id="time-start" style="width: 40%;">
-                <input type="time" id="time-end" style="width: 40%;">
+                <input type="time" id="time-start" style="width: 45%;">
+                <input type="time" id="time-end" style="width: 45%;">
             </div>
-            <button onclick="save()" class="save-btn">SPEICHERN & AKTUALISIEREN</button>
+            <button onclick="save()" class="save-btn">SPEICHERN & NEUSTART</button>
         </div>
-
         <div class="menu-section">
             <div class="menu-title">KAFFEE-SPENDE</div>
-            <p class="legal-text">Dir gefällt Aura Weather? Wir arbeiten mit viel Herzblut an diesem Projekt. Wenn du unsere Arbeit unterstützen möchtest, freuen wir uns riesig über einen kleinen virtuellen Kaffee!</p>
-            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="btn-link" style="border-color: #ffcc00; color: #ffcc00; font-weight: bold;">☕ JETZT KAFFEE SPENDIEREN</a>
+            <p class="legal-text">Unterstütze die Code-Werft mit einem virtuellen Kaffee!</p>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="btn-link" style="border-color: #ffcc00; color: #ffcc00;">☕ KAFFEE SPENDIEREN</a>
         </div>
-
-        <div class="menu-section">
-            <div class="menu-title">HILFE & KONTAKT</div>
-            <p class="legal-text"><b>Alte Hardware:</b> Um Ressourcen zu sparen, schließe alle anderen Apps. Aura ist für den Dauerbetrieb auf Android 4.4 optimiert.</p>
-            <a href="mailto:webmaster@code-werft.de?subject=Nutzeranfrage Aura Weather&body=Hallo Code-Werft Team,%0D%0A%0D%0A" class="btn-link">📧 NACHRICHT AN UNS</a>
-        </div>
-
         <div class="menu-section legal-text">
             <div class="menu-title">RECHTLICHES</div>
-            <p><b>Impressum:</b> Code-Werft Karl Altmannshofer<br>Kontakt: webmaster@code-werft.de</p>
-            <p><b>Datenschutz:</b> Alle Einstellungen bleiben auf deinem Tablet (Local Storage). Wir sammeln keine persönlichen Daten.</p>
-            <p><b>Urheberrecht:</b> © 2026 Code-Werft Karl Altmannshofer. Wetter-API: OpenWeatherMap.</p>
+            <p>© 2026 Code-Werft Karl Altmannshofer<br>webmaster@code-werft.de</p>
         </div>
-
         <button onclick="closeMenu()" class="back-btn">ZURÜCK</button>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
+ 
