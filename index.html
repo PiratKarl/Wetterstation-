@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Pro V15.1</title>
+    <title>Aura Weather Station V16.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <h1 style="color:#00eaff;">AURA STARTEN V15.1</h1>
+        <img src="logo.png" class="start-logo" alt="Aura Weather Station Logo">
+        <div class="tap-finger">👆</div>
+        <div class="start-text">KLICK ZUM START</div>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
@@ -50,19 +52,20 @@
 
     <div id="settings-overlay">
         <div id="menu-main" class="menu-list">
-            <h2 style="color:#00eaff; text-align:center;">AURA SETUP</h2>
+            <div class="menu-logo-wrapper">
+                <img src="logo.png" class="menu-logo" alt="Aura Weather Station Logo">
+            </div>
             <div class="menu-item-btn" onclick="showSub('sub-config')">📍 Standort & Timer <span>❯</span></div>
             <div class="menu-item-btn" onclick="showSub('sub-coffee')">☕ Kaffee-Spende <span>❯</span></div>
             <div class="menu-item-btn" onclick="showSub('sub-help')">📖 Hilfe & Tricks <span>❯</span></div>
             <div class="menu-item-btn" onclick="showSub('sub-contact')">📧 Kontakt & Web <span>❯</span></div>
             <div class="menu-item-btn" onclick="showSub('sub-legal')">⚖️ Rechtliches <span>❯</span></div>
-            <button onclick="closeMenu()" class="back-btn" style="background:transparent; border: 1px solid #444;">SCHLIESSEN</button>
+            <button onclick="closeMenu()" class="back-btn" style="background:transparent; border: 1px solid #444; width:100%;">SCHLIESSEN</button>
         </div>
 
         <div id="sub-config" class="sub-content">
             <div class="menu-title">STANDORT / TIMER</div>
             <input type="text" id="city-in">
-            <p style="color:#888;">Schlafmodus von - bis:</p>
             <div style="display:flex; gap:10px; width:100%;"><input type="time" id="time-start"> <input type="time" id="time-end"></div>
             <button onclick="save()" class="save-btn">SPEICHERN</button>
             <button onclick="showMain()" class="back-btn">ZURÜCK</button>
@@ -70,31 +73,28 @@
 
         <div id="sub-coffee" class="sub-content">
             <div class="menu-title">KAFFEE-SPENDE</div>
-            <p class="legal-text">Aura ist ein Herzensprojekt der Code-Werft. Wenn du magst, spendier uns einen Kaffee!</p>
+            <p class="legal-text">Aura ist ein Projekt der Code-Werft. Unterstütze uns gerne mit einem Kaffee!</p>
             <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="btn-link" style="border-color:#ffcc00; color:#ffcc00;">☕ PER PAYPAL SPENDEN</a>
             <button onclick="showMain()" class="back-btn">ZURÜCK</button>
         </div>
 
         <div id="sub-help" class="sub-content">
-            <div class="menu-title">TRICKS</div>
-            <p class="legal-text"><b>Vollbild:</b> Einfach irgendwo tippen.<br><b>Alte Geräte:</b> Deaktiviere alle Hintergrund-Apps für maximale Stabilität.</p>
+            <div class="menu-title">HILFE</div>
+            <p class="legal-text">Nutze Chrome für Stabilität. Logo anklicken öffnet unsere Homepage.</p>
             <button onclick="showMain()" class="back-btn">ZURÜCK</button>
         </div>
 
         <div id="sub-contact" class="sub-content">
             <div class="menu-title">KONTAKT</div>
-            <p class="legal-text">Besuch uns online oder schreib uns eine E-Mail.</p>
             <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 UNSERE HOMEPAGE</a>
-            <a href="mailto:webmaster@code-werft.de?subject=Aura%20Nutzeranfrage&body=Hallo%20Code-Werft%20Team," class="btn-link">📧 E-MAIL SENDEN</a>
+            <a href="mailto:webmaster@code-werft.de?subject=Aura%20Anfrage" class="btn-link">📧 E-MAIL SENDEN</a>
             <button onclick="showMain()" class="back-btn">ZURÜCK</button>
         </div>
 
         <div id="sub-legal" class="sub-content">
             <div class="menu-title">RECHTLICHES</div>
             <div class="legal-text">
-                <p><b>Impressum:</b> Code-Werft Karl Altmannshofer<br>E-Mail: webmaster@code-werft.de</p>
-                <p><b>Datenschutz:</b> Diese App speichert alle Einstellungen ausschließlich lokal auf diesem Gerät.</p>
-                <p>© 2026 Code-Werft Karl Altmannshofer</p>
+                <p>Code-Werft Karl Altmannshofer<br>© 2026 Alle Rechte vorbehalten.</p>
             </div>
             <button onclick="showMain()" class="back-btn">ZURÜCK</button>
         </div>
@@ -103,3 +103,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+ 
