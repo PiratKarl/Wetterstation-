@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="cache-control" content="no-cache, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
-    <title>Aura Weather Station V17.4</title>
-    <link rel="stylesheet" href="style.css?v=17.4">
+    <title>Aura Weather Station V17.5</title>
+    <link rel="stylesheet" href="style.css?v=17.5">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:300px;" alt="Logo">
-        <div class="tap-finger">👆</div>
+        <div style="font-size:8vh; margin:20px 0;">👆</div>
         <div style="color:#00eaff; font-size:3.5vh; font-weight:bold;">AURA WEATHER STATION<br>STARTEN</div>
     </div>
 
@@ -25,9 +25,7 @@
                 <div id="clock">--:--</div>
                 <div class="status-bar">
                     <div id="date">...</div>
-                    <div id="bat-box" class="icon-status" style="display:none;">
-                        <span id="bat-icon">🔋</span><span id="bat-level">--%</span>
-                    </div>
+                    <div id="bat-box" class="icon-status" style="display:none;"><span id="bat-icon">🔋</span><span id="bat-level">--%</span></div>
                     <div id="wifi-box" class="icon-status"><span id="wifi-icon" class="online">📶</span></div>
                 </div>
                 <a href="https://code-werft.de" target="_blank"><img src="logo.png" class="aura-logo"></a>
@@ -47,9 +45,12 @@
                 <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
                 <div class="astro-row">☾ <span id="sunset">--:--</span></div>
                 <div id="moon" class="moon-row">MOND</div>
-                <div class="update-info">
-                    Update: <span id="last-up-date">--.--.--</span><br>
-                    Zeit: <span id="last-up-time">--:--</span> Uhr
+                
+                <div class="info-block">
+                    <span class="info-label">Web App Update:</span>
+                    Build V17.5 (Aktiv)
+                    <span class="info-label">Wetter Update:</span>
+                    <span id="last-up-date">--.--.--</span> | <span id="last-up-time">--:--</span> Uhr
                 </div>
             </div>
         </div>
@@ -64,16 +65,15 @@
     </div>
 
     <div id="settings-overlay">
-        <div id="menu-main" style="width:90%; max-width:550px; display:flex; flex-direction:column; gap:10px;">
+        <div style="width:90%; max-width:550px; display:flex; flex-direction:column; gap:10px;">
             <div style="text-align:center;"><img src="logo.png" style="width:150px; margin-bottom:10px;"></div>
-            <button onclick="save()" style="background:#00eaff; padding:15px; font-weight:bold; border-radius:10px; border:none;">EINSTELLUNGEN SPEICHERN</button>
             <input type="text" id="city-in" placeholder="Stadt">
             <div style="display:flex; gap:10px;"><input type="time" id="time-start"> <input type="time" id="time-end"></div>
-            <button onclick="closeMenu()" class="back-btn">ZURÜCK</button>
-            <p style="font-size:1.2vh; color:#444; text-align:center;">V17.4 | Auto-Start & Batterie-Fix</p>
+            <button onclick="save()" style="background:#00eaff; padding:15px; font-weight:bold; border-radius:10px; border:none; color:black;">SPEICHERN</button>
+            <button onclick="closeMenu()" style="background:#333; color:white; padding:10px; border:none; border-radius:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=17.4"></script>
+    <script src="script.js?v=17.5"></script>
 </body>
 </html>
