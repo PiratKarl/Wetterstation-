@@ -1,16 +1,10 @@
-var currentVer = 18.3;
+var currentVer = 18.4;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
 var active = false, worldData = "";
 
-var capitals = [
-    "Berlin", "Paris", "Rome", "Madrid", "Vienna", "London", "Stockholm", "Oslo", "Brussels", "Amsterdam",
-    "Washington", "Ottawa", "Mexico City", "Brasilia", "Buenos Aires", "Santiago", "Tokyo", "Beijing", 
-    "Seoul", "Bangkok", "Singapore", "Jakarta", "New Delhi", "Canberra", "Wellington", "Cairo", "Cape Town", 
-    "Nairobi", "Moscow", "Warsaw", "Prague", "Budapest", "Athens", "Lisbon", "Copenhagen", "Helsinki", 
-    "Dublin", "Reykjavik", "Luxembourg", "Bern", "Ankara", "Jerusalem", "Riyadh", "Abu Dhabi", "Lima", "Bogota"
-];
+var capitals = ["Berlin", "Paris", "Rome", "Madrid", "London", "Tokyo", "Washington", "Ottawa", "Canberra", "Brasilia", "Stockholm", "Oslo"];
 
 function z(n){return (n<10?'0':'')+n;}
 
@@ -73,8 +67,7 @@ function loadWeather() {
 
 function loadWorld() {
     worldData = "";
-    var shuffled = capitals.sort(function(){ return 0.5 - Math.random() }).slice(0, 12);
-    shuffled.forEach(function(c) {
+    capitals.forEach(function(c) {
         var x = new XMLHttpRequest();
         x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric", false);
         x.send();
