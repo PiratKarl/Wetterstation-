@@ -1,21 +1,44 @@
-var currentVer = 20.1;
+var currentVer = 20.2;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
 
 function z(n){return (n<10?'0':'')+n;}
 
+function checkUpdate() {
+    var x = new XMLHttpRequest();
+    x.open("GET", "version.json?n=" + Date.now(), true);
+    x.onload = function() {
+        if (x.status === 200 && JSON.parse(x.responseText).version > currentVer) {
+            document.getElementById('update-overlay').style.display = 'flex';
+        }
+    };
+    x.send();
+}
+
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
+    
+    // 1. VOLLBILD ERZWINGEN (ALLE METHODEN)
+    var elem = document.documentElement;
+    if (elem.requestFullscreen) { elem.requestFullscreen(); } 
+    else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } /* Wichtig für altes Android */
+    else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+
+    // 2. MEDIEN STARTEN (Video + Audio + SleepVideo Vorbereitung)
     var wV = document.getElementById('wake-vid');
     var sV = document.getElementById('sleep-vid');
+    var wA = document.getElementById('wake-aud');
     
-    // Transparenter Wachhalter & Schwarzer Schlaf-Film
     wV.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
     sV.src = "https://github.com/intel-iot-devkit/sample-videos/raw/master/black.mp4";
-    
+    // Lautloses Audio (Base64)
+    wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
+
     wV.play();
-    loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000);
+    wA.play(); // Audio muss laufen für Android 4.4 Wachbleiben!
+
+    loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000); setInterval(checkUpdate, 1800000);
 }
 
 function update() {
@@ -59,7 +82,9 @@ function loadWeather() {
         var year=new Date().getFullYear(), mo=new Date().getMonth()+1, da=new Date().getDate(); if(mo<3){year--;mo+=12;}++mo;
         var jd = (365.25*year) + (30.6*mo) + da - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
         var moonTxt = ["NEUMOND","SICHEL","1. VIERTEL","ZUN. MOND","VOLLMOND","ABN. MOND","3. VIERTEL","SICHEL"];
+        var moonIco = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"];
         document.getElementById('moon-txt').innerText = moonTxt[b];
+        document.getElementById('moon-icon').innerText = moonIco[b];
 
         loadFore(d.coord.lat, d.coord.lon, d.main.temp);
     };
