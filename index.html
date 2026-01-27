@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
-    <title>Aura Weather Station V17.3</title>
-    <link rel="stylesheet" href="style.css?v=17.3">
+    <title>Aura Weather Station V17.4</title>
+    <link rel="stylesheet" href="style.css?v=17.4">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
 
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:300px;" alt="Logo">
-        <div style="font-size:8vh; margin-top:20px;">👆</div>
-        <div style="color:#00eaff; font-size:3.5vh; font-weight:bold;">AURA STARTEN</div>
+        <div class="tap-finger">👆</div>
+        <div style="color:#00eaff; font-size:3.5vh; font-weight:bold;">AURA WEATHER STATION<br>STARTEN</div>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
@@ -25,9 +25,12 @@
                 <div id="clock">--:--</div>
                 <div class="status-bar">
                     <div id="date">...</div>
+                    <div id="bat-box" class="icon-status" style="display:none;">
+                        <span id="bat-icon">🔋</span><span id="bat-level">--%</span>
+                    </div>
                     <div id="wifi-box" class="icon-status"><span id="wifi-icon" class="online">📶</span></div>
                 </div>
-                <img src="logo.png" class="aura-logo" alt="Logo">
+                <a href="https://code-werft.de" target="_blank"><img src="logo.png" class="aura-logo"></a>
             </div>
             
             <div class="box-center">
@@ -51,7 +54,7 @@
             </div>
         </div>
 
-        <div class="ticker-wrap"><div id="ticker" class="ticker-content">INITIALISIERE...</div></div>
+        <div class="ticker-wrap"><div id="ticker" class="ticker-content">SYNCHRONISIERE...</div></div>
 
         <div class="tables-area">
             <table id="hourly-table"></table>
@@ -61,28 +64,16 @@
     </div>
 
     <div id="settings-overlay">
-        <div id="menu-main" class="menu-list">
+        <div id="menu-main" style="width:90%; max-width:550px; display:flex; flex-direction:column; gap:10px;">
             <div style="text-align:center;"><img src="logo.png" style="width:150px; margin-bottom:10px;"></div>
-            <div class="menu-item-btn" onclick="showSub('sub-config')">📍 Standort & Timer <span>❯</span></div>
-            <div class="menu-item-btn" onclick="showSub('sub-help')">📖 Hilfe <span>❯</span></div>
-            <button onclick="closeMenu()" class="back-btn" style="width:100%;">SCHLIESSEN</button>
-            <p style="font-size:1.2vh; color:#444; text-align:center;">V17.3 | Auto-Update: Ein</p>
-        </div>
-
-        <div id="sub-config" class="sub-content">
-            <div class="menu-title">KONFIGURATION</div>
+            <button onclick="save()" style="background:#00eaff; padding:15px; font-weight:bold; border-radius:10px; border:none;">EINSTELLUNGEN SPEICHERN</button>
             <input type="text" id="city-in" placeholder="Stadt">
-            <div style="display:flex; gap:10px; width:100%;"><input type="time" id="time-start"> <input type="time" id="time-end"></div>
-            <button onclick="save()" class="save-btn">SPEICHERN</button>
-            <button onclick="showMain()" class="back-btn">ZURÜCK</button>
-        </div>
-        <div id="sub-help" class="sub-content">
-            <div class="menu-title">INFO</div>
-            <p style="color:#ccc; font-size:2vh;">Die Station aktualisiert sich bei Änderungen auf GitHub automatisch.</p>
-            <button onclick="showMain()" class="back-btn">ZURÜCK</button>
+            <div style="display:flex; gap:10px;"><input type="time" id="time-start"> <input type="time" id="time-end"></div>
+            <button onclick="closeMenu()" class="back-btn">ZURÜCK</button>
+            <p style="font-size:1.2vh; color:#444; text-align:center;">V17.4 | Auto-Start & Batterie-Fix</p>
         </div>
     </div>
 
-    <script src="script.js?v=17.3"></script>
+    <script src="script.js?v=17.4"></script>
 </body>
 </html>
