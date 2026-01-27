@@ -1,19 +1,25 @@
-var currentVer = 18.2;
+var currentVer = 18.3;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
 var active = false, worldData = "";
-var worldCities = ["New York", "Sydney", "Tokyo", "London", "Berlin"];
+
+var capitals = [
+    "Berlin", "Paris", "Rome", "Madrid", "Vienna", "London", "Stockholm", "Oslo", "Brussels", "Amsterdam",
+    "Washington", "Ottawa", "Mexico City", "Brasilia", "Buenos Aires", "Santiago", "Tokyo", "Beijing", 
+    "Seoul", "Bangkok", "Singapore", "Jakarta", "New Delhi", "Canberra", "Wellington", "Cairo", "Cape Town", 
+    "Nairobi", "Moscow", "Warsaw", "Prague", "Budapest", "Athens", "Lisbon", "Copenhagen", "Helsinki", 
+    "Dublin", "Reykjavik", "Luxembourg", "Bern", "Ankara", "Jerusalem", "Riyadh", "Abu Dhabi", "Lima", "Bogota"
+];
 
 function z(n){return (n<10?'0':'')+n;}
 
 function checkUpdate() {
     var x = new XMLHttpRequest();
-    x.open("GET", "version.json?nocache=" + new Date().getTime(), true);
+    x.open("GET", "version.json?n=" + Date.now(), true);
     x.onload = function() {
-        if (x.status === 200) {
-            var data = JSON.parse(x.responseText);
-            if (data.version > currentVer) { location.reload(true); }
+        if (x.status === 200 && JSON.parse(x.responseText).version > currentVer) {
+            document.getElementById('update-overlay').style.display = 'flex';
         }
     };
     x.send();
@@ -25,23 +31,19 @@ function startApp() {
     v.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
     v.play().catch(function(e){});
     if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-    if(!active) { 
-        active = true; loadWeather(); update(); 
-        setInterval(update, 1000); setInterval(loadWeather, 600000); setInterval(checkUpdate, 1800000);
-    }
+    if(!active) { active = true; loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000); setInterval(checkUpdate, 1800000); }
 }
 
 function update() {
     var now = new Date();
     document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
-    var d = ['So','Mo','Di','Mi','Do','Fr','Sa'], m = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['JANUAR','FEBRUAR','MÄRZ','APRIL','MAI','JUNI','JULI','AUGUST','SEPTEMBER','OKTOBER','NOVEMBER','DEZEMBER'];
     document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
     
     var year=now.getFullYear(), mo=now.getMonth()+1, da=now.getDate(); if(mo<3){year--;mo+=12;}++mo;
     var jd = (365.25*year) + (30.6*mo) + da - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
     document.getElementById('moon').innerText = ["🌑 NEUMOND","🌒 SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 SICHEL"][b];
 
-    // Sleep Modus
     var sleep = false;
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes(), s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]), e = parseInt(sEnd.split(':')[0])*60 + parseInt(sEnd.split(':')[1]);
@@ -60,11 +62,9 @@ function loadWeather() {
         document.getElementById('weather-status').innerText = d.weather[0].description.toUpperCase();
         document.getElementById('city-title').innerText = d.name.toUpperCase();
         document.getElementById('current-weather-icon').src = d.weather[0].icon + ".gif";
-        
         var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000), s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
         document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
         document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
-
         var n = new Date(); document.getElementById('up-date').innerText = z(n.getDate())+"."+z(n.getMonth()+1); document.getElementById('up-time').innerText = z(n.getHours())+":"+z(n.getMinutes());
         loadWorld(); loadFore(d.coord.lat, d.coord.lon, d.main.temp);
     };
@@ -72,10 +72,16 @@ function loadWeather() {
 }
 
 function loadWorld() {
-    worldData = ""; var icons = {"Clouds":"☁️","Clear":"☀️","Rain":"🌧️","Snow":"❄️"};
-    worldCities.forEach(function(c) {
-        var x = new XMLHttpRequest(); x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric", false); x.send();
-        var d = JSON.parse(x.responseText); worldData += " +++ " + d.name.toUpperCase() + ": " + (icons[d.weather[0].main] || "🌡️") + " " + Math.round(d.main.temp) + "°";
+    worldData = "";
+    var shuffled = capitals.sort(function(){ return 0.5 - Math.random() }).slice(0, 12);
+    shuffled.forEach(function(c) {
+        var x = new XMLHttpRequest();
+        x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric", false);
+        x.send();
+        if(x.status === 200) {
+            var d = JSON.parse(x.responseText);
+            worldData += " ◈ " + d.name.toUpperCase() + ": <img src='" + d.weather[0].icon + ".gif'> " + Math.round(d.main.temp) + "°";
+        }
     });
 }
 
@@ -96,7 +102,7 @@ function loadFore(lat, lon, ct) {
             dy += "<td>"+day+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span style='color:#ff4444'>"+Math.round(it.main.temp_max)+"°</span> <span style='color:#00eaff'>"+Math.round(it.main.temp_min-2)+"°</span></td>";
         }
         document.getElementById('hourly-table').innerHTML = h + "</tr>"; document.getElementById('daily-table').innerHTML = dy + "</tr>";
-        document.getElementById('ticker').innerText = d.list[0].weather[0].description.toUpperCase() + " +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H" + worldData;
+        document.getElementById('ticker').innerHTML = d.list[0].weather[0].description.toUpperCase() + " +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H" + worldData;
     };
     x.send();
 }
