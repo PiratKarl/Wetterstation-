@@ -3,77 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Aura Mother V18.1</title>
-    <style>
-        body { background: #000; margin: 0; overflow: hidden; height: 100vh; width: 100vw; font-family: Arial, sans-serif; }
-        #wake-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.1; }
-        #app-frame { position: absolute; top: 5px; left: 5px; width: calc(100% - 10px); height: calc(100% - 10px); border: none; z-index: 10; background: #000; }
-        #sleep-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; cursor: pointer; }
-        #wake-menu { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; background: #111; border: 2px solid #00eaff; border-radius: 20px; padding: 30px; text-align: center; z-index: 200; color: #fff; }
-        .wake-btn { background: #222; border: 1px solid #00eaff; color: #00eaff; padding: 20px; margin: 10px; border-radius: 10px; font-weight: bold; font-size: 2.5vh; width: 100%; }
-        #start-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #00eaff; cursor: pointer; }
-    </style>
+    <title>Aura Weather V18.2</title>
+    <link rel="stylesheet" href="style.css?v=18.2">
 </head>
-<body onload="checkAutoStart()">
-    <video id="wake-video" loop playsinline muted></video>
-    <iframe id="app-frame" src="station.html"></iframe>
+<body>
+    <video id="wake-video" loop playsinline muted style="position:fixed; width:1px; opacity:0.01;"></video>
 
-    <div id="start-screen" onclick="initMother(false)">
-        <img src="logo.png" style="width:250px; margin-bottom:20px;">
-        <div style="font-size:8vh;">👆</div>
-        <h2 style="letter-spacing:2px;">AURA VOLLBILD STARTEN</h2>
+    <div id="start-overlay" onclick="startApp()">
+        <img src="logo.png" style="width:250px;">
+        <div style="font-size:8vh; margin:20px 0;">👆</div>
+        <div style="color:#00eaff; font-size:3.5vh; font-weight:bold;">TIPPEN ZUM STARTEN</div>
     </div>
 
-    <div id="sleep-overlay" onclick="showWakeMenu()"></div>
-    <div id="wake-menu">
-        <h2 style="color:#00eaff;">AUFWACHEN?</h2>
-        <button class="wake-btn" onclick="tempWake(5)">⏳ 5 MINUTEN WACH BLEIBEN</button>
-        <button class="wake-btn" onclick="tempWake(9999)">☀️ ANBLEIBEN BIS MORGEN</button>
-        <button class="wake-btn" onclick="hideWakeMenu()" style="border-color:#555; color:#888;">ZURÜCK</button>
+    <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
+
+    <div class="top-section">
+        <div class="box-left">
+            <div id="clock">--:--</div>
+            <div id="date">...</div>
+            <div id="bat-box" style="display:none; font-size:2.2vh; margin-top:10px;">🔋 <span id="bat-lv">--%</span></div>
+            <img src="logo.png" class="aura-logo">
+        </div>
+
+        <div class="box-center">
+            <div id="city-title">...</div>
+            <div class="temp-row">
+                <img id="current-weather-icon" src="">
+                <div id="temp-display">--°</div>
+                <span id="main-pop">💧--%</span>
+            </div>
+            <div id="weather-status">LADE...</div>
+            <div id="feels-like">--</div>
+            <div id="clothes-advice">--</div>
+        </div>
+
+        <div class="box-right">
+            <div class="astro-row">☀ <span id="sunrise">--:--</span></div>
+            <div class="astro-row">☾ <span id="sunset">--:--</span></div>
+            <div id="moon">...</div>
+            <div class="update-info">
+                Web App: V18.2<br>
+                Update: <span id="up-date">--.--</span> | <span id="up-time">--:--</span> Uhr
+            </div>
+        </div>
     </div>
 
-    <script>
-        var ignoreSleepUntil = 0;
-        function checkAutoStart() { if(localStorage.getItem('autoRestart') === 'true') { localStorage.removeItem('autoRestart'); initMother(true); } }
+    <div class="ticker-wrap"><div id="ticker">INITIALISIERE...</div></div>
 
-        function initMother(isAuto) {
-            if(!isAuto) {
-                var doc = window.document.documentElement;
-                var rf = doc.requestFullscreen || doc.webkitRequestFullScreen || doc.mozRequestFullScreen;
-                if(rf) rf.call(doc);
-            }
-            document.getElementById('start-screen').style.display = 'none';
-            var v = document.getElementById('wake-video');
-            v.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
-            v.play();
-            setInterval(checkSleep, 10000);
-            setInterval(checkUpdate, 1800000);
-        }
+    <div class="tables-area">
+        <table id="hourly-table"></table>
+        <div style="border-top:1px dashed #333; margin:5px 0;"></div>
+        <table id="daily-table"></table>
+    </div>
 
-        function checkSleep() {
-            var sStart = localStorage.getItem('sleepStart'), sEnd = localStorage.getItem('sleepEnd');
-            if(!sStart || !sEnd) return;
-            var now = new Date(), n = now.getHours()*60 + now.getMinutes();
-            var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
-            var e = parseInt(sEnd.split(':')[0])*60 + parseInt(sEnd.split(':')[1]);
-            var isSleepTime = (s > e) ? (n >= s || n < e) : (n >= s && n < e);
-            document.getElementById('sleep-overlay').style.display = (isSleepTime && Date.now() > ignoreSleepUntil) ? 'block' : 'none';
-        }
+    <div id="settings-overlay">
+        <div id="menu-main" class="menu-list">
+            <img src="logo.png" style="width:150px; align-self:center; margin-bottom:15px;">
+            <div class="menu-item" onclick="showSub('sub-config')">📍 STANDORT & TIMER <span>❯</span></div>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="menu-item" style="color:#ffcc00; border-color:#ffcc00;">☕ KAFFEE-SPENDE <span>❯</span></a>
+            <div class="menu-item" onclick="showSub('sub-help')">📖 HILFE & TRICKS <span>❯</span></div>
+            <div class="menu-item" onclick="showSub('sub-contact')">📧 KONTAKT & WEB <span>❯</span></div>
+            <button onclick="closeMenu()" style="background:#333; color:#fff; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;">SCHLIESSEN</button>
+        </div>
 
-        function showWakeMenu() { document.getElementById('wake-menu').style.display = 'block'; }
-        function hideWakeMenu() { document.getElementById('wake-menu').style.display = 'none'; }
-        function tempWake(mins) { ignoreSleepUntil = Date.now() + (mins * 60000); hideWakeMenu(); checkSleep(); }
+        <div id="sub-config" class="sub-content">
+            <h2 style="color:#00eaff;">KONFIGURATION</h2>
+            <input type="text" id="city-in" placeholder="Stadt eingeben">
+            <div style="display:flex; gap:10px;"><input type="time" id="t-start"> <input type="time" id="t-end"></div>
+            <button onclick="save()" style="background:#00eaff; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold; margin-top:10px;">SPEICHERN</button>
+            <button onclick="showMain()" style="background:#333; color:#fff; border:none; padding:10px; border-radius:10px; margin-top:15px; width:100%;">ZURÜCK</button>
+        </div>
+        
+        <div id="sub-contact" class="sub-content">
+            <h2 style="color:#00eaff;">KONTAKT</h2>
+            <a href="https://code-werft.de" target="_blank" class="menu-item">🌐 UNSERE WEBSEITE <span>❯</span></a>
+            <button onclick="showMain()" style="margin-top:20px;">ZURÜCK</button>
+        </div>
+        
+        <div id="sub-help" class="sub-content"><h2 style="color:#00eaff;">HILFE</h2><p>Updates werden oben rechts angezeigt. Nach einem App-Update bitte einmal den Bildschirm antippen.</p><button onclick="showMain()">ZURÜCK</button></div>
+    </div>
 
-        function checkUpdate() {
-            var x = new XMLHttpRequest();
-            x.open("GET", "version.json?n=" + Date.now(), true);
-            x.onload = function() {
-                var d = JSON.parse(x.responseText);
-                if(d.version > 18.1) { localStorage.setItem('autoRestart', 'true'); location.reload(true); }
-            };
-            x.send();
-        }
-    </script>
+    <script src="script.js?v=18.2"></script>
 </body>
 </html>
+ 
