@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="cache-control" content="no-cache, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
-    <title>Aura Weather Station V17.5</title>
-    <link rel="stylesheet" href="style.css?v=17.5">
+    <title>Aura Weather Station V17.6</title>
+    <link rel="stylesheet" href="style.css?v=17.6">
 </head>
 <body>
-    <video id="wake-video" loop playsinline muted><source src="https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4" type="video/mp4"></video>
+    <video id="wake-video" loop playsinline muted></video>
 
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:300px;" alt="Logo">
@@ -48,9 +48,9 @@
                 
                 <div class="info-block">
                     <span class="info-label">Web App Update:</span>
-                    Build V17.5 (Aktiv)
+                    Build V17.6
                     <span class="info-label">Wetter Update:</span>
-                    <span id="last-up-date">--.--.--</span> | <span id="last-up-time">--:--</span> Uhr
+                    <span id="last-up-date">--.--.--</span> | <span id="last-up-time">--:--</span>
                 </div>
             </div>
         </div>
@@ -65,15 +65,16 @@
     </div>
 
     <div id="settings-overlay">
-        <div style="width:90%; max-width:550px; display:flex; flex-direction:column; gap:10px;">
-            <div style="text-align:center;"><img src="logo.png" style="width:150px; margin-bottom:10px;"></div>
+        <div style="width:90%; max-width:550px; display:flex; flex-direction:column; gap:10px; text-align:center;">
+            <img src="logo.png" style="width:150px; margin: 0 auto;">
             <input type="text" id="city-in" placeholder="Stadt">
             <div style="display:flex; gap:10px;"><input type="time" id="time-start"> <input type="time" id="time-end"></div>
-            <button onclick="save()" style="background:#00eaff; padding:15px; font-weight:bold; border-radius:10px; border:none; color:black;">SPEICHERN</button>
+            <button onclick="save()" style="background:#00eaff; padding:15px; font-weight:bold; border-radius:10px; border:none;">SPEICHERN</button>
             <button onclick="closeMenu()" style="background:#333; color:white; padding:10px; border:none; border-radius:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=17.5"></script>
+    <script src="script.js?v=17.6"></script>
 </body>
 </html>
+ 
