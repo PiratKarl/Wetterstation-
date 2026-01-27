@@ -1,23 +1,19 @@
-var currentVer = 18.8;
+var currentVer = 18.9;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
 var active = false;
 
-var caps = ["Berlin", "Paris", "Rome", "Madrid", "London", "Tokyo", "Washington", "Ottawa", "Canberra", "Stockholm", "Vienna", "Lisbon"];
+var caps = ["Berlin", "Paris", "Rome", "Madrid", "London", "Tokyo", "Washington", "Ottawa", "Stockholm", "Vienna", "Lisbon", "Cairo", "Warsaw"];
 
 function z(n){return (n<10?'0':'')+n;}
 
-// Aggressiver Update-Check mit Cache-Buster
 function checkUpdate() {
     var x = new XMLHttpRequest();
-    x.open("GET", "version.json?timestamp=" + new Date().getTime(), true);
+    x.open("GET", "version.json?n=" + Date.now(), true);
     x.onload = function() {
-        if (x.status === 200) {
-            var data = JSON.parse(x.responseText);
-            if (data.version > currentVer) {
-                document.getElementById('update-overlay').style.display = 'flex';
-            }
+        if (x.status === 200 && JSON.parse(x.responseText).version > currentVer) {
+            document.getElementById('update-overlay').style.display = 'flex';
         }
     };
     x.send();
@@ -112,5 +108,3 @@ function closeMenu() { document.getElementById('settings-overlay').style.display
 function showMain() { document.getElementById('menu-main').style.display='flex'; var subs = document.getElementsByClassName('sub-content'); for(var i=0; i<subs.length; i++) subs[i].style.display='none'; }
 function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
 function save() { localStorage.setItem('city', document.getElementById('city-in').value); localStorage.setItem('t-start', document.getElementById('t-start').value); localStorage.setItem('t-end', document.getElementById('t-end').value); location.reload(); }
-
-if(navigator.getBattery) navigator.getBattery().then(function(b){ var f = function(){ document.getElementById('bat-box').style.display='block'; document.getElementById('bat-lv').innerText=Math.round(b.level*100)+"%"; }; f(); b.onlevelchange=f; });
