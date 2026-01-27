@@ -7,30 +7,38 @@ body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0;
 }
 
 .top-section { display: flex; justify-content: space-between; height: 45vh; padding: 20px; box-sizing: border-box; }
-.box-left { width: 45%; display: flex; flex-direction: column; align-items: flex-start; }
+
+/* LINKS: Uhr & Status */
+.box-left { width: 35%; display: flex; flex-direction: column; align-items: flex-start; }
 #clock { font-size: 13vh; font-weight: bold; line-height: 1; }
 .status-bar { display: flex; align-items: center; gap: 15px; margin-top: 5px; }
-#date { font-size: 2.8vh; color: #00eaff; text-transform: uppercase; white-space: nowrap; }
-.icon-status { font-size: 2.5vh; display: flex; align-items: center; gap: 5px; }
-#bat-level { color: #fff; }
-.online { color: #00ff00; }
-.offline { color: #ff4444; text-decoration: line-through; }
+#date { font-size: 2.5vh; color: #00eaff; text-transform: uppercase; white-space: nowrap; }
+.icon-status { font-size: 2.2vh; display: flex; align-items: center; gap: 5px; }
+.aura-logo { width: 235px; height: 128px; margin-top: 15px; display: block; object-fit: contain; }
 
-.logo-link { display: block; margin-top: 15px; text-decoration: none; border: none; }
-.logo-link:active { opacity: 0.6; }
-.aura-logo { width: 235px; height: 128px; display: block; object-fit: contain; border: none; }
+/* MITTE: Perfekt zentriert */
+.box-center { 
+    width: 40%; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center;
+}
+#city-title { font-size: 2.5vh; color: #888; letter-spacing: 2px; margin-bottom: 5px; }
+.temp-row { display: flex; align-items: center; justify-content: center; width: 100%; }
+#current-weather-icon { width: 15vh; height: 15vh; margin-right: 10px; }
+#temp-display { font-size: 18vh; font-weight: bold; line-height: 1; }
+#feels-like { font-size: 3vh; color: #00eaff; font-weight: bold; margin-top: 5px; }
+#clothes-advice { font-size: 3.2vh; margin-top: 10px; color: #ffcc00; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
 
-.box-center { width: 30%; text-align: center; }
-#city-title { font-size: 2.5vh; color: #888; letter-spacing: 2px; }
-.temp-row { display: flex; justify-content: center; align-items: center; margin-top: 5px; }
-#temp-display { font-size: 18vh; font-weight: bold; }
-#feels-like { font-size: 3vh; color: #00eaff; font-weight: bold; }
-#clothes-advice { font-size: 3.5vh; margin-top: 10px; color: #ffcc00; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-
-.box-right { width: 25%; text-align: right; padding-top: 60px; }
+/* RECHTS: Astro & Update-Zeit */
+.box-right { width: 25%; text-align: right; padding-top: 40px; }
 .astro-row { font-size: 3.2vh; margin-bottom: 0.8vh; font-weight: bold; }
-.moon-row { font-size: 2.8vh; color: #00eaff; margin-top: 1vh; }
+.moon-row { font-size: 2.8vh; color: #00eaff; margin-top: 1vh; margin-bottom: 2vh; }
+.update-info { font-size: 1.8vh; color: #666; line-height: 1.4; border-top: 1px solid #222; padding-top: 10px; }
 
+/* TICKER & TABELLEN */
 .ticker-wrap { width: 100%; height: 7vh; background: #111; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; }
 .ticker-content { display: inline-block; padding-left: 100%; animation: ticker 60s linear infinite; font-size: 4vh; color: #00eaff; line-height: 7vh; font-weight: bold; }
 @keyframes ticker { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
@@ -40,30 +48,13 @@ table { width: 100%; table-layout: fixed; }
 td { text-align: center; font-size: 3vh; font-weight: bold; padding: 3px; }
 .t-icon { width: 6.5vh; height: 6.5vh; }
 .t-pop { color: #00eaff; font-size: 2vh; font-weight: bold; }
-.temp-max { color: #ff4444; }
-.temp-min { color: #00eaff; }
 
+/* MENÜ & OVERLAYS */
 #settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); flex-direction:column; align-items:center; z-index:20000; padding-top: 10px; }
 .menu-list { width: 90%; max-width: 550px; display: flex; flex-direction: column; gap: 8px; }
 .menu-item-btn { background: #111; border: 1px solid #333; color: #fff; padding: 12px 20px; font-size: 2.5vh; font-weight: bold; text-align: left; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-.menu-item-btn:active { background: #222; border-color: #00eaff; }
-.menu-logo-wrapper { margin-bottom: 10px; text-align: center; width: 100%; }
-.menu-logo { width: 176px; height: 96px; object-fit: contain; }
-
-.sub-content { display: none; width: 90%; max-width: 550px; flex-direction: column; align-items: center; text-align: center; }
-.menu-title { color: #00eaff; font-size: 3vh; margin-bottom: 15px; border-bottom: 2px solid #00eaff; padding-bottom: 5px; width: 100%; }
-
-input { font-size: 2.2vh; padding: 12px; background: #222; color: #fff; border: 1px solid #444; margin: 8px 0; width: 100%; border-radius: 8px; }
-.save-btn { background: #00eaff; color: #000; padding: 12px; font-size: 2.8vh; font-weight: bold; border: none; border-radius: 10px; margin-top: 15px; width: 100%; }
 .back-btn { background: #333; color: #fff; padding: 10px 25px; font-size: 2vh; border: none; border-radius: 10px; margin-top: 20px; }
-.legal-text { color: #bbb; font-size: 1.9vh; line-height: 1.4; text-align: left; width: 100%; }
-.btn-link { display: block; padding: 12px; background: #222; color: #00eaff; text-decoration: none; border: 1px solid #00eaff; border-radius: 8px; margin: 8px 0; font-weight: bold; }
 
 #start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50000; cursor: pointer; }
-.start-logo { width: 300px; height: 164px; object-fit: contain; margin-bottom: 20px; }
-.tap-finger { font-size: 8vh; animation: bounce 1s infinite alternate; }
-@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
-.start-text { color: #00eaff; font-size: 3.5vh; font-weight: bold; margin-top: 10px; }
-
 #wake-video { position: fixed; width: 1px; opacity: 0.01; z-index: -1; }
 .sleep-mode { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; background:black !important; z-index:15000 !important; opacity:1 !important; }
