@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V20.3 Final</title>
-    <link rel="stylesheet" href="style.css?v=20.3">
+    <title>Aura V20.4 Final</title>
+    <link rel="stylesheet" href="style.css?v=20.4">
 </head>
 <body>
     <video id="wake-vid" loop playsinline muted></video>
@@ -14,11 +14,11 @@
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:220px; margin-bottom:30px;">
         <div style="border: 3px solid #00eaff; color: #00eaff; padding: 25px 50px; font-size: 32px; font-weight: bold; border-radius: 40px; box-shadow: 0 0 25px rgba(0,234,255,0.4);">STARTEN</div>
-        <div style="color:#555; margin-top:20px; font-size:18px;">(Läd Video & Audio Engine)</div>
+        <div style="color:#555; margin-top:20px; font-size:18px;">(Tippen für Vollbild & Sound)</div>
     </div>
 
     <div id="update-overlay" onclick="location.reload(true)">
-        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V20.3</h1>
+        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V20.4</h1>
         <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; margin-top:20px; font-size:24px;">LADEN</div>
     </div>
 
@@ -28,7 +28,6 @@
             <div id="date">...</div>
             <img src="logo.png" class="logo-img">
         </div>
-
         <div class="col-center">
             <div id="city-name">...</div>
             <div class="weather-group">
@@ -43,7 +42,6 @@
             <div id="w-feels">--</div>
             <div id="clothing">--</div>
         </div>
-
         <div class="col-right">
             <div id="btn-setup" onclick="openMenu()">⚙ MENÜ</div>
             <div class="astro-box">
@@ -66,6 +64,12 @@
             <div onclick="showSub('sub-config')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
                 <span>📍 STANDORT & TIMER</span> <span>❯</span>
             </div>
+            <div onclick="showSub('sub-help')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
+                <span>📖 HILFE & TRICKS</span> <span>❯</span>
+            </div>
+            <div onclick="showSub('sub-legal')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
+                <span>⚖️ IMPRESSUM & DATEN</span> <span>❯</span>
+            </div>
             <div onclick="showSub('sub-donation')" style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
                 <span>☕ KAFFEE-SPENDE</span> <span>❯</span>
             </div>
@@ -74,21 +78,62 @@
 
         <div id="sub-config" class="sub-c">
             <h2 style="color:#00eaff;">STANDORT</h2>
-            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444; border-radius:5px;">
-            <h2 style="color:#00eaff; margin-top:20px;">SCHLAF-TIMER (Schwarzes Video)</h2>
-            <input type="time" id="t-start" style="font-size:22px; padding:10px;"> bis <input type="time" id="t-end" style="font-size:22px; padding:10px;">
+            <p>Hier tragen Sie Ihre Stadt ein, damit das Wetter stimmt.</p>
+            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444; border-radius:5px;" placeholder="z.B. Braunschweig">
+            <h2 style="color:#00eaff; margin-top:30px;">SCHLAF-TIMER (Nachtmodus)</h2>
+            <p>In dieser Zeit wird der Bildschirm schwarz, aber das Tablet bleibt an. Perfekt für die Nacht.</p>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <input type="time" id="t-start" style="font-size:22px; padding:10px;"> <span>bis</span> <input type="time" id="t-end" style="font-size:22px; padding:10px;">
+            </div>
             <button onclick="save()" style="width:100%; padding:20px; font-size:22px; background:#00eaff; border:none; font-weight:bold; margin-top:30px; border-radius:10px;">SPEICHERN</button>
             <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ZURÜCK</button>
         </div>
 
+        <div id="sub-help" class="sub-c">
+            <h2>HILFE & TRICKS (Für Android 4.4)</h2>
+            <p>Damit Ihr altes Tablet nicht ausgeht, haben wir eine spezielle Technik eingebaut. Hier ist, was Sie wissen müssen:</p>
+            <ul>
+                <li><strong>Der "Start"-Klick ist Pflicht:</strong> Nach jedem Update oder Neustart müssen Sie einmal auf den Bildschirm tippen. Nur so darf der Browser das unsichtbare Video und den lautlosen Ton starten, die das Tablet wachhalten.</li>
+                <li><strong>Die ultimative Lösung (Entwickleroptionen):</strong> Wenn das Display trotzdem ausgeht, gibt es einen Trick in den Android-Einstellungen:
+                    <ol>
+                        <li>Gehen Sie in die Tablet-Einstellungen -> "Über das Tablet".</li>
+                        <li>Tippen Sie 7-mal schnell auf die "Build-Nummer". Es erscheint "Sie sind jetzt Entwickler!".</li>
+                        <li>Gehen Sie zurück. Nun gibt es den neuen Menüpunkt "Entwickleroptionen".</li>
+                        <li>Aktivieren Sie dort die Option <strong>"Aktiv lassen"</strong> (oder "Wach bleiben").</li>
+                    </ol>
+                    Solange das Ladekabel steckt, geht der Bildschirm nun NIE mehr aus.
+                </li>
+                <li><strong>Aktualisierung:</strong> Das Wetter aktualisiert sich alle 10 Minuten von selbst. Sie müssen nichts tun.</li>
+            </ul>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
+        </div>
+
+        <div id="sub-legal" class="sub-c">
+            <h2>IMPRESSUM & DATENSCHUTZ</h2>
+            <p><strong>Dies ist ein privates Liebhaber-Projekt.</strong></p>
+            <p>Es dient ausschließlich dazu, alten Tablets (wie Ihrem Android 4.4 Gerät) neues Leben als schicke Wetterstation einzuhauchen.</p>
+            <h3>Datenschutz (Kurz & Klar)</h3>
+            <ul>
+                <li><strong>Wir sammeln NICHTS:</strong> Diese App speichert keine persönlichen Daten von Ihnen.</li>
+                <li><strong>Keine Cookies, kein Tracking:</strong> Es gibt keine Werbetracker oder Analyse-Tools.</li>
+                <li><strong>Ihr Standort:</strong> Der von Ihnen eingegebene Stadtname wird nur lokal auf Ihrem Tablet gespeichert (im Browser-Speicher), damit er beim nächsten Start noch da ist. Er wird nur an den Wetterdienst (OpenWeatherMap) gesendet, um die Daten abzurufen.</li>
+            </ul>
+            <h3>Kontakt</h3>
+            <p>Bei Fragen oder Problemen: piratkarl@web.de</p>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
+        </div>
+
         <div id="sub-donation" class="sub-c">
             <h2 style="color:#ffcc00;">KAFFEE SPENDE</h2>
-            <p style="font-size:18px; line-height:1.5; color:#ddd;">Danke für die Unterstützung des Projekts!</p>
-            <div style="background:#ffcc00; color:#000; padding:20px; font-weight:bold; font-size:20px; text-align:center; border-radius:10px; margin-top:20px;">PayPal: piratkarl@web.de</div>
+            <p>Vielen Dank, dass Sie AURA nutzen! Diese Station ist das Ergebnis vieler Wochen Arbeit, um sie perfekt an alte Geräte anzupassen.</p>
+            <p>Die Wetterdaten kosten monatlich Geld. Wenn Sie das Projekt unterstützen möchten, freue ich mich riesig über einen "virtuellen Kaffee".</p>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" style="text-decoration:none;">
+                <div style="background:#ffcc00; color:#000; padding:20px; font-weight:bold; font-size:20px; text-align:center; border-radius:10px; margin-top:20px;">PayPal: piratkarl@web.de</div>
+            </a>
             <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=20.3"></script>
+    <script src="script.js?v=20.4"></script>
 </body>
-                    </html>
+    </html>
