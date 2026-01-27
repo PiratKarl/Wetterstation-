@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Weather Station V18.4</title>
-    <link rel="stylesheet" href="style.css?v=18.4">
+    <title>Aura Station V18.5</title>
+    <link rel="stylesheet" href="style.css?v=18.5">
 </head>
 <body>
     <video id="wake-video" loop playsinline muted style="position:fixed; width:1px; opacity:0.01;"></video>
@@ -16,10 +16,10 @@
     </div>
 
     <div id="update-overlay" onclick="location.reload(true)">
-        <h1 style="color:#00eaff; font-size:6vh;">HURRA!</h1>
-        <p style="font-size:3vh;">Eine neue Version ist da!</p>
-        <div style="font-size:8vh; margin:20px;">🔄</div>
-        <div style="background:#00eaff; color:#000; padding:20px; border-radius:15px; font-weight:bold; font-size:3vh;">JETZT AKTUALISIEREN</div>
+        <h1 style="color:#00eaff; font-size:7vh;">UPDATE BEREIT</h1>
+        <p style="font-size:3.5vh;">Version 18.5 verfügbar</p>
+        <div style="font-size:10vh; margin:30px;">🔄</div>
+        <div style="background:#00eaff; color:#000; padding:25px; border-radius:15px; font-weight:bold; font-size:3.5vh;">JETZT AKTUALISIEREN</div>
     </div>
 
     <div id="gear-btn" onclick="openMenu()">⚙ SETUP</div>
@@ -33,13 +33,13 @@
         </div>
 
         <div class="box-center">
-            <div id="city-title" style="color:#888; letter-spacing:2px;">...</div>
+            <div id="city-title" style="color:#888; letter-spacing:2px; font-size:2.4vh;">...</div>
             <div class="temp-row">
                 <img id="current-weather-icon" src="">
                 <div id="temp-display">--°</div>
                 <span id="main-pop">💧--%</span>
             </div>
-            <div id="weather-status">BITTE WARTEN</div>
+            <div id="weather-status">SYNCHRONISIERE</div>
             <div id="feels-like">--</div>
             <div id="clothes-advice">--</div>
         </div>
@@ -49,13 +49,13 @@
             <div class="astro-row">☾ <span id="sunset">--:--</span></div>
             <div id="moon">...</div>
             <div class="update-info">
-                Web App: V18.4<br>
-                Update: <span id="up-date">--.--</span> | <span id="up-time">--:--</span> Uhr
+                Web App: Build V18.5<br>
+                Status: <span id="up-date">--.--</span> | <span id="up-time">--:--</span> Uhr
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker">GLOBALE DATEN WERDEN GELADEN...</div></div>
+    <div class="ticker-wrap"><div id="ticker">LADE GLOBALE METROPOLEN...</div></div>
 
     <div class="tables-area">
         <table id="hourly-table"></table>
@@ -65,7 +65,7 @@
 
     <div id="settings-overlay">
         <div id="menu-main" class="menu-list">
-            <img src="logo.png" style="width:150px; align-self:center; margin-bottom:15px;">
+            <img src="logo.png" style="width:150px; align-self:center; margin-bottom:20px;">
             <div class="menu-item" onclick="showSub('sub-config')">📍 STANDORT & TIMER <span>❯</span></div>
             <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="menu-item" style="color:#ffcc00; border-color:#ffcc00;">☕ KAFFEE-SPENDE <span>❯</span></a>
             <div class="menu-item" onclick="showSub('sub-help')">📖 HILFE & TRICKS <span>❯</span></div>
@@ -80,7 +80,6 @@
             <button onclick="save()" style="background:#00eaff; border:none; padding:18px; width:100%; border-radius:12px; font-weight:bold; margin-top:10px;">SPEICHERN</button>
             <button onclick="showMain()" style="background:#333; color:#fff; border:none; padding:12px; border-radius:10px; margin-top:15px; width:100%;">ZURÜCK</button>
         </div>
-        
         <div id="sub-contact" class="sub-content">
             <h2 style="color:#00eaff;">KONTAKT</h2>
             <a href="https://code-werft.de" target="_blank" class="menu-item">🌐 UNSERE WEBSEITE <span>❯</span></a>
@@ -88,6 +87,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=18.4"></script>
+    <script src="script.js?v=18.5"></script>
 </body>
 </html>
