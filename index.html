@@ -4,63 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Aura Mother V18.0</title>
+    <title>Aura Mother V18.1</title>
     <style>
         body { background: #000; margin: 0; overflow: hidden; height: 100vh; width: 100vw; font-family: Arial, sans-serif; }
         #wake-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.1; }
-        #app-frame { 
-            position: absolute; top: 5px; left: 5px; 
-            width: calc(100% - 10px); height: calc(100% - 10px); 
-            border: none; z-index: 10; background: #000;
-        }
+        #app-frame { position: absolute; top: 5px; left: 5px; width: calc(100% - 10px); height: calc(100% - 10px); border: none; z-index: 10; background: #000; }
         #sleep-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; cursor: pointer; }
-        #wake-menu { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; background: #111; border: 2px solid #00eaff; border-radius: 20px;
-            padding: 30px; text-align: center; z-index: 200; color: #fff;
-        }
+        #wake-menu { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; background: #111; border: 2px solid #00eaff; border-radius: 20px; padding: 30px; text-align: center; z-index: 200; color: #fff; }
         .wake-btn { background: #222; border: 1px solid #00eaff; color: #00eaff; padding: 20px; margin: 10px; border-radius: 10px; font-weight: bold; font-size: 2.5vh; width: 100%; }
         #start-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #00eaff; cursor: pointer; }
     </style>
 </head>
-<body>
+<body onload="checkAutoStart()">
     <video id="wake-video" loop playsinline muted></video>
     <iframe id="app-frame" src="station.html"></iframe>
 
-    <div id="start-screen" onclick="initMother()">
+    <div id="start-screen" onclick="initMother(false)">
         <img src="logo.png" style="width:250px; margin-bottom:20px;">
         <div style="font-size:8vh;">👆</div>
         <h2 style="letter-spacing:2px;">AURA VOLLBILD STARTEN</h2>
     </div>
 
     <div id="sleep-overlay" onclick="showWakeMenu()"></div>
-
     <div id="wake-menu">
         <h2 style="color:#00eaff;">AUFWACHEN?</h2>
         <button class="wake-btn" onclick="tempWake(5)">⏳ 5 MINUTEN WACH BLEIBEN</button>
-        <button class="wake-btn" onclick="tempWake(999)">☀️ BIS ZUR NÄCHSTEN SCHLAFZEIT</button>
+        <button class="wake-btn" onclick="tempWake(9999)">☀️ ANBLEIBEN BIS MORGEN</button>
         <button class="wake-btn" onclick="hideWakeMenu()" style="border-color:#555; color:#888;">ZURÜCK</button>
     </div>
 
     <script>
         var ignoreSleepUntil = 0;
+        function checkAutoStart() { if(localStorage.getItem('autoRestart') === 'true') { localStorage.removeItem('autoRestart'); initMother(true); } }
 
-        function initMother() {
-            // VOLLBILD-TRICK FÜR ANDROID 4.4
-            var doc = window.document;
-            var docEl = doc.documentElement;
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            if (requestFullScreen) { requestFullScreen.call(docEl); }
-
+        function initMother(isAuto) {
+            if(!isAuto) {
+                var doc = window.document.documentElement;
+                var rf = doc.requestFullscreen || doc.webkitRequestFullScreen || doc.mozRequestFullScreen;
+                if(rf) rf.call(doc);
+            }
             document.getElementById('start-screen').style.display = 'none';
             var v = document.getElementById('wake-video');
             v.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
             v.play();
-
-            // Adresszeile weghauen
-            window.scrollTo(0, 1);
-
             setInterval(checkSleep, 10000);
             setInterval(checkUpdate, 1800000);
         }
@@ -72,29 +58,19 @@
             var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
             var e = parseInt(sEnd.split(':')[0])*60 + parseInt(sEnd.split(':')[1]);
             var isSleepTime = (s > e) ? (n >= s || n < e) : (n >= s && n < e);
-            
-            if(isSleepTime && Date.now() > ignoreSleepUntil) {
-                document.getElementById('sleep-overlay').style.display = 'block';
-            } else {
-                document.getElementById('sleep-overlay').style.display = 'none';
-            }
+            document.getElementById('sleep-overlay').style.display = (isSleepTime && Date.now() > ignoreSleepUntil) ? 'block' : 'none';
         }
 
         function showWakeMenu() { document.getElementById('wake-menu').style.display = 'block'; }
         function hideWakeMenu() { document.getElementById('wake-menu').style.display = 'none'; }
-        
-        function tempWake(mins) {
-            ignoreSleepUntil = Date.now() + (mins * 60000);
-            hideWakeMenu();
-            checkSleep();
-        }
+        function tempWake(mins) { ignoreSleepUntil = Date.now() + (mins * 60000); hideWakeMenu(); checkSleep(); }
 
         function checkUpdate() {
             var x = new XMLHttpRequest();
             x.open("GET", "version.json?n=" + Date.now(), true);
             x.onload = function() {
                 var d = JSON.parse(x.responseText);
-                if(d.version > 18.0) location.reload(true);
+                if(d.version > 18.1) { localStorage.setItem('autoRestart', 'true'); location.reload(true); }
             };
             x.send();
         }
