@@ -1,10 +1,10 @@
-var currentVer = 18.4;
+var currentVer = 18.5;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
 var active = false, worldData = "";
 
-var capitals = ["Berlin", "Paris", "Rome", "Madrid", "London", "Tokyo", "Washington", "Ottawa", "Canberra", "Brasilia", "Stockholm", "Oslo"];
+var caps = ["Berlin", "Paris", "Rome", "Madrid", "London", "Tokyo", "Washington", "Ottawa", "Canberra", "Brasilia", "Stockholm", "Oslo", "Vienna", "Athens", "Lisbon"];
 
 function z(n){return (n<10?'0':'')+n;}
 
@@ -67,7 +67,8 @@ function loadWeather() {
 
 function loadWorld() {
     worldData = "";
-    capitals.forEach(function(c) {
+    var shuffle = caps.sort(() => 0.5 - Math.random()).slice(0, 10);
+    shuffle.forEach(function(c) {
         var x = new XMLHttpRequest();
         x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric", false);
         x.send();
