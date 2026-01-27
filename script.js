@@ -1,8 +1,10 @@
-var currentVer = 17.6;
+var currentVer = 17.7;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('sleepStart'), sEnd = localStorage.getItem('sleepEnd');
 var active = false, grace = false;
+var worldCities = ["New York", "Sydney", "Tokyo", "London", "Berlin"];
+var worldData = "";
 
 function z(n){return (n<10?'0':'')+n;}
 
@@ -24,51 +26,37 @@ function checkUpdate() {
 window.onload = function() {
     if(localStorage.getItem('autoStart') === 'true') {
         localStorage.removeItem('autoStart');
-        startApp(true); // Automatischer Modus ohne Video-Zwang
+        startApp(true);
     }
 };
 
 function startApp(isAuto) {
     document.getElementById('start-overlay').style.display='none';
-    var el = document.documentElement;
-    
     if(!isAuto) {
-        if(el.requestFullscreen) el.requestFullscreen();
         var v = document.getElementById('wake-video');
         v.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
         v.play().catch(function(e){});
+        if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
     }
-
-    grace = true; setTimeout(function(){ grace = false; }, 60000);
     if(!active) { 
-        active=true; 
-        initStatusHandlers();
-        loadWeather(); 
-        update(); 
-        setInterval(update, 1000); 
-        setInterval(loadWeather, 600000); 
-        setInterval(checkUpdate, 1800000);
+        active=true; initStatusHandlers(); loadWeather(); update(); 
+        setInterval(update, 1000); setInterval(loadWeather, 600000); setInterval(checkUpdate, 1800000);
     }
 }
 
 function initStatusHandlers() {
-    window.addEventListener('online', updateStatus);
-    window.addEventListener('offline', updateStatus);
+    window.addEventListener('online', function(){ document.getElementById('wifi-icon').className="online"; });
+    window.addEventListener('offline', function(){ document.getElementById('wifi-icon').className="offline"; });
     if (navigator.getBattery) {
         navigator.getBattery().then(function(battery) {
-            updateBattery(battery);
-            battery.onlevelchange = function(){ updateBattery(battery); };
-            battery.onchargingchange = function(){ updateBattery(battery); };
+            var updateBat = function(){
+                document.getElementById('bat-box').style.display = 'flex';
+                document.getElementById('bat-level').innerText = Math.round(battery.level * 100) + "%";
+                document.getElementById('bat-icon').innerText = battery.charging ? "⚡" : "🔋";
+            };
+            updateBat(); battery.onlevelchange = updateBat; battery.onchargingchange = updateBat;
         });
     }
-}
-
-function updateStatus() { document.getElementById('wifi-icon').className = navigator.onLine ? "online" : "offline"; }
-
-function updateBattery(bat) {
-    document.getElementById('bat-box').style.display = 'flex';
-    document.getElementById('bat-level').innerText = Math.round(bat.level * 100) + "%";
-    document.getElementById('bat-icon').innerText = bat.charging ? "⚡" : "🔋";
 }
 
 function update() {
@@ -77,8 +65,7 @@ function update() {
     var days = ['So.','Mo.','Di.','Mi.','Do.','Fr.','Sa.'], months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
     document.getElementById('date').innerText = days[now.getDay()] + " " + now.getDate() + ". " + months[now.getMonth()];
     
-    var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate();
-    if(month<3){year--;month+=12;}++month;
+    var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate(); if(month<3){year--;month+=12;}++month;
     var jd = (365.25*year) + (30.6*month) + day - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
     document.getElementById('moon').innerText = ["🌑 NEUMOND","🌒 SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 SICHEL"][b];
 
@@ -88,8 +75,7 @@ function update() {
         if(s > e) { if(n >= s || n < e) sleep = true; } else { if(n >= s && n < e) sleep = true; }
     }
     var v = document.getElementById('wake-video');
-    if(sleep && !grace && v.src) v.classList.add('sleep-mode');
-    else v.classList.remove('sleep-mode');
+    if(sleep && !grace && v.src) v.classList.add('sleep-mode'); else v.classList.remove('sleep-mode');
 }
 
 function loadWeather() {
@@ -99,12 +85,11 @@ function loadWeather() {
         var d = JSON.parse(x.responseText);
         document.getElementById('temp-display').innerText = Math.round(d.main.temp) + "°";
         document.getElementById('feels-like').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
+        document.getElementById('weather-desc').innerText = d.weather[0].description.toUpperCase();
         document.getElementById('city-title').innerText = d.name.toUpperCase();
         document.getElementById('current-weather-icon').src = d.weather[0].icon + ".gif";
         
-        // Sonnenzeiten Fix
-        var r = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
-        var s = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
+        var r = new Date((d.sys.sunrise + d.timezone - 3600) * 1000), s = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
         document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
         document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
 
@@ -112,9 +97,23 @@ function loadWeather() {
         document.getElementById('last-up-date').innerText = z(now.getDate()) + "." + z(now.getMonth()+1) + "." + now.getFullYear().toString().substr(2,2);
         document.getElementById('last-up-time').innerText = z(now.getHours()) + ":" + z(now.getMinutes());
 
+        loadWorldWeather(); // Weltwetter laden
         loadFore(d.coord.lat, d.coord.lon, d.main.temp);
     };
     x.send();
+}
+
+function loadWorldWeather() {
+    worldData = "";
+    var icons = {"Clouds":"☁️","Clear":"☀️","Rain":"🌧️","Drizzle":"🌦️","Thunderstorm":"⛈️","Snow":"❄️","Mist":"🌫️"};
+    worldCities.forEach(function(c) {
+        var x = new XMLHttpRequest();
+        x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric&lang=de", false); // Synchron für Ticker-Bau
+        x.send();
+        var d = JSON.parse(x.responseText);
+        var icon = icons[d.weather[0].main] || "🌡️";
+        worldData += " +++ " + d.name.toUpperCase() + ": " + icon + " " + Math.round(d.main.temp) + "°";
+    });
 }
 
 function loadFore(lat, lon, currentTemp) {
@@ -123,27 +122,25 @@ function loadFore(lat, lon, currentTemp) {
     x.onload = function() {
         var d = JSON.parse(x.responseText);
         var h = "<tr>", dy = "<tr>", rainNext = Math.round(d.list[0].pop * 100);
+        document.getElementById('main-pop').innerText = "💧" + rainNext + "%";
         document.getElementById('clothes-advice').innerText = (rainNext > 30) ? "🌂 REGENSCHIRM" : (currentTemp < 5 ? "🧥 WINTERJACKE" : (currentTemp < 15 ? "🧥 ÜBERGANGSJACKE" : "👕 T-SHIRT"));
         
         for(var i=0; i<4; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
-            h += "<td>"+z(t.getHours())+"h<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<br><span class='t-pop'>💧"+Math.round(it.pop*100)+"%</span></td>";
+            h += "<td>"+z(t.getHours())+" Uhr<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br>"+Math.round(it.main.temp)+"°<br><span style='color:#00eaff; font-size:2vh;'>💧"+Math.round(it.pop*100)+"%</span></td>";
         }
         for(var i=0; i<32; i+=8) {
             var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
-            dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span class='temp-max'>"+Math.round(it.main.temp_max)+"°</span> <span class='temp-min'>"+Math.round(it.main.temp_min-2)+"°</span><br><span class='t-pop'>💧"+Math.round(it.pop*100)+"%</span></td>";
+            dy += "<td>"+day.substr(0,2)+"<br><img class='t-icon' src='"+it.weather[0].icon+".gif'><br><span style='color:#ff4444;'>"+Math.round(it.main.temp_max)+"°</span> <span style='color:#00eaff;'>"+Math.round(it.main.temp_min-2)+"°</span><br><span style='color:#00eaff; font-size:2vh;'>💧"+Math.round(it.pop*100)+"%</span></td>";
         }
         document.getElementById('hourly-table').innerHTML = h + "</tr>"; document.getElementById('daily-table').innerHTML = dy + "</tr>";
-        document.getElementById('ticker').innerText = d.list[0].weather[0].description.toUpperCase() + " +++ REGEN: " + rainNext + "% +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H";
+        document.getElementById('ticker').innerText = d.list[0].weather[0].description.toUpperCase() + " +++ WIND: " + Math.round(d.list[0].wind.speed*3.6) + " KM/H" + worldData;
     };
     x.send();
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='flex'; }
+function openMenu() { document.getElementById('settings-overlay').style.display='flex'; showMain(); }
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-function save() {
-    localStorage.setItem('city', document.getElementById('city-in').value);
-    localStorage.setItem('sleepStart', document.getElementById('time-start').value);
-    localStorage.setItem('sleepEnd', document.getElementById('time-end').value);
-    location.reload();
-}
+function showMain() { document.getElementById('menu-main').style.display='flex'; var subs=document.getElementsByClassName('sub-content'); for(var i=0; i<subs.length; i++) subs[i].style.display='none'; }
+function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='flex'; }
+function save() { localStorage.setItem('city', document.getElementById('city-in').value); localStorage.setItem('sleepStart', document.getElementById('time-start').value); localStorage.setItem('sleepEnd', document.getElementById('time-end').value); location.reload(); }
