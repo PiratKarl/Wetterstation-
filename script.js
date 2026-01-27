@@ -1,4 +1,4 @@
-var currentVer = 17.4;
+var currentVer = 17.6;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('sleepStart'), sEnd = localStorage.getItem('sleepEnd');
@@ -6,7 +6,6 @@ var active = false, grace = false;
 
 function z(n){return (n<10?'0':'')+n;}
 
-// Auto-Update Checker
 function checkUpdate() {
     var x = new XMLHttpRequest();
     x.open("GET", "version.json?nocache=" + new Date().getTime(), true);
@@ -14,7 +13,7 @@ function checkUpdate() {
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.version > currentVer) {
-                localStorage.setItem('autoStart', 'true'); // Flag für Neustart setzen
+                localStorage.setItem('autoStart', 'true');
                 setTimeout(function(){ location.reload(true); }, 2000);
             }
         }
@@ -22,12 +21,24 @@ function checkUpdate() {
     x.send();
 }
 
-function startApp() {
+window.onload = function() {
+    if(localStorage.getItem('autoStart') === 'true') {
+        localStorage.removeItem('autoStart');
+        startApp(true); // Automatischer Modus ohne Video-Zwang
+    }
+};
+
+function startApp(isAuto) {
     document.getElementById('start-overlay').style.display='none';
     var el = document.documentElement;
-    if(el.requestFullscreen) el.requestFullscreen();
-    else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    document.getElementById('wake-video').play().catch(function(e){});
+    
+    if(!isAuto) {
+        if(el.requestFullscreen) el.requestFullscreen();
+        var v = document.getElementById('wake-video');
+        v.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
+        v.play().catch(function(e){});
+    }
+
     grace = true; setTimeout(function(){ grace = false; }, 60000);
     if(!active) { 
         active=true; 
@@ -40,59 +51,45 @@ function startApp() {
     }
 }
 
-// Beim Laden prüfen, ob wir automatisch starten sollen
-window.onload = function() {
-    if(localStorage.getItem('autoStart') === 'true') {
-        localStorage.removeItem('autoStart');
-        startApp(); // Direkt in die App springen
-    }
-};
-
 function initStatusHandlers() {
     window.addEventListener('online', updateStatus);
     window.addEventListener('offline', updateStatus);
-    // Batterie-Logik für Android 4.4 zurückbringen
-    var handleBat = function(bat) {
-        document.getElementById('bat-box').style.display = 'flex';
-        document.getElementById('bat-level').innerText = Math.round(bat.level * 100) + "%";
-        document.getElementById('bat-icon').innerText = bat.charging ? "⚡" : "🔋";
-    };
     if (navigator.getBattery) {
         navigator.getBattery().then(function(battery) {
-            handleBat(battery);
-            battery.onlevelchange = function(){ handleBat(battery); };
-            battery.onchargingchange = function(){ handleBat(battery); };
+            updateBattery(battery);
+            battery.onlevelchange = function(){ updateBattery(battery); };
+            battery.onchargingchange = function(){ updateBattery(battery); };
         });
     }
 }
 
-function updateStatus() {
-    document.getElementById('wifi-icon').className = navigator.onLine ? "online" : "offline";
+function updateStatus() { document.getElementById('wifi-icon').className = navigator.onLine ? "online" : "offline"; }
+
+function updateBattery(bat) {
+    document.getElementById('bat-box').style.display = 'flex';
+    document.getElementById('bat-level').innerText = Math.round(bat.level * 100) + "%";
+    document.getElementById('bat-icon').innerText = bat.charging ? "⚡" : "🔋";
 }
 
 function update() {
     var now = new Date();
     document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
-    
-    // Lang-Datum Format Fix
-    var days = ['So.','Mo.','Di.','Mi.','Do.','Fr.','Sa.'];
-    var months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    var days = ['So.','Mo.','Di.','Mi.','Do.','Fr.','Sa.'], months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
     document.getElementById('date').innerText = days[now.getDay()] + " " + now.getDate() + ". " + months[now.getMonth()];
     
-    // Mond
     var year=now.getFullYear(), month=now.getMonth()+1, day=now.getDate();
     if(month<3){year--;month+=12;}++month;
     var jd = (365.25*year) + (30.6*month) + day - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
     document.getElementById('moon').innerText = ["🌑 NEUMOND","🌒 SICHEL","🌓 1. VIERTEL","🌔 ZUN. MOND","🌕 VOLLMOND","🌖 ABN. MOND","🌗 LETZTES V.","🌘 SICHEL"][b];
 
-    // Sleep
     var sleep = false;
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes(), s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]), e = parseInt(sEnd.split(':')[0])*60 + parseInt(sEnd.split(':')[1]);
         if(s > e) { if(n >= s || n < e) sleep = true; } else { if(n >= s && n < e) sleep = true; }
     }
-    if(sleep && !grace) document.getElementById('wake-video').classList.add('sleep-mode');
-    else document.getElementById('wake-video').classList.remove('sleep-mode');
+    var v = document.getElementById('wake-video');
+    if(sleep && !grace && v.src) v.classList.add('sleep-mode');
+    else v.classList.remove('sleep-mode');
 }
 
 function loadWeather() {
@@ -105,6 +102,12 @@ function loadWeather() {
         document.getElementById('city-title').innerText = d.name.toUpperCase();
         document.getElementById('current-weather-icon').src = d.weather[0].icon + ".gif";
         
+        // Sonnenzeiten Fix
+        var r = new Date((d.sys.sunrise + d.timezone - 3600) * 1000);
+        var s = new Date((d.sys.sunset + d.timezone - 3600) * 1000);
+        document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
+        document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
+
         var now = new Date();
         document.getElementById('last-up-date').innerText = z(now.getDate()) + "." + z(now.getMonth()+1) + "." + now.getFullYear().toString().substr(2,2);
         document.getElementById('last-up-time').innerText = z(now.getHours()) + ":" + z(now.getMinutes());
