@@ -4,11 +4,15 @@ html, body {
 }
 #wake-vid { position: fixed; top: 0; left: 0; width: 5px; height: 5px; opacity: 0.01; z-index: -10; pointer-events: none; }
 #sleep-vid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: none; object-fit: fill; }
+
 .dashboard { display: flex; height: 55vh; padding: 10px 20px; box-sizing: border-box; }
+
+/* LINKS & MITTE & RECHTS (Wie gehabt, bewährtes Layout) */
 .col-left { width: 30%; display: flex; flex-direction: column; }
 #clock { font-size: 110px; font-weight: bold; line-height: 0.85; letter-spacing: -3px; margin-left: -5px; }
 #date { font-size: 24px; color: #00eaff; font-weight: bold; margin-top: 8px; text-transform: uppercase; }
 .logo-img { width: 160px; margin-top: 15px; opacity: 0.7; }
+
 .col-center { width: 45%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 #city-name { font-size: 18px; letter-spacing: 3px; color: #888; margin-bottom: 2px; text-transform: uppercase; }
 .weather-group { display: flex; align-items: center; justify-content: center; margin-top: -5px; }
@@ -19,24 +23,34 @@ html, body {
 #w-desc { font-size: 28px; font-weight: bold; text-transform: uppercase; margin-top: 0px; }
 #w-feels { font-size: 22px; color: #aaa; }
 #clothing { font-size: 28px; color: #ffcc00; font-weight: bold; margin-top: 8px; border: 2px solid #ffcc00; padding: 4px 20px; border-radius: 25px; }
-.col-right { width: 25%; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; padding-top: 10px; gap: 30px; } /* gap hinzugefügt für Abstand */
+
+.col-right { width: 25%; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; padding-top: 10px; gap: 30px; }
 #btn-setup { background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; padding: 10px 20px; font-size: 20px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
-/* Astro-Box nach oben verschoben durch gap im Parent und margin-top hier entfernt */
 .astro-box { text-align: right; }
 .astro-big { font-size: 26px; font-weight: bold; color: #fff; margin-bottom: 5px; }
 .moon-phase { color: #00eaff; font-size: 22px; font-weight: bold; }
-.ticker-area { height: 45px; background: #080808; border-top: 1px solid #222; border-bottom: 1px solid #222; overflow: hidden; white-space: nowrap; margin-bottom: 5px; }
-#ticker-text { display: inline-block; padding-left: 100%; animation: tick 85s linear infinite; font-size: 26px; line-height: 45px; color: #00eaff; font-weight: bold; }
-#ticker-text img { vertical-align: middle; width: 35px; margin: 0 8px; }
+
+/* TICKER NEU: GRÖSSER */
+.ticker-area { height: 55px; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; margin-bottom: 5px; position: relative; }
+#ticker-text { display: inline-block; padding-left: 100%; animation: tick 60s linear infinite; font-size: 32px; line-height: 55px; color: #00eaff; font-weight: bold; }
+#ticker-text img { vertical-align: middle; width: 40px; margin: 0 10px; }
+
+/* ALARM MODUS (Wenn NINA/DWD Warnung) */
+.ticker-alert { background: #330000 !important; border-color: #ff0000 !important; }
+.text-alert { color: #ff0000 !important; text-shadow: 0 0 5px #ff0000; animation: tick 35s linear infinite !important; }
+
 @keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
-.forecast-area { display: flex; flex-direction: column; height: 35vh; padding: 0 10px; }
-.f-row { display: flex; justify-content: space-between; width: 100%; height: 50%; align-items: center; border-bottom: 1px solid #111; }
+
+/* TABELLEN: Mit Abstand (gap) */
+.forecast-area { display: flex; flex-direction: column; height: 35vh; padding: 0 10px; justify-content: space-between; } /* space-between drückt sie auseinander */
+.f-row { display: flex; justify-content: space-between; width: 100%; height: 46%; align-items: center; border-bottom: 1px solid #111; background: rgba(255,255,255,0.02); border-radius: 10px; } /* 46% Höhe lässt Platz für Lücke */
 .f-item { text-align: center; flex: 1; font-size: 22px; font-weight: bold; }
 .f-icon { width: 55px; height: 55px; vertical-align: middle; margin: 2px 0; }
+
+/* OVERLAYS (Unverändert) */
 #start-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:60000; display:flex; justify-content:center; align-items:center; flex-direction:column; }
 #update-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:60000; display:none; justify-content:center; align-items:center; flex-direction:column; }
 #settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:55000; padding:30px; overflow-y: auto; }
 .sub-c { display: none; text-align: left; max-width: 700px; margin: 0 auto; }
 .sub-c h2 { color: #00eaff; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 30px; }
 .sub-c p, .sub-c li { font-size: 18px; line-height: 1.6; color: #ccc; margin-bottom: 15px; }
-.sub-c strong { color: #fff; }
