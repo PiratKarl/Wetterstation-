@@ -1,4 +1,4 @@
-var currentVer = 20.3;
+var currentVer = 20.4;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
@@ -18,26 +18,20 @@ function checkUpdate() {
 
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
-    
-    // 1. VOLLBILD VERSUCHEN (ALLE METHODEN)
     var elem = document.documentElement;
     if (elem.requestFullscreen) { elem.requestFullscreen(); } 
     else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
 
-    // 2. DIE WACHHALTE-MASCHINE
     var wV = document.getElementById('wake-vid');
     var sV = document.getElementById('sleep-vid');
     var wA = document.getElementById('wake-aud');
     
-    // Tag-Video (Big Buck Bunny, transparent)
     wV.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
-    // Nacht-Video (Schwarz)
     sV.src = "https://github.com/intel-iot-devkit/sample-videos/raw/master/black.mp4";
-    // AUDIO (Der Dimmer-Killer!)
     wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
 
     wV.play();
-    wA.volume = 1.0; // Wichtig: System muss denken, es läuft Ton!
+    wA.volume = 1.0;
     wA.play();
 
     loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000); setInterval(checkUpdate, 1800000);
