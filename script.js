@@ -1,7 +1,8 @@
-var currentVer = 21.3;
+var currentVer = 21.4;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
+var myLat = 0, myLon = 0;
 
 function z(n){return (n<10?'0':'')+n;}
 
@@ -56,11 +57,14 @@ function loadWeather() {
     x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API+"&units=metric&lang=de", true);
     x.onload = function() {
         var d = JSON.parse(x.responseText);
+        myLat = d.coord.lat; myLon = d.coord.lon;
+        
         document.getElementById('city-name').innerText = d.name.toUpperCase();
         document.getElementById('temp').innerText = Math.round(d.main.temp) + "°";
         document.getElementById('w-icon').src = d.weather[0].icon + ".gif";
         document.getElementById('w-desc').innerText = d.weather[0].description;
         document.getElementById('w-feels').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
+        
         var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000);
         var s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
         document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
@@ -79,7 +83,6 @@ function loadWeather() {
     x.send();
 }
 
-// NEUE INTELLIGENTE BERECHNUNG
 function loadFore(lat, lon, ct) {
     var x = new XMLHttpRequest();
     x.open("GET", "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de", true);
@@ -88,7 +91,6 @@ function loadFore(lat, lon, ct) {
         document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
         document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
 
-        // STUNDEN (Einfach die nächsten 5)
         var h = "";
         for(var i=0; i<5; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
@@ -96,29 +98,17 @@ function loadFore(lat, lon, ct) {
         }
         document.getElementById('hourly-row').innerHTML = h;
 
-        // TAGE: Echte Berechnung von Min/Max
-        // Wir gruppieren die Daten nach Tag (Datum String)
         var days = {};
         d.list.forEach(function(item) {
             var date = new Date(item.dt * 1000);
             var dateStr = date.toLocaleDateString('de-DE', {weekday: 'short'}).toUpperCase();
-            
-            if (!days[dateStr]) {
-                days[dateStr] = { min: 100, max: -100, icon: item.weather[0].icon, count: 0 };
-            }
-            // Wir suchen den niedrigsten und höchsten Wert des Tages
+            if (!days[dateStr]) { days[dateStr] = { min: 100, max: -100, icon: item.weather[0].icon }; }
             if (item.main.temp_min < days[dateStr].min) days[dateStr].min = item.main.temp_min;
             if (item.main.temp_max > days[dateStr].max) days[dateStr].max = item.main.temp_max;
-            
-            // Icon von Mittags (ca. 12 Uhr) nehmen, wenn möglich
-            if (date.getHours() >= 11 && date.getHours() <= 14) {
-                days[dateStr].icon = item.weather[0].icon;
-            }
+            if (date.getHours() >= 11 && date.getHours() <= 14) { days[dateStr].icon = item.weather[0].icon; }
         });
 
-        var dy = "";
-        var count = 0;
-        // Die gesammelten Tage anzeigen (Maximal 5)
+        var dy = ""; var count = 0;
         for (var key in days) {
             if (count >= 5) break;
             var dayData = days[key];
@@ -130,12 +120,11 @@ function loadFore(lat, lon, ct) {
     x.send();
 }
 
-// 20 STÄDTE + ANTI-HÄNGER
 var worldCaps = ["Berlin", "Paris", "London", "Rome", "Madrid", "Vienna", "Warsaw", "Moscow", "Lisbon", "New York", "Los Angeles", "Rio de Janeiro", "Buenos Aires", "Tokyo", "Beijing", "Bangkok", "Sydney", "Dubai", "Cairo", "Cape Town"];
 
 function checkWarnings(lat, lon) {
     var warningHTML = "";
-    var timeout = setTimeout(function() { loadWorldTicker(""); }, 3000); // Notbremse
+    var timeout = setTimeout(function() { loadWorldTicker(""); }, 3000); 
 
     var x = new XMLHttpRequest();
     x.open("GET", "https://api.brightsky.dev/alerts?lat="+lat+"&lon="+lon, true);
