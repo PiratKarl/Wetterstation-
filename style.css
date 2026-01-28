@@ -1,4 +1,4 @@
-/* --- AURA V22.7 PRÄZISIONS-LAYOUT --- */
+/* --- AURA V22.8 SICHERHEITS-EDITION --- */
 
 html, body { 
     width: 100%; height: 100%; margin: 0; padding: 0; 
@@ -15,13 +15,33 @@ html, body {
 /* 1. SEKTOR: Dashboard (45% der Höhe) */
 .dashboard { display: flex; height: 45vh; padding: 10px 20px; box-sizing: border-box; flex-shrink: 0; align-items: flex-start; }
 
-/* LINKS: Standort exakt auf Uhr-Oberkante */
+/* LINKS: Logo & Uhr */
 .col-left { width: 28%; display: flex; flex-direction: column; }
 #city-name { font-size: 20px; letter-spacing: 2px; color: #888; text-transform: uppercase; margin-bottom: 2px; }
 #clock { font-size: 85px; font-weight: bold; line-height: 0.8; margin-top: 0; letter-spacing: -2px; }
 #date { font-size: 22px; color: #00eaff; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
-.logo-container { width: 140px; margin-top: 15px; opacity: 0.8; }
-#logo-heartbeat { width: 100%; height: auto; display: block; }
+
+/* DAS LOGO-SANDWICH */
+.logo-container { 
+    width: 140px; 
+    margin-top: 15px; 
+    opacity: 0.8; 
+    position: relative; /* Erlaubt das Stapeln von Bild und Video */
+}
+.logo-fallback { 
+    width: 100%; 
+    height: auto; 
+    display: block; 
+}
+#logo-heartbeat { 
+    position: absolute; /* Legt das Video exakt über das Bild */
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: auto; 
+    display: block; 
+    z-index: 5; /* Video liegt oben */
+}
 
 /* MITTE: Hierarchie (Zustand > Gefühl > Kleidung) */
 .col-center { width: 44%; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -30,13 +50,12 @@ html, body {
 #temp { font-size: 105px; font-weight: bold; line-height: 0.9; }
 #w-desc { font-size: 26px; font-weight: bold; text-transform: uppercase; margin-top: 5px; color: #fff; }
 #w-feels { font-size: 20px; color: #aaa; margin-top: 2px; }
-#clothing { font-size: 18px; color: #ffcc00; font-weight: bold; border: 1.5px solid #ffcc00; padding: 2px 12px; border-radius: 15px; margin-top: 8px; }
+#clothing { font-size: 17px; color: #ffcc00; font-weight: bold; border: 1.5px solid #ffcc00; padding: 2px 10px; border-radius: 15px; margin-top: 8px; }
 
-/* RECHTS: Astro-Block höher geschoben */
+/* RECHTS: Astro & Menü */
 .col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; }
 #btn-setup { background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; padding: 6px 12px; font-size: 16px; border-radius: 6px; margin-bottom: 25px; cursor: pointer; font-weight: bold; }
 .astro-box { text-align: right; margin-top: -15px; }
-.maint-note { color: #ff0000; font-weight: bold; font-size: 14px; display: block; margin-top: 2px; }
 
 /* 2. SEKTOR: Ticker (5% der Höhe) */
 .ticker-area { height: 5vh; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
@@ -50,7 +69,7 @@ html, body {
 .f-row { display: flex; justify-content: space-between; width: 100%; height: 46%; align-items: center; background: rgba(255,255,255,0.02); border-radius: 10px; border-bottom: 1px solid #111; }
 .f-item { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .f-head { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: -5px; }
-.f-icon { width: 90px; height: 90px; } /* Grosse Icons wie gewünscht */
+.f-icon { width: 90px; height: 90px; } 
 .f-val { font-size: 19px; font-weight: bold; }
 
 /* MENÜ & RECHTLICHES */
@@ -60,5 +79,5 @@ html, body {
 .sub-c p, .sub-c li { font-size: 18px; line-height: 1.6; color: #ccc; margin-bottom: 15px; }
 .btn-m { background: #111; border: 1px solid #333; padding: 18px; width: 100%; max-width: 450px; margin: 0 auto 10px auto; color: #fff; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; border-radius: 10px; }
 
-/* Animationen */
+@keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }

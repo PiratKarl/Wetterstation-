@@ -1,6 +1,6 @@
-/* --- AURA V22.7 DATEN-MOTOR --- */
+/* --- AURA V22.8 DATEN-MOTOR & UPDATE-WÄCHTER --- */
 
-var currentVer = 22.7;
+var currentVer = 22.8;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
@@ -10,27 +10,29 @@ function z(n){return (n<10?'0':'')+n;}
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
     
-    // Vollbild-Anforderung
+    // Vollbild-Modus anfordern
     var de = document.documentElement;
     if (de.requestFullscreen) { de.requestFullscreen(); } 
     else if (de.webkitRequestFullscreen) { de.webkitRequestFullscreen(); } 
     else if (de.mozRequestFullScreen) { de.mozRequestFullScreen(); }
 
-    // Wachhalter (Audio & Video-Logo)
+    // Wachhalter (Audio & Video-Herzschlag)
     var heartbeat = document.getElementById('logo-heartbeat');
     var wA = document.getElementById('wake-aud');
     wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
     wA.play();
+    
+    // Video starten (Wachhalte-Effekt auch wenn unsichtbar)
     if(heartbeat) { heartbeat.play(); }
 
-    // Initialer Start
+    // Initialer Datenabruf
     loadWeather();
     update();
     
-    // Intervalle setzen
-    setInterval(update, 1000);           // Uhrzeit & Sleep-Check jede Sekunde
+    // Die Kontroll-Intervalle
+    setInterval(update, 1000);           // Uhr & Sleep-Check jede Sekunde
     setInterval(loadWeather, 600000);    // Wetter alle 10 Minuten
-    setInterval(checkUpdate, 1800000);   // Update-Check alle 30 Minuten
+    setInterval(checkUpdate, 1800000);   // Update-Wächter alle 30 Minuten
 }
 
 function update() {
@@ -40,7 +42,7 @@ function update() {
     var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
 
-    // Sleep-Timer Logik
+    // Ruhemodus (Sleep) Logik
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes();
         var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
@@ -68,13 +70,13 @@ function loadWeather() {
             document.getElementById('w-feels').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
             
             var now = new Date();
-            document.getElementById('last-update').innerText = z(now.getDate()) + "." + z(now.getMonth()+1) + "." + now.getFullYear().toString().substr(-2) + " " + z(now.getHours()) + ":" + z(now.getMinutes());
+            document.getElementById('last-update').innerText = z(now.getDate()) + "." + z(now.getMonth()+1) + "." + now.getFullYear().toString().substr(-2) + " um " + z(now.getHours()) + ":" + z(now.getMinutes()) + " Uhr";
 
             var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000), s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
             document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
             document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
 
-            // Mondphase
+            // Mondphase berechnen
             var year=now.getFullYear(), mo=now.getMonth()+1, da=now.getDate(); if(mo<3){year--;mo+=12;}++mo;
             var jd = (365.25*year) + (30.6*mo) + da - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
             var mI = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"], mT = ["NEUMOND","SICHEL","1. VIERTEL","ZUN. MOND","VOLLMOND","ABN. MOND","3. VIERTEL","SICHEL"];
@@ -97,7 +99,7 @@ function loadFore(lat, lon, ct) {
             document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
             document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
             
-            // Stundenvorhersage
+            // Stundenvorhersage (Icons 90px via CSS)
             var h = "";
             for(var i=0; i<5; i++) {
                 var it = d.list[i], t = new Date(it.dt*1000);
