@@ -1,8 +1,7 @@
-var currentVer = 21.2;
+var currentVer = 21.3;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
-var myLat = 0, myLon = 0;
 
 function z(n){return (n<10?'0':'')+n;}
 
@@ -57,7 +56,6 @@ function loadWeather() {
     x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API+"&units=metric&lang=de", true);
     x.onload = function() {
         var d = JSON.parse(x.responseText);
-        myLat = d.coord.lat; myLon = d.coord.lon;
         document.getElementById('city-name').innerText = d.name.toUpperCase();
         document.getElementById('temp').innerText = Math.round(d.main.temp) + "°";
         document.getElementById('w-icon').src = d.weather[0].icon + ".gif";
@@ -76,11 +74,12 @@ function loadWeather() {
         document.getElementById('moon-icon').innerText = moonIco[b];
 
         loadFore(d.coord.lat, d.coord.lon, d.main.temp);
-        checkWarnings(d.coord.lat, d.coord.lon); // Startet den Warn-Check
+        checkWarnings(d.coord.lat, d.coord.lon);
     };
     x.send();
 }
 
+// NEUE INTELLIGENTE BERECHNUNG
 function loadFore(lat, lon, ct) {
     var x = new XMLHttpRequest();
     x.open("GET", "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de", true);
@@ -88,36 +87,60 @@ function loadFore(lat, lon, ct) {
         var d = JSON.parse(x.responseText);
         document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
         document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
-        var h = "", dy = "";
+
+        // STUNDEN (Einfach die nächsten 5)
+        var h = "";
         for(var i=0; i<5; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
             h += `<div class='f-item'>${t.getHours()} Uhr<br><img class='f-icon' src='${it.weather[0].icon}.gif'><br>${Math.round(it.main.temp)}°</div>`;
         }
-        for(var i=0; i<40; i+=8) {
-            var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE',{weekday:'short'});
-            dy += `<div class='f-item'>${day.toUpperCase()}<br><img class='f-icon' src='${it.weather[0].icon}.gif'><br><span style='color:#ff4444'>${Math.round(it.main.temp_max)}°</span> <span style='color:#00eaff'>${Math.round(it.main.temp_min)}°</span></div>`;
-        }
         document.getElementById('hourly-row').innerHTML = h;
+
+        // TAGE: Echte Berechnung von Min/Max
+        // Wir gruppieren die Daten nach Tag (Datum String)
+        var days = {};
+        d.list.forEach(function(item) {
+            var date = new Date(item.dt * 1000);
+            var dateStr = date.toLocaleDateString('de-DE', {weekday: 'short'}).toUpperCase();
+            
+            if (!days[dateStr]) {
+                days[dateStr] = { min: 100, max: -100, icon: item.weather[0].icon, count: 0 };
+            }
+            // Wir suchen den niedrigsten und höchsten Wert des Tages
+            if (item.main.temp_min < days[dateStr].min) days[dateStr].min = item.main.temp_min;
+            if (item.main.temp_max > days[dateStr].max) days[dateStr].max = item.main.temp_max;
+            
+            // Icon von Mittags (ca. 12 Uhr) nehmen, wenn möglich
+            if (date.getHours() >= 11 && date.getHours() <= 14) {
+                days[dateStr].icon = item.weather[0].icon;
+            }
+        });
+
+        var dy = "";
+        var count = 0;
+        // Die gesammelten Tage anzeigen (Maximal 5)
+        for (var key in days) {
+            if (count >= 5) break;
+            var dayData = days[key];
+            dy += `<div class='f-item'>${key}<br><img class='f-icon' src='${dayData.icon}.gif'><br><span style='color:#ff4444'>${Math.round(dayData.max)}°</span> <span style='color:#00eaff'>${Math.round(dayData.min)}°</span></div>`;
+            count++;
+        }
         document.getElementById('daily-row').innerHTML = dy;
     };
     x.send();
 }
 
-// 20 STÄDTE LISTE
+// 20 STÄDTE + ANTI-HÄNGER
 var worldCaps = ["Berlin", "Paris", "London", "Rome", "Madrid", "Vienna", "Warsaw", "Moscow", "Lisbon", "New York", "Los Angeles", "Rio de Janeiro", "Buenos Aires", "Tokyo", "Beijing", "Bangkok", "Sydney", "Dubai", "Cairo", "Cape Town"];
 
 function checkWarnings(lat, lon) {
     var warningHTML = "";
-    // NOT-AUS: Wenn DWD nach 3 Sek nicht antwortet, lade nur Weltwetter!
-    var timeout = setTimeout(function() {
-        console.log("Warn-Check Timeout: Lade Weltwetter...");
-        loadWorldTicker(""); 
-    }, 3000);
+    var timeout = setTimeout(function() { loadWorldTicker(""); }, 3000); // Notbremse
 
     var x = new XMLHttpRequest();
     x.open("GET", "https://api.brightsky.dev/alerts?lat="+lat+"&lon="+lon, true);
     x.onload = function() {
-        clearTimeout(timeout); // Timer stoppen, Antwort ist da
+        clearTimeout(timeout);
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.alerts && data.alerts.length > 0) {
@@ -126,36 +149,26 @@ function checkWarnings(lat, lon) {
                 }
             }
         }
-        loadWorldTicker(warningHTML); // Weltwetter laden (mit oder ohne Warnung)
+        loadWorldTicker(warningHTML);
     };
-    x.onerror = function() { clearTimeout(timeout); loadWorldTicker(""); }; // Bei Fehler sofort weiter
+    x.onerror = function() { clearTimeout(timeout); loadWorldTicker(""); };
     x.send();
 }
 
 function loadWorldTicker(prefix) {
-    var wd = prefix || ""; // Warnung voranstellen
-    var count = 0;
-    
-    // Wir laden die Städte nacheinander, um das alte Tablet nicht zu überlasten
+    var wd = prefix || "";
     function loadNextCity(i) {
-        if (i >= worldCaps.length) {
-            document.getElementById('ticker-text').innerHTML = wd;
-            return;
-        }
+        if (i >= worldCaps.length) { document.getElementById('ticker-text').innerHTML = wd; return; }
         var r = new XMLHttpRequest();
         r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+worldCaps[i]+"&appid="+API+"&units=metric",true);
         r.onload = function() {
-            if(r.status===200) {
-                var j=JSON.parse(r.responseText); 
-                wd += ` ◈ ${j.name.toUpperCase()}: <img src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°`;
-            }
-            loadNextCity(i+1); // Nächste Stadt laden
+            if(r.status===200) { var j=JSON.parse(r.responseText); wd += ` ◈ ${j.name.toUpperCase()}: <img src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°`; }
+            loadNextCity(i+1);
         };
-        r.onerror = function() { loadNextCity(i+1); }; // Weiter bei Fehler
+        r.onerror = function() { loadNextCity(i+1); };
         r.send();
     }
-    
-    loadNextCity(0); // Start
+    loadNextCity(0);
 }
 
 function openMenu() { document.getElementById('settings-overlay').style.display='block'; showMain(); }
