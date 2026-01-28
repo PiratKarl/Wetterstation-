@@ -5,7 +5,6 @@ html, body {
 #wake-vid { position: fixed; top: 0; left: 0; width: 5px; height: 5px; opacity: 0.01; z-index: -10; pointer-events: none; }
 #sleep-vid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: none; object-fit: fill; }
 
-/* Dashboard etwas kompakter, damit unten mehr Platz ist */
 .dashboard { display: flex; height: 48vh; padding: 10px 20px; box-sizing: border-box; }
 
 .col-left { width: 30%; display: flex; flex-direction: column; }
@@ -30,26 +29,23 @@ html, body {
 .astro-big { font-size: 26px; font-weight: bold; color: #fff; margin-bottom: 5px; }
 .moon-phase { color: #00eaff; font-size: 22px; font-weight: bold; }
 
-/* Ticker: Jetzt höher positioniert durch kleineres Dashboard */
+/* TICKER BEREICH */
 .ticker-area { height: 55px; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; margin-bottom: 15px; position: relative; }
-#ticker-text { display: inline-block; padding-left: 100%; animation: tick 60s linear infinite; font-size: 32px; line-height: 55px; color: #00eaff; font-weight: bold; }
+#ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 32px; line-height: 55px; color: #00eaff; font-weight: bold; } /* Animation langsamer (120s) wegen vieler Städte */
 #ticker-text img { vertical-align: middle; width: 40px; margin: 0 10px; }
 
-/* Alarm Modus */
-.ticker-alert { background: #330000 !important; border-color: #ff0000 !important; }
-.text-alert { color: #ff0000 !important; text-shadow: 0 0 5px #ff0000; animation: tick 35s linear infinite !important; }
+/* Alarm Styling innerhalb des Tickers */
+.warn-blink { color: #ff0000; text-shadow: 0 0 5px #ff0000; font-weight: 900; margin-right: 50px; animation: blinker 1.5s linear infinite; }
+@keyframes blinker { 50% { opacity: 0.5; } }
 @keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
-/* Tabellen Bereich */
 .forecast-area { display: flex; flex-direction: column; height: 38vh; padding: 0 10px; justify-content: flex-start; gap: 15px; }
 .f-row { display: flex; justify-content: space-between; width: 100%; height: 45%; align-items: center; border-bottom: 1px solid #111; background: rgba(255,255,255,0.02); border-radius: 10px; }
-.f-item { text-align: center; flex: 1; font-size: 22px; font-weight: bold; } /* Flex 1 verteilt 5 Elemente automatisch */
+.f-item { text-align: center; flex: 1; font-size: 22px; font-weight: bold; }
 .f-icon { width: 55px; height: 55px; vertical-align: middle; margin: 2px 0; }
-
-/* Die gewünschte "Leere Zeile" unten */
 .bottom-spacer { height: 30px; width: 100%; }
 
-/* Overlays unverändert */
+/* Overlays */
 #start-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:60000; display:flex; justify-content:center; align-items:center; flex-direction:column; }
 #update-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:60000; display:none; justify-content:center; align-items:center; flex-direction:column; }
 #settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:55000; padding:30px; overflow-y: auto; }

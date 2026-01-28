@@ -1,4 +1,4 @@
-var currentVer = 21.1;
+var currentVer = 21.2;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
@@ -58,13 +58,11 @@ function loadWeather() {
     x.onload = function() {
         var d = JSON.parse(x.responseText);
         myLat = d.coord.lat; myLon = d.coord.lon;
-        
         document.getElementById('city-name').innerText = d.name.toUpperCase();
         document.getElementById('temp').innerText = Math.round(d.main.temp) + "°";
         document.getElementById('w-icon').src = d.weather[0].icon + ".gif";
         document.getElementById('w-desc').innerText = d.weather[0].description;
         document.getElementById('w-feels').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
-        
         var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000);
         var s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
         document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
@@ -78,7 +76,7 @@ function loadWeather() {
         document.getElementById('moon-icon').innerText = moonIco[b];
 
         loadFore(d.coord.lat, d.coord.lon, d.main.temp);
-        checkWarnings(d.coord.lat, d.coord.lon);
+        checkWarnings(d.coord.lat, d.coord.lon); // Startet den Warn-Check
     };
     x.send();
 }
@@ -90,14 +88,11 @@ function loadFore(lat, lon, ct) {
         var d = JSON.parse(x.responseText);
         document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
         document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
-
         var h = "", dy = "";
-        // 5 STUNDEN
         for(var i=0; i<5; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
             h += `<div class='f-item'>${t.getHours()} Uhr<br><img class='f-icon' src='${it.weather[0].icon}.gif'><br>${Math.round(it.main.temp)}°</div>`;
         }
-        // 5 TAGE
         for(var i=0; i<40; i+=8) {
             var it = d.list[i], day = new Date(it.dt*1000).toLocaleDateString('de-DE',{weekday:'short'});
             dy += `<div class='f-item'>${day.toUpperCase()}<br><img class='f-icon' src='${it.weather[0].icon}.gif'><br><span style='color:#ff4444'>${Math.round(it.main.temp_max)}°</span> <span style='color:#00eaff'>${Math.round(it.main.temp_min)}°</span></div>`;
@@ -108,47 +103,59 @@ function loadFore(lat, lon, ct) {
     x.send();
 }
 
+// 20 STÄDTE LISTE
+var worldCaps = ["Berlin", "Paris", "London", "Rome", "Madrid", "Vienna", "Warsaw", "Moscow", "Lisbon", "New York", "Los Angeles", "Rio de Janeiro", "Buenos Aires", "Tokyo", "Beijing", "Bangkok", "Sydney", "Dubai", "Cairo", "Cape Town"];
+
 function checkWarnings(lat, lon) {
+    var warningHTML = "";
+    // NOT-AUS: Wenn DWD nach 3 Sek nicht antwortet, lade nur Weltwetter!
+    var timeout = setTimeout(function() {
+        console.log("Warn-Check Timeout: Lade Weltwetter...");
+        loadWorldTicker(""); 
+    }, 3000);
+
     var x = new XMLHttpRequest();
     x.open("GET", "https://api.brightsky.dev/alerts?lat="+lat+"&lon="+lon, true);
     x.onload = function() {
-        var box = document.getElementById('ticker-box');
-        var txt = document.getElementById('ticker-text');
-        
+        clearTimeout(timeout); // Timer stoppen, Antwort ist da
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.alerts && data.alerts.length > 0) {
-                box.className = "ticker-area ticker-alert";
-                txt.className = "text-alert";
-                var warnText = "";
                 for(var i=0; i<data.alerts.length; i++) {
-                    warnText += " +++ ⚠️ AMTLICHE WARNUNG: " + data.alerts[i].event_de.toUpperCase() + " (" + data.alerts[i].headline_de + ") ";
+                    warningHTML += "<span class='warn-blink'> +++ ⚠️ WARNUNG: " + data.alerts[i].event_de.toUpperCase() + " (" + data.alerts[i].headline_de + ") ⚠️</span>";
                 }
-                txt.innerHTML = warnText + " +++";
-            } else {
-                box.className = "ticker-area";
-                txt.className = "";
-                loadWorldTicker();
             }
-        } else {
-            loadWorldTicker();
         }
+        loadWorldTicker(warningHTML); // Weltwetter laden (mit oder ohne Warnung)
     };
+    x.onerror = function() { clearTimeout(timeout); loadWorldTicker(""); }; // Bei Fehler sofort weiter
     x.send();
 }
 
-function loadWorldTicker() {
-    var caps = ["Berlin", "Paris", "London", "New York", "Tokyo", "Dubai"]; 
-    var wd = ""; var done = 0;
-    caps.forEach(c => { 
-        var r=new XMLHttpRequest(); 
-        r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric",true); 
+function loadWorldTicker(prefix) {
+    var wd = prefix || ""; // Warnung voranstellen
+    var count = 0;
+    
+    // Wir laden die Städte nacheinander, um das alte Tablet nicht zu überlasten
+    function loadNextCity(i) {
+        if (i >= worldCaps.length) {
+            document.getElementById('ticker-text').innerHTML = wd;
+            return;
+        }
+        var r = new XMLHttpRequest();
+        r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+worldCaps[i]+"&appid="+API+"&units=metric",true);
         r.onload = function() {
-            if(r.status===200){ var j=JSON.parse(r.responseText); wd+=` ◈ ${j.name.toUpperCase()}: <img src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°`; }
-            done++; if(done === caps.length) { document.getElementById('ticker-text').innerHTML = wd; }
+            if(r.status===200) {
+                var j=JSON.parse(r.responseText); 
+                wd += ` ◈ ${j.name.toUpperCase()}: <img src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°`;
+            }
+            loadNextCity(i+1); // Nächste Stadt laden
         };
-        r.send(); 
-    });
+        r.onerror = function() { loadNextCity(i+1); }; // Weiter bei Fehler
+        r.send();
+    }
+    
+    loadNextCity(0); // Start
 }
 
 function openMenu() { document.getElementById('settings-overlay').style.display='block'; showMain(); }
