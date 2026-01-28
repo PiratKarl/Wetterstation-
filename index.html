@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V21.4</title>
-    <link rel="stylesheet" href="style.css?v=21.4">
+    <title>Aura V21.5 Compact</title>
+    <link rel="stylesheet" href="style.css?v=21.5">
 </head>
 <body>
     <video id="wake-vid" loop playsinline muted></video>
@@ -14,11 +14,11 @@
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:220px; margin-bottom:30px;">
         <div style="border: 3px solid #00eaff; color: #00eaff; padding: 25px 50px; font-size: 32px; font-weight: bold; border-radius: 40px; box-shadow: 0 0 25px rgba(0,234,255,0.4);">STARTEN</div>
-        <div style="color:#555; margin-top:20px; font-size:18px;">(System wird initialisiert...)</div>
+        <div style="color:#555; margin-top:20px; font-size:18px;">(Lade System...)</div>
     </div>
 
     <div id="update-overlay" onclick="location.reload(true)">
-        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V21.4</h1>
+        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V21.5</h1>
         <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; margin-top:20px; font-size:24px;">JETZT AKTUALISIEREN</div>
     </div>
 
@@ -60,95 +60,32 @@
         <div class="f-row" id="hourly-row"></div>
         <div class="f-row" id="daily-row"></div>
     </div>
-    <div class="bottom-spacer"></div>
 
     <div id="settings-overlay">
         <div id="menu-main" style="text-align:center;">
             <h1 style="color:#00eaff; font-size:40px; margin-bottom:30px;">EINSTELLUNGEN</h1>
-            
-            <div onclick="showSub('sub-config')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
-                <span>📍 STANDORT & TIMER</span> <span>❯</span>
-            </div>
-            
-            <div onclick="showSub('sub-help')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
-                <span>📖 BEDIENUNGSHILFE</span> <span>❯</span>
-            </div>
-            
-            <div onclick="showSub('sub-contact')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
-                <span>📧 KONTAKT & IMPRESSUM</span> <span>❯</span>
-            </div>
-            
-            <div onclick="showSub('sub-donation')" style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;">
-                <span>☕ PROJEKT UNTERSTÜTZEN</span> <span>❯</span>
-            </div>
-            
+            <div onclick="showSub('sub-config')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>📍 STANDORT & TIMER</span> <span>❯</span></div>
+            <div onclick="showSub('sub-help')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>📖 BEDIENUNGSHILFE</span> <span>❯</span></div>
+            <div onclick="showSub('sub-contact')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>📧 KONTAKT & IMPRESSUM</span> <span>❯</span></div>
+            <div onclick="showSub('sub-donation')" style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>☕ PROJEKT UNTERSTÜTZEN</span> <span>❯</span></div>
             <button onclick="closeMenu()" style="width:100%; max-width:400px; padding:20px; font-size:20px; background:#333; color:#fff; border:none; margin-top:20px; border-radius:10px;">SCHLIESSEN</button>
         </div>
-
         <div id="sub-config" class="sub-c">
-            <h2>WOHNORT EINSTELLEN</h2>
-            <p>Bitte geben Sie hier Ihren Städtenamen ein. Das System ermittelt automatisch die GPS-Koordinaten für das lokale Wetter und die amtlichen Warnungen.</p>
-            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444; border-radius:5px;" placeholder="z.B. Braunschweig">
-            
-            <h2>RUHEMODUS (NACHT)</h2>
-            <p>Hier definieren Sie, in welchem Zeitraum der Bildschirm abgedunkelt werden soll. Das Gerät bleibt technisch aktiv (für Updates), stört aber nicht beim Schlafen.</p>
-            <div style="display:flex; gap:10px; align-items:center;">
-                <input type="time" id="t-start" style="font-size:22px; padding:10px;"> <span>bis</span> <input type="time" id="t-end" style="font-size:22px; padding:10px;">
-            </div>
-            
-            <button onclick="save()" style="width:100%; padding:20px; font-size:22px; background:#00eaff; border:none; font-weight:bold; margin-top:30px; border-radius:10px;">SPEICHERN & NEUSTARTEN</button>
-            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ZURÜCK</button>
+            <h2>WOHNORT EINSTELLEN</h2><p>Geben Sie hier Ihren Städtenamen ein.</p><input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444; border-radius:5px;" placeholder="z.B. Braunschweig">
+            <h2>RUHEMODUS</h2><div style="display:flex; gap:10px;"><input type="time" id="t-start" style="font-size:22px; padding:10px;"> bis <input type="time" id="t-end" style="font-size:22px; padding:10px;"></div>
+            <button onclick="save()" style="width:100%; padding:20px; font-size:22px; background:#00eaff; border:none; font-weight:bold; margin-top:30px; border-radius:10px;">SPEICHERN & NEUSTARTEN</button><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ZURÜCK</button>
         </div>
-
         <div id="sub-help" class="sub-c">
-            <h2>HINWEISE ZUM DAUERBETRIEB</h2>
-            <p>Ältere Tablets neigen dazu, den Bildschirm automatisch abzuschalten, um Energie zu sparen. Damit die Wetterstation dauerhaft sichtbar bleibt, beachten Sie bitte folgende Punkte:</p>
-            
-            <p><strong>1. Inbetriebnahme</strong><br>
-            Nach jedem Neustart oder Update muss zwingend einmal auf die Schaltfläche "STARTEN" getippt werden. Dies autorisiert die Audio- und Videokomponenten, die das Gerät wachhalten.</p>
-            
-            <p><strong>2. Systemeinstellungen (Wichtig)</strong><br>
-            Sollte das Display dennoch dunkel werden, prüfen Sie bitte die Android-Einstellungen:</p>
-            <ul>
-                <li>Navigieren Sie zu <em>Einstellungen > Entwickleroptionen</em>.</li>
-                <li>Aktivieren Sie die Option <strong>"Aktiv lassen"</strong> (oder "Wach bleiben").</li>
-                <li>Dadurch wird verhindert, dass das Tablet in den Standby-Modus wechselt, solange es am Ladekabel angeschlossen ist.</li>
-            </ul>
-            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
+            <h2>HINWEISE</h2><p>1. Start drücken!<br>2. Android Einstellungen -> "Aktiv lassen" einschalten.</p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
         </div>
-
         <div id="sub-contact" class="sub-c">
-            <h2>IMPRESSUM & DATENSCHUTZ</h2>
-            <p>Diese Anwendung ist ein privates Projekt zur Weiternutzung älterer Hardware.</p>
-            
-            <p><strong>Datenschutz-Hinweis:</strong><br>
-            Es werden keine personenbezogenen Daten gespeichert oder an Dritte weitergegeben. Ihr Standort wird ausschließlich lokal auf Ihrem Gerät gespeichert, um die Wetterdaten abzurufen.</p>
-            
-            <h2>KONTAKT</h2>
-            <p>Bei technischen Fragen erreichen Sie uns unter:<br>
-            <a href="mailto:webmaster@code-werft.de" style="color:#00eaff; text-decoration:none;">webmaster@code-werft.de</a></p>
-            
-            <h2>WEBSEITE</h2>
-            <p>Weitere Informationen und Updates finden Sie auf:<br>
-            <a href="https://code-werft.de" target="_blank" style="color:#00eaff;">https://code-werft.de</a></p>
-            
-            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
+            <h2>IMPRESSUM</h2><p>Privatprojekt. Keine Datenspeicherung.<br>Kontakt: <a href="mailto:webmaster@code-werft.de" style="color:#00eaff;">webmaster@code-werft.de</a><br>Web: <a href="https://code-werft.de" style="color:#00eaff;">code-werft.de</a></p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
         </div>
-
         <div id="sub-donation" class="sub-c">
-            <h2>UNTERSTÜTZUNG</h2>
-            <p>Die Entwicklung und der Betrieb der Wetterstation erfolgen privat. Insbesondere der Abruf der hochpräzisen Wetterdaten und der Betrieb des Servers verursachen monatliche Kosten.</p>
-            <p>Wenn Ihnen die Anwendung gefällt und Sie zum Erhalt des Projekts beitragen möchten, freue ich mich über eine Unterstützung.</p>
-            
-            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="pp-btn">
-                ☕ JETZT UNTERSTÜTZEN (PayPal)
-            </a>
-            
-            <p style="font-size:16px; margin-top:15px; color:#888;">Die Abwicklung erfolgt sicher über PayPal.</p>
-            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
+            <h2>UNTERSTÜTZUNG</h2><p>Helfen Sie beim Betrieb des Servers:</p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="pp-btn">☕ JETZT UNTERSTÜTZEN</a><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=21.4"></script>
+    <script src="script.js?v=21.5"></script>
 </body>
-    </html> 
+                </html> 
