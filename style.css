@@ -5,37 +5,48 @@ html, body {
 }
 #sleep-vid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: none; object-fit: fill; }
 
-#start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+/* STARTSEITE ZENTRIERUNG */
+#start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
-.dashboard { display: flex; height: 45vh; padding: 10px 20px; box-sizing: border-box; flex-shrink: 0; }
-.col-left { width: 28%; }
-#clock { font-size: 85px; font-weight: bold; line-height: 0.85; }
-#date { font-size: 22px; color: #00eaff; font-weight: bold; margin-top: 5px; }
-.logo-container { width: 140px; margin-top: 10px; opacity: 0.8; }
+/* DASHBOARD (45% Höhe) */
+.dashboard { display: flex; height: 45vh; padding: 10px 20px; box-sizing: border-box; flex-shrink: 0; align-items: flex-start; }
+
+/* LINKS: Standort auf Uhr-Höhe */
+.col-left { width: 28%; display: flex; flex-direction: column; }
+#city-name { font-size: 20px; letter-spacing: 2px; color: #888; text-transform: uppercase; margin-bottom: 2px; }
+#clock { font-size: 85px; font-weight: bold; line-height: 0.8; margin-top: 0; }
+.logo-container { width: 140px; margin-top: 15px; opacity: 0.8; }
 #logo-heartbeat { width: 100%; height: auto; display: block; }
 
-.col-center { width: 44%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+/* MITTE: Gestapelte Infos */
+.col-center { width: 44%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .main-row { display: flex; align-items: center; justify-content: center; gap: 15px; }
-#temp { font-size: 100px; font-weight: bold; line-height: 0.9; }
-#w-desc { font-size: 24px; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
-#clothing { font-size: 20px; color: #ffcc00; font-weight: bold; border: 2px solid #ffcc00; padding: 3px 12px; border-radius: 15px; margin-top: 8px; min-height: 25px; }
+#w-icon { width: 100px; height: 100px; }
+#temp { font-size: 105px; font-weight: bold; line-height: 0.9; }
+#w-desc { font-size: 26px; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+#w-feels { font-size: 20px; color: #aaa; margin-top: 2px; }
+#clothing { font-size: 18px; color: #ffcc00; font-weight: bold; border: 1.5px solid #ffcc00; padding: 2px 12px; border-radius: 15px; margin-top: 8px; }
 
-.col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; height: 100%; }
-#btn-setup { background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; padding: 8px 15px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; }
+/* RECHTS: Astro-Block höher */
+.col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; }
+#btn-setup { background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; padding: 6px 12px; font-size: 16px; border-radius: 6px; margin-bottom: 20px; }
+.astro-box { text-align: right; margin-top: -10px; }
 
-.ticker-area { height: 5vh; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
+/* TICKER EINE ZEILE HÖHER */
+.ticker-area { height: 5vh; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; }
 #ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 26px; line-height: 5vh; font-weight: bold; }
-.t-warn { color: #ff0000; text-shadow: 0 0 5px #ff0000; margin-right: 40px; }
+.t-warn { color: #ff0000; margin-right: 40px; }
 .t-world { color: #00eaff; margin-right: 30px; }
-@keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
-.forecast-area { display: flex; flex-direction: column; height: 50vh; padding: 5px 10px; box-sizing: border-box; justify-content: space-around; flex-shrink: 0; }
-.f-row { display: flex; justify-content: space-between; width: 100%; height: 45%; align-items: center; background: rgba(255,255,255,0.02); border-radius: 10px; }
-.f-item { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; }
-.f-head { font-size: 18px; font-weight: bold; }
+/* VORHERSAGE: Grosse Icons */
+.forecast-area { display: flex; flex-direction: column; height: 50vh; padding: 5px 10px; box-sizing: border-box; justify-content: space-around; }
+.f-row { display: flex; justify-content: space-between; width: 100%; height: 46%; align-items: center; background: rgba(255,255,255,0.02); border-radius: 10px; }
+.f-item { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.f-head { font-size: 18px; font-weight: bold; margin-bottom: -5px; }
+.f-icon { width: 90px; height: 90px; } /* Fast so groß wie das Haupticon */
 .f-val { font-size: 19px; font-weight: bold; }
 
-#settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:90000; padding:30px; overflow-y: auto; box-sizing: border-box; }
+/* MENÜ */
+#settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:90000; padding:30px; overflow-y: auto; }
 .sub-c { display: none; max-width: 800px; margin: 0 auto; text-align: left; }
-.sub-c h2 { color: #00eaff; font-size: 22px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 25px; }
-.sub-c p { font-size: 18px; line-height: 1.6; color: #ccc; }
+.sub-c h2 { color: #00eaff; border-bottom: 1px solid #333; padding-bottom: 5px; }
