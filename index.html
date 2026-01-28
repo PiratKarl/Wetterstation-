@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V23.1 Cockpit Edition</title>
-    <link rel="stylesheet" href="style.css?v=23.1">
+    <title>Aura V23.2 Cockpit & Content</title>
+    <link rel="stylesheet" href="style.css?v=23.2">
 </head>
 <body>
-    <div id="bat-alert" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:20px solid red; z-index:100000; pointer-events:none; animation: pulse 0.5s infinite;"></div>
+    <div id="bat-alert"></div>
 
     <audio id="wake-aud" loop playsinline></audio>
     <video id="sleep-vid" loop playsinline muted></video>
@@ -50,27 +50,26 @@
         </div>
 
         <div class="col-right">
-            <button id="btn-setup" onclick="openMenu()">⚙ MENÜ</button>
+            <button id="btn-setup" onclick="openMenu()">⚙ EINSTELLUNGEN</button>
             <div class="astro-box">
                 <div style="font-size:20px; font-weight:bold;">☀ <span id="sunrise">--:--</span> | ☾ <span id="sunset">--:--</span></div>
-                <div style="color:#00eaff; font-size:18px; margin-top:5px; font-weight:bold;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
+                <div id="moon-row">--</div>
             </div>
 
             <div class="status-cockpit">
-                <div id="stat-wlan" class="status-line">📡 PRÜFE WLAN...</div>
-                <div id="stat-bat" class="status-line">🔋 PRÜFE AKKU...</div>
-                <div id="stat-data" class="status-line">🔄 PRÜFE DATEN...</div>
+                <div id="stat-wlan" class="status-line">📡 WLAN STATUS...</div>
+                <div id="stat-bat" class="status-line">🔋 AKKU STATUS...</div>
+                <div id="stat-data" class="status-line">🔄 DATEN STATUS...</div>
                 <div class="sleep-info">
                     <div id="conf-sleep">🌙 Sleep: --:--</div>
                     <div id="conf-wake">☀️ Wake: --:--</div>
                 </div>
-                <div style="font-size:11px; color:#555; margin-top:10px;">VERSION 23.1</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-area">
-        <div id="ticker-text">Lade Welt-Ticker mit Ortszeiten...</div>
+        <div id="ticker-text">Lade Welt-Ticker mit Echtzeit-Daten...</div>
     </div>
 
     <div class="forecast-area">
@@ -80,30 +79,56 @@
 
     <div id="settings-overlay">
         <div id="menu-main" style="text-align:center;">
-            <h1 style="color:#00eaff; font-size:40px; margin-bottom:40px;">EINSTELLUNGEN</h1>
-            <div class="btn-m" onclick="showSub('sub-config')"><span>📍 STANDORT & SLEEP</span> <span>❯</span></div>
-            <div class="btn-m" onclick="showSub('sub-legal')"><span>⚖ RECHTLICHES & KONTAKT</span> <span>❯</span></div>
-            <div class="btn-m" style="border-color:#ffcc00; color:#ffcc00;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')"><span>☕ KAFFEE SPENDEN (HTTPS)</span> <span>❯</span></div>
-            <button onclick="closeMenu()" style="width:100%; max-width:450px; padding:20px; background:#333; color:#fff; border:none; margin-top:30px; border-radius:10px; font-size:20px;">ZURÜCK</button>
+            <h1 style="color:#00eaff; font-size:40px; margin-bottom:40px;">STATIONS-ZENTRALE</h1>
+            <div class="btn-m" onclick="showSub('sub-config')"><span>📍 STANDORT & ZEITEN</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-guide')"><span>📖 ANLEITUNG & TIPPS</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-legal')"><span>⚖ IMPRESSUM & KONTAKT</span> <span>❯</span></div>
+            <div class="btn-m" style="border-color:#ffcc00; color:#ffcc00;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')"><span>☕ KAFFEE FÜR DEN PIRATEN</span> <span>❯</span></div>
+            <button onclick="closeMenu()" style="width:100%; max-width:450px; padding:20px; background:#333; color:#fff; border:none; margin-top:30px; border-radius:10px; font-size:20px; cursor:pointer;">ZURÜCK ZUM DASHBOARD</button>
         </div>
 
         <div id="sub-config" class="sub-c">
-            <h2>WOHNORT & SLEEP</h2>
-            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444;" placeholder="z.B. Braunschweig">
+            <h2>WOHNORT & RUHEMODUS</h2>
+            <p>Geben Sie Ihren Wohnort ein und legen Sie fest, wann die Station in den Ruhemodus gehen soll.</p>
+            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444;" placeholder="Braunschweig">
             <div style="margin-top:20px; font-size:18px;">
-                Ruhezeit von: <input type="time" id="t-start" style="font-size:18px;"> bis: <input type="time" id="t-end" style="font-size:18px;">
+                Ruhe von: <input type="time" id="t-start"> bis: <input type="time" id="t-end">
             </div>
-            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px;">SPEICHERN</button>
+            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px; cursor:pointer;">SPEICHERN & NEU STARTEN</button>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:#333; color:#fff; margin-top:10px; border-radius:10px;">ABBRECHEN</button>
+        </div>
+
+        <div id="sub-guide" class="sub-c">
+            <h2>BEDIENUNG FÜR LAIEN</h2>
+            <div class="guide-box">
+                <p>1️⃣ <strong>Start:</strong> Tippen Sie beim ersten Laden auf "Station Starten". Die App wechselt automatisch in den Vollbildmodus.</p>
+                <p>2️⃣ <strong>Wach bleiben:</strong> Das schlagende Herz (Logo) sorgt dafür, dass Ihr Tablet nicht abschaltet.</p>
+                <p>3️⃣ <strong>Status-Check:</strong> Rechts unten sehen Sie drei pulsierende Zeilen. Leuchten diese Grün, ist alles perfekt. Blinkt es Rot, prüfen Sie Ihr WLAN.</p>
+                <p>4️⃣ <strong>Updates:</strong> Die Station prüft alle 30 Minuten, ob neue Funktionen verfügbar sind. Erscheint ein Pfeil oben, einfach antippen!</p>
+            </div>
+            <h2>EXPERTEN-TIPPS</h2>
+            <p>Für die beste Darstellung auf alten Tablets empfiehlt es sich, das Gerät im Querformat zu fixieren. Die Helligkeit wird nachts im Ruhemodus automatisch über das Video-Overlay reduziert.</p>
+            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
         </div>
 
         <div id="sub-legal" class="sub-c">
-            <h2>IMPRESSUM & KONTAKT</h2>
-            <p><strong>Betreiber:</strong> Pirat Karl<br>Lohengrinstraße 25, 38106 Braunschweig</p>
-            <p><strong>E-Mail:</strong> webmaster@code-werft.de</p>
+            <h2>IMPRESSUM</h2>
+            <p><strong>Diensteanbieter & Verantwortlicher:</strong><br>
+            Pirat Karl<br>
+            Lohengrinstraße 25<br>
+            38106 Braunschweig<br>
+            Deutschland / Niedersachsen</p>
+            
+            <h2>KONTAKT & HOMEPAGE</h2>
+            <p><strong>E-Mail:</strong> <a href="mailto:webmaster@code-werft.de" style="color:#00eaff;">webmaster@code-werft.de</a></p>
+            <p><strong>Homepage:</strong> <a href="https://code-werft.de" target="_blank" style="color:#00eaff;">https://code-werft.de</a></p>
+            
+            <h2>DATENSCHUTZ</h2>
+            <p>Diese Wetterstation arbeitet vollständig lokal. Ihr eingestellter Standort und die Schlafzeiten werden nur in Ihrem Browser gespeichert. Es findet kein Tracking und keine Weitergabe von privaten Daten statt.</p>
             <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=23.1"></script>
+    <script src="script.js?v=23.2"></script>
 </body>
-                </html>
+    </html>
