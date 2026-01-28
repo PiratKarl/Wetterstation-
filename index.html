@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V21.7 Final</title>
-    <link rel="stylesheet" href="style.css?v=21.7">
+    <title>Aura V21.8 Fix</title>
+    <link rel="stylesheet" href="style.css?v=21.8">
 </head>
 <body>
     <video id="wake-vid" loop playsinline muted></video>
@@ -12,8 +12,17 @@
     <video id="sleep-vid" loop playsinline muted></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <img src="logo.png" style="width:220px; margin-bottom:30px;">
+        <div class="finger-hint">👇</div>
+        <img src="logo.png" style="width:200px; margin-bottom:30px;">
         <div style="border: 3px solid #00eaff; color: #00eaff; padding: 25px 50px; font-size: 32px; font-weight: bold; border-radius: 40px; cursor: pointer;">STARTEN</div>
+        <p style="color:#555; margin-top:20px;">Bitte hier tippen zum Aktivieren</p>
+    </div>
+
+    <div id="update-overlay" style="display:none;" onclick="location.reload(true)">
+        <div class="finger-hint">👆</div>
+        <h1 style="color:#00eaff; font-size:35px;">NEUE VERSION BEREIT</h1>
+        <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; font-size:24px;">JETZT AKTUALISIEREN</div>
+        <p style="color:#fff; margin-top:20px;">Tippe auf den blauen Balken</p>
     </div>
 
     <div class="dashboard">
@@ -38,14 +47,14 @@
         <div class="col-right">
             <div id="btn-setup" onclick="openMenu()">⚙ MENÜ</div>
             <div style="text-align:right;">
-                <div style="font-size:24px;">☀ <span id="sunrise">--:--</span></div>
-                <div style="font-size:24px;">☾ <span id="sunset">--:--</span></div>
-                <div style="color:#00eaff; font-size:22px; margin-top:10px;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
+                <div style="font-size:22px; font-weight:bold;">☀ <span id="sunrise">--:--</span></div>
+                <div style="font-size:22px; font-weight:bold;">☾ <span id="sunset">--:--</span></div>
+                <div style="color:#00eaff; font-size:20px; font-weight:bold; margin-top:8px;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-area"><div id="ticker-text">Lade...</div></div>
+    <div class="ticker-area"><div id="ticker-text">Lade Weltwetter...</div></div>
     <div class="forecast-area"><div class="f-row" id="hourly-row"></div><div class="f-row" id="daily-row"></div></div>
 
     <div id="settings-overlay">
@@ -55,38 +64,43 @@
             <div onclick="showSub('sub-help')" style="background:#111; border:1px solid #333; padding:20px; margin-bottom:15px; cursor:pointer; font-size:22px;">📖 BEDIENUNGSHILFE ❯</div>
             <div onclick="showSub('sub-contact')" style="background:#111; border:1px solid #333; padding:20px; margin-bottom:15px; cursor:pointer; font-size:22px;">📧 KONTAKT & WEB ❯</div>
             <div onclick="showSub('sub-donation')" style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; margin-bottom:15px; cursor:pointer; font-size:22px;">☕ UNTERSTÜTZUNG ❯</div>
-            <button onclick="closeMenu()" style="width:100%; padding:20px; background:#333; color:#fff; border:none; font-size:20px;">SCHLIESSEN</button>
+            <button onclick="closeMenu()" style="width:100%; padding:20px; background:#333; color:#fff; border:none; font-size:20px; border-radius:10px;">ZURÜCK ZUM WETTER</button>
         </div>
 
         <div id="sub-config" class="sub-c">
-            <h2>WOHNORT</h2>
-            <p>Geben Sie Ihren Städtenamen ein, um lokale Wetterdaten zu erhalten.</p>
-            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff;" placeholder="z.B. Braunschweig">
-            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px;">SPEICHERN</button>
-            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none;">ZURÜCK</button>
+            <h2>WOHNORT EINSTELLEN</h2>
+            <p>Trage hier den Namen deiner Stadt ein. Das System sucht dann automatisch das passende Wetter für dich heraus.</p>
+            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444;" placeholder="z.B. Braunschweig">
+            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px;">EINGABE SPEICHERN</button>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ABBRECHEN</button>
         </div>
 
         <div id="sub-help" class="sub-c">
-            <h2>DAUERBETRIEB</h2>
-            <p>Damit das Display an bleibt: Tippen Sie nach dem Start einmal auf "STARTEN". Aktivieren Sie in den Android-Entwickleroptionen die Funktion "Wach bleiben".</p>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff;">ZURÜCK</button>
+            <h2>WICHTIGE HINWEISE</h2>
+            <p>Damit das Tablet niemals ausgeht, sind zwei Dinge wichtig:</p>
+            <ul>
+                <li><strong>Immer Starten:</strong> Tippe nach jedem Start oder Update auf den Knopf mit dem Finger-Symbol. Nur so darf die App das Tablet wachhalten.</li>
+                <li><strong>Entwickler-Trick:</strong> In den Tablet-Einstellungen gibt es oft einen Schalter "Wach bleiben beim Laden". Wenn dieser an ist, bleibt das Display immer hell.</li>
+            </ul>
+            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">VERSTANDEN</button>
         </div>
 
         <div id="sub-contact" class="sub-c">
-            <h2>KONTAKT</h2>
-            <p>E-Mail: webmaster@code-werft.de</p>
-            <p>Web: <a href="https://code-werft.de" target="_blank" style="color:#00eaff;">code-werft.de</a></p>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff;">ZURÜCK</button>
+            <h2>KONTAKT & IMPRESSUM</h2>
+            <p>Dieses Projekt ist privat und dient der Weiternutzung alter Tablets.</p>
+            <p>E-Mail: <strong>webmaster@code-werft.de</strong></p>
+            <p>Besuche uns online: <a href="https://code-werft.de" target="_blank" style="color:#00eaff;">code-werft.de</a></p>
+            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
         </div>
 
         <div id="sub-donation" class="sub-c">
-            <h2>SPENDE</h2>
-            <p>Unterstützen Sie den Betrieb des Wetter-Servers:</p>
-            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="pp-btn">☕ JETZT PER PAYPAL SPENDEN</a>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; margin-top:20px;">ZURÜCK</button>
+            <h2>PROJEKT UNTERSTÜTZEN</h2>
+            <p>Die Wetterdaten und der Server kosten jeden Monat Geld. Wenn dir die Station gefällt, freuen wir uns über einen kleinen Beitrag.</p>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" style="background:#ffcc00; color:#000; padding:15px; border-radius:8px; text-align:center; font-weight:bold; text-decoration:none; display:block; font-size:18px;">☕ EINEM KAFFEE SPENDEN (PayPal)</a>
+            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; margin-top:20px; border-radius:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=21.7"></script>
+    <script src="script.js?v=21.8"></script>
 </body>
-        </html> 
+    </html> 
