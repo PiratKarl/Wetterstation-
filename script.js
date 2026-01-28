@@ -1,12 +1,19 @@
-var currentVer = 21.6;
+var currentVer = 21.7;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
-var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
 
 function z(n){return (n<10?'0':'')+n;}
 
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
+    
+    // VOLLBILD-COMMANDO (Für alle Browser-Generationen)
+    var doc = window.document;
+    var docEl = doc.documentElement;
+    var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+    if(requestFullScreen) { requestFullScreen.call(docEl); }
+
+    // Wachhalter & Logo-Video starten
     var wV = document.getElementById('wake-vid');
     var wA = document.getElementById('wake-aud');
     var heartbeat = document.getElementById('logo-heartbeat');
@@ -17,7 +24,7 @@ function startApp() {
     wV.play(); wA.volume = 1.0; wA.play();
     if(heartbeat) { heartbeat.play(); }
 
-    loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000); setInterval(checkUpdate, 1800000);
+    loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000);
 }
 
 function update() {
@@ -57,7 +64,6 @@ function loadFore(lat, lon, ct) {
         document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
         document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
 
-        // STUNDEN: "13 Uhr" Format
         var h = "";
         for(var i=0; i<5; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
@@ -65,7 +71,6 @@ function loadFore(lat, lon, ct) {
         }
         document.getElementById('hourly-row').innerHTML = h;
 
-        // TAGE: Echte Min/Max Berechnung
         var days = {};
         d.list.forEach(function(item) {
             var dateStr = new Date(item.dt * 1000).toLocaleDateString('de-DE', {weekday: 'short'}).toUpperCase();
@@ -89,22 +94,20 @@ var worldCaps = ["Berlin", "Paris", "London", "Rome", "Madrid", "Vienna", "Warsa
 
 function checkWarnings(lat, lon) {
     var x = new XMLHttpRequest();
-    var timeout = setTimeout(function() { loadWorldTicker(""); }, 3000); // 3s Notbremse
     x.open("GET", "https://api.brightsky.dev/alerts?lat="+lat+"&lon="+lon, true);
     x.onload = function() {
-        clearTimeout(timeout);
         var txt = "";
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.alerts && data.alerts.length > 0) {
                 for(var i=0; i<data.alerts.length; i++) {
-                    txt += "<span class='warn-blink'> +++ ⚠️ WARNUNG: " + data.alerts[i].event_de.toUpperCase() + " (" + data.alerts[i].headline_de + ") ⚠️</span>";
+                    txt += "<span class='warn-blink'> +++ ⚠️ WARNUNG: " + data.alerts[i].event_de.toUpperCase() + " ⚠️</span>";
                 }
             }
         }
         loadWorldTicker(txt);
     };
-    x.onerror = function() { clearTimeout(timeout); loadWorldTicker(""); };
+    x.onerror = function() { loadWorldTicker(""); };
     x.send();
 }
 
@@ -121,15 +124,8 @@ function loadWorldTicker(prefix) {
     });
 }
 
-function checkUpdate() {
-    var x = new XMLHttpRequest();
-    x.open("GET", "version.json?n=" + Date.now(), true);
-    x.onload = function() { if (x.status === 200 && JSON.parse(x.responseText).version > currentVer) document.getElementById('update-overlay').style.display = 'flex'; };
-    x.send();
-}
-
-function openMenu() { document.getElementById('settings-overlay').style.display='block'; }
+function openMenu() { document.getElementById('settings-overlay').style.display='block'; showMain(); }
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
 function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
-function showMain() { document.getElementById('menu-main').style.display='block'; document.getElementById('sub-config').style.display='none'; document.getElementById('sub-help').style.display='none'; }
+function showMain() { document.getElementById('menu-main').style.display='block'; var s = document.getElementsByClassName('sub-c'); for(var i=0; i<s.length; i++){s[i].style.display='none';} }
 function save() { localStorage.setItem('city', document.getElementById('city-in').value); location.reload(); }
