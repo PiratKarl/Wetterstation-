@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V21.2 World</title>
-    <link rel="stylesheet" href="style.css?v=21.2">
+    <title>Aura V21.3</title>
+    <link rel="stylesheet" href="style.css?v=21.3">
 </head>
 <body>
     <video id="wake-vid" loop playsinline muted></video>
@@ -14,11 +14,11 @@
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:220px; margin-bottom:30px;">
         <div style="border: 3px solid #00eaff; color: #00eaff; padding: 25px 50px; font-size: 32px; font-weight: bold; border-radius: 40px; box-shadow: 0 0 25px rgba(0,234,255,0.4);">STARTEN</div>
-        <div style="color:#555; margin-top:20px; font-size:18px;">(Läd Warnsystem & 20 Städte)</div>
+        <div style="color:#555; margin-top:20px; font-size:18px;">(Läd Wetter-Rechner & Welt)</div>
     </div>
 
     <div id="update-overlay" onclick="location.reload(true)">
-        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V21.2</h1>
+        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V21.3</h1>
         <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; margin-top:20px; font-size:24px;">LADEN</div>
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div class="ticker-area" id="ticker-box">
-        <div id="ticker-text">Lade Weltwetter...</div>
+        <div id="ticker-text">Berechne Wetterdaten...</div>
     </div>
 
     <div class="forecast-area">
@@ -67,20 +67,67 @@
             <h1 style="color:#00eaff; font-size:40px; margin-bottom:30px;">EINSTELLUNGEN</h1>
             <div onclick="showSub('sub-config')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>📍 STANDORT & TIMER</span> <span>❯</span></div>
             <div onclick="showSub('sub-help')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>📖 HILFE & TRICKS</span> <span>❯</span></div>
-            <div onclick="showSub('sub-legal')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>⚖️ IMPRESSUM & DATEN</span> <span>❯</span></div>
+            <div onclick="showSub('sub-contact')" style="background:#111; border:1px solid #333; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>📧 KONTAKT & WEB</span> <span>❯</span></div>
             <div onclick="showSub('sub-donation')" style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>☕ KAFFEE-SPENDE</span> <span>❯</span></div>
             <button onclick="closeMenu()" style="width:100%; max-width:400px; padding:20px; font-size:20px; background:#333; color:#fff; border:none; margin-top:20px; border-radius:10px;">SCHLIESSEN</button>
         </div>
+
         <div id="sub-config" class="sub-c">
-            <h2 style="color:#00eaff;">STANDORT</h2><input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444; border-radius:5px;" placeholder="z.B. Braunschweig">
-            <h2 style="color:#00eaff; margin-top:30px;">SCHLAF-TIMER</h2><div style="display:flex; gap:10px;"><input type="time" id="t-start" style="font-size:22px; padding:10px;"> bis <input type="time" id="t-end" style="font-size:22px; padding:10px;"></div>
-            <button onclick="save()" style="width:100%; padding:20px; font-size:22px; background:#00eaff; border:none; font-weight:bold; margin-top:30px; border-radius:10px;">SPEICHERN</button><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ZURÜCK</button>
+            <h2>STANDORT EINGEBEN</h2>
+            <p>Damit die Wetterstation weiß, wo sie ist, musst du hier deine Stadt eintragen. Das Wetter wird dann genau für diesen Ort berechnet.</p>
+            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444; border-radius:5px;" placeholder="z.B. Braunschweig">
+            
+            <h2>NACHT-MODUS (SCHLAFEN)</h2>
+            <p>Das Tablet soll nachts nicht leuchten? Hier kannst du einstellen, wann der Bildschirm schwarz werden soll. Das Tablet bleibt aber an, damit der Wecker funktioniert.</p>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <input type="time" id="t-start" style="font-size:22px; padding:10px;"> <span>bis</span> <input type="time" id="t-end" style="font-size:22px; padding:10px;">
+            </div>
+            
+            <button onclick="save()" style="width:100%; padding:20px; font-size:22px; background:#00eaff; border:none; font-weight:bold; margin-top:30px; border-radius:10px;">SPEICHERN & NEUSTARTEN</button>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ZURÜCK</button>
         </div>
-        <div id="sub-help" class="sub-c"><h2>HILFE</h2><p>1. Start drücken!<br>2. "Aktiv lassen" in Android Einstellungen an.</p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button></div>
-        <div id="sub-legal" class="sub-c"><h2>IMPRESSUM</h2><p>Privatprojekt.</p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button></div>
-        <div id="sub-donation" class="sub-c"><h2 style="color:#ffcc00;">SPENDE</h2><p>PayPal: piratkarl@web.de</p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button></div>
+
+        <div id="sub-help" class="sub-c">
+            <h2>SO BLEIBT DAS TABLET AN</h2>
+            <p>Alte Tablets schlafen gerne ein. Damit das Display immer an bleibt, gibt es zwei wichtige Regeln:</p>
+            <p><strong>1. Der "Start"-Klick</strong><br>
+            Wenn du die App startest, siehst du einen großen Knopf. Da musst du einmal fest draufdrücken. Das sagt dem Tablet: "Hallo! Ich bin da! Bitte bleib wach!"</p>
+            
+            <p><strong>2. Der Profi-Trick (Einstellungen)</strong><br>
+            Wenn das Tablet trotzdem dunkel wird, muss ein Erwachsener in die Tablet-Einstellungen gehen. Dort gibt es einen geheimen Schalter namens <strong>"Aktiv lassen"</strong> (oder "Wach bleiben"). Wenn der an ist, schläft das Tablet nie mehr ein, solange das Kabel steckt.</p>
+            
+            <h2>WIE OFT KOMMT DAS WETTER?</h2>
+            <p>Die Station holt sich alle 10 Minuten ganz von alleine neue Daten aus dem Internet. Du musst nichts tun.</p>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
+        </div>
+
+        <div id="sub-contact" class="sub-c">
+            <h2>IMPRESSUM & KONTAKT</h2>
+            <p>Dies ist ein privates Projekt. Wir sammeln keine Daten von dir.</p>
+            
+            <h2>E-MAIL</h2>
+            <p><a href="mailto:webmaster@code-werft.de" style="color:#00eaff; text-decoration:none;">webmaster@code-werft.de</a></p>
+            
+            <h2>HOMEPAGE</h2>
+            <p>Besuche uns im Internet für Updates:<br>
+            <a href="https://code-werft.de" target="_blank" style="color:#00eaff;">https://code-werft.de</a></p>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
+        </div>
+
+        <div id="sub-donation" class="sub-c">
+            <h2>EINE KLEINE SPENDE?</h2>
+            <p>Hallo! Ich freue mich sehr, dass dir meine Wetterstation gefällt. Ich habe viel Zeit damit verbracht, sie auch für alte Geräte schön zu machen.</p>
+            <p>Das Wetter-Daten (API) und der Server kosten mich jeden Monat Geld. Da ich das privat bezahle, freue ich mich riesig über einen "virtuellen Kaffee".</p>
+            
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR" target="_blank" class="pp-btn">
+                ☕ JETZT KAFFEE SPENDEN (PayPal)
+            </a>
+            
+            <p style="font-size:16px; margin-top:15px; color:#888;">Das geht ganz einfach und sicher über PayPal.</p>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button>
+        </div>
     </div>
 
-    <script src="script.js?v=21.2"></script>
+    <script src="script.js?v=21.3"></script>
 </body>
-                                                                                                                                 </html> 
+                                                                                 </html> 
