@@ -1,6 +1,6 @@
-/* --- AURA V22.8 DATEN-MOTOR & UPDATE-WÄCHTER --- */
+/* --- AURA V22.9 SYMBOL-MOTOR & UPDATE-WÄCHTER --- */
 
-var currentVer = 22.8;
+var currentVer = 22.9;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
@@ -10,29 +10,24 @@ function z(n){return (n<10?'0':'')+n;}
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
     
-    // Vollbild-Modus anfordern
     var de = document.documentElement;
     if (de.requestFullscreen) { de.requestFullscreen(); } 
     else if (de.webkitRequestFullscreen) { de.webkitRequestFullscreen(); } 
     else if (de.mozRequestFullScreen) { de.mozRequestFullScreen(); }
 
-    // Wachhalter (Audio & Video-Herzschlag)
     var heartbeat = document.getElementById('logo-heartbeat');
     var wA = document.getElementById('wake-aud');
     wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
     wA.play();
     
-    // Video starten (Wachhalte-Effekt auch wenn unsichtbar)
     if(heartbeat) { heartbeat.play(); }
 
-    // Initialer Datenabruf
     loadWeather();
     update();
     
-    // Die Kontroll-Intervalle
-    setInterval(update, 1000);           // Uhr & Sleep-Check jede Sekunde
-    setInterval(loadWeather, 600000);    // Wetter alle 10 Minuten
-    setInterval(checkUpdate, 1800000);   // Update-Wächter alle 30 Minuten
+    setInterval(update, 1000);           
+    setInterval(loadWeather, 600000);    
+    setInterval(checkUpdate, 1800000);   
 }
 
 function update() {
@@ -42,7 +37,6 @@ function update() {
     var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
 
-    // Ruhemodus (Sleep) Logik
     if(sStart && sEnd) {
         var n = now.getHours()*60 + now.getMinutes();
         var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
@@ -76,7 +70,6 @@ function loadWeather() {
             document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
             document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
 
-            // Mondphase berechnen
             var year=now.getFullYear(), mo=now.getMonth()+1, da=now.getDate(); if(mo<3){year--;mo+=12;}++mo;
             var jd = (365.25*year) + (30.6*mo) + da - 694039.09; jd/=29.53; var b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
             var mI = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"], mT = ["NEUMOND","SICHEL","1. VIERTEL","ZUN. MOND","VOLLMOND","ABN. MOND","3. VIERTEL","SICHEL"];
@@ -99,7 +92,6 @@ function loadFore(lat, lon, ct) {
             document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
             document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
             
-            // Stundenvorhersage (Icons 90px via CSS)
             var h = "";
             for(var i=0; i<5; i++) {
                 var it = d.list[i], t = new Date(it.dt*1000);
@@ -107,7 +99,6 @@ function loadFore(lat, lon, ct) {
             }
             document.getElementById('hourly-row').innerHTML = h;
 
-            // Tagesvorhersage (Min/Max Berechnung)
             var days = {};
             d.list.forEach(function(item) {
                 var dStr = new Date(item.dt * 1000).toLocaleDateString('de-DE', {weekday: 'short'}).toUpperCase();
@@ -150,7 +141,10 @@ function loadWorldTicker(prefix) {
         var r = new XMLHttpRequest();
         r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric",true);
         r.onload = function() {
-            if(r.status===200) { var j=JSON.parse(r.responseText); wd += `<span class='t-world'> ◈ ${j.name.toUpperCase()}: ${Math.round(j.main.temp)}°</span>`; }
+            if(r.status===200) { 
+                var j=JSON.parse(r.responseText); 
+                wd += `<span class='t-world'> ◈ ${j.name.toUpperCase()}: <img class='t-icon' src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°</span>`; 
+            }
             done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
         };
         r.send(); 

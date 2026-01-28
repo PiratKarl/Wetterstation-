@@ -1,4 +1,4 @@
-/* --- AURA V22.8 SICHERHEITS-EDITION --- */
+/* --- AURA V22.9 SYMBOL-EDITION --- */
 
 html, body { 
     width: 100%; height: 100%; margin: 0; padding: 0; 
@@ -15,33 +15,16 @@ html, body {
 /* 1. SEKTOR: Dashboard (45% der Höhe) */
 .dashboard { display: flex; height: 45vh; padding: 10px 20px; box-sizing: border-box; flex-shrink: 0; align-items: flex-start; }
 
-/* LINKS: Logo & Uhr */
+/* LINKS: Logo & Uhr (Standort auf Uhr-Oberkante) */
 .col-left { width: 28%; display: flex; flex-direction: column; }
 #city-name { font-size: 20px; letter-spacing: 2px; color: #888; text-transform: uppercase; margin-bottom: 2px; }
 #clock { font-size: 85px; font-weight: bold; line-height: 0.8; margin-top: 0; letter-spacing: -2px; }
 #date { font-size: 22px; color: #00eaff; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
 
-/* DAS LOGO-SANDWICH */
-.logo-container { 
-    width: 140px; 
-    margin-top: 15px; 
-    opacity: 0.8; 
-    position: relative; /* Erlaubt das Stapeln von Bild und Video */
-}
-.logo-fallback { 
-    width: 100%; 
-    height: auto; 
-    display: block; 
-}
-#logo-heartbeat { 
-    position: absolute; /* Legt das Video exakt über das Bild */
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: auto; 
-    display: block; 
-    z-index: 5; /* Video liegt oben */
-}
+/* LOGO-SANDWICH (V22.8 Sicherheits-Logik) */
+.logo-container { width: 140px; margin-top: 15px; opacity: 0.8; position: relative; }
+.logo-fallback { width: 100%; height: auto; display: block; }
+#logo-heartbeat { position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; z-index: 5; }
 
 /* MITTE: Hierarchie (Zustand > Gefühl > Kleidung) */
 .col-center { width: 44%; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -57,20 +40,29 @@ html, body {
 #btn-setup { background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; padding: 6px 12px; font-size: 16px; border-radius: 6px; margin-bottom: 25px; cursor: pointer; font-weight: bold; }
 .astro-box { text-align: right; margin-top: -15px; }
 
-/* 2. SEKTOR: Ticker (5% der Höhe) */
+/* 2. SEKTOR: Ticker mit Wetter-Symbolen */
 .ticker-area { height: 5vh; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
 #ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 26px; line-height: 5vh; font-weight: bold; }
 .t-warn { color: #ff0000; text-shadow: 0 0 5px #ff0000; margin-right: 40px; }
-.t-world { color: #00eaff; margin-right: 30px; }
-@keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
+.t-world { color: #00eaff; margin-right: 30px; display: inline-flex; align-items: center; }
+.t-icon { width: 35px; height: 35px; vertical-align: middle; margin: 0 5px; } /* Symbole im Ticker */
 
-/* 3. SEKTOR: Vorhersage (50% der Höhe) */
+/* 3. SEKTOR: Vorhersage (Intelligente Größen-Anpassung) */
 .forecast-area { display: flex; flex-direction: column; height: 50vh; padding: 5px 10px; box-sizing: border-box; justify-content: space-around; flex-shrink: 0; }
 .f-row { display: flex; justify-content: space-between; width: 100%; height: 46%; align-items: center; background: rgba(255,255,255,0.02); border-radius: 10px; border-bottom: 1px solid #111; }
 .f-item { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.f-head { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: -5px; }
-.f-icon { width: 90px; height: 90px; } 
-.f-val { font-size: 19px; font-weight: bold; }
+.f-head { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: -2px; }
+
+/* FIX: Icons schrumpfen auf kleinen Bildschirmen automatisch */
+.f-icon { 
+    width: auto; 
+    height: 18vh; /* Nutzt 18% der verfügbaren Höhe statt fester Pixel */
+    max-height: 120px; /* Begrenzung für Riesen-Displays */
+    min-height: 50px; 
+    margin: 2px 0;
+}
+
+.f-val { font-size: 19px; font-weight: bold; margin-top: -2px; }
 
 /* MENÜ & RECHTLICHES */
 #settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:95000; padding:30px; overflow-y: auto; box-sizing: border-box; }
