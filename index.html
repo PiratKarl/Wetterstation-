@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V22.2 Final</title>
-    <link rel="stylesheet" href="style.css?v=22.2">
+    <title>Aura V22.3 Precision</title>
+    <link rel="stylesheet" href="style.css?v=22.3">
 </head>
 <body>
-    <video id="wake-vid" loop playsinline muted></video>
     <audio id="wake-aud" loop playsinline></audio>
     <video id="sleep-vid" loop playsinline muted></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <div style="font-size:70px; margin-bottom:20px; animation: bounce 1.5s infinite;">👇</div>
-        <img src="logo.png" style="width:200px; margin-bottom:30px;">
-        <div style="border: 4px solid #00eaff; color: #00eaff; padding: 25px 60px; font-size: 35px; font-weight: bold; border-radius: 50px; cursor: pointer;">STATION STARTEN</div>
-        <p style="color:#888; margin-top:30px; font-size:18px;">Tippe auf den Button, um das Wetter zu laden.</p>
+        <div class="start-inner">
+            <div style="font-size:70px; margin-bottom:20px; animation: bounce 2s infinite;">👇</div>
+            <img src="logo.png" style="width:180px; margin-bottom:20px;">
+            <div style="border: 4px solid #00eaff; color: #00eaff; padding: 20px 50px; font-size: 30px; font-weight: bold; border-radius: 50px;">STATION STARTEN</div>
+        </div>
     </div>
 
     <div class="dashboard">
@@ -28,10 +28,10 @@
         </div>
         <div class="col-center">
             <div id="city-name">...</div>
-            <div class="main-weather-row">
+            <div class="main-row">
                 <img id="w-icon" src="" style="width:90px;">
                 <div id="temp">--°</div>
-                <div style="color:#00eaff; font-weight:bold;"><div style="font-size:20px;">💧</div><div id="pop">--%</div></div>
+                <div style="color:#00eaff; font-weight:bold;"><div style="font-size:22px;">💧</div><div id="pop">--%</div></div>
             </div>
             <div id="w-desc">...</div>
             <div id="clothing">...</div>
@@ -39,62 +39,48 @@
         <div class="col-right">
             <button id="btn-setup" onclick="openMenu()">⚙ MENÜ</button>
             <div style="text-align:right;">
-                <div style="font-size:22px; font-weight:bold;">☀ <span id="sunrise">--:--</span> | ☾ <span id="sunset">--:--</span></div>
-                <div style="color:#00eaff; font-size:20px; margin-top:5px;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
-                <div style="font-size:14px; margin-top:10px; color:#fff;">V22.2 | <span id="last-update">...</span><br><span style="color:#ff0000; font-weight:bold;">HINWEIS: Wartungen in Gange!!</span></div>
+                <div style="font-size:20px; font-weight:bold;">☀ <span id="sunrise">--:--</span> | ☾ <span id="sunset">--:--</span></div>
+                <div style="color:#00eaff; font-size:18px; margin-top:5px;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
+                <div style="font-size:13px; margin-top:8px; color:#fff;">V22.3 | aktualisiert am <span id="last-update">...</span><br><span style="color:#ff0000; font-weight:bold;">HINWEIS: Wartungen in Gange!!</span></div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-area"><div id="ticker-text">Lade...</div></div>
-
-    <div class="forecast-area">
-        <div class="f-row" id="hourly-row"></div>
-        <div class="f-row" id="daily-row"></div>
-    </div>
+    <div class="ticker-area"><div id="ticker-text">...</div></div>
+    <div class="forecast-area"><div class="f-row" id="hourly-row"></div><div class="f-row" id="daily-row"></div></div>
 
     <div id="settings-overlay">
-        <div id="menu-main" style="text-align:center;">
-            <h1 style="color:#00eaff; font-size:40px;">MENÜ</h1>
-            <div style="background:#111; border:1px solid #333; padding:20px; margin-bottom:15px; cursor:pointer; font-size:22px;" onclick="showSub('sub-help')">📖 ANLEITUNG & TRICKS ❯</div>
-            <div style="background:#111; border:1px solid #333; padding:20px; margin-bottom:15px; cursor:pointer; font-size:22px;" onclick="showSub('sub-legal')">⚖ RECHTLICHES & KONTAKT ❯</div>
-            <div style="background:#111; border:1px solid #333; padding:20px; margin-bottom:15px; cursor:pointer; font-size:22px;" onclick="showSub('sub-privacy')">🛡 DATENSCHUTZ ❯</div>
-            <div style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; margin-bottom:15px; cursor:pointer; font-size:22px;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')">☕ KAFFEE SPENDEN ❯</div>
-            <button onclick="closeMenu()" style="width:100%; max-width:400px; padding:20px; background:#333; color:#fff; border:none; border-radius:10px; font-size:20px;">ZURÜCK</button>
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <h1 style="color:#00eaff; font-size: 40px;">EINSTELLUNGEN</h1>
+            <div style="background:#111; padding:20px; margin-bottom:10px; cursor:pointer;" onclick="showSub('sub-help')">ANLEITUNG & TRICKS ❯</div>
+            <div style="background:#111; padding:20px; margin-bottom:10px; cursor:pointer;" onclick="showSub('sub-legal')">IMPRESSUM & KONTAKT ❯</div>
+            <div style="background:#111; padding:20px; margin-bottom:10px; cursor:pointer;" onclick="showSub('sub-privacy')">DATENSCHUTZ ❯</div>
+            <div style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; margin-bottom:10px; cursor:pointer;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')">☕ KAFFEE SPENDEN ❯</div>
+            <button onclick="closeMenu()" style="width:100%; padding:20px; background:#333; color:#fff; border:none; margin-top:20px;">ZURÜCK</button>
         </div>
 
         <div id="sub-help" class="sub-c">
-            <h2>TIPPS FÜR ALTE TABLETS</h2>
-            <p>Damit dein Tablet wie ein Profi-Display an der Wand bleibt, beachte diese zwei einfachen Tricks:</p>
-            <ul>
-                <li><strong>Immer am Strom:</strong> Lass das Ladekabel eingesteckt. Alte Akkus machen sonst schnell schlapp.</li>
-                <li><strong>Wachbleiben-Modus:</strong> Gehe in die Tablet-Einstellungen unter "Entwickleroptionen". Dort gibt es einen Schalter "Wach bleiben beim Laden". Wenn du den einschaltest, geht das Licht niemals aus!</li>
-                <li><strong>Einmal Tippen:</strong> Nach jedem Start oder Update musst du einmal auf "STARTEN" drücken. Nur dann darf die App das Tablet wachhalten.</li>
-            </ul>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff;">VERSTANDEN</button>
+            <h2>TRICKS FÜR ALTE GERÄTE</h2>
+            <p><strong>Bildschirm bleibt an:</strong> Gehe in die Android-Einstellungen -> Telefoninfo -> 7x auf "Build-Nummer" tippen. Dann in den neuen "Entwickleroptionen" den Punkt <strong>"Wach bleiben beim Laden"</strong> einschalten.</p>
+            <p><strong>Vollbild:</strong> Tippe nach dem Start einmal auf eine freie Stelle, falls die Leiste oben nicht verschwindet.</p>
+            <button onclick="showMain()">ZURÜCK</button>
         </div>
 
         <div id="sub-legal" class="sub-c">
             <h2>IMPRESSUM</h2>
-            <p><strong>Betreiber:</strong> [Dein Name/Firma]<br>Lohengrinstraße 25, 38106 Braunschweig, Deutschland<br>
-            <strong>E-Mail:</strong> webmaster@code-werft.de<br>
-            <strong>Homepage:</strong> <a href="https://code-werft.de" target="_blank" style="color:#00eaff;">www.code-werft.de</a></p>
+            <p><strong>Betreiber:</strong> [Dein Name]<br>Lohengrinstraße 25, 38106 Braunschweig</p>
+            <p><strong>Kontakt:</strong> webmaster@code-werft.de<br><strong>Web:</strong> www.code-werft.de</p>
             <p>Dieses Projekt ist ein privates Hobby-Projekt zur Weiternutzung von Altgeräten.</p>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff;">ZURÜCK</button>
+            <button onclick="showMain()">ZURÜCK</button>
         </div>
 
         <div id="sub-privacy" class="sub-c">
-            <h2>DATENSCHUTZ GANZ EINFACH</h2>
-            <p>Deine Privatsphäre ist uns extrem wichtig. Deshalb machen wir es kurz:</p>
-            <ul>
-                <li><strong>Keine Überwachung:</strong> Wir wissen nicht, wer du bist. Wir speichern keine Namen oder E-Mails auf unseren Servern.</li>
-                <li><strong>Kein Tracking:</strong> Es gibt keine versteckten Werbe-Programme oder Tracker.</li>
-                <li><strong>Nur Wetter:</strong> Wir senden lediglich deinen eingestellten Stadtnamen an den Wetterdienst (OpenWeatherMap), um die Vorhersage abzurufen.</li>
-            </ul>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff;">ZURÜCK</button>
+            <h2>DATENSCHUTZ</h2>
+            <p>Wir sammeln keine Daten. Dein eingestellter Wohnort wird nur in deinem Browser gespeichert. Wir wissen nicht, wer du bist oder wo genau die Station steht.</p>
+            <button onclick="showMain()">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=22.2"></script>
+    <script src="script.js?v=22.3"></script>
 </body>
-</html> 
+                    </html> 
