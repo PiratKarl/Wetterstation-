@@ -1,6 +1,6 @@
-/* --- AURA V23.1 COCKPIT-MOTOR --- */
+/* --- AURA V23.2 REPARATUR-MOTOR --- */
 
-var currentVer = 23.1;
+var currentVer = 23.2;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
@@ -34,10 +34,8 @@ function update() {
     var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
 
-    // Status-Cockpit Aktualisierung
     updateStatusCockpit();
 
-    // Sleep-Logik
     if(sStart !== '--:--' && sEnd !== '--:--') {
         var n = now.getHours()*60 + now.getMinutes();
         var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
@@ -51,28 +49,32 @@ function update() {
 }
 
 function updateStatusCockpit() {
-    // 1. Daten-Status (Aktualität)
+    // Daten-Status
     var diff = (Date.now() - lastDataFetch) / 1000 / 60;
     var dStat = document.getElementById('stat-data');
     if(diff < 15) { dStat.innerHTML = "🔄 DATEN AKTUELL"; dStat.className = "status-line stat-ok"; }
     else { dStat.innerHTML = "🔄 DATEN VERALTET"; dStat.className = "status-line stat-err"; }
 
-    // 2. WLAN-Status
+    // WLAN-Status
     var wStat = document.getElementById('stat-wlan');
     if(navigator.onLine) { wStat.innerHTML = "📡 WLAN VERBUNDEN"; wStat.className = "status-line stat-ok"; }
     else { wStat.innerHTML = "📡 KEIN WLAN"; wStat.className = "status-line stat-err"; }
 
-    // 3. Batterie-Status
+    // Batterie-Status & Alarm
     if (navigator.getBattery) {
         navigator.getBattery().then(function(bat) {
             var bStat = document.getElementById('stat-bat');
             var lvl = Math.round(bat.level * 100);
             bStat.innerHTML = (bat.charging ? "⚡ LADEN " : "🔋 AKKU ") + lvl + "%";
             bStat.className = (lvl > 20 || bat.charging) ? "status-line stat-ok" : "status-line stat-err";
+            
+            // Akku-Alarm Logik (< 5% blitzt es rot)
+            var alertBox = document.getElementById('bat-alert');
+            if(lvl < 5 && !bat.charging) { alertBox.style.display = 'block'; }
+            else { alertBox.style.display = 'none'; }
         });
     }
 
-    // 4. Sleep-Zeiten Anzeige
     document.getElementById('conf-sleep').innerText = "🌙 Sleep: " + sStart;
     document.getElementById('conf-wake').innerText = "☀️ Wake: " + sEnd;
 }
@@ -94,11 +96,29 @@ function loadWeather() {
             document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
             document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
 
+            // MOND WIEDER AKTIVIEREN
+            calcMoon();
+
             loadFore(d.coord.lat, d.coord.lon, d.main.temp);
             checkWarnings(d.coord.lat, d.coord.lon);
         }
     };
     x.send();
+}
+
+function calcMoon() {
+    var n = new Date();
+    var y = n.getFullYear(), m = n.getMonth() + 1, d = n.getDate();
+    if (m < 3) { y--; m += 12; }
+    ++m;
+    var c = 365.25 * y; var e = 30.6 * m;
+    var jd = c + e + d - 694039.09; jd /= 29.53;
+    var b = Math.round((jd - parseInt(jd)) * 8); if (b >= 8) b = 0;
+    var mI = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
+    var mT = ["NEUMOND", "SICHEL", "1. VIERTEL", "ZUN. MOND", "VOLLMOND", "ABN. MOND", "3. VIERTEL", "SICHEL"];
+    var row = document.getElementById('moon-row');
+    row.innerText = mI[b] + " " + mT[b];
+    if(b === 4) { row.style.color = "#80dfff"; row.style.textShadow = "0 0 10px #00eaff"; } else { row.style.color = "#00eaff"; row.style.textShadow = "none"; }
 }
 
 function loadFore(lat, lon, ct) {
