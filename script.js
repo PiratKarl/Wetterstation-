@@ -1,4 +1,4 @@
-var currentVer = 21.4;
+var currentVer = 21.5;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start'), sEnd = localStorage.getItem('t-end');
@@ -91,13 +91,19 @@ function loadFore(lat, lon, ct) {
         document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
         document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
 
+        // STUNDEN: Jetzt mit sauberer DIV Struktur statt <br>
         var h = "";
         for(var i=0; i<5; i++) {
             var it = d.list[i], t = new Date(it.dt*1000);
-            h += `<div class='f-item'>${t.getHours()} Uhr<br><img class='f-icon' src='${it.weather[0].icon}.gif'><br>${Math.round(it.main.temp)}°</div>`;
+            h += `<div class='f-item'>
+                    <div class='f-head'>${t.getHours()} Uhr</div>
+                    <img class='f-icon' src='${it.weather[0].icon}.gif'>
+                    <div class='f-val'>${Math.round(it.main.temp)}°</div>
+                  </div>`;
         }
         document.getElementById('hourly-row').innerHTML = h;
 
+        // TAGE: Auch hier saubere Struktur
         var days = {};
         d.list.forEach(function(item) {
             var date = new Date(item.dt * 1000);
@@ -112,7 +118,14 @@ function loadFore(lat, lon, ct) {
         for (var key in days) {
             if (count >= 5) break;
             var dayData = days[key];
-            dy += `<div class='f-item'>${key}<br><img class='f-icon' src='${dayData.icon}.gif'><br><span style='color:#ff4444'>${Math.round(dayData.max)}°</span> <span style='color:#00eaff'>${Math.round(dayData.min)}°</span></div>`;
+            dy += `<div class='f-item'>
+                     <div class='f-head'>${key}</div>
+                     <img class='f-icon' src='${dayData.icon}.gif'>
+                     <div class='f-val'>
+                        <span style='color:#ff4444'>${Math.round(dayData.max)}°</span> 
+                        <span style='color:#00eaff'>${Math.round(dayData.min)}°</span>
+                     </div>
+                   </div>`;
             count++;
         }
         document.getElementById('daily-row').innerHTML = dy;
