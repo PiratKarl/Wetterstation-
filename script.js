@@ -1,4 +1,4 @@
-var currentVer = 22.2;
+var currentVer = 22.3;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 
@@ -10,11 +10,10 @@ function startApp() {
     if (de.requestFullscreen) { de.requestFullscreen(); } else if (de.webkitRequestFullscreen) { de.webkitRequestFullscreen(); }
 
     var heartbeat = document.getElementById('logo-heartbeat');
-    var wV = document.getElementById('wake-vid');
     var wA = document.getElementById('wake-aud');
-    wV.src = "https://raw.githubusercontent.com/bower-media-samples/big-buck-bunny-1080p-30s/master/video.mp4";
+    
     wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
-    wV.play(); wA.play();
+    wA.play();
     if(heartbeat) { heartbeat.play(); }
 
     loadWeather(); update(); setInterval(update, 1000); setInterval(loadWeather, 600000);
@@ -39,7 +38,7 @@ function loadWeather() {
             document.getElementById('w-desc').innerText = d.weather[0].description.toUpperCase();
             
             var now = new Date();
-            document.getElementById('last-update').innerText = "am " + z(now.getDate()) + "." + z(now.getMonth()+1) + "." + now.getFullYear().toString().substr(-2) + " um " + z(now.getHours()) + ":" + z(now.getMinutes()) + " Uhr";
+            document.getElementById('last-update').innerText = z(now.getDate()) + "." + z(now.getMonth()+1) + "." + now.getFullYear().toString().substr(-2) + " um " + z(now.getHours()) + ":" + z(now.getMinutes()) + " Uhr";
 
             var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000), s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
             document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
@@ -69,7 +68,6 @@ function loadFore(lat, lon, ct) {
             document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
             document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
             
-            // STUNDEN
             var h = "";
             for(var i=0; i<5; i++) {
                 var it = d.list[i], t = new Date(it.dt*1000);
@@ -77,13 +75,12 @@ function loadFore(lat, lon, ct) {
             }
             document.getElementById('hourly-row').innerHTML = h;
 
-            // TAGE
             var days = {};
             d.list.forEach(function(item) {
                 var dStr = new Date(item.dt * 1000).toLocaleDateString('de-DE', {weekday: 'short'}).toUpperCase();
                 if (!days[dStr]) { days[dStr] = { min: 100, max: -100, icon: item.weather[0].icon }; }
                 if (item.main.temp_min < days[dStr].min) days[dStr].min = item.main.temp_min;
-                if (item.main.temp_max > days[dStr].max) days[dStr].max = item.main.temp_max;
+                if (item.main.temp_max > days[dStr].max) days[dateStr].max = item.main.temp_max;
             });
             var dy = ""; var cnt = 0;
             for (var k in days) { if (cnt >= 5) break;
@@ -114,7 +111,7 @@ function checkWarnings(lat, lon) {
 }
 
 function loadWorldTicker(prefix) {
-    var caps = ["Berlin", "Paris", "London", "New York", "Tokyo", "Sydney", "Rio", "Dubai", "Rome", "Madrid"];
+    var caps = ["Berlin", "Paris", "London", "Rome", "Madrid", "Vienna", "Warsaw", "Moscow", "Lisbon", "New York", "Los Angeles", "Rio de Janeiro", "Buenos Aires", "Tokyo", "Beijing", "Bangkok", "Sydney", "Dubai", "Cairo", "Cape Town"];
     var wd = prefix; var done = 0;
     caps.forEach(c => { 
         var r = new XMLHttpRequest();
@@ -127,7 +124,16 @@ function loadWorldTicker(prefix) {
     });
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='block'; showMain(); }
+function openMenu() { document.getElementById('settings-overlay').style.display='block'; }
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
-function showMain() { document.getElementById('menu-main').style.display='block'; var s = document.getElementsByClassName('sub-c'); for(var i=0; i<s.length; i++){s[i].style.display='none';} }
+function showSub(id) { 
+    var s = document.getElementsByClassName('sub-c'); 
+    for(var i=0; i<s.length; i++){s[i].style.display='none';}
+    document.getElementById('menu-main').style.display='none'; 
+    document.getElementById(id).style.display='block'; 
+}
+function showMain() { 
+    document.getElementById('menu-main').style.display='block'; 
+    var s = document.getElementsByClassName('sub-c'); 
+    for(var i=0; i<s.length; i++){s[i].style.display='none';} 
+}
