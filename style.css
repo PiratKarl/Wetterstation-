@@ -1,4 +1,4 @@
-/* --- AURA V23.0 GLOBAL-TIME-EDITION --- */
+/* --- AURA V23.1 COCKPIT-EDITION --- */
 
 html, body { 
     width: 100%; height: 100%; margin: 0; padding: 0; 
@@ -12,71 +12,67 @@ html, body {
 /* Startseite */
 #start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
 
-/* 1. SEKTOR: Dashboard (45% Höhe) */
+/* 1. SEKTOR: Dashboard */
 .dashboard { display: flex; height: 45vh; padding: 10px 20px; box-sizing: border-box; flex-shrink: 0; align-items: flex-start; }
 
-/* LINKS: Standort & Uhr */
 .col-left { width: 28%; display: flex; flex-direction: column; }
 #city-name { font-size: 20px; letter-spacing: 2px; color: #888; text-transform: uppercase; margin-bottom: 2px; }
 #clock { font-size: 85px; font-weight: bold; line-height: 0.8; margin-top: 0; letter-spacing: -2px; }
 #date { font-size: 22px; color: #00eaff; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
 
-/* LOGO-SANDWICH (V22.8 Sicherheits-Logik) */
 .logo-container { width: 140px; margin-top: 15px; opacity: 0.8; position: relative; }
 .logo-fallback { width: 100%; height: auto; display: block; }
 #logo-heartbeat { position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; z-index: 5; }
 
-/* MITTE: Wetter-Zentrum */
 .col-center { width: 44%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .main-row { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; }
 #w-icon { width: 100px; height: 100px; }
 #temp { font-size: 105px; font-weight: bold; line-height: 0.9; }
-#w-desc { font-size: 26px; font-weight: bold; text-transform: uppercase; margin-top: 5px; color: #fff; }
-#w-feels { font-size: 20px; color: #aaa; margin-top: 2px; }
+#w-desc { font-size: 26px; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+#w-feels { font-size: 20px; color: #aaa; }
 #clothing { font-size: 17px; color: #ffcc00; font-weight: bold; border: 1.5px solid #ffcc00; padding: 2px 10px; border-radius: 15px; margin-top: 8px; }
 
-/* RECHTS: Astro & Menü */
-.col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; }
-#btn-setup { background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; padding: 6px 12px; font-size: 16px; border-radius: 6px; margin-bottom: 25px; cursor: pointer; font-weight: bold; }
-.astro-box { text-align: right; margin-top: -15px; }
+/* RECHTS: Astro & NEUES STATUS-COCKPIT */
+.col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+#btn-setup { background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; padding: 6px 12px; font-size: 16px; border-radius: 6px; margin-bottom: 20px; cursor: pointer; font-weight: bold; }
 
-/* 2. SEKTOR: Ticker (5% Höhe) */
+.astro-box { margin-top: -10px; margin-bottom: 15px; }
+
+.status-cockpit { font-size: 14px; color: #ccc; border-top: 1px solid #333; padding-top: 10px; width: 100%; }
+.status-line { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 5px; font-weight: bold; }
+.stat-ok { color: #00ff00; animation: pulse 2s infinite; }
+.stat-err { color: #ff0000; animation: blink-red 1s infinite; }
+.sleep-info { color: #888; font-size: 13px; margin-top: 5px; }
+
+/* 2. SEKTOR: Ticker mit Alarm-Effekten */
 .ticker-area { height: 5vh; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
 #ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 26px; line-height: 5vh; font-weight: bold; }
-.t-warn { color: #ff0000; text-shadow: 0 0 5px #ff0000; margin-right: 40px; }
+
+.t-warn { color: #ff0000; text-shadow: 0 0 10px #ff0000; margin-right: 40px; animation: blink-red 1s infinite; }
 .t-world { color: #00eaff; margin-right: 45px; display: inline-flex; align-items: center; }
-.t-icon { width: 38px; height: 38px; vertical-align: middle; margin: 0 8px; } /* Symbole im Ticker */
-.t-time { color: #888; font-size: 18px; margin-left: 5px; font-weight: normal; } /* Ortszeit-Stil */
+.t-icon { width: 38px; height: 38px; vertical-align: middle; margin: 0 8px; }
+.t-time { color: #ffffff !important; font-size: 18px; margin-left: 5px; font-weight: normal; } /* Weiße Ortszeit */
 
-/* 3. SEKTOR: Vorhersage (50% Höhe) */
+/* 3. SEKTOR: Vorhersage */
 .forecast-area { display: flex; flex-direction: column; height: 50vh; padding: 5px 10px; box-sizing: border-box; justify-content: space-around; flex-shrink: 0; }
-.f-row { display: flex; justify-content: space-between; width: 100%; height: 46%; align-items: center; background: rgba(255,255,255,0.02); border-radius: 10px; border-bottom: 1px solid #111; }
-.f-item { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.f-head { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: -2px; }
+.f-row { display: flex; justify-content: space-between; width: 100%; height: 46%; align-items: center; background: rgba(255,255,255,0.02); border-radius: 10px; }
+.f-item { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.f-head { font-size: 18px; font-weight: bold; color: #fff; }
 
-/* Standard-Größe für neue Tablets */
-.f-icon { 
-    width: auto; 
-    height: 18vh; 
-    max-height: 130px; 
-    margin: 2px 0;
-}
+.f-icon { width: auto; height: 18vh; max-height: 130px; margin: 2px 0; }
 
-/* HÖHEN-SENSOR: Spezial-Anpassung für das alte Samsung Tablet */
+/* HÖHEN-SENSOR (Altes Tablet) */
 @media (max-height: 600px) {
-    .f-icon { height: 14vh; max-height: 85px; } /* Icons schrumpfen */
+    .f-icon { height: 14vh; max-height: 85px; }
     .f-head { font-size: 16px; }
-    .f-val { font-size: 17px; }
-    #clock { font-size: 75px; } /* Uhr etwas kleiner für mehr Luft */
+    #clock { font-size: 75px; }
+    .status-cockpit { font-size: 12px; }
 }
 
-.f-val { font-size: 19px; font-weight: bold; margin-top: -2px; }
+.f-val { font-size: 19px; font-weight: bold; }
 
-/* MENÜ */
-#settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:95000; padding:30px; overflow-y: auto; box-sizing: border-box; }
-.sub-c { display: none; max-width: 800px; margin: 0 auto; text-align: left; }
-.sub-c h2 { color: #00eaff; font-size: 22px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 25px; text-transform: uppercase; }
-.btn-m { background: #111; border: 1px solid #333; padding: 18px; width: 100%; max-width: 450px; margin: 0 auto 10px auto; color: #fff; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; border-radius: 10px; }
-
+/* Animationen */
 @keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
+@keyframes blink-red { 0%, 100% { opacity: 1; color: #ff0000; } 50% { opacity: 0.5; color: #660000; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
