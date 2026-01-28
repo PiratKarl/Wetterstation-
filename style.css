@@ -1,4 +1,4 @@
-/* --- AURA V22.9 SYMBOL-EDITION --- */
+/* --- AURA V23.0 GLOBAL-TIME-EDITION --- */
 
 html, body { 
     width: 100%; height: 100%; margin: 0; padding: 0; 
@@ -9,13 +9,13 @@ html, body {
 /* Wachhalter & Schlafmodus */
 #sleep-vid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: none; object-fit: fill; }
 
-/* Startseite: Absolute Zentrierung */
+/* Startseite */
 #start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
 
-/* 1. SEKTOR: Dashboard (45% der Höhe) */
+/* 1. SEKTOR: Dashboard (45% Höhe) */
 .dashboard { display: flex; height: 45vh; padding: 10px 20px; box-sizing: border-box; flex-shrink: 0; align-items: flex-start; }
 
-/* LINKS: Logo & Uhr (Standort auf Uhr-Oberkante) */
+/* LINKS: Standort & Uhr */
 .col-left { width: 28%; display: flex; flex-direction: column; }
 #city-name { font-size: 20px; letter-spacing: 2px; color: #888; text-transform: uppercase; margin-bottom: 2px; }
 #clock { font-size: 85px; font-weight: bold; line-height: 0.8; margin-top: 0; letter-spacing: -2px; }
@@ -26,7 +26,7 @@ html, body {
 .logo-fallback { width: 100%; height: auto; display: block; }
 #logo-heartbeat { position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; z-index: 5; }
 
-/* MITTE: Hierarchie (Zustand > Gefühl > Kleidung) */
+/* MITTE: Wetter-Zentrum */
 .col-center { width: 44%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .main-row { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; }
 #w-icon { width: 100px; height: 100px; }
@@ -40,35 +40,42 @@ html, body {
 #btn-setup { background: rgba(0, 234, 255, 0.1); border: 1px solid #00eaff; color: #00eaff; padding: 6px 12px; font-size: 16px; border-radius: 6px; margin-bottom: 25px; cursor: pointer; font-weight: bold; }
 .astro-box { text-align: right; margin-top: -15px; }
 
-/* 2. SEKTOR: Ticker mit Wetter-Symbolen */
+/* 2. SEKTOR: Ticker (5% Höhe) */
 .ticker-area { height: 5vh; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
 #ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 26px; line-height: 5vh; font-weight: bold; }
 .t-warn { color: #ff0000; text-shadow: 0 0 5px #ff0000; margin-right: 40px; }
-.t-world { color: #00eaff; margin-right: 30px; display: inline-flex; align-items: center; }
-.t-icon { width: 35px; height: 35px; vertical-align: middle; margin: 0 5px; } /* Symbole im Ticker */
+.t-world { color: #00eaff; margin-right: 45px; display: inline-flex; align-items: center; }
+.t-icon { width: 38px; height: 38px; vertical-align: middle; margin: 0 8px; } /* Symbole im Ticker */
+.t-time { color: #888; font-size: 18px; margin-left: 5px; font-weight: normal; } /* Ortszeit-Stil */
 
-/* 3. SEKTOR: Vorhersage (Intelligente Größen-Anpassung) */
+/* 3. SEKTOR: Vorhersage (50% Höhe) */
 .forecast-area { display: flex; flex-direction: column; height: 50vh; padding: 5px 10px; box-sizing: border-box; justify-content: space-around; flex-shrink: 0; }
 .f-row { display: flex; justify-content: space-between; width: 100%; height: 46%; align-items: center; background: rgba(255,255,255,0.02); border-radius: 10px; border-bottom: 1px solid #111; }
 .f-item { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .f-head { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: -2px; }
 
-/* FIX: Icons schrumpfen auf kleinen Bildschirmen automatisch */
+/* Standard-Größe für neue Tablets */
 .f-icon { 
     width: auto; 
-    height: 18vh; /* Nutzt 18% der verfügbaren Höhe statt fester Pixel */
-    max-height: 120px; /* Begrenzung für Riesen-Displays */
-    min-height: 50px; 
+    height: 18vh; 
+    max-height: 130px; 
     margin: 2px 0;
+}
+
+/* HÖHEN-SENSOR: Spezial-Anpassung für das alte Samsung Tablet */
+@media (max-height: 600px) {
+    .f-icon { height: 14vh; max-height: 85px; } /* Icons schrumpfen */
+    .f-head { font-size: 16px; }
+    .f-val { font-size: 17px; }
+    #clock { font-size: 75px; } /* Uhr etwas kleiner für mehr Luft */
 }
 
 .f-val { font-size: 19px; font-weight: bold; margin-top: -2px; }
 
-/* MENÜ & RECHTLICHES */
+/* MENÜ */
 #settings-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:95000; padding:30px; overflow-y: auto; box-sizing: border-box; }
 .sub-c { display: none; max-width: 800px; margin: 0 auto; text-align: left; }
 .sub-c h2 { color: #00eaff; font-size: 22px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 25px; text-transform: uppercase; }
-.sub-c p, .sub-c li { font-size: 18px; line-height: 1.6; color: #ccc; margin-bottom: 15px; }
 .btn-m { background: #111; border: 1px solid #333; padding: 18px; width: 100%; max-width: 450px; margin: 0 auto 10px auto; color: #fff; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; border-radius: 10px; }
 
 @keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
