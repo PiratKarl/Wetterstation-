@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V23.0 Global Time</title>
-    <link rel="stylesheet" href="style.css?v=23.0">
+    <title>Aura V23.1 Cockpit Edition</title>
+    <link rel="stylesheet" href="style.css?v=23.1">
 </head>
 <body>
+    <div id="bat-alert" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:20px solid red; z-index:100000; pointer-events:none; animation: pulse 0.5s infinite;"></div>
+
     <audio id="wake-aud" loop playsinline></audio>
     <video id="sleep-vid" loop playsinline muted></video>
 
@@ -52,16 +54,23 @@
             <div class="astro-box">
                 <div style="font-size:20px; font-weight:bold;">☀ <span id="sunrise">--:--</span> | ☾ <span id="sunset">--:--</span></div>
                 <div style="color:#00eaff; font-size:18px; margin-top:5px; font-weight:bold;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
-                <div style="font-size:13px; margin-top:10px; color:#fff;">
-                    V23.0 | <span id="last-update">...</span><br>
-                    <span class="maint-note" style="color:#ff0000; font-weight:bold;">HINWEIS: Wartungen in Gange!!</span>
+            </div>
+
+            <div class="status-cockpit">
+                <div id="stat-wlan" class="status-line">📡 PRÜFE WLAN...</div>
+                <div id="stat-bat" class="status-line">🔋 PRÜFE AKKU...</div>
+                <div id="stat-data" class="status-line">🔄 PRÜFE DATEN...</div>
+                <div class="sleep-info">
+                    <div id="conf-sleep">🌙 Sleep: --:--</div>
+                    <div id="conf-wake">☀️ Wake: --:--</div>
                 </div>
+                <div style="font-size:11px; color:#555; margin-top:10px;">VERSION 23.1</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-area">
-        <div id="ticker-text">Berechne Welt-Zeiten...</div>
+        <div id="ticker-text">Lade Welt-Ticker mit Ortszeiten...</div>
     </div>
 
     <div class="forecast-area">
@@ -82,7 +91,7 @@
             <h2>WOHNORT & SLEEP</h2>
             <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444;" placeholder="z.B. Braunschweig">
             <div style="margin-top:20px; font-size:18px;">
-                Ruhezeit von: <input type="time" id="t-start"> bis: <input type="time" id="t-end">
+                Ruhezeit von: <input type="time" id="t-start" style="font-size:18px;"> bis: <input type="time" id="t-end" style="font-size:18px;">
             </div>
             <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px;">SPEICHERN</button>
         </div>
@@ -91,12 +100,10 @@
             <h2>IMPRESSUM & KONTAKT</h2>
             <p><strong>Betreiber:</strong> Pirat Karl<br>Lohengrinstraße 25, 38106 Braunschweig</p>
             <p><strong>E-Mail:</strong> webmaster@code-werft.de</p>
-            <h2>DATENSCHUTZ</h2>
-            <p>Es werden keine Nutzerdaten auf externen Servern gespeichert. Standorteinstellungen bleiben lokal im Browser-Speicher.</p>
             <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=23.0"></script>
+    <script src="script.js?v=23.1"></script>
 </body>
                 </html>
