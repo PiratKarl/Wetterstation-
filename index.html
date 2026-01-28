@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V22.8 Safety</title>
-    <link rel="stylesheet" href="style.css?v=22.8">
+    <title>Aura V22.9 Symbol Edition</title>
+    <link rel="stylesheet" href="style.css?v=22.9">
 </head>
 <body>
     <audio id="wake-aud" loop playsinline></audio>
@@ -53,14 +53,16 @@
                 <div style="font-size:20px; font-weight:bold;">☀ <span id="sunrise">--:--</span> | ☾ <span id="sunset">--:--</span></div>
                 <div style="color:#00eaff; font-size:18px; margin-top:5px; font-weight:bold;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
                 <div style="font-size:13px; margin-top:10px; color:#fff;">
-                    V22.8 | <span id="last-update">...</span><br>
-                    <span class="maint-note">HINWEIS: Wartungen in Gange!!</span>
+                    V22.9 | <span id="last-update">...</span><br>
+                    <span class="maint-note" style="color:#ff0000; font-weight:bold;">HINWEIS: Wartungen in Gange!!</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-area"><div id="ticker-text">Lade Daten...</div></div>
+    <div class="ticker-area">
+        <div id="ticker-text">Initialisiere Welt-Wetter-Symbole...</div>
+    </div>
 
     <div class="forecast-area">
         <div class="f-row" id="hourly-row"></div>
@@ -91,11 +93,11 @@
             <p><strong>E-Mail:</strong> webmaster@code-werft.de</p>
             <p><strong>Homepage:</strong> https://code-werft.de</p>
             <h2>DATENSCHUTZ</h2>
-            <p>Diese Station speichert keine privaten Daten. Der Standort wird nur lokal in Ihrem Browser gesichert. Kein Tracking, keine Cookies.</p>
+            <p>Keine Datenspeicherung auf externen Servern. Alle Einstellungen verbleiben lokal auf Ihrem Tablet.</p>
             <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=22.8"></script>
+    <script src="script.js?v=22.9"></script>
 </body>
-                                       </html>
+</html>
