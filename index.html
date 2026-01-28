@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V22.6 Final</title>
-    <link rel="stylesheet" href="style.css?v=22.6">
+    <title>Aura V22.7 Final</title>
+    <link rel="stylesheet" href="style.css?v=22.7">
 </head>
 <body>
     <audio id="wake-aud" loop playsinline></audio>
@@ -13,7 +13,13 @@
     <div id="start-overlay" onclick="startApp()">
         <div style="font-size:70px; margin-bottom:20px; animation: bounce 2s infinite;">👇</div>
         <img src="logo.png" style="width:180px; margin-bottom:20px;">
-        <div style="border: 4px solid #00eaff; color: #00eaff; padding: 20px 50px; font-size: 30px; font-weight: bold; border-radius: 50px;">STARTEN</div>
+        <div style="border: 4px solid #00eaff; color: #00eaff; padding: 20px 50px; font-size: 30px; font-weight: bold; border-radius: 50px; cursor: pointer;">STATION STARTEN</div>
+    </div>
+
+    <div id="update-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:99999; flex-direction:column; justify-content:center; align-items:center;" onclick="location.reload(true)">
+        <div style="font-size:70px; margin-bottom:20px; animation: bounce 2s infinite;">👆</div>
+        <h1 style="color:#00eaff;">NEUE VERSION BEREIT</h1>
+        <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; font-size:24px;">JETZT AKTUALISIEREN</div>
     </div>
 
     <div class="dashboard">
@@ -30,7 +36,7 @@
             <div class="main-row">
                 <img id="w-icon" src="">
                 <div id="temp">--°</div>
-                <div style="color:#00eaff; font-weight:bold;"><div style="font-size:22px;">💧</div><div id="pop">--%</div></div>
+                <div class="pop-box"><div style="font-size:25px;">💧</div><div id="pop">--%</div></div>
             </div>
             <div id="w-desc">...</div>
             <div id="w-feels">...</div>
@@ -41,42 +47,61 @@
             <button id="btn-setup" onclick="openMenu()">⚙ MENÜ</button>
             <div class="astro-box">
                 <div style="font-size:20px; font-weight:bold;">☀ <span id="sunrise">--:--</span> | ☾ <span id="sunset">--:--</span></div>
-                <div style="color:#00eaff; font-size:18px; margin-top:5px;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
-                <div style="font-size:13px; margin-top:10px; color:#fff;">V22.6 | aktualisiert am <span id="last-update">...</span><br><span style="color:#ff0000; font-weight:bold;">HINWEIS: Wartungen in Gange!!</span></div>
+                <div style="color:#00eaff; font-size:18px; margin-top:5px; font-weight:bold;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
+                <div class="info-box" style="font-size:13px; margin-top:10px; color:#fff;">
+                    V22.7 | aktualisiert am <span id="last-update">...</span><br>
+                    <span class="maint-note">HINWEIS: Wartungen in Gange!!</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-area"><div id="ticker-text">...</div></div>
-    <div class="forecast-area"><div class="f-row" id="hourly-row"></div><div class="f-row" id="daily-row"></div></div>
+    <div class="ticker-area"><div id="ticker-text">Lade Weltwetter...</div></div>
+
+    <div class="forecast-area">
+        <div class="f-row" id="hourly-row"></div>
+        <div class="f-row" id="daily-row"></div>
+    </div>
 
     <div id="settings-overlay">
         <div id="menu-main" style="text-align:center;">
-            <h1 style="color:#00eaff; font-size:40px;">EINSTELLUNGEN</h1>
-            <div style="background:#111; padding:20px; margin-bottom:10px; cursor:pointer;" onclick="showSub('sub-config')">📍 STANDORT & SLEEP ❯</div>
-            <div style="background:#111; padding:20px; margin-bottom:10px; cursor:pointer;" onclick="showSub('sub-legal')">⚖ IMPRESSUM, KONTAKT & DATENSCHUTZ ❯</div>
-            <div style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; margin-bottom:10px; cursor:pointer;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')">☕ KAFFEE SPENDEN (HTTPS) ❯</div>
-            <button onclick="closeMenu()" style="width:100%; padding:20px; background:#333; color:#fff; border:none; margin-top:20px;">ZURÜCK</button>
+            <h1 style="color:#00eaff; font-size:40px; margin-bottom:40px;">EINSTELLUNGEN</h1>
+            <div class="btn-m" onclick="showSub('sub-config')"><span>📍 STANDORT & SLEEP</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-legal')"><span>⚖ RECHTLICHES & KONTAKT</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-help')"><span>📖 HILFE & TRICKS</span> <span>❯</span></div>
+            <div class="btn-m" style="border-color:#ffcc00; color:#ffcc00;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')"><span>☕ KAFFEE SPENDEN (HTTPS)</span> <span>❯</span></div>
+            <button onclick="closeMenu()" style="width:100%; max-width:450px; padding:20px; background:#333; color:#fff; border:none; margin-top:30px; border-radius:10px; font-size:20px;">ZURÜCK</button>
         </div>
 
         <div id="sub-config" class="sub-c">
-            <h2>WOHNORT & RUHEZEIT</h2>
-            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff;" placeholder="z.B. Braunschweig">
-            <div style="margin-top:20px;">Sleep von: <input type="time" id="t-start"> bis: <input type="time" id="t-end"></div>
-            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px;">SPEICHERN</button>
+            <h2>WOHNORT EINSTELLEN</h2>
+            <p>Trage hier deinen Stadtnamen ein.</p>
+            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444;" placeholder="z.B. Braunschweig">
+            <h2>RUHEMODUS (SLEEP)</h2>
+            <div style="display:flex; gap:10px; align-items:center;">
+                Von: <input type="time" id="t-start" style="font-size:22px; padding:10px;"> Bis: <input type="time" id="t-end" style="font-size:22px; padding:10px;">
+            </div>
+            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px;">EINSTELLUNGEN SPEICHERN</button>
         </div>
 
         <div id="sub-legal" class="sub-c">
             <h2>IMPRESSUM & KONTAKT</h2>
-            <p><strong>Betreiber:</strong> [Dein Name]<br>Lohengrinstraße 25, 38106 Braunschweig</p>
+            <p><strong>Betreiber:</strong> Pirat Karl<br>Lohengrinstraße 25, 38106 Braunschweig</p>
             <p><strong>E-Mail:</strong> <a href="mailto:webmaster@code-werft.de" style="color:#00eaff;">webmaster@code-werft.de</a></p>
             <p><strong>Homepage:</strong> <a href="https://code-werft.de" target="_blank" style="color:#00eaff;">https://code-werft.de</a></p>
-            <h2>DATENSCHUTZ</h2>
-            <p>Wir speichern keine persönlichen Daten. Ihr Wohnort wird nur lokal im Browser gesichert. Es findet kein Tracking statt.</p>
-            <button onclick="showMain()">ZURÜCK</button>
+            <h2>DATENSCHUTZ (FÜR LAIEN)</h2>
+            <p>Deine Privatsphäre ist uns wichtig. Wir speichern KEINE persönlichen Daten. Dein eingestellter Wohnort wird nur lokal in deinem Browser gespeichert. Es findet kein Tracking oder Werbe-Überwachung statt.</p>
+            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
+        </div>
+
+        <div id="sub-help" class="sub-c">
+            <h2>HILFE & TRICKS</h2>
+            <p><strong>Wachbleiben:</strong> In den Android-Einstellungen unter "Entwickleroptionen" den Punkt "Wach bleiben beim Laden" aktivieren.</p>
+            <p><strong>Vollbild:</strong> Nach dem Start einmal tippen, um die Leiste oben zu verstecken.</p>
+            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=22.6"></script>
+    <script src="script.js?v=22.7"></script>
 </body>
                 </html> 
