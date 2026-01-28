@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V21.6 Heartbeat</title>
+    <title>Aura V21.6 1:1</title>
     <link rel="stylesheet" href="style.css?v=21.6">
 </head>
 <body>
@@ -16,8 +16,8 @@
         <div style="border: 3px solid #00eaff; color: #00eaff; padding: 25px 50px; font-size: 32px; font-weight: bold; border-radius: 40px; box-shadow: 0 0 25px rgba(0,234,255,0.4);">STARTEN</div>
     </div>
 
-    <div id="update-overlay" onclick="location.reload(true)">
-        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V21.6</h1>
+    <div id="update-overlay" style="display:none;" onclick="location.reload(true)">
+        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE VERFÜGBAR</h1>
         <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; margin-top:20px; font-size:24px;">JETZT AKTUALISIEREN</div>
     </div>
 
@@ -25,14 +25,12 @@
         <div class="col-left">
             <div id="clock">--:--</div>
             <div id="date">...</div>
-            
             <div class="logo-container">
                 <video id="logo-heartbeat" loop playsinline muted>
                     <source src="logo.mp4" type="video/mp4">
                 </video>
             </div>
         </div>
-        
         <div class="col-center">
             <div id="city-name">...</div>
             <div class="weather-group">
@@ -44,23 +42,18 @@
             <div id="w-feels">--</div>
             <div id="clothing">--</div>
         </div>
-        
         <div class="col-right">
             <div id="btn-setup" onclick="openMenu()">⚙ MENÜ</div>
-            <div class="astro-box">
-                <div class="astro-big"><span style="color:#00eaff;">☀</span> <span id="sunrise">--:--</span></div>
-                <div class="astro-big"><span style="color:#aaa;">☾</span> <span id="sunset">--:--</span></div>
-                <div class="moon-phase"><span id="moon-icon"></span> <span id="moon-txt">...</span></div>
+            <div style="text-align:right;">
+                <div style="font-size:24px; font-weight:bold;">☀ <span id="sunrise">--:--</span></div>
+                <div style="font-size:24px; font-weight:bold;">☾ <span id="sunset">--:--</span></div>
+                <div style="color:#00eaff; font-size:22px; font-weight:bold; margin-top:10px;"><span id="moon-icon"></span> <span id="moon-txt"></span></div>
             </div>
         </div>
     </div>
 
     <div class="ticker-area" id="ticker-box"><div id="ticker-text">Lade Weltwetter...</div></div>
-
-    <div class="forecast-area">
-        <div class="f-row" id="hourly-row"></div>
-        <div class="f-row" id="daily-row"></div>
-    </div>
+    <div class="forecast-area"><div class="f-row" id="hourly-row"></div><div class="f-row" id="daily-row"></div></div>
 
     <div id="settings-overlay">
         <div id="menu-main" style="text-align:center;">
@@ -71,8 +64,13 @@
             <div onclick="showSub('sub-donation')" style="background:#111; border:1px solid #ffcc00; color:#ffcc00; padding:20px; width:100%; max-width:400px; margin:0 auto 15px auto; border-radius:10px; font-size:22px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between;"><span>☕ PROJEKT UNTERSTÜTZEN</span> <span>❯</span></div>
             <button onclick="closeMenu()" style="width:100%; max-width:400px; padding:20px; font-size:20px; background:#333; color:#fff; border:none; margin-top:20px; border-radius:10px;">SCHLIESSEN</button>
         </div>
+        <div id="sub-config" class="sub-c">
+            <h2>WOHNORT</h2><input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff;" placeholder="z.B. Braunschweig">
+            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px;">SPEICHERN</button>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ZURÜCK</button>
+        </div>
         </div>
 
     <script src="script.js?v=21.6"></script>
 </body>
-                    </html> 
+                                                                                                                                                                                                                                                                                                                         </html> 
