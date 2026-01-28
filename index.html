@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V21.1</title>
-    <link rel="stylesheet" href="style.css?v=21.1">
+    <title>Aura V21.2 World</title>
+    <link rel="stylesheet" href="style.css?v=21.2">
 </head>
 <body>
     <video id="wake-vid" loop playsinline muted></video>
@@ -14,11 +14,11 @@
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:220px; margin-bottom:30px;">
         <div style="border: 3px solid #00eaff; color: #00eaff; padding: 25px 50px; font-size: 32px; font-weight: bold; border-radius: 40px; box-shadow: 0 0 25px rgba(0,234,255,0.4);">STARTEN</div>
-        <div style="color:#555; margin-top:20px; font-size:18px;">(Lädt Wetter & Warnsystem)</div>
+        <div style="color:#555; margin-top:20px; font-size:18px;">(Läd Warnsystem & 20 Städte)</div>
     </div>
 
     <div id="update-overlay" onclick="location.reload(true)">
-        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V21.1</h1>
+        <h1 style="color:#00eaff; font-size:40px;">NEUES UPDATE V21.2</h1>
         <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; margin-top:20px; font-size:24px;">LADEN</div>
     </div>
 
@@ -53,14 +53,13 @@
     </div>
 
     <div class="ticker-area" id="ticker-box">
-        <div id="ticker-text">Systemstart...</div>
+        <div id="ticker-text">Lade Weltwetter...</div>
     </div>
 
     <div class="forecast-area">
         <div class="f-row" id="hourly-row"></div>
         <div class="f-row" id="daily-row"></div>
     </div>
-
     <div class="bottom-spacer"></div>
 
     <div id="settings-overlay">
@@ -77,11 +76,11 @@
             <h2 style="color:#00eaff; margin-top:30px;">SCHLAF-TIMER</h2><div style="display:flex; gap:10px;"><input type="time" id="t-start" style="font-size:22px; padding:10px;"> bis <input type="time" id="t-end" style="font-size:22px; padding:10px;"></div>
             <button onclick="save()" style="width:100%; padding:20px; font-size:22px; background:#00eaff; border:none; font-weight:bold; margin-top:30px; border-radius:10px;">SPEICHERN</button><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:10px;">ZURÜCK</button>
         </div>
-        <div id="sub-help" class="sub-c"><h2>HILFE</h2><p>Start-Button drücken & "Aktiv lassen" in Einstellungen an.</p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button></div>
+        <div id="sub-help" class="sub-c"><h2>HILFE</h2><p>1. Start drücken!<br>2. "Aktiv lassen" in Android Einstellungen an.</p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button></div>
         <div id="sub-legal" class="sub-c"><h2>IMPRESSUM</h2><p>Privatprojekt.</p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button></div>
         <div id="sub-donation" class="sub-c"><h2 style="color:#ffcc00;">SPENDE</h2><p>PayPal: piratkarl@web.de</p><button onclick="showMain()" style="width:100%; padding:15px; background:none; color:#888; border:none; margin-top:20px;">ZURÜCK</button></div>
     </div>
 
-    <script src="script.js?v=21.1"></script>
+    <script src="script.js?v=21.2"></script>
 </body>
-    </html> 
+                                                                                                                                 </html> 
