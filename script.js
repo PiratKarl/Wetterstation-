@@ -1,6 +1,6 @@
-/* --- AURA V23.6 REPARATUR-MOTOR (Universal Safe) --- */
+/* --- AURA V23.7 REPARATUR-MOTOR (Universal Safe) --- */
 
-var currentVer = 23.6;
+var currentVer = 23.7;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
@@ -12,10 +12,8 @@ function z(n){return (n<10?'0':'')+n;}
 function startApp() {
     appStarted = true;
     document.getElementById('start-overlay').style.display = 'none';
-    
-    // Dashboard erst jetzt für das Auge sichtbar machen (Fix gegen Symbol-Salat)
     var dash = document.getElementsByClassName('dashboard')[0];
-    if(dash) dash.style.display = 'flex';
+    if(dash) dash.style.display = 'flex'; 
     
     var de = document.documentElement;
     if (de.requestFullscreen) { de.requestFullscreen(); } 
@@ -24,12 +22,11 @@ function startApp() {
     var heartbeat = document.getElementById('logo-heartbeat');
     var wA = document.getElementById('wake-aud');
     wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
-    wA.play();
+    if(wA) wA.play();
     if(heartbeat) { heartbeat.play(); }
 
     loadWeather();
     update();
-    
     setInterval(update, 1000);           
     setInterval(loadWeather, 600000);    
     setInterval(checkUpdate, 1800000);   
@@ -44,7 +41,6 @@ function update() {
 
     updateStatusCockpit();
 
-    // Sleep-Logik
     if(sStart !== '--:--' && sEnd !== '--:--') {
         var n = now.getHours()*60 + now.getMinutes();
         var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
@@ -60,23 +56,19 @@ function update() {
 function updateStatusCockpit() {
     var diff = (Date.now() - lastDataFetch) / 1000 / 60;
     var dStat = document.getElementById('stat-data');
-    if(diff < 15) { dStat.innerHTML = "🔄 DATEN AKTUELL"; dStat.className = "status-line stat-ok"; }
-    else { dStat.innerHTML = "🔄 DATEN VERALTET"; dStat.className = "status-line stat-err"; }
+    if(diff < 15) { dStat.innerHTML = "🔄 DATEN AKTUELL"; dStat.style.color = "#00ff00"; }
+    else { dStat.innerHTML = "🔄 DATEN VERALTET"; dStat.style.color = "#ff4444"; }
 
     var wStat = document.getElementById('stat-wlan');
-    if(navigator.onLine) { wStat.innerHTML = "📡 WLAN VERBUNDEN"; wStat.className = "status-line stat-ok"; }
-    else { wStat.innerHTML = "📡 KEIN WLAN"; wStat.className = "status-line stat-err"; }
+    wStat.innerHTML = navigator.onLine ? "📡 WLAN VERBUNDEN" : "📡 KEIN WLAN";
+    wStat.style.color = navigator.onLine ? "#00ff00" : "#ff4444";
 
     if (navigator.getBattery) {
         navigator.getBattery().then(function(bat) {
             var bStat = document.getElementById('stat-bat');
             var lvl = Math.round(bat.level * 100);
             bStat.innerHTML = (bat.charging ? "⚡ LADEN " : "🔋 AKKU ") + lvl + "%";
-            bStat.className = (lvl > 20 || bat.charging) ? "status-line stat-ok" : "status-line stat-err";
-            
-            var alertBox = document.getElementById('bat-alert');
-            if(lvl < 5 && !bat.charging) { alertBox.style.display = 'block'; }
-            else { alertBox.style.display = 'none'; }
+            bStat.style.color = (lvl > 20 || bat.charging) ? "#00ff00" : "#ff4444";
         });
     }
     document.getElementById('conf-sleep').innerText = "🌙 Sleep: " + sStart;
@@ -116,8 +108,7 @@ function calcMoon() {
     var b = Math.round((jd - parseInt(jd)) * 8); if (b >= 8) b = 0;
     var mI = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
     var mT = ["NEUMOND", "SICHEL", "1. VIERTEL", "ZUN. MOND", "VOLLMOND", "ABN. MOND", "3. VIERTEL", "SICHEL"];
-    var row = document.getElementById('moon-row');
-    if(row) row.innerText = mI[b] + " " + mT[b];
+    document.getElementById('moon-row').innerText = mI[b] + " " + mT[b];
 }
 
 function loadWorldTicker(prefix) {
@@ -132,8 +123,7 @@ function loadWorldTicker(prefix) {
                 var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                 var cityTime = new Date(utc + (3600000 * (j.timezone / 3600)));
                 var tStr = z(cityTime.getHours()) + ":" + z(cityTime.getMinutes());
-                // Name in Cyan, Uhrzeit in Weiss (Fix für Layout)
-                wd += " <span class='t-world'> ◈ " + j.name.toUpperCase() + " <span style='color:#ffffff'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°</span>"; 
+                wd += " <span style='color:#00eaff'> ◈ " + j.name.toUpperCase() + "</span> <span style='color:#ffffff'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°"; 
             }
             done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
         };
@@ -166,7 +156,8 @@ function loadFore(lat, lon, ct) {
             });
             var dy = ""; var cnt = 0;
             for (var k in days) { if (cnt >= 5) break;
-                dy += "<div class='f-item'><div class='f-head'>" + k + "</div><img class='f-icon' src='" + days[k].icon + ".gif'><div class='f-val'><span style='color:#ff4444'>" + Math.round(days[k].max) + "°</span> <span style='color:#00eaff'>" + Math.round(days[k].min) + "°</span></div></div>";
+                // Tagesvorhersage: Max - Min mit Cyan-Bindestrich
+                dy += "<div class='f-item'><div class='f-head'>" + k + "</div><img class='f-icon' src='" + days[k].icon + ".gif'><div class='f-val'><span style='color:#ff4444'>" + Math.round(days[k].max) + "°</span><span class='t-sep'>-</span><span style='color:#00eaff'>" + Math.round(days[k].min) + "°</span></div></div>";
                 cnt++;
             }
             document.getElementById('daily-row').innerHTML = dy;
@@ -183,7 +174,7 @@ function checkWarnings(lat, lon) {
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.alerts && data.alerts.length > 0) {
-                for(var i=0; i<data.alerts.length; i++) { txt += "<span class='t-warn'> +++ ⚠️ " + data.alerts[i].event_de.toUpperCase() + " ⚠️</span>"; }
+                for(var i=0; i<data.alerts.length; i++) { txt += "<span style='color:#ff4444'> +++ ⚠️ " + data.alerts[i].event_de.toUpperCase() + " ⚠️</span>"; }
             }
         }
         loadWorldTicker(txt);
