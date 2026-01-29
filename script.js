@@ -1,15 +1,22 @@
-/* --- AURA V23.2 REPARATUR-MOTOR --- */
+/* --- AURA V23.2 UNIVERSAL-MOTOR (Cyan/Weiß Edition) --- */
 
 var currentVer = 23.2;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
 var lastDataFetch = 0;
+var appStarted = false;
 
 function z(n){return (n<10?'0':'')+n;}
 
 function startApp() {
+    appStarted = true;
     document.getElementById('start-overlay').style.display = 'none';
+    
+    // Dashboard erst jetzt für das Auge sichtbar machen
+    var dash = document.getElementsByClassName('dashboard')[0];
+    if(dash) dash.style.display = 'flex';
+    
     var de = document.documentElement;
     if (de.requestFullscreen) { de.requestFullscreen(); } 
     else if (de.webkitRequestFullscreen) { de.webkitRequestFullscreen(); } 
@@ -29,13 +36,13 @@ function startApp() {
 }
 
 function update() {
+    if(!appStarted) return;
     var now = new Date();
     document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
     var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
 
-    updateStatusCockpit();
-
+    // Ruhemodus-Check
     if(sStart !== '--:--' && sEnd !== '--:--') {
         var n = now.getHours()*60 + now.getMinutes();
         var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
@@ -46,33 +53,6 @@ function update() {
             if(sV.style.display !== 'block') { sV.style.display = 'block'; sV.play(); } 
         } else { sV.style.display = 'none'; sV.pause(); }
     }
-}
-
-function updateStatusCockpit() {
-    var diff = (Date.now() - lastDataFetch) / 1000 / 60;
-    var dStat = document.getElementById('stat-data');
-    if(diff < 15) { dStat.innerHTML = "🔄 DATEN AKTUELL"; dStat.className = "status-line stat-ok"; }
-    else { dStat.innerHTML = "🔄 DATEN VERALTET"; dStat.className = "status-line stat-err"; }
-
-    var wStat = document.getElementById('stat-wlan');
-    if(navigator.onLine) { wStat.innerHTML = "📡 WLAN VERBUNDEN"; wStat.className = "status-line stat-ok"; }
-    else { wStat.innerHTML = "📡 KEIN WLAN"; wStat.className = "status-line stat-err"; }
-
-    if (navigator.getBattery) {
-        navigator.getBattery().then(function(bat) {
-            var bStat = document.getElementById('stat-bat');
-            var lvl = Math.round(bat.level * 100);
-            bStat.innerHTML = (bat.charging ? "⚡ LADEN " : "🔋 AKKU ") + lvl + "%";
-            bStat.className = (lvl > 20 || bat.charging) ? "status-line stat-ok" : "status-line stat-err";
-            
-            var alertBox = document.getElementById('bat-alert');
-            if(lvl < 5 && !bat.charging) { alertBox.style.display = 'block'; }
-            else { alertBox.style.display = 'none'; }
-        });
-    }
-
-    document.getElementById('conf-sleep').innerText = "🌙 Sleep: " + sStart;
-    document.getElementById('conf-wake').innerText = "☀️ Wake: " + sEnd;
 }
 
 function loadWeather() {
@@ -86,12 +66,7 @@ function loadWeather() {
             document.getElementById('temp').innerText = Math.round(d.main.temp) + "°";
             document.getElementById('w-icon').src = d.weather[0].icon + ".gif";
             document.getElementById('w-desc').innerText = d.weather[0].description.toUpperCase();
-            document.getElementById('w-feels').innerText = "GEFÜHLT " + Math.round(d.main.feels_like) + "°";
             
-            var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000), s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
-            document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
-            document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
-
             calcMoon();
             loadFore(d.coord.lat, d.coord.lon, d.main.temp);
             checkWarnings(d.coord.lat, d.coord.lon);
@@ -105,13 +80,32 @@ function calcMoon() {
     var y = n.getFullYear(), m = n.getMonth() + 1, d = n.getDate();
     if (m < 3) { y--; m += 12; }
     ++m;
-    var c = 365.25 * y; var e = 30.6 * m;
-    var jd = c + e + d - 694039.09; jd /= 29.53;
+    var jd = (365.25 * y) + (30.6 * m) + d - 694039.09; jd /= 29.53;
     var b = Math.round((jd - parseInt(jd)) * 8); if (b >= 8) b = 0;
     var mI = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
-    var mT = ["NEUMOND", "SICHEL", "1. VIERTEL", "ZUN. MOND", "VOLLMOND", "ABN. MOND", "3. VIERTEL", "SICHEL"];
     var row = document.getElementById('moon-row');
-    row.innerText = mI[b] + " " + mT[b];
+    if(row) row.innerText = mI[b];
+}
+
+function loadWorldTicker(prefix) {
+    var caps = ["Berlin", "Paris", "London", "Rome", "New York", "Tokyo", "Sydney", "Dubai"];
+    var wd = prefix; var done = 0;
+    caps.forEach(function(c) { 
+        var r = new XMLHttpRequest();
+        r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric",true);
+        r.onload = function() {
+            if(r.status===200) { 
+                var j = JSON.parse(r.responseText);
+                var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
+                var cityTime = new Date(utc + (3600000 * (j.timezone / 3600)));
+                var tStr = z(cityTime.getHours()) + ":" + z(cityTime.getMinutes());
+                // Hier: Name in Cyan, Uhrzeit in WEISS
+                wd += " <span class='t-world'> ◈ " + j.name.toUpperCase() + " <span style='color:#ffffff'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°</span>"; 
+            }
+            done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
+        };
+        r.send(); 
+    });
 }
 
 function loadFore(lat, lon, ct) {
@@ -126,7 +120,7 @@ function loadFore(lat, lon, ct) {
             var h = "";
             for(var i=0; i<5; i++) {
                 var it = d.list[i], t = new Date(it.dt*1000);
-                h += `<div class='f-item'><div class='f-head'>${t.getHours()} Uhr</div><img class='f-icon' src='${it.weather[0].icon}.gif'><div class='f-val'>${Math.round(it.main.temp)}°</div></div>`;
+                h += "<div class='f-item'><div class='f-head'>" + t.getHours() + " Uhr</div><img class='f-icon' src='" + it.weather[0].icon + ".gif'><div class='f-val'>" + Math.round(it.main.temp) + "°</div></div>";
             }
             document.getElementById('hourly-row').innerHTML = h;
 
@@ -139,7 +133,7 @@ function loadFore(lat, lon, ct) {
             });
             var dy = ""; var cnt = 0;
             for (var k in days) { if (cnt >= 5) break;
-                dy += `<div class='f-item'><div class='f-head'>${k}</div><img class='f-icon' src='${days[k].icon}.gif'><div class='f-val'><span style='color:#ff4444'>${Math.round(days[k].max)}°</span> <span style='color:#00eaff'>${Math.round(days[k].min)}°</span></div></div>`;
+                dy += "<div class='f-item'><div class='f-head'>" + k + "</div><img class='f-icon' src='" + days[k].icon + ".gif'><div class='f-val'><span style='color:#ff4444'>" + Math.round(days[k].max) + "°</span> <span style='color:#00eaff'>" + Math.round(days[k].min) + "°</span></div></div>";
                 cnt++;
             }
             document.getElementById('daily-row').innerHTML = dy;
@@ -148,24 +142,21 @@ function loadFore(lat, lon, ct) {
     x.send();
 }
 
-function loadWorldTicker(prefix) {
-    var caps = ["München", "Stuttgart", "Berlin", "Paris", "London", "Rome", "Madrid", "Vienna", "Warsaw", "Moscow", "New York", "Los Angeles", "Rio de Janeiro", "Tokyo", "Beijing", "Bangkok", "Sydney", "Dubai", "Cairo", "Cape Town"];
-    var wd = prefix; var done = 0;
-    caps.forEach(c => { 
-        var r = new XMLHttpRequest();
-        r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric",true);
-        r.onload = function() {
-            if(r.status===200) { 
-                var j=JSON.parse(r.responseText);
-                var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
-                var cityTime = new Date(utc + (3600000 * (j.timezone / 3600)));
-                var tStr = z(cityTime.getHours()) + ":" + z(cityTime.getMinutes());
-                wd += `<span class='t-world'> ◈ ${j.name.toUpperCase()} <span class='t-time'>${tStr} UHR</span> <img class='t-icon' src='${j.weather[0].icon}.gif'> ${Math.round(j.main.temp)}°</span>`; 
+function checkWarnings(lat, lon) {
+    var x = new XMLHttpRequest();
+    x.open("GET", "https://api.brightsky.dev/alerts?lat="+lat+"&lon="+lon, true);
+    x.onload = function() {
+        var txt = "";
+        if (x.status === 200) {
+            var data = JSON.parse(x.responseText);
+            if (data.alerts && data.alerts.length > 0) {
+                for(var i=0; i<data.alerts.length; i++) { txt += "<span class='t-warn'> +++ ⚠️ " + data.alerts[i].event_de.toUpperCase() + " ⚠️</span>"; }
             }
-            done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
-        };
-        r.send(); 
-    });
+        }
+        loadWorldTicker(txt);
+    };
+    x.onerror = function() { loadWorldTicker(""); };
+    x.send();
 }
 
 function checkUpdate() {
@@ -180,30 +171,11 @@ function checkUpdate() {
     x.send();
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='block'; showMain(); }
+function openMenu() { document.getElementById('settings-overlay').style.display='block'; }
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
-function showMain() { document.getElementById('menu-main').style.display='block'; var s = document.getElementsByClassName('sub-c'); for(var i=0; i<s.length; i++){s[i].style.display='none';} }
 function save() { 
     localStorage.setItem('city', document.getElementById('city-in').value); 
     localStorage.setItem('t-start', document.getElementById('t-start').value); 
     localStorage.setItem('t-end', document.getElementById('t-end').value); 
     location.reload(); 
-}
-
-function checkWarnings(lat, lon) {
-    var x = new XMLHttpRequest();
-    x.open("GET", "https://api.brightsky.dev/alerts?lat="+lat+"&lon="+lon, true);
-    x.onload = function() {
-        var txt = "";
-        if (x.status === 200) {
-            var data = JSON.parse(x.responseText);
-            if (data.alerts && data.alerts.length > 0) {
-                for(var i=0; i<data.alerts.length; i++) { txt += `<span class='t-warn'> +++ ⚠️ WARNUNG: ${data.alerts[i].event_de.toUpperCase()} ⚠️</span>`; }
-            }
-        }
-        loadWorldTicker(txt);
-    };
-    x.onerror = function() { loadWorldTicker(""); };
-    x.send();
 }
