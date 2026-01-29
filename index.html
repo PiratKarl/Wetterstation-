@@ -3,45 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V24.1</title>
-    <link rel="stylesheet" href="style.css?v=24.1">
+    <title>Aura V23.1 Klassik</title>
+    <link rel="stylesheet" href="style.css?v=23.1">
 </head>
 <body>
+    <audio id="wake-aud" loop playsinline></audio>
+    <video id="sleep-vid" loop playsinline muted></video>
+
     <div id="start-overlay" onclick="startApp()">
         <img src="logo.png" style="width:130px; margin-bottom:20px;">
-        <div style="border: 4px solid #00eaff; color: #00eaff; padding: 15px 45px; font-size: 28px; font-weight: bold; border-radius: 50px;">STATION STARTEN</div>
+        <div style="border: 3px solid #00eaff; color: #00eaff; padding: 15px 40px; font-size: 24px; font-weight: bold; border-radius: 10px; cursor: pointer; background: #000;">STATION STARTEN</div>
+        <p style="color:#444; margin-top:15px;">Version 23.1 Stable</p>
     </div>
 
     <div class="dashboard">
         <div class="col-left">
-            <div id="city-name">...</div>
-            <div id="clock">--:--</div>
+            <div id="city-name">LADE...</div>
+            <div id="clock">00:00</div>
             <div id="date">...</div>
             <div class="logo-container">
                 <img src="logo.png" class="logo-fallback">
                 <video id="logo-heartbeat" loop playsinline muted><source src="logo.mp4" type="video/mp4"></video>
             </div>
         </div>
+
         <div class="col-center">
-            <div class="main-row"><img id="w-icon" src=""><div id="temp">--°</div></div>
-            <div id="w-desc">...</div>
-            <div id="clothing">...</div>
+            <img id="w-icon" src="">
+            <div id="temp">--°</div>
+            <div id="w-desc">WETTERDATEN...</div>
         </div>
+
         <div class="col-right">
-            <button onclick="openMenu()">⚙</button>
-            <div>☀ <span id="sunrise">--:--</span></div>
-            <div>☾ <span id="sunset">--:--</span></div>
-            <div id="stat-data" style="font-size:10px;">PROLOG...</div>
+            <button id="btn-setup" onclick="openMenu()">EINSTELLUNGEN</button>
+            <div class="astro-box">
+                <div>SONNE ☀ <span id="sunrise">--:--</span></div>
+                <div>UNTER ☾ <span id="sunset">--:--</span></div>
+            </div>
+            <div style="margin-top:20px; font-size:12px; color:#555;">
+                webmaster@code-werft.de
+            </div>
         </div>
     </div>
 
-    <div class="ticker-area"><div id="ticker-text">Lade Welt-Ticker...</div></div>
+    <div class="ticker-area">
+        <div id="ticker-text">Verbindung zum Wetter-Server wird aufgebaut...</div>
+    </div>
 
     <div class="forecast-area">
         <div class="f-row" id="hourly-row"></div>
         <div class="f-row" id="daily-row"></div>
     </div>
 
-    <script src="script.js?v=24.1"></script>
+    <div id="settings-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:20000; padding:30px; box-sizing:border-box; text-align:center; color:#fff;">
+        <h1 style="color:#00eaff;">KONFIGURATION</h1>
+        
+        <p>STANDORT ÄNDERN:</p>
+        <input type="text" id="city-in" style="width:80%; padding:15px; font-size:20px; background:#111; color:#fff; border:1px solid #00eaff; border-radius:10px;" placeholder="z.B. Braunschweig">
+        
+        <div style="margin-top:40px; border:1px solid #ffcc00; padding:20px; border-radius:10px; color:#ffcc00; cursor:pointer;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')">
+            ☕ UNTERSTÜTZE DAS PROJEKT: KAFFEE SPENDEN
+        </div>
+
+        <div style="margin-top:40px; color:#aaa; font-size:14px;">
+            <p><strong>IMPRESSUM</strong></p>
+            <p>Pirat Karl<br>38106 Braunschweig</p>
+            <p>webmaster@code-werft.de</p>
+        </div>
+
+        <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:30px; border-radius:10px; border:none; font-size:18px;">SPEICHERN & NEU LADEN</button>
+        <button onclick="closeMenu()" style="width:100%; padding:15px; background:#333; color:#fff; margin-top:15px; border-radius:10px; border:none;">ABBRECHEN</button>
+    </div>
+
+    <script src="script.js?v=23.1"></script>
 </body>
-</html>
+</html> 
