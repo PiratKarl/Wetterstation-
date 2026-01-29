@@ -1,6 +1,6 @@
-/* --- AURA V23.2 UNIVERSAL-MOTOR (Cyan/Weiß Edition) --- */
+/* --- AURA V23.6 REPARATUR-MOTOR (Universal Safe) --- */
 
-var currentVer = 23.2;
+var currentVer = 23.6;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
@@ -11,11 +11,10 @@ function z(n){return (n<10?'0':'')+n;}
 
 function startApp() {
     appStarted = true;
+    // FIX: Dashboard erst nach Klick aktivieren (Gegen Symbol-Salat)
     document.getElementById('start-overlay').style.display = 'none';
-    
-    // Dashboard erst jetzt für das Auge sichtbar machen
     var dash = document.getElementsByClassName('dashboard')[0];
-    if(dash) dash.style.display = 'flex';
+    if(dash) dash.style.display = 'flex'; 
     
     var de = document.documentElement;
     if (de.requestFullscreen) { de.requestFullscreen(); } 
@@ -42,7 +41,7 @@ function update() {
     var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
 
-    // Ruhemodus-Check
+    // Sleep-Logik
     if(sStart !== '--:--' && sEnd !== '--:--') {
         var n = now.getHours()*60 + now.getMinutes();
         var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
@@ -99,7 +98,7 @@ function loadWorldTicker(prefix) {
                 var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                 var cityTime = new Date(utc + (3600000 * (j.timezone / 3600)));
                 var tStr = z(cityTime.getHours()) + ":" + z(cityTime.getMinutes());
-                // Hier: Name in Cyan, Uhrzeit in WEISS
+                // Name in Cyan, Uhrzeit in Weiss
                 wd += " <span class='t-world'> ◈ " + j.name.toUpperCase() + " <span style='color:#ffffff'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°</span>"; 
             }
             done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
@@ -171,8 +170,10 @@ function checkUpdate() {
     x.send();
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='block'; }
+function openMenu() { document.getElementById('settings-overlay').style.display='block'; showMain(); }
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
+function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
+function showMain() { document.getElementById('menu-main').style.display='block'; var s = document.getElementsByClassName('sub-c'); for(var i=0; i<s.length; i++){s[i].style.display='none';} }
 function save() { 
     localStorage.setItem('city', document.getElementById('city-in').value); 
     localStorage.setItem('t-start', document.getElementById('t-start').value); 
