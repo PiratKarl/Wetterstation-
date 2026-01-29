@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V23.7 Universal</title>
-    <link rel="stylesheet" href="style.css?v=23.7">
+    <title>Aura V23.8 Universal</title>
+    <link rel="stylesheet" href="style.css?v=23.8">
 </head>
 <body>
     <div id="bat-alert"></div>
@@ -15,14 +15,12 @@
         <div style="font-size:70px; margin-bottom:15px; animation: bounce 2s infinite;">👇</div>
         <img src="logo.png" style="width:140px; margin-bottom:20px;">
         <div style="border: 4px solid #00eaff; color: #00eaff; padding: 15px 45px; font-size: 28px; font-weight: bold; border-radius: 50px; cursor: pointer; background: #000;">STATION STARTEN</div>
-        <p style="color:#666; margin-top:20px; font-size:14px;">Tippen Sie hier, um die Anzeige zu kalibrieren und zu starten.</p>
+        <p style="color:#444; margin-top:20px; font-size:14px;">Tippen Sie hier, um das System zu kalibrieren.</p>
     </div>
 
     <div id="update-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:210000; flex-direction:column; justify-content:center; align-items:center;" onclick="location.reload(true)">
-        <div style="font-size:70px; margin-bottom:20px; animation: bounce 2s infinite;">👆</div>
-        <h1 style="color:#00eaff;">NEUE VERSION BEREIT</h1>
-        <p style="color:#ccc; margin-bottom:20px;">Ein Update mit Verbesserungen wurde gefunden.</p>
-        <div style="background:#00eaff; color:#000; padding:15px 35px; font-weight:bold; border-radius:10px; cursor:pointer;">JETZT AKTUALISIEREN</div>
+        <h1 style="color:#00eaff;">NEUES UPDATE VERFÜGBAR</h1>
+        <div style="background:#00eaff; color:#000; padding:15px 35px; font-weight:bold; border-radius:10px; cursor:pointer;">JETZT INSTALLIEREN</div>
     </div>
 
     <div class="dashboard">
@@ -53,9 +51,9 @@
                 <div id="moon-row">--</div>
             </div>
             <div class="status-cockpit">
-                <div id="stat-wlan" class="status-line">📡 WLAN STATUS...</div>
-                <div id="stat-bat" class="status-line">🔋 AKKU STATUS...</div>
-                <div id="stat-data" class="status-line">🔄 DATEN STATUS...</div>
+                <div id="stat-wlan" class="status-line">📡 WLAN PRÜFEN...</div>
+                <div id="stat-bat" class="status-line">🔋 AKKU PRÜFEN...</div>
+                <div id="stat-data" class="status-line">🔄 DATEN PRÜFEN...</div>
                 <div class="sleep-info">
                     <div id="conf-sleep">🌙 Sleep: --:--</div>
                     <div id="conf-wake">☀️ Wake: --:--</div>
@@ -65,7 +63,7 @@
     </div>
 
     <div class="ticker-area">
-        <div id="ticker-text">Verbindung zum Wetter-Server wird aufgebaut...</div>
+        <div id="ticker-text">Lade Welt-Ticker & Warnmeldungen...</div>
     </div>
 
     <div class="forecast-area">
@@ -76,67 +74,68 @@
     <div id="settings-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.99); z-index:220000; padding:20px; box-sizing:border-box; overflow-y:auto;">
         
         <div id="menu-main" style="text-align:center; max-width:500px; margin: 0 auto;">
-            <h1 style="color:#00eaff; font-size:38px; margin-bottom:30px;">STATIONS-MENÜ</h1>
-            <div class="btn-m" onclick="showSub('sub-config')" style="background:#111; border:1px solid #444; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer; display:flex; justify-content:space-between;"><span>📍 STANDORT & ZEITEN</span> <span>❯</span></div>
-            <div class="btn-m" onclick="showSub('sub-guide')" style="background:#111; border:1px solid #444; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer; display:flex; justify-content:space-between;"><span>📖 BEDIENUNGS-ANLEITUNG</span> <span>❯</span></div>
-            <div class="btn-m" onclick="showSub('sub-legend')" style="background:#111; border:1px solid #444; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer; display:flex; justify-content:space-between;"><span>🔍 SYMBOLE ERKLÄRT</span> <span>❯</span></div>
-            <div class="btn-m" onclick="showSub('sub-legal')" style="background:#111; border:1px solid #444; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer; display:flex; justify-content:space-between;"><span>⚖ IMPRESSUM</span> <span>❯</span></div>
+            <h1 style="color:#00eaff; font-size:38px; margin-bottom:30px;">EINSTELLUNGEN</h1>
             
-            <div style="border:2px solid #ffcc00; color:#ffcc00; padding:18px; margin-top:25px; border-radius:12px; cursor:pointer; font-weight:bold;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')">
-                ☕ UNTERSTÜTZE DAS PROJEKT: KAFFEE SPENDEN
-                <div style="font-size:12px; margin-top:5px; font-weight:normal;">Sichere HTTPS-Zahlung via PayPal</div>
+            <div class="btn-m" onclick="showSub('sub-config')" style="background:#111; border:1px solid #333; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer; display:flex; justify-content:space-between;"><span>📍 STANDORT & ZEITEN</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-guide')" style="background:#111; border:1px solid #333; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer; display:flex; justify-content:space-between;"><span>📖 HILFE & ANLEITUNG</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-legend')" style="background:#111; border:1px solid #333; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer; display:flex; justify-content:space-between;"><span>🔍 SYMBOLE ERKLÄRT</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-legal')" style="background:#111; border:1px solid #333; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer; display:flex; justify-content:space-between;"><span>⚖ IMPRESSUM</span> <span>❯</span></div>
+            
+            <div style="border:2px solid #ffcc00; color:#ffcc00; padding:18px; margin-top:25px; border-radius:12px; cursor:pointer; font-weight:bold; background:rgba(255,204,0,0.05);" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')">
+                ☕ DAS PROJEKT UNTERSTÜTZEN
+                <div style="font-size:13px; margin-top:5px; font-weight:normal; color:#fff;">Einen Kaffee für die Weiterentwicklung spenden</div>
             </div>
             
-            <button onclick="closeMenu()" style="width:100%; padding:18px; background:#333; color:#fff; border:none; margin-top:20px; border-radius:12px; cursor:pointer; font-size:18px; font-weight:bold;">ZURÜCK ZUR ANZEIGE</button>
+            <button onclick="closeMenu()" style="width:100%; padding:18px; background:#00eaff; color:#000; border:none; margin-top:25px; border-radius:12px; cursor:pointer; font-size:18px; font-weight:bold;">ZURÜCK ZUM DASHBOARD</button>
         </div>
 
         <div id="sub-config" class="sub-c" style="display:none; text-align:center;">
-            <h2 style="color:#00eaff;">STANDORT-EINSTELLUNGEN</h2>
-            <p style="color:#ccc;">Geben Sie Ihren Ort für die Wetterdaten ein:</p>
-            <input type="text" id="city-in" style="width:90%; padding:15px; font-size:20px; background:#111; color:#fff; border:1px solid #00eaff; border-radius:10px;" placeholder="z.B. Braunschweig">
+            <h2 style="color:#00eaff;">STANDORT & RUHEZEITEN</h2>
+            <p style="color:#aaa;">Wetter-Ort ändern:</p>
+            <input type="text" id="city-in" style="width:90%; padding:15px; font-size:20px; background:#111; color:#fff; border:1px solid #444; border-radius:10px;" placeholder="z.B. Braunschweig">
             
             <div style="margin-top:30px; color:#00eaff; font-weight:bold;">AUTOMATISCHER RUHEMODUS</div>
-            <p style="font-size:14px; color:#aaa;">In dieser Zeit zeigt das Tablet ein entspannendes Video (z.B. Kamin), um Strom zu sparen und das Display zu schonen.</p>
+            <p style="font-size:13px; color:#888;">Das Display schaltet in dieser Zeit auf ein Entspannungsvideo um.</p>
             <div style="display:flex; justify-content:center; gap:10px; margin-top:10px;">
-                Von: <input type="time" id="t-start" style="padding:10px;"> Bis: <input type="time" id="t-end" style="padding:10px;">
+                Start: <input type="time" id="t-start" style="padding:10px;"> Ende: <input type="time" id="t-end" style="padding:10px;">
             </div>
             
             <button onclick="save()" style="width:100%; padding:18px; background:#00eaff; color:#000; font-weight:bold; margin-top:30px; border-radius:12px;">SPEICHERN & NEU LADEN</button>
             <button onclick="showMain()" style="width:100%; padding:12px; background:#333; color:#fff; margin-top:15px; border-radius:12px;">ABBRECHEN</button>
         </div>
 
-        <div id="sub-guide" class="sub-c" style="display:none; color:#ccc; text-align:left; line-height:1.5;">
-            <h2 style="color:#00eaff; text-align:center;">WIE FUNKTIONIERT DIE STATION?</h2>
-            <p><strong>1. Der Start:</strong> Um ein sauberes Layout zu garantieren, startet die Station hinter einem schwarzen Vorhang. Ein Klick auf "Start" kalibriert die Anzeige.</p>
-            <p><strong>2. Das Herz-Logo:</strong> Die Animation links unten dient als "Wachhalter". Sie verhindert, dass das Tablet in den Standby-Modus geht.</p>
-            <p><strong>3. Der Ticker:</strong> Er zeigt im Wechsel das Wetter großer Metropolen und blendet bei Gefahr wichtige Wetterwarnungen ein.</p>
-            <p><strong>4. Automatik:</strong> Die Station prüft alle 30 Minuten, ob ein Update vorliegt, und installiert dieses auf Wunsch automatisch.</p>
-            <button onclick="showMain()" style="width:100%; padding:18px; background:#333; color:#fff; border-radius:12px; margin-top:20px;">ALLES KLAR!</button>
+        <div id="sub-guide" class="sub-c" style="display:none; color:#ccc; text-align:left; line-height:1.4;">
+            <h2 style="color:#00eaff; text-align:center;">ANLEITUNG</h2>
+            <p>• <strong>Start:</strong> Der schwarze Vorhang beim Laden schützt die Anzeige vor Fehlern. Ein Klick startet das System sauber.</p>
+            <p>• <strong>Dashboard:</strong> Links (Zeit), Mitte (Wetter), Rechts (Geräte-Status und Cockpit).</p>
+            <p>• <strong>Welt-Ticker:</strong> Unten sehen Sie aktuelle Temperaturen aus Metropolen und bei Bedarf blinkende Wetterwarnungen.</p>
+            <p>• <strong>Updates:</strong> Das System prüft selbstständig auf Verbesserungen und bietet diese oben am Bildschirm an.</p>
+            <button onclick="showMain()" style="width:100%; padding:18px; background:#333; color:#fff; border-radius:12px; margin-top:20px;">VERSTANDEN</button>
         </div>
 
         <div id="sub-legend" class="sub-c" style="display:none; color:#ccc;">
-            <h2 style="color:#00eaff; text-align:center;">ERKLÄRUNG DER WERTE</h2>
-            <div style="background:#111; padding:15px; border-radius:10px;">
-                <p>☀️ <strong>Sonne/Mond:</strong> Zeigt die Zeiten für Auf- und Untergang am aktuellen Tag.</p>
-                <p>💧 <strong>Regentropfen:</strong> Die Wahrscheinlichkeit, dass es in der nächsten Stunde regnet.</p>
-                <p>🧥 <strong>Kleidung:</strong> Ein Vorschlag basierend auf Temperatur und Regenrisiko.</p>
-                <p>🌡️ <strong>Vorhersage:</strong> Die Werte werden als <b>Max <span style='color:#00eaff'>-</span> Min</b> angezeigt.</p>
-                <p>⚠️ <strong>Warnungen:</strong> Erscheinen bei Unwetter im Ticker in roter Schrift.</p>
+            <h2 style="color:#00eaff; text-align:center;">SYMBOLE</h2>
+            <div style="background:#111; padding:20px; border-radius:10px;">
+                <p>☀️/☾: Aufgang und Untergang.</p>
+                <p>💧: Wahrscheinlichkeit für Niederschlag.</p>
+                <p>🧥: Bekleidungsempfehlung (T-Shirt bis Winterjacke).</p>
+                <p>🌡️: Vorhersage als <b>Max <span style='color:#00eaff'>-</span> Min</b> (Cyan-Trenner).</p>
+                <p>⚠️: Warnungen erscheinen rot im Ticker.</p>
             </div>
             <button onclick="showMain()" style="width:100%; padding:18px; background:#333; color:#fff; border-radius:12px; margin-top:20px;">ZURÜCK</button>
         </div>
 
         <div id="sub-legal" class="sub-c" style="display:none; text-align:center;">
             <h2 style="color:#00eaff;">IMPRESSUM</h2>
-            <div style="background:#111; padding:20px; border-radius:10px; color:#ccc;">
-                <p><strong>Betreiber der Station:</strong><br>Pirat Karl<br>38106 Braunschweig</p>
-                <p><strong>Technischer Support:</strong><br>webmaster@code-werft.de</p>
-                <p style="font-size:12px; color:#666; margin-top:20px;">Entwickelt für Android 4.4 und moderne Web-Tablets.<br>Version: 23.7 Universal</p>
+            <div style="background:#111; padding:25px; border-radius:10px; color:#ccc;">
+                <p><strong>Stations-Betreiber:</strong><br>Pirat Karl<br>38106 Braunschweig</p>
+                <p><strong>Technik & Support:</strong><br><span style="color:#00eaff;">webmaster@code-werft.de</span></p>
+                <p style="font-size:12px; color:#555; margin-top:30px;">Optimiert für Universal-Betrieb (Android 4.4+)<br>Version: 23.8 Universal-Panzer</p>
             </div>
             <button onclick="showMain()" style="width:100%; padding:18px; background:#333; color:#fff; border-radius:12px; margin-top:20px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=23.7"></script>
+    <script src="script.js?v=23.8"></script>
 </body>
-                </html> 
+    </html> 
