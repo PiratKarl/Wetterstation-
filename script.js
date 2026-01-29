@@ -1,6 +1,5 @@
-/* --- AURA V24.0 REPARATUR-MOTOR (Ticker & Warn-Ampel) --- */
-
-var currentVer = 24.0;
+/* --- AURA V24.1 REPARATUR-MOTOR --- */
+var currentVer = 24.1;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
@@ -12,22 +11,10 @@ function z(n){return (n<10?'0':'')+n;}
 function startApp() {
     appStarted = true;
     document.getElementById('start-overlay').style.display = 'none';
-    
     setTimeout(function() {
         var dash = document.getElementsByClassName('dashboard')[0];
         if(dash) { dash.style.display = 'flex'; }
     }, 50);
-    
-    var de = document.documentElement;
-    if (de.requestFullscreen) { de.requestFullscreen(); } 
-    else if (de.webkitRequestFullscreen) { de.webkitRequestFullscreen(); } 
-    
-    var heartbeat = document.getElementById('logo-heartbeat');
-    var wA = document.getElementById('wake-aud');
-    wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
-    if(wA) wA.play();
-    if(heartbeat) { heartbeat.play(); }
-
     loadWeather();
     update();
     setInterval(update, 1000);           
@@ -41,28 +28,6 @@ function update() {
     document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
     var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
-
-    updateStatusCockpit();
-
-    if(sStart !== '--:--' && sEnd !== '--:--') {
-        var n = now.getHours()*60 + now.getMinutes();
-        var s = parseInt(sStart.split(':')[0])*60 + parseInt(sStart.split(':')[1]);
-        var e = parseInt(sEnd.split(':')[0])*60 + parseInt(sEnd.split(':')[1]);
-        var isSleep = (s > e) ? (n >= s || n < e) : (n >= s && n < e);
-        var sV = document.getElementById('sleep-vid');
-        if(isSleep) { 
-            if(sV.style.display !== 'block') { sV.style.display = 'block'; sV.play(); } 
-        } else { sV.style.display = 'none'; sV.pause(); }
-    }
-}
-
-function updateStatusCockpit() {
-    var diff = (Date.now() - lastDataFetch) / 1000 / 60;
-    var dStat = document.getElementById('stat-data');
-    if(dStat) {
-        dStat.innerHTML = diff < 15 ? "🔄 DATEN AKTUELL" : "🔄 DATEN VERALTET";
-        dStat.style.color = diff < 15 ? "#00ff00" : "#ff4444";
-    }
 }
 
 function loadWeather() {
@@ -76,11 +41,9 @@ function loadWeather() {
             document.getElementById('temp').innerText = Math.round(d.main.temp) + "°";
             document.getElementById('w-icon').src = d.weather[0].icon + ".gif";
             document.getElementById('w-desc').innerText = d.weather[0].description.toUpperCase();
-            
             var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000), s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
             document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
             document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
-
             loadFore(d.coord.lat, d.coord.lon, d.main.temp);
             checkWarnings(d.coord.lat, d.coord.lon);
         }
@@ -100,7 +63,6 @@ function loadWorldTicker(prefix) {
                 var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                 var cityTime = new Date(utc + (3600000 * (j.timezone / 3600)));
                 var tStr = z(cityTime.getHours()) + ":" + z(cityTime.getMinutes());
-                // Name Cyan, Zeit Weiss, Icons mit t-icon Klasse zur Verkleinerung
                 wd += " <span style='color:#00eaff'> ◈ " + j.name.toUpperCase() + "</span> <span style='color:#ffffff'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°"; 
             }
             done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
@@ -118,14 +80,12 @@ function loadFore(lat, lon, ct) {
             var d = JSON.parse(x.responseText);
             document.getElementById('pop').innerText = Math.round(d.list[0].pop * 100)+"%";
             document.getElementById('clothing').innerText = (d.list[0].pop > 0.3) ? "REGENSCHIRM" : (ct < 7 ? "WINTERJACKE" : "T-SHIRT");
-            
             var h = "";
             for(var i=0; i<5; i++) {
                 var it = d.list[i], t = new Date(it.dt*1000);
                 h += "<div class='f-item'><div class='f-head'>" + t.getHours() + " Uhr</div><img class='f-icon' src='" + it.weather[0].icon + ".gif'><div class='f-val'>" + Math.round(it.main.temp) + "°</div></div>";
             }
             document.getElementById('hourly-row').innerHTML = h;
-
             var days = {};
             d.list.forEach(function(item) {
                 var dStr = new Date(item.dt * 1000).toLocaleDateString('de-DE', {weekday: 'short'}).toUpperCase();
@@ -154,7 +114,6 @@ function checkWarnings(lat, lon) {
             if (data.alerts && data.alerts.length > 0) {
                 for(var i=0; i<data.alerts.length; i++) { 
                     var alert = data.alerts[i];
-                    // Ampel-System: Rot für extreme Warnungen, sonst Gelb
                     var color = (alert.event_de.toLowerCase().indexOf('extrem') > -1) ? "#ff0000" : "#ffff00";
                     txt += "<span style='color:" + color + "; font-weight:bold;'> +++ ⚠️ " + alert.event_de.toUpperCase() + " ⚠️</span>"; 
                 }
@@ -162,7 +121,6 @@ function checkWarnings(lat, lon) {
         }
         loadWorldTicker(txt);
     };
-    x.onerror = function() { loadWorldTicker(""); };
     x.send();
 }
 
@@ -178,13 +136,9 @@ function checkUpdate() {
     x.send();
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='block'; showMain(); }
+function openMenu() { document.getElementById('settings-overlay').style.display='block'; }
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
-function showMain() { document.getElementById('menu-main').style.display='block'; var s = document.getElementsByClassName('sub-c'); for(var i=0; i<s.length; i++){s[i].style.display='none';} }
 function save() { 
     localStorage.setItem('city', document.getElementById('city-in').value); 
-    localStorage.setItem('t-start', document.getElementById('t-start').value); 
-    localStorage.setItem('t-end', document.getElementById('t-end').value); 
     location.reload(); 
 }
