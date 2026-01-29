@@ -1,6 +1,6 @@
-/* --- AURA V23.2 REPARATUR-MOTOR --- */
+/* --- AURA V23.3 LEGENDE-MOTOR --- */
 
-var currentVer = 23.2;
+var currentVer = 23.3;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
@@ -60,7 +60,7 @@ function updateStatusCockpit() {
     if(navigator.onLine) { wStat.innerHTML = "📡 WLAN VERBUNDEN"; wStat.className = "status-line stat-ok"; }
     else { wStat.innerHTML = "📡 KEIN WLAN"; wStat.className = "status-line stat-err"; }
 
-    // Batterie-Status & Alarm
+    // Akku-Status & Alarm
     if (navigator.getBattery) {
         navigator.getBattery().then(function(bat) {
             var bStat = document.getElementById('stat-bat');
@@ -68,13 +68,11 @@ function updateStatusCockpit() {
             bStat.innerHTML = (bat.charging ? "⚡ LADEN " : "🔋 AKKU ") + lvl + "%";
             bStat.className = (lvl > 20 || bat.charging) ? "status-line stat-ok" : "status-line stat-err";
             
-            // Akku-Alarm Logik (< 5% blitzt es rot)
             var alertBox = document.getElementById('bat-alert');
             if(lvl < 5 && !bat.charging) { alertBox.style.display = 'block'; }
             else { alertBox.style.display = 'none'; }
         });
     }
-
     document.getElementById('conf-sleep').innerText = "🌙 Sleep: " + sStart;
     document.getElementById('conf-wake').innerText = "☀️ Wake: " + sEnd;
 }
@@ -96,9 +94,7 @@ function loadWeather() {
             document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
             document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
 
-            // MOND WIEDER AKTIVIEREN
             calcMoon();
-
             loadFore(d.coord.lat, d.coord.lon, d.main.temp);
             checkWarnings(d.coord.lat, d.coord.lon);
         }
@@ -111,14 +107,14 @@ function calcMoon() {
     var y = n.getFullYear(), m = n.getMonth() + 1, d = n.getDate();
     if (m < 3) { y--; m += 12; }
     ++m;
-    var c = 365.25 * y; var e = 30.6 * m;
-    var jd = c + e + d - 694039.09; jd /= 29.53;
+    var jd = (365.25 * y) + (30.6 * m) + d - 694039.09; jd /= 29.53;
     var b = Math.round((jd - parseInt(jd)) * 8); if (b >= 8) b = 0;
     var mI = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
     var mT = ["NEUMOND", "SICHEL", "1. VIERTEL", "ZUN. MOND", "VOLLMOND", "ABN. MOND", "3. VIERTEL", "SICHEL"];
     var row = document.getElementById('moon-row');
     row.innerText = mI[b] + " " + mT[b];
-    if(b === 4) { row.style.color = "#80dfff"; row.style.textShadow = "0 0 10px #00eaff"; } else { row.style.color = "#00eaff"; row.style.textShadow = "none"; }
+    if(b === 4) { row.style.color = "#80dfff"; row.style.textShadow = "0 0 10px #00eaff"; } 
+    else { row.style.color = "#00eaff"; row.style.textShadow = "none"; }
 }
 
 function loadFore(lat, lon, ct) {
@@ -191,6 +187,7 @@ function openMenu() { document.getElementById('settings-overlay').style.display=
 function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
 function showSub(id) { document.getElementById('menu-main').style.display='none'; document.getElementById(id).style.display='block'; }
 function showMain() { document.getElementById('menu-main').style.display='block'; var s = document.getElementsByClassName('sub-c'); for(var i=0; i<s.length; i++){s[i].style.display='none';} }
+
 function save() { 
     localStorage.setItem('city', document.getElementById('city-in').value); 
     localStorage.setItem('t-start', document.getElementById('t-start').value); 
