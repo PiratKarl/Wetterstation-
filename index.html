@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V23.2 Universal</title>
-    <link rel="stylesheet" href="style.css?v=23.2">
+    <title>Aura V23.6 Universal</title>
+    <link rel="stylesheet" href="style.css?v=23.6">
 </head>
 <body>
     <div id="bat-alert"></div>
-
     <audio id="wake-aud" loop playsinline></audio>
     <video id="sleep-vid" loop playsinline muted></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <div style="font-size:70px; margin-bottom:20px; animation: bounce 2s infinite;">👇</div>
-        <img src="logo.png" style="width:160px; margin-bottom:20px;">
-        <div style="border: 4px solid #00eaff; color: #00eaff; padding: 20px 50px; font-size: 30px; font-weight: bold; border-radius: 50px; cursor: pointer; background: #000;">STATION STARTEN</div>
+        <div style="font-size:70px; margin-bottom:15px; animation: bounce 2s infinite;">👇</div>
+        <img src="logo.png" style="width:140px; margin-bottom:20px;">
+        <div style="border: 4px solid #00eaff; color: #00eaff; padding: 15px 40px; font-size: 28px; font-weight: bold; border-radius: 50px; cursor: pointer; background: #000;">STATION STARTEN</div>
     </div>
 
     <div id="update-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:210000; flex-direction:column; justify-content:center; align-items:center;" onclick="location.reload(true)">
+        <div style="font-size:70px; margin-bottom:20px; animation: bounce 2s infinite;">👆</div>
         <h1 style="color:#00eaff;">UPDATE VERFÜGBAR</h1>
         <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; cursor:pointer;">JETZT AKTUALISIEREN</div>
     </div>
@@ -28,33 +28,29 @@
             <div id="city-name">...</div>
             <div id="clock">--:--</div>
             <div id="date">...</div>
-            
             <div class="logo-container">
                 <img src="logo.png" class="logo-fallback">
-                <video id="logo-heartbeat" loop playsinline muted>
-                    <source src="logo.mp4" type="video/mp4">
-                </video>
+                <video id="logo-heartbeat" loop playsinline muted><source src="logo.mp4" type="video/mp4"></video>
             </div>
         </div>
 
         <div class="col-center">
             <div class="main-row">
-                <img id="w-icon" src="">
-                <div id="temp">--°</div>
-                <div style="color:#00eaff; font-weight:bold;"><div style="font-size:25px;">💧</div><div id="pop">--%</div></div>
+                <img id="w-icon" src=""><div id="temp">--°</div>
+                <div style="color:#00eaff; font-weight:bold;"><div style="font-size:20px;">💧</div><div id="pop">--%</div></div>
             </div>
             <div id="w-desc">...</div>
             <div id="clothing">...</div>
         </div>
 
         <div class="col-right">
-            <button id="btn-setup" onclick="openMenu()">⚙ EINSTELLUNGEN</button>
-            <div id="moon-row" style="font-size:45px; color:#00eaff; margin-top:20px;">--</div>
+            <button id="btn-setup" onclick="openMenu()">⚙ MENÜ</button>
+            <div id="moon-row" style="font-size:45px; color:#00eaff; margin-top:15px;">--</div>
         </div>
     </div>
 
     <div class="ticker-area">
-        <div id="ticker-text">Lade Welt-Ticker...</div>
+        <div id="ticker-text">Lade Ticker-Daten...</div>
     </div>
 
     <div class="forecast-area">
@@ -62,26 +58,45 @@
         <div class="f-row" id="daily-row"></div>
     </div>
 
-    <div id="settings-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:220000; padding:20px; text-align:center;">
-        <h1 style="color:#00eaff; font-size:40px; margin-bottom:40px;">STATIONS-ZENTRALE</h1>
+    <div id="settings-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:220000; padding:20px; box-sizing:border-box; overflow-y:auto;">
         
-        <div style="max-width:450px; margin: 0 auto;">
-            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444; border-radius:10px;" placeholder="Stadt eingeben">
-            
-            <div style="margin-top:20px; color:#ccc; font-size:18px;">
-                Ruhemodus: <input type="time" id="t-start" style="padding:5px;"> bis <input type="time" id="t-end" style="padding:5px;">
-            </div>
-
-            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:30px; border-radius:10px; font-size:20px; cursor:pointer; border:none;">SPEICHERN & NEU LADEN</button>
-            
-            <div style="border: 1px solid #ffcc00; color: #ffcc00; padding: 18px; margin-top: 20px; border-radius: 10px; font-weight: bold; cursor: pointer;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')">
-                ☕ KAFFEE SPENDEN (HTTPS)
-            </div>
-
+        <div id="menu-main" style="text-align:center;">
+            <h1 style="color:#00eaff; font-size:36px; margin-bottom:30px;">STATIONS-ZENTRALE</h1>
+            <div class="btn-m" onclick="showSub('sub-config')" style="background:#111; border:1px solid #444; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer;">📍 STANDORT & ZEITEN</div>
+            <div class="btn-m" onclick="showSub('sub-guide')" style="background:#111; border:1px solid #444; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer;">📖 ANLEITUNG</div>
+            <div class="btn-m" onclick="showSub('sub-legend')" style="background:#111; border:1px solid #444; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer;">🔍 LEGENDE</div>
+            <div class="btn-m" onclick="showSub('sub-legal')" style="background:#111; border:1px solid #444; padding:15px; margin-bottom:10px; color:#fff; border-radius:10px; cursor:pointer;">⚖ IMPRESSUM</div>
+            <div style="border:1px solid #ffcc00; color:#ffcc00; padding:15px; margin-top:20px; border-radius:10px; cursor:pointer; font-weight:bold;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')">☕ KAFFEE SPENDEN (HTTPS)</div>
             <button onclick="closeMenu()" style="width:100%; padding:15px; background:#333; color:#fff; border:none; margin-top:20px; border-radius:10px; cursor:pointer;">ZURÜCK</button>
         </div>
+
+        <div id="sub-config" class="sub-c" style="display:none; text-align:center;">
+            <h2 style="color:#00eaff;">STANDORT</h2>
+            <input type="text" id="city-in" style="width:90%; padding:12px; background:#222; color:#fff; border:1px solid #444;" placeholder="Braunschweig">
+            <button onclick="save()" style="width:100%; padding:15px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px;">SPEICHERN</button>
+            <button onclick="showMain()" style="width:100%; padding:10px; background:#333; color:#fff; margin-top:10px; border-radius:10px;">ZURÜCK</button>
+        </div>
+
+        <div id="sub-guide" class="sub-c" style="display:none;">
+            <h2 style="color:#00eaff;">HILFE</h2>
+            <p>1. Start drücken öffnet das Dashboard sauber.<br>2. Herz-Animation hält das Tablet aktiv.<br>3. Ticker zeigt Weltwetter und Warnungen.</p>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
+        </div>
+
+        <div id="sub-legend" class="sub-c" style="display:none;">
+            <h2 style="color:#00eaff;">LEGENDE</h2>
+            <p>🌕 Vollmond | 🌑 Neumond<br>💧 Regenwahrscheinlichkeit<br>⚠️ Wetterwarnung aktiv</p>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
+        </div>
+
+        <div id="sub-legal" class="sub-c" style="display:none;">
+            <h2 style="color:#00eaff;">IMPRESSUM</h2>
+            <p>Pirat Karl<br>Lohengrinstraße 25, 38106 Braunschweig</p>
+            <button onclick="showMain()" style="width:100%; padding:15px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
+        </div>
+
     </div>
 
-    <script src="script.js?v=23.2"></script>
+    <script src="script.js?v=23.6"></script>
 </body>
-</html> 
+                </html> 
