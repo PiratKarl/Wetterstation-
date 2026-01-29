@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V23.4 Urlaubs-Edition</title>
-    <link rel="stylesheet" href="style.css?v=23.4">
+    <title>Aura V23.5 Rettungs-Edition</title>
+    <link rel="stylesheet" href="style.css?v=23.5">
 </head>
 <body>
     <div id="bat-alert"></div>
@@ -13,15 +13,15 @@
     <video id="sleep-vid" loop playsinline muted></video>
 
     <div id="start-overlay" onclick="startApp()">
-        <div style="font-size:70px; margin-bottom:20px; animation: bounce 2s infinite;">👇</div>
-        <img src="logo.png" style="width:180px; margin-bottom:20px;">
-        <div style="border: 4px solid #00eaff; color: #00eaff; padding: 20px 50px; font-size: 30px; font-weight: bold; border-radius: 50px; cursor: pointer; background: #000;">STATION STARTEN</div>
+        <div style="font-size:70px; margin-bottom:15px; animation: bounce 2s infinite;">👇</div>
+        <img src="logo.png" style="width:160px; margin-bottom:20px;">
+        <div style="border: 4px solid #00eaff; color: #00eaff; padding: 15px 40px; font-size: 28px; font-weight: bold; border-radius: 50px; cursor: pointer; background: #000;">STATION STARTEN</div>
     </div>
 
-    <div id="update-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:100010; flex-direction:column; justify-content:center; align-items:center;" onclick="location.reload(true)">
+    <div id="update-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:210000; flex-direction:column; justify-content:center; align-items:center;" onclick="location.reload(true)">
         <div style="font-size:70px; margin-bottom:20px; animation: bounce 2s infinite;">👆</div>
-        <h1 style="color:#00eaff;">UPDATE VERFÜGBAR</h1>
-        <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; font-size:24px;">JETZT AKTUALISIEREN</div>
+        <h1 style="color:#00eaff;">NEUES UPDATE</h1>
+        <div style="background:#00eaff; color:#000; padding:20px 40px; font-weight:bold; border-radius:10px; font-size:24px;">INSTALLIEREN</div>
     </div>
 
     <div class="dashboard">
@@ -42,17 +42,17 @@
             <div class="main-row">
                 <img id="w-icon" src="">
                 <div id="temp">--°</div>
-                <div style="color:#00eaff; font-weight:bold;"><div style="font-size:25px;">💧</div><div id="pop">--%</div></div>
             </div>
             <div id="w-desc">...</div>
             <div id="w-feels">...</div>
             <div id="clothing">...</div>
+            <div style="color:#00eaff; font-weight:bold; margin-top:5px;"><span style="font-size:22px;">💧</span> <span id="pop">--%</span> Regen</div>
         </div>
 
         <div class="col-right">
             <button id="btn-setup" onclick="openMenu()">⚙ EINSTELLUNGEN</button>
             <div class="astro-box">
-                <div style="font-size:20px; font-weight:bold;">☀ <span id="sunrise">--:--</span> | ☾ <span id="sunset">--:--</span></div>
+                <div style="font-size:18px; font-weight:bold;">☀ <span id="sunrise">--:--</span> | ☾ <span id="sunset">--:--</span></div>
                 <div id="moon-row">--</div>
             </div>
 
@@ -69,7 +69,7 @@
     </div>
 
     <div class="ticker-area">
-        <div id="ticker-text">Lade Ticker-Daten...</div>
+        <div id="ticker-text">Bereite Urlaubs-Ticker vor...</div>
     </div>
 
     <div class="forecast-area">
@@ -79,49 +79,46 @@
 
     <div id="settings-overlay">
         <div id="menu-main" style="text-align:center;">
-            <h1 style="color:#00eaff; font-size:40px; margin-bottom:40px;">STATIONS-ZENTRALE</h1>
+            <h1 style="color:#00eaff; font-size:36px; margin-bottom:30px;">STATIONS-ZENTRALE</h1>
             <div class="btn-m" onclick="showSub('sub-config')"><span>📍 STANDORT & ZEITEN</span> <span>❯</span></div>
-            <div class="btn-m" onclick="showSub('sub-guide')"><span>📖 ANLEITUNG & TIPPS</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-guide')"><span>📖 ANLEITUNG</span> <span>❯</span></div>
             <div class="btn-m" onclick="showSub('sub-legend')"><span>🔍 WETTER-LEGENDE</span> <span>❯</span></div>
-            <div class="btn-m" onclick="showSub('sub-legal')"><span>⚖ IMPRESSUM & KONTAKT</span> <span>❯</span></div>
+            <div class="btn-m" onclick="showSub('sub-legal')"><span>⚖ IMPRESSUM</span> <span>❯</span></div>
             <div class="btn-m" style="border-color:#ffcc00; color:#ffcc00;" onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&currency_code=EUR')"><span>☕ KAFFEE FÜR DEN ENTWICKLER</span> <span>❯</span></div>
-            <button onclick="closeMenu()" style="width:100%; max-width:480px; padding:20px; background:#333; color:#fff; border:none; margin-top:30px; border-radius:10px; font-size:20px; cursor:pointer;">ZURÜCK ZUM DASHBOARD</button>
+            <button onclick="closeMenu()" style="width:100%; max-width:450px; padding:18px; background:#333; color:#fff; border:none; margin-top:20px; border-radius:10px; font-size:18px; cursor:pointer;">ZURÜCK</button>
         </div>
 
         <div id="sub-config" class="sub-c">
-            <h2>STANDORT & RUHEZEITEN</h2>
-            <input type="text" id="city-in" style="width:100%; padding:15px; font-size:22px; background:#222; color:#fff; border:1px solid #444;" placeholder="Braunschweig">
-            <div style="margin-top:20px; font-size:18px;">
-                Ruhe von: <input type="time" id="t-start"> bis: <input type="time" id="t-end">
-            </div>
-            <button onclick="save()" style="width:100%; padding:20px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px; cursor:pointer;">SPEICHERN</button>
-            <button onclick="showMain()" style="width:100%; padding:15px; background:#333; color:#fff; margin-top:10px; border-radius:10px;">ZURÜCK</button>
+            <h2>EINSTELLUNGEN</h2>
+            <input type="text" id="city-in" style="width:90%; padding:15px; font-size:20px; background:#222; color:#fff; border:1px solid #444;" placeholder="Braunschweig">
+            <div style="margin-top:20px;">Ruhezeit: <input type="time" id="t-start"> bis <input type="time" id="t-end"></div>
+            <button onclick="save()" style="width:100%; padding:18px; background:#00eaff; color:#000; font-weight:bold; margin-top:20px; border-radius:10px;">SPEICHERN</button>
         </div>
 
         <div id="sub-guide" class="sub-c">
-            <h2>ANLEITUNG FÜR LAIEN</h2>
-            <div class="guide-box">
-                <p>1️⃣ <strong>Vollbild:</strong> Tippen Sie auf den Start-Button. Der blickdichte Vorhang öffnet sich.</p>
-                <p>2️⃣ <strong>Dauerbetrieb:</strong> Das Herz verhindert den Standby-Modus.</p>
-                <p>3️⃣ <strong>Urlaubs-Ticker:</strong> Unten sehen Sie jetzt abwechselnd Warnungen, Weltstädte und beliebte Urlaubsziele.</p>
-            </div>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
+            <h2>BEDIENUNG</h2>
+            <p>1. <strong>Start:</strong> Ein Klick auf "Starten" öffnet das Dashboard.</p>
+            <p>2. <strong>Dashboard:</strong> Alles ist nun entzerrt, damit Texte nicht überlappen.</p>
+            <p>3. <strong>Status:</strong> Rechts unten siehst du, ob WLAN und Akku okay sind.</p>
+            <button onclick="showMain()" style="width:100%; padding:18px; background:#333; border-radius:10px;">ZURÜCK</button>
         </div>
 
         <div id="sub-legend" class="sub-c">
-            <h2>WETTER-SYMBOLE</h2>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px; margin-top:20px;">ZURÜCK</button>
+            <h2>LEGENDE</h2>
+            <div class="legende-grid"><img src="01d.gif" class="leg-img"><div class="leg-txt"><strong>Sonne:</strong> Viel Licht, wenig Wolken. <span class="leg-tip">Tipp: Sonnenschutz nutzen.</span></div></div>
+            <div class="legende-grid"><img src="09d.gif" class="leg-img"><div class="leg-txt"><strong>Regen:</strong> Niederschlag möglich. <span class="leg-tip">Tipp: Schirm mitnehmen.</span></div></div>
+            <div class="legende-grid"><img src="13d.gif" class="leg-img"><div class="leg-txt"><strong>Schnee:</strong> Weißer Niederschlag. <span class="leg-tip">Tipp: Rutschgefahr beachten!</span></div></div>
+            <button onclick="showMain()" style="width:100%; padding:18px; background:#333; border-radius:10px; margin-top:20px;">ZURÜCK</button>
         </div>
 
         <div id="sub-legal" class="sub-c">
             <h2>IMPRESSUM</h2>
-            <p><strong>Betreiber:</strong> Pirat Karl<br>Lohengrinstraße 25, 38106 Braunschweig</p>
-            <p><strong>Homepage:</strong> <a href="https://code-werft.de" style="color:#00eaff;">https://code-werft.de</a></p>
-            <p>Version 23.4 (Urlaubs-Edition)</p>
-            <button onclick="showMain()" style="width:100%; padding:20px; background:#333; color:#fff; border-radius:10px;">ZURÜCK</button>
+            <p><strong>Betreiber:</strong> Pirat Karl<br>Lohengrinstraße 25, Braunschweig</p>
+            <p>Homepage: <a href="https://code-werft.de" style="color:#00eaff;">https://code-werft.de</a></p>
+            <button onclick="showMain()" style="width:100%; padding:18px; background:#333; border-radius:10px;">ZURÜCK</button>
         </div>
     </div>
 
-    <script src="script.js?v=23.4"></script>
+    <script src="script.js?v=23.5"></script>
 </body>
 </html>
