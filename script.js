@@ -1,6 +1,6 @@
-/* --- AURA V23.7 REPARATUR-MOTOR (Universal Safe) --- */
+/* --- AURA V23.8 REPARATUR-MOTOR (Universal Safe) --- */
 
-var currentVer = 23.7;
+var currentVer = 23.8;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
@@ -11,9 +11,10 @@ function z(n){return (n<10?'0':'')+n;}
 
 function startApp() {
     appStarted = true;
+    // Fix: Start-Overlay weg und Dashboard erst JETZT sichtbar schalten (Gegen Geisterbilder)
     document.getElementById('start-overlay').style.display = 'none';
     var dash = document.getElementsByClassName('dashboard')[0];
-    if(dash) dash.style.display = 'flex'; 
+    if(dash) { dash.style.display = 'flex'; } 
     
     var de = document.documentElement;
     if (de.requestFullscreen) { de.requestFullscreen(); } 
@@ -123,7 +124,8 @@ function loadWorldTicker(prefix) {
                 var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                 var cityTime = new Date(utc + (3600000 * (j.timezone / 3600)));
                 var tStr = z(cityTime.getHours()) + ":" + z(cityTime.getMinutes());
-                wd += " <span style='color:#00eaff'> ◈ " + j.name.toUpperCase() + "</span> <span style='color:#ffffff'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°"; 
+                // Name in Cyan, Uhrzeit in kräftigem Weiss
+                wd += " <span style='color:#00eaff'> ◈ " + j.name.toUpperCase() + "</span> <span style='color:#ffffff; font-weight:bold;'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°"; 
             }
             done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
         };
@@ -174,7 +176,7 @@ function checkWarnings(lat, lon) {
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.alerts && data.alerts.length > 0) {
-                for(var i=0; i<data.alerts.length; i++) { txt += "<span style='color:#ff4444'> +++ ⚠️ " + data.alerts[i].event_de.toUpperCase() + " ⚠️</span>"; }
+                for(var i=0; i<data.alerts.length; i++) { txt += "<span style='color:#ff4444; font-weight:bold;'> +++ ⚠️ " + data.alerts[i].event_de.toUpperCase() + " ⚠️</span>"; }
             }
         }
         loadWorldTicker(txt);
