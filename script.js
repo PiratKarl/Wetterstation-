@@ -1,6 +1,6 @@
-/* --- AURA V23.9 REPARATUR-MOTOR (Total Fix) --- */
+/* --- AURA V24.0 REPARATUR-MOTOR (Ticker & Warn-Ampel) --- */
 
-var currentVer = 23.9;
+var currentVer = 24.0;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
@@ -11,11 +11,8 @@ function z(n){return (n<10?'0':'')+n;}
 
 function startApp() {
     appStarted = true;
-    // Overlay sofort weg
     document.getElementById('start-overlay').style.display = 'none';
     
-    // Das Dashboard erst mit 50ms Verzögerung auf flex schalten, 
-    // um Geisterbilder auf schnellen Tablets zu verhindern.
     setTimeout(function() {
         var dash = document.getElementsByClassName('dashboard')[0];
         if(dash) { dash.style.display = 'flex'; }
@@ -62,23 +59,10 @@ function update() {
 function updateStatusCockpit() {
     var diff = (Date.now() - lastDataFetch) / 1000 / 60;
     var dStat = document.getElementById('stat-data');
-    if(diff < 15) { dStat.innerHTML = "🔄 DATEN AKTUELL"; dStat.style.color = "#00ff00"; }
-    else { dStat.innerHTML = "🔄 DATEN VERALTET"; dStat.style.color = "#ff4444"; }
-
-    var wStat = document.getElementById('stat-wlan');
-    wStat.innerHTML = navigator.onLine ? "📡 WLAN VERBUNDEN" : "📡 KEIN WLAN";
-    wStat.style.color = navigator.onLine ? "#00ff00" : "#ff4444";
-
-    if (navigator.getBattery) {
-        navigator.getBattery().then(function(bat) {
-            var bStat = document.getElementById('stat-bat');
-            var lvl = Math.round(bat.level * 100);
-            bStat.innerHTML = (bat.charging ? "⚡ LADEN " : "🔋 AKKU ") + lvl + "%";
-            bStat.style.color = (lvl > 20 || bat.charging) ? "#00ff00" : "#ff4444";
-        });
+    if(dStat) {
+        dStat.innerHTML = diff < 15 ? "🔄 DATEN AKTUELL" : "🔄 DATEN VERALTET";
+        dStat.style.color = diff < 15 ? "#00ff00" : "#ff4444";
     }
-    document.getElementById('conf-sleep').innerText = "🌙 Sleep: " + sStart;
-    document.getElementById('conf-wake').innerText = "☀️ Wake: " + sEnd;
 }
 
 function loadWeather() {
@@ -97,24 +81,11 @@ function loadWeather() {
             document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
             document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
 
-            calcMoon();
             loadFore(d.coord.lat, d.coord.lon, d.main.temp);
             checkWarnings(d.coord.lat, d.coord.lon);
         }
     };
     x.send();
-}
-
-function calcMoon() {
-    var n = new Date();
-    var y = n.getFullYear(), m = n.getMonth() + 1, d = n.getDate();
-    if (m < 3) { y--; m += 12; }
-    ++m;
-    var jd = (365.25 * y) + (30.6 * m) + d - 694039.09; jd /= 29.53;
-    var b = Math.round((jd - parseInt(jd)) * 8); if (b >= 8) b = 0;
-    var mI = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
-    var mT = ["NEUMOND", "SICHEL", "1. VIERTEL", "ZUN. MOND", "VOLLMOND", "ABN. MOND", "3. VIERTEL", "SICHEL"];
-    document.getElementById('moon-row').innerText = mI[b] + " " + mT[b];
 }
 
 function loadWorldTicker(prefix) {
@@ -129,10 +100,12 @@ function loadWorldTicker(prefix) {
                 var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                 var cityTime = new Date(utc + (3600000 * (j.timezone / 3600)));
                 var tStr = z(cityTime.getHours()) + ":" + z(cityTime.getMinutes());
-                wd += " <span style='color:#00eaff'> ◈ " + j.name.toUpperCase() + "</span> <span style='color:#ffffff; font-weight:bold;'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°"; 
+                // Name Cyan, Zeit Weiss, Icons mit t-icon Klasse zur Verkleinerung
+                wd += " <span style='color:#00eaff'> ◈ " + j.name.toUpperCase() + "</span> <span style='color:#ffffff'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°"; 
             }
             done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
         };
+        r.onerror = function() { done++; };
         r.send(); 
     });
 }
@@ -179,7 +152,12 @@ function checkWarnings(lat, lon) {
         if (x.status === 200) {
             var data = JSON.parse(x.responseText);
             if (data.alerts && data.alerts.length > 0) {
-                for(var i=0; i<data.alerts.length; i++) { txt += "<span style='color:#ff4444; font-weight:bold;'> +++ ⚠️ " + data.alerts[i].event_de.toUpperCase() + " ⚠️</span>"; }
+                for(var i=0; i<data.alerts.length; i++) { 
+                    var alert = data.alerts[i];
+                    // Ampel-System: Rot für extreme Warnungen, sonst Gelb
+                    var color = (alert.event_de.toLowerCase().indexOf('extrem') > -1) ? "#ff0000" : "#ffff00";
+                    txt += "<span style='color:" + color + "; font-weight:bold;'> +++ ⚠️ " + alert.event_de.toUpperCase() + " ⚠️</span>"; 
+                }
             }
         }
         loadWorldTicker(txt);
