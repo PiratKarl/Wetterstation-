@@ -1,6 +1,6 @@
-/* --- AURA V23.8 REPARATUR-MOTOR (Universal Safe) --- */
+/* --- AURA V23.9 REPARATUR-MOTOR (Total Fix) --- */
 
-var currentVer = 23.8;
+var currentVer = 23.9;
 var API = '518e81d874739701f08842c1a55f6588';
 var city = localStorage.getItem('city') || 'Braunschweig';
 var sStart = localStorage.getItem('t-start') || '--:--', sEnd = localStorage.getItem('t-end') || '--:--';
@@ -11,10 +11,15 @@ function z(n){return (n<10?'0':'')+n;}
 
 function startApp() {
     appStarted = true;
-    // Fix: Start-Overlay weg und Dashboard erst JETZT sichtbar schalten (Gegen Geisterbilder)
+    // Overlay sofort weg
     document.getElementById('start-overlay').style.display = 'none';
-    var dash = document.getElementsByClassName('dashboard')[0];
-    if(dash) { dash.style.display = 'flex'; } 
+    
+    // Das Dashboard erst mit 50ms Verzögerung auf flex schalten, 
+    // um Geisterbilder auf schnellen Tablets zu verhindern.
+    setTimeout(function() {
+        var dash = document.getElementsByClassName('dashboard')[0];
+        if(dash) { dash.style.display = 'flex'; }
+    }, 50);
     
     var de = document.documentElement;
     if (de.requestFullscreen) { de.requestFullscreen(); } 
@@ -124,7 +129,6 @@ function loadWorldTicker(prefix) {
                 var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                 var cityTime = new Date(utc + (3600000 * (j.timezone / 3600)));
                 var tStr = z(cityTime.getHours()) + ":" + z(cityTime.getMinutes());
-                // Name in Cyan, Uhrzeit in kräftigem Weiss
                 wd += " <span style='color:#00eaff'> ◈ " + j.name.toUpperCase() + "</span> <span style='color:#ffffff; font-weight:bold;'>" + tStr + "</span> <img class='t-icon' src='" + j.weather[0].icon + ".gif'> " + Math.round(j.main.temp) + "°"; 
             }
             done++; if(done === caps.length) document.getElementById('ticker-text').innerHTML = wd;
@@ -158,7 +162,6 @@ function loadFore(lat, lon, ct) {
             });
             var dy = ""; var cnt = 0;
             for (var k in days) { if (cnt >= 5) break;
-                // Tagesvorhersage: Max - Min mit Cyan-Bindestrich
                 dy += "<div class='f-item'><div class='f-head'>" + k + "</div><img class='f-icon' src='" + days[k].icon + ".gif'><div class='f-val'><span style='color:#ff4444'>" + Math.round(days[k].max) + "°</span><span class='t-sep'>-</span><span style='color:#00eaff'>" + Math.round(days[k].min) + "°</span></div></div>";
                 cnt++;
             }

@@ -1,54 +1,66 @@
-/* --- AURA V23.8 REPARATUR-LAYOUT (Universal Safe) --- */
+/* --- AURA V23.9 TOTAL-REPARATUR (Extreme Fix) --- */
 
 html, body { 
     width: 100%; height: 100%; margin: 0; padding: 0; 
-    background: #000; color: #fff; font-family: 'Arial Narrow', Arial, sans-serif; 
+    background: #000 !important; color: #fff; 
+    font-family: 'Arial Narrow', Arial, sans-serif; 
     overflow: hidden; display: flex; flex-direction: column; 
 }
 
-/* FIX: START-VORHANG (Absolut blickdicht gegen Geisterbilder) */
+/* START-VORHANG: Jetzt mit absoluter Priorität */
 #start-overlay { 
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: #000 !important; z-index: 200000;
-    display: flex; flex-direction: column; justify-content: center; 
-    align-items: center; text-align: center; 
+    background: #000 !important; z-index: 999999;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; 
 }
 
-#sleep-vid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 150000; display: none; object-fit: fill; }
-
-/* FIX: DASHBOARD UNSICHTBAR (Verhindert doppeltes Logo beim Laden) */
+/* DASHBOARD: Startet komplett unsichtbar gegen Geister-Logos */
 .dashboard { 
-    display: none; height: 45vh; padding: 10px 20px; box-sizing: border-box; 
-    flex-shrink: 0; align-items: flex-start; position: relative; z-index: 10; 
+    display: none; height: 42vh; padding: 10px 20px; box-sizing: border-box; 
+    flex-shrink: 0; position: relative; z-index: 10; 
 }
 
-.col-left { width: 28%; display: flex; flex-direction: column; }
-#clock { font-size: 85px; font-weight: bold; line-height: 0.8; letter-spacing: -2px; }
-#date { font-size: 22px; color: #00eaff; font-weight: bold; margin-top: 5px; }
+/* LOGO-PANZER: Absoluter Stopp gegen Explosion */
+.logo-container { 
+    width: 130px !important; height: 90px !important; 
+    margin-top: 10px; overflow: hidden; position: relative; 
+}
+#logo-heartbeat, .logo-fallback { 
+    width: 130px !important; height: auto !important; 
+    max-height: 90px !important; display: block; 
+}
 
-/* FIX: LOGO-BOX (Begrenzt auf exakte Pixel gegen Video-Explosion) */
-.logo-container { width: 140px; max-height: 100px; margin-top: 15px; position: relative; overflow: hidden; }
-.logo-fallback, #logo-heartbeat { width: 140px !important; height: auto !important; max-height: 100px !important; display: block; }
+/* TICKER-RETTER: Erzwungene Position am unteren Drittel */
+.ticker-area { 
+    height: 6vh; background: #050505; 
+    border-top: 2px solid #00eaff; border-bottom: 2px solid #333; 
+    overflow: hidden; white-space: nowrap; flex-shrink: 0; 
+    position: relative; z-index: 5000; /* Muss ÜBER der Vorhersage liegen */
+}
+#ticker-text { 
+    line-height: 6vh; font-size: 28px; font-weight: bold; color: #00eaff; 
+}
 
-.col-center { width: 44%; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.main-row { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; }
-#w-icon { width: 100px; height: 100px; }
-#temp { font-size: 105px; font-weight: bold; line-height: 0.9; }
-#w-desc { font-size: 26px; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+/* VORHERSAGE-FIX: Darf NIEMALS über den Ticker ragen */
+.forecast-area { 
+    height: 52vh !important; max-height: 52vh !important; 
+    padding: 5px; box-sizing: border-box; 
+    display: flex; flex-direction: column; 
+    justify-content: space-between; background: #000;
+}
+.f-row { 
+    display: flex; justify-content: space-around; 
+    height: 48%; background: rgba(255,255,255,0.03); border-radius: 8px; 
+}
+.f-item { text-align: center; display: flex; flex-direction: column; align-items: center; }
 
-.col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
-#btn-setup { background: rgba(0, 234, 255, 0.2); border: 2px solid #00eaff; color: #00eaff; padding: 8px 16px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+/* ICON-BREMSE: Damit sie nicht den Ticker wegdrücken */
+.f-icon { 
+    height: 14vh !important; max-height: 100px !important; width: auto; 
+}
 
-/* FIX: TICKER-SICHERUNG (Eigene Ebene mit z-index) */
-.ticker-area { height: 5vh; background: #080808; border-top: 2px solid #333; border-bottom: 2px solid #333; overflow: hidden; white-space: nowrap; flex-shrink: 0; position: relative; z-index: 50; }
-#ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; -webkit-animation: tick 120s linear infinite; font-size: 26px; line-height: 5vh; font-weight: bold; color: #00eaff; }
+.t-sep { color: #00eaff; font-weight: bold; margin: 0 5px; } /* Cyan Trenner */
 
-/* FIX: VORHERSAGE-SPERRE (Darf Ticker nicht mehr überlappen) */
-.forecast-area { display: flex; flex-direction: column; height: 48vh !important; max-height: 48vh; padding: 5px 10px; box-sizing: border-box; justify-content: space-around; flex-shrink: 0; background: #000; }
-.f-row { display: flex; justify-content: space-between; width: 100%; height: 46%; align-items: center; background: rgba(255,255,255,0.02); border-radius: 10px; }
-.f-item { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; }
-.f-icon { width: auto; height: 16vh; max-height: 110px; }
-.t-sep { color: #00eaff; margin: 0 4px; font-weight: bold; } /* Cyan Bindestrich */
-
-@keyframes tick { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
-@-webkit-keyframes tick { 0% { -webkit-transform: translate3d(0,0,0); } 100% { -webkit-transform: translate3d(-100%,0,0); } }
+/* COCKPIT RECHTS */
+.col-right { width: 30%; display: flex; flex-direction: column; align-items: flex-end; }
+#btn-setup { border: 2px solid #00eaff; color: #00eaff; padding: 5px 15px; border-radius: 5px; background: none; }
