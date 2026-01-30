@@ -3,28 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V30.0</title>
-    <link rel="stylesheet" href="style.css?v=30.0">
+    <title>Aura Wetterstation V31.0</title>
+    <link rel="stylesheet" href="style.css?v=31.0">
 </head>
 <body>
 
-    <video id="bg-wake-video" loop playsinline muted>
+    <video id="wake-video-layer" loop playsinline muted>
         <source src="logo.mp4" type="video/mp4">
     </video>
 
-    <div id="start-overlay" class="overlay">
-        <img src="logo.png" style="width:120px; opacity:0.8;">
-        <button class="btn-start" onclick="startApp()">AURA V30 STARTEN</button>
-        <p style="color:#444; margin-top:15px;">System bereit. Tippen zum Starten.</p>
+    <div id="start-overlay">
+        <img src="logo.png" style="width:140px; opacity:0.9;">
+        <button class="btn-start" onclick="document.documentElement.requestFullscreen().catch(e=>{}); startApp()">
+            SYSTEM STARTEN
+        </button>
+        <p style="color:#555; margin-top:20px;">Aura V31.0 Ready</p>
     </div>
 
     <div class="dashboard">
+        
         <div class="col-left">
-            <div id="city-name">LADE...</div>
             <div id="clock">00:00</div>
-            <div id="date">...</div>
+            <div id="date">Lade Datum...</div>
             
-            <div class="logo-wrapper">
+            <div class="logo-container">
+                <img id="logo-img" src="logo.png" style="display:none;"> 
                 <video id="logo-video" loop playsinline muted>
                     <source src="logo.mp4" type="video/mp4">
                 </video>
@@ -32,22 +35,45 @@
         </div>
 
         <div class="col-center">
-            <img id="weather-icon" src="">
-            <div id="temp">--°</div>
-            <div id="desc">INITIALISIERUNG...</div>
+            <div class="main-row">
+                <img id="main-icon" src="">
+                <div id="main-temp">--°</div>
+                <div class="rain-box">
+                    <img src="https://openweathermap.org/img/wn/09d.png" class="rain-icon">
+                    <div id="rain-prob">--%</div>
+                </div>
+            </div>
+            
+            <div id="feels-like">--</div>
+
+            <div id="desc-text">SYSTEM START...</div>
         </div>
 
         <div class="col-right">
-            <button class="btn-setup" onclick="openSettings()">⚙</button>
-            <div class="astro-box">
-                <div>☀ <span id="sunrise">--:--</span></div>
-                <div>☾ <span id="sunset">--:--</span></div>
+            <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
+            
+            <div class="info-row" style="margin-top:10px;">
+                <span class="astro-label">SONNE:</span> <span id="sunrise">--:--</span> / <span id="sunset">--:--</span>
+            </div>
+            
+            <div class="info-row">
+                <span class="astro-label">MOND:</span> <span id="moon-phase">--</span>
+            </div>
+
+            <div style="flex-grow:1;"></div> <div class="info-row">
+                <span id="bat-level">--%</span> <img src="" class="status-icon" id="bat-icon" style="display:none;">
+            </div>
+            <div class="info-row">
+                <span id="net-status">WLAN Check...</span>
+            </div>
+            <div class="info-row" style="font-size:1.5vh; color:#555; margin-top:5px;">
+                <span id="last-update">--:--</span>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-content">Verbinde mit Wetter-Satellit...</div>
+        <div id="ticker-text">+++ VERBINDUNG ZUM WETTER-SATELLITEN HERGESTELLT +++</div>
     </div>
 
     <div class="forecast-area">
@@ -55,21 +81,41 @@
         <div class="f-row" id="daily-row"></div>
     </div>
 
-    <div id="settings-modal">
-        <h2 style="color:#00eaff; margin-bottom:30px;">KONFIGURATION</h2>
-        <p>Neuer Standort:</p>
-        <input type="text" id="city-input" class="inp-city" placeholder="z.B. Braunschweig">
+    <div id="menu-modal">
+        <button class="menu-close" onclick="closeMenu()">X</button>
+        <h2 style="text-align:center; color:#00eaff; margin-bottom:30px;">EINSTELLUNGEN</h2>
         
-        <div style="margin-top:40px;">
-            <button class="btn-start" style="font-size:20px; padding:10px 30px;" onclick="saveSettings()">SPEICHERN</button>
+        <div class="menu-grid">
+            <div style="background:#111; padding:15px; border-radius:5px; border:1px solid #333;">
+                <p style="margin:0 0 10px 0; color:#888;">STANDORT:</p>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
+                    <button onclick="saveCity()" style="background:#00eaff; border:none; padding:0 20px; font-weight:bold;">OK</button>
+                </div>
+            </div>
+
+            <div class="menu-btn" onclick="alertInfo('Sleep-Timer Einstellungen: \n\nHier kannst du bald einstellen, wann das Display ausgehen soll.\n(Funktion folgt im nächsten Update)')">
+                💤 RUHEZEITEN EINSTELLEN
+            </div>
+
+            <div class="menu-btn" onclick="alertInfo('Tipp 1: Tippe auf Start, um Vollbild zu aktivieren.\nTipp 2: Rote Schrift bedeutet es wird wärmer.')">
+                📖 ANLEITUNG & TIPPS
+            </div>
+
+            <div class="menu-btn" onclick="alertInfo('Danke, dass du an uns denkst! \nEine Spenden-Funktion via PayPal wird bald integriert.')">
+                ☕ KAFFEE SPENDIEREN
+            </div>
+
+            <div class="menu-btn" onclick="alertInfo('Datenschutz:\nEs werden keine persönlichen Daten gespeichert.\nNur der Stadtname liegt lokal auf diesem Tablet.')">
+                § IMPRESSUM & DATENSCHUTZ
+            </div>
+            
+            <div style="text-align:center; color:#444; margin-top:20px; font-size:12px;">
+                Aura Wetterstation V31.0 | Code-Werft
+            </div>
         </div>
-        <div style="margin-top:20px;">
-            <button onclick="closeSettings()" style="background:none; border:none; color:#888; font-size:16px;">ABBRECHEN</button>
-        </div>
-        
-        <p style="margin-top:50px; color:#333; font-size:12px;">Aura Core V30.0 | Code-Werft</p>
     </div>
 
-    <script src="script.js?v=30.0"></script>
+    <script src="script.js?v=31.0"></script>
 </body>
-</html>
+                    </html> 
