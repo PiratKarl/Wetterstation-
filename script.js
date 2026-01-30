@@ -1,7 +1,7 @@
-/* --- AURA V35.0 INTELLIGENCE --- */
+/* --- AURA V36.0 INTELLIGENCE --- */
 
 const CONFIG = {
-    version: 35.0,
+    version: 36.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     lastTemp: null,
@@ -78,7 +78,7 @@ function loadData() {
     .then(r => r.json())
     .then(forecast => {
         renderForecast(forecast);
-        buildHybridTicker(forecast);
+        buildHybridTicker(forecast, curr); // Übergebe auch aktuelles Wetter
     })
     .catch(e => {
         ui.ticker.innerText = "+++ VERBINDUNGSFEHLER +++";
@@ -98,10 +98,10 @@ function renderCurrent(data) {
     
     // GEFÜHLT FARB-LOGIK
     ui.feelsLike.innerText = "Gefühlt: " + fl + "°";
-    ui.feelsLike.className = ""; // Reset
-    if(fl < t) ui.feelsLike.classList.add('feel-colder'); // Kälter als echt -> Blau
-    else if(fl > t) ui.feelsLike.classList.add('feel-warmer'); // Wärmer als echt -> Rot
-    else ui.feelsLike.classList.add('feel-same'); // Gleich -> Grau
+    ui.feelsLike.className = ""; 
+    if(fl < t) ui.feelsLike.classList.add('feel-colder'); 
+    else if(fl > t) ui.feelsLike.classList.add('feel-warmer'); 
+    else ui.feelsLike.classList.add('feel-same'); 
 
     ui.mainIcon.src = data.weather[0].icon + ".gif";
 
@@ -151,7 +151,7 @@ function renderForecast(data) {
             count++;
             let max = Math.round(item.main.temp_max);
             let min = Math.round(item.main.temp_min - 2); 
-            let pop = Math.round(item.pop * 100); // Regenrisiko für den Tag
+            let pop = Math.round(item.pop * 100); 
 
             dHTML += `
                 <div class="f-item">
@@ -167,27 +167,70 @@ function renderForecast(data) {
     ui.daily.innerHTML = dHTML;
 }
 
-/* --- 4. HYBRID TICKER --- */
-function buildHybridTicker(localData) {
+/* --- 4. HYBRID TICKER (ZEIT-SCANNER LOGIK) --- */
+function buildHybridTicker(forecastData, currentData) {
     let tickerHTML = "";
     let alerts = [];
     let severe = false; 
-    
-    localData.list.slice(0, 4).forEach(item => {
-        let id = item.weather[0].id;
-        let wind = item.wind.speed;
-        if(id >= 200 && id < 300) { alerts.push("⚡ GEWITTER"); severe=true; }
-        if(id >= 600 && id < 700) { alerts.push("❄ SCHNEE"); severe=true; }
-        if(wind > 15) { alerts.push("💨 STURM ("+Math.round(wind*3.6)+" km/h)"); severe=true; }
-        if(id >= 300 && id < 600 && !severe) { alerts.push("☔ REGEN MÖGLICH"); }
-    });
-    
-    alerts = [...new Set(alerts)]; 
 
+    // Helper: Prüft ob Wetter-ID "schlimm" ist
+    function isBad(id, wind) {
+        if(id >= 200 && id < 300) return "GEWITTER"; // Rot
+        if(id >= 600 && id < 700) return "SCHNEE";   // Rot
+        if(wind > 15) return "STURM ("+Math.round(wind*3.6)+" km/h)"; // Rot
+        return null;
+    }
+
+    // 1. Check AKTUELLES Wetter
+    let badCurrent = isBad(currentData.weather[0].id, currentData.wind.speed);
+    if(badCurrent) {
+        alerts.push(`${badCurrent} (AKTUELL)`);
+        severe = true;
+    }
+
+    // 2. Check ZUKUNFT (Nächste 12h)
+    // Wir suchen das ERSTE Auftreten eines Unwetters
+    let futureWarning = null;
+    for(let i=0; i<4; i++) { // nächste 4 Einträge = 12h
+        let item = forecastData.list[i];
+        let badFuture = isBad(item.weather[0].id, item.wind.speed);
+        
+        if(badFuture && !severe) { // Nur wenn nicht eh schon aktuell Alarm ist
+            let time = new Date(item.dt*1000);
+            let timeStr = (time.getHours()<10?'0':'')+time.getHours() + ":00 UHR";
+            futureWarning = `${badFuture} (ERWARTET AB ${timeStr})`;
+            severe = true;
+            break; // Erste Warnung reicht
+        }
+    }
+    if(futureWarning) alerts.push(futureWarning);
+
+    // 3. Check REGEN (Gelb) - Nur wenn kein Rot-Alarm
+    if(!severe) {
+        // Aktuell Regen?
+        if(currentData.weather[0].id >= 300 && currentData.weather[0].id < 600) {
+            alerts.push("REGEN (AKTUELL)");
+        } else {
+            // Kommt Regen?
+            for(let i=0; i<3; i++) {
+                let id = forecastData.list[i].weather[0].id;
+                if(id >= 300 && id < 600) {
+                    let time = new Date(forecastData.list[i].dt*1000);
+                    let timeStr = (time.getHours()<10?'0':'')+time.getHours() + ":00 UHR";
+                    alerts.push(`REGEN (AB ${timeStr})`);
+                    break;
+                }
+            }
+        }
+    }
+    
+    // HTML BAUEN
     if(alerts.length > 0) {
         let cssClass = severe ? "t-alert" : "t-warn"; 
         let symbol = severe ? "⚠" : "☂";
-        tickerHTML += `<span class="${cssClass}">${symbol} ACHTUNG: ${alerts.join(" & ")} ${symbol}</span> <span class="t-sep">+++</span> `;
+        // Entferne Duplikate falls Logik doppelt greift
+        let uniqueAlerts = [...new Set(alerts)];
+        tickerHTML += `<span class="${cssClass}">${symbol} ACHTUNG: ${uniqueAlerts.join(" & ")} ${symbol}</span> <span class="t-sep">+++</span> `;
     } else {
         tickerHTML += `<span class="t-city">AURA SYSTEM V${CONFIG.version} ONLINE</span> <span class="t-sep">+++</span> `;
     }
