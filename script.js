@@ -1,7 +1,7 @@
 /* --- AURA V37.0 REPAIR --- */
 
 const CONFIG = {
-    version: 37.0,
+    version: 38.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     lastTemp: null,
