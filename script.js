@@ -1,20 +1,18 @@
-/* --- AURA V32.0 INTELLIGENCE --- */
+/* --- AURA V33.0 INTELLIGENCE --- */
 
 const CONFIG = {
-    version: 32.0,
+    version: 33.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     lastTemp: null,
-    // Sleep Timer Defaults (noch ohne harte Funktion, nur Speicherung)
     sleepStart: localStorage.getItem('aura_sleep_start') || '22:00',
     sleepEnd: localStorage.getItem('aura_sleep_end') || '06:00'
 };
 
-// UI Element Cache
 const ui = {
     clock: document.getElementById('clock'),
     date: document.getElementById('date'),
-    locationHeader: document.getElementById('location-header'), // NEU
+    locationHeader: document.getElementById('location-header'),
     mainIcon: document.getElementById('main-icon'),
     mainTemp: document.getElementById('main-temp'),
     feelsLike: document.getElementById('feels-like'),
@@ -31,45 +29,34 @@ const ui = {
     daily: document.getElementById('daily-row')
 };
 
-/* --- 1. SYSTEM START & LOGO RETTER --- */
+/* --- 1. START & LOGO RETTER --- */
 async function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
 
-    // A) Modernes Tablet: Wake Lock
+    // Wake Lock (Modern)
     if ('wakeLock' in navigator) {
         try { await navigator.wakeLock.request('screen'); } catch (err) {}
     }
 
-    // B) Logo Logik (Retter für altes Tablet)
-    // Strategie: Bild ist an. Wir versuchen Video zu starten. Wenn es klappt -> Video einblenden.
+    // Video-Logik (Alt)
     let vid = document.getElementById('logo-video');
     let playPromise = vid.play();
-
     if (playPromise !== undefined) {
-        playPromise.then(_ => {
-            // Video läuft! Wir machen es sichtbar.
-            console.log("Video läuft -> Blende über Bild.");
-            vid.classList.add('video-active');
-        }).catch(error => {
-            // Video fail -> Wir tun NICHTS. Das Bild ist ja schon da.
-            console.log("Video fail (Altes Tablet) -> Bleibe beim Bild.");
-        });
+        playPromise.then(_ => { vid.classList.add('video-active'); }).catch(e => {});
     }
-
-    // C) Hintergrund Wachhalter (nur Audio/Loop Versuch)
+    
+    // Hintergrund Audio-Loop
     let bgVid = document.getElementById('wake-video-layer');
     if(bgVid) bgVid.play().catch(e => {});
 
-    // D) Start Routine
     runClock();
     loadData();
     checkStatus();
 
-    // Intervalle
     setInterval(runClock, 1000);
-    setInterval(loadData, 600000); // 10 Min Wetter
-    setInterval(checkUpdate, 300000); // 5 Min Version
-    setInterval(checkStatus, 60000); // 1 Min Status
+    setInterval(loadData, 600000); // 10 Min
+    setInterval(checkUpdate, 300000); // 5 Min
+    setInterval(checkStatus, 60000); // 1 Min
 }
 
 /* --- 2. UHRZEIT --- */
@@ -77,7 +64,6 @@ function runClock() {
     let now = new Date();
     let h = now.getHours(); let m = now.getMinutes();
     ui.clock.innerText = (h<10?'0':'')+h + ':' + (m<10?'0':'')+m;
-    
     let days = ['SONNTAG','MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG'];
     let months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     ui.date.innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
@@ -97,8 +83,7 @@ function loadData() {
         renderTicker(forecast);
     })
     .catch(e => {
-        console.error(e);
-        ui.ticker.innerText = "+++ DATEN-FEHLER +++";
+        ui.ticker.innerText = "+++ DATEN-FEHLER - PRÜFE INTERNET +++";
         ui.ticker.classList.add('ticker-alert');
     });
 
@@ -107,16 +92,15 @@ function loadData() {
 }
 
 function renderCurrent(data) {
-    // HEADER (Stadtname oben)
     ui.locationHeader.innerText = data.name.toUpperCase();
-
-    // TEMP
+    
     let t = Math.round(data.main.temp);
     ui.mainTemp.innerText = t + "°";
     ui.feelsLike.innerText = "Gefühlt: " + Math.round(data.main.feels_like) + "°";
-    ui.mainIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    
+    // WICHTIG: Nutze lokale GIFs!
+    ui.mainIcon.src = data.weather[0].icon + ".gif";
 
-    // Trend-Farbe
     ui.desc.innerText = data.weather[0].description;
     ui.desc.className = ''; 
     if (CONFIG.lastTemp !== null) {
@@ -126,7 +110,6 @@ function renderCurrent(data) {
     }
     CONFIG.lastTemp = t;
 
-    // Astro
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
     ui.sunrise.innerText = formatTime(sr);
@@ -134,22 +117,19 @@ function renderCurrent(data) {
 }
 
 function renderForecast(data) {
-    // Regenwahrscheinlichkeit
     let pop = Math.round(data.list[0].pop * 100);
     ui.rainProb.innerText = pop + "% Regen";
-    
-    // Mond
     ui.moon.innerText = getMoonPhaseIcon(new Date());
 
-    // Stündlich (5 Werte)
+    // Stündlich (5 Werte) - Lokale GIFs nutzen!
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
         let hour = new Date(item.dt*1000).getHours();
         hHTML += `
             <div class="f-item">
-                <div class="f-head">${hour} Uhr</div>
-                <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}.png" class="f-icon">
+                <div class="f-head">${hour}h</div>
+                <img src="${item.weather[0].icon}.gif" class="f-icon">
                 <div class="f-temp-box">${Math.round(item.main.temp)}°</div>
             </div>`;
     }
@@ -170,9 +150,9 @@ function renderForecast(data) {
             dHTML += `
                 <div class="f-item">
                     <div class="f-head">${dayName}</div>
-                    <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}.png" class="f-icon">
+                    <img src="${item.weather[0].icon}.gif" class="f-icon">
                     <div class="f-temp-box">
-                        <span class="val-min">${min}°</span> <span style="font-size:0.5em;color:#444">|</span> <span class="val-max">${max}°</span>
+                        <span class="val-min">${min}°</span><span style="font-size:0.4em;color:#333">|</span><span class="val-max">${max}°</span>
                     </div>
                 </div>`;
         }
@@ -201,7 +181,7 @@ function renderTicker(data) {
 }
 function loadWorldTicker() {
     let cities = ["Berlin", "London", "New York", "Tokio"];
-    let text = "+++ AURA V32 ONLINE +++ ";
+    let text = "+++ AURA V33 ONLINE +++ ";
     let fetches = cities.map(c => fetch(`https://api.openweathermap.org/data/2.5/weather?q=${c}&appid=${CONFIG.apiKey}&units=metric`).then(r=>r.json()));
     Promise.all(fetches).then(results => {
         results.forEach(res => { text += ` ◈ ${res.name.toUpperCase()}: ${Math.round(res.main.temp)}° `; });
@@ -209,11 +189,10 @@ function loadWorldTicker() {
     });
 }
 
-/* --- 5. SYSTEM & HELFER --- */
+/* --- 5. SYSTEM --- */
 function checkStatus() {
     if(navigator.onLine) { ui.wifi.innerText = "WLAN: OK"; ui.wifi.className = "stat-ok"; }
     else { ui.wifi.innerText = "OFFLINE"; ui.wifi.className = "stat-err"; }
-
     if('getBattery' in navigator) {
         navigator.getBattery().then(bat => {
             let level = Math.round(bat.level * 100);
@@ -238,47 +217,41 @@ function getMoonPhaseIcon(date) {
     return moons[b];
 }
 
-/* --- 6. NEUES MENÜ LOGIK (AKKORDEON) --- */
+/* --- 6. MENÜ (AKKORDEON & VOLLBILD RETTER) --- */
 function openMenu() { 
     document.getElementById('menu-modal').style.display = 'block'; 
-    // Fülle Inputs mit gespeicherten Werten
     document.getElementById('inp-city-val').value = CONFIG.city;
     document.getElementById('inp-sleep-start').value = CONFIG.sleepStart;
     document.getElementById('inp-sleep-end').value = CONFIG.sleepEnd;
 }
-function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
 
-// Diese Funktion klappt die Bereiche auf und zu
+function closeMenu() { 
+    document.getElementById('menu-modal').style.display = 'none';
+    // WICHTIG: Erneut Vollbild anfordern, falls es verloren ging
+    document.documentElement.requestFullscreen().catch(e=>{});
+}
+
 function toggleAccordion(id) {
     let content = document.getElementById(id);
     let isVisible = content.classList.contains('acc-show');
-    
-    // Erstmal alle zumachen (damit immer nur einer offen ist)
-    let all = document.querySelectorAll('.acc-content');
-    all.forEach(el => el.classList.remove('acc-show'));
-    
-    // Wenn es zu war, mach DIESES auf
-    if(!isVisible) {
-        content.classList.add('acc-show');
-    }
+    // Alle schließen
+    document.querySelectorAll('.acc-content').forEach(el => el.classList.remove('acc-show'));
+    // Gewähltes öffnen
+    if(!isVisible) content.classList.add('acc-show');
 }
 
 function saveSettings() {
     let cityInp = document.getElementById('inp-city-val').value;
-    let sleepS = document.getElementById('inp-sleep-start').value;
-    let sleepE = document.getElementById('inp-sleep-end').value;
-
     if(cityInp) {
         localStorage.setItem('aura_city', cityInp);
         CONFIG.city = cityInp;
         loadData();
     }
-    // Speichere Sleep Zeiten
-    localStorage.setItem('aura_sleep_start', sleepS);
-    localStorage.setItem('aura_sleep_end', sleepE);
-    CONFIG.sleepStart = sleepS;
-    CONFIG.sleepEnd = sleepE;
-
-    alert("Einstellungen gespeichert!");
-    closeMenu();
+    let sS = document.getElementById('inp-sleep-start').value;
+    let sE = document.getElementById('inp-sleep-end').value;
+    localStorage.setItem('aura_sleep_start', sS);
+    localStorage.setItem('aura_sleep_end', sE);
+    CONFIG.sleepStart = sS; CONFIG.sleepEnd = sE;
+    
+    closeMenu(); // Schließt Menü und stellt Vollbild wieder her
 }
