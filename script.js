@@ -1,4 +1,4 @@
-/* --- AURA V43.0 (RESTORED STABLE LOGIC) --- */
+/* --- AURA V43.0 (STABLE LOGIC) --- */
 
 const CONFIG = {
     version: 43.0,
@@ -8,14 +8,14 @@ const CONFIG = {
 
 /* --- SYSTEM START --- */
 function startApp() {
-    // 1. Overlay entfernen
+    // 1. Overlay ausblenden
     document.getElementById('start-overlay').style.display = 'none';
     
-    // 2. Vollbild versuchen (Sanft, ohne Zwang)
+    // 2. Vollbild (Sanft)
     let el = document.documentElement;
     if(el.requestFullscreen) { el.requestFullscreen().catch(e=>{}); }
     
-    // 3. Videos starten (Wichtig für Logo)
+    // 3. Videos starten
     let logoVid = document.getElementById('logo-video');
     if(logoVid) { logoVid.play().catch(e=>{}); }
     
@@ -26,14 +26,14 @@ function startApp() {
     runClock();
     loadData();
 
-    // 5. Intervalle setzen
-    setInterval(runClock, 1000);       // Uhr jede Sekunde
-    setInterval(loadData, 600000);     // Wetter alle 10 Min
-    setInterval(checkUpdate, 300000);  // Updates alle 5 Min
-    setInterval(checkStatus, 60000);   // Status jede Minute
+    // 5. Intervalle starten
+    setInterval(runClock, 1000);       
+    setInterval(loadData, 600000);     // 10 Min
+    setInterval(checkUpdate, 300000);  // 5 Min
+    setInterval(checkStatus, 60000);   // 1 Min
 }
 
-/* --- UHRZEIT --- */
+/* --- UHR & DATUM --- */
 function runClock() {
     let now = new Date();
     let h = now.getHours();
@@ -58,16 +58,11 @@ function loadData() {
     .then(r => r.json())
     .then(forecast => {
         renderForecast(forecast);
-        updateTicker(forecast); // Robuster Ticker
+        updateTicker(forecast);
     })
     .catch(e => {
         document.getElementById('ticker-text').innerText = "+++ WETTERDIENST NICHT ERREICHBAR +++";
     });
-    
-    // Update-Zeitstempel
-    let now = new Date();
-    let timeStr = (now.getHours()<10?'0':'')+now.getHours() + ":" + (now.getMinutes()<10?'0':'')+now.getMinutes();
-    // (Optionaler Log, falls benötigt)
 }
 
 function renderCurrent(data) {
@@ -75,14 +70,14 @@ function renderCurrent(data) {
     document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
     document.getElementById('main-icon').src = data.weather[0].icon + ".gif";
     
-    // Regenwahrscheinlichkeit (Fallback, da Current API das oft nicht hat, sonst 0)
+    // Einfache Regenanzeige
     let rain = data.rain ? "Regen" : "0% Regen";
     document.getElementById('rain-prob').innerText = rain;
     
     document.getElementById('feels-like').innerText = "Gefühlt: " + Math.round(data.main.feels_like) + "°";
     document.getElementById('desc-text').innerText = data.weather[0].description.toUpperCase();
 
-    // Astro
+    // Astro-Daten
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
     document.getElementById('sunrise').innerText = formatTime(sr);
@@ -90,14 +85,15 @@ function renderCurrent(data) {
 }
 
 function renderForecast(data) {
-    // Regen-Wahrscheinlichkeit aus Vorhersage ziehen (genauer)
-    let pop = Math.round(data.list[0].pop * 100);
-    document.getElementById('rain-prob').innerText = pop + "% Regen";
-    
-    // Mondphase berechnen
+    // 1. Regenwahrscheinlichkeit (genauer aus Vorhersage)
+    if(data.list[0].pop > 0) {
+        document.getElementById('rain-prob').innerText = Math.round(data.list[0].pop * 100) + "% Regen";
+    }
+
+    // 2. Mondphase
     document.getElementById('moon-phase').innerText = getMoonPhase(new Date());
 
-    // Stunden-Ansicht
+    // 3. Stunden-Ansicht (nächste 5 Einträge)
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
@@ -106,13 +102,14 @@ function renderForecast(data) {
     }
     document.getElementById('hourly-row').innerHTML = hHTML;
 
-    // Tages-Ansicht
+    // 4. Tages-Ansicht (Mittags-Werte der nächsten Tage)
     let dHTML = "";
     let usedDays = [];
     let count = 0;
     data.list.forEach(item => {
         let d = new Date(item.dt*1000);
         let dayName = d.toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
+        // Nimm Wetter um ca. 12:00-15:00 Uhr, nur einmal pro Tag
         if(!usedDays.includes(dayName) && d.getHours() >= 12 && count < 5) {
             usedDays.push(dayName);
             count++;
@@ -122,36 +119,35 @@ function renderForecast(data) {
     document.getElementById('daily-row').innerHTML = dHTML;
 }
 
-/* --- TICKER (Stabilisiert) --- */
+/* --- TICKER --- */
 function updateTicker(data) {
-    // Zeigt einfach nur Systemstatus und eine Vorhersage-Warnung an, keine externen Abfragen die blockieren könnten
-    let text = "+++ AURA V" + CONFIG.version + " ONLINE +++ ";
-    
-    // Prüfen auf Regen/Schnee in den nächsten Stunden
+    let baseText = "+++ AURA V" + CONFIG.version + " ONLINE +++ ";
     let alertText = "";
-    for(let i=0; i<3; i++) {
+    
+    // Einfache Prüfung auf Schnee/Gewitter in der Zukunft
+    for(let i=0; i<4; i++) {
         let id = data.list[i].weather[0].id;
-        if(id >= 200 && id < 300) alertText = "ACHTUNG: GEWITTER IM ANMARSCH";
-        else if(id >= 600 && id < 700) alertText = "ACHTUNG: SCHNEEFALL ERWARTET";
+        if(id >= 200 && id < 300) alertText = "ACHTUNG: GEWITTER MÖGLICH";
+        if(id >= 600 && id < 700) alertText = "ACHTUNG: SCHNEEFALL MÖGLICH";
     }
     
     if(alertText !== "") {
-        document.getElementById('ticker-text').innerText = "+++ " + alertText + " +++ " + text;
-        document.getElementById('ticker-text').style.color = "#ff3333"; // Rot bei Warnung
+        document.getElementById('ticker-text').innerText = "+++ " + alertText + " +++ " + baseText;
+        document.getElementById('ticker-text').style.color = "#ff3333";
     } else {
-        document.getElementById('ticker-text').innerText = text + "BRAUNSCHWEIG WETTER STABIL +++";
+        document.getElementById('ticker-text').innerText = baseText + CONFIG.city.toUpperCase() + " WETTER STABIL +++";
         document.getElementById('ticker-text').style.color = "#00eaff";
     }
 }
 
-/* --- MENÜ & STATUS --- */
+/* --- HILFSFUNKTIONEN --- */
 function checkStatus() {
-    // WLAN
+    // WLAN Check
     let net = document.getElementById('net-status');
     if(navigator.onLine) { net.innerText = "WLAN: OK"; net.style.color = "#0f0"; }
     else { net.innerText = "OFFLINE"; net.style.color = "#f00"; }
     
-    // Batterie
+    // Batterie Check
     if(navigator.getBattery) {
         navigator.getBattery().then(bat => {
             document.getElementById('bat-level').innerText = "BAT: " + Math.round(bat.level*100) + "%";
@@ -191,9 +187,7 @@ function closeMenu() { document.getElementById('menu-modal').style.display = 'no
 function toggleAccordion(id) {
     let content = document.getElementById(id);
     let isVisible = content.style.display === "block";
-    // Alle schließen
     document.querySelectorAll('.acc-content').forEach(el => el.style.display = 'none');
-    // Gewähltes öffnen, wenn es zu war
     if(!isVisible) content.style.display = "block";
 }
 
