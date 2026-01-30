@@ -13,7 +13,7 @@
     </video>
 
     <div id="start-overlay">
-        <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px;">
+        <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
@@ -25,6 +25,7 @@
         <div class="col-left">
             <div id="clock">00:00</div>
             <div id="date">LADE...</div>
+            
             <div class="logo-container">
                 <video id="logo-video" loop playsinline muted>
                     <source src="logo.mp4" type="video/mp4">
@@ -39,7 +40,7 @@
                 <img id="main-icon" src=""> 
                 <div id="main-temp">--°</div>
                 <div class="rain-box">
-                    <img src="09d.gif" class="rain-icon" style="width:30px;">
+                    <img src="09d.gif" class="rain-icon">
                     <div id="rain-prob">--%</div>
                 </div>
             </div>
@@ -94,23 +95,23 @@
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
-                <span>☕ Kaffeekasse</span> <span>▼</span>
+                <span>☕ Support</span> <span>▼</span>
             </button>
             <div id="acc-kaffee" class="acc-content">
-                <p class="menu-text">Code-Werft Support:</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">Spenden</a>
+                <p class="menu-text">Unterstütze die Code-Werft:</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">Spenden</a>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-imp')">
-                <span>⚖️ Impressum</span> <span>▼</span>
+                <span>⚖️ Info</span> <span>▼</span>
             </button>
             <div id="acc-imp" class="acc-content">
-                <p class="menu-text">Code-Werft Braunschweig</p>
-                <p class="menu-text">Kontakt: webmaster@code-werft.de</p>
+                <p class="menu-text">Code-Werft Aura V43.0</p>
+                <p class="menu-text">Build: Stable Restore</p>
             </div>
         </div>
     </div>
 
     <script src="script.js?v=43.0"></script>
 </body>
-                </html>
+    </html> 
