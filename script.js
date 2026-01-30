@@ -1,109 +1,168 @@
-/* --- AURA V23.1 CORE STABLE --- */
+/* --- AURA V30.0 CORE ENGINE --- */
 
-var currentVer = 23.1;
-var API = '518e81d874739701f08842c1a55f6588';
-var city = localStorage.getItem('city') || 'Braunschweig';
+// KONFIGURATION
+var VERSION = 30.0;
+var API_KEY = '518e81d874739701f08842c1a55f6588'; // Dein Key
+var city = localStorage.getItem('aura_city') || 'Braunschweig';
 
-function z(n){return (n<10?'0':'')+n;}
+// ELEMENTE CACHEN
+var ui = {
+    clock: document.getElementById('clock'),
+    date: document.getElementById('date'),
+    city: document.getElementById('city-name'),
+    temp: document.getElementById('temp'),
+    desc: document.getElementById('desc'),
+    icon: document.getElementById('weather-icon'),
+    sunrise: document.getElementById('sunrise'),
+    sunset: document.getElementById('sunset'),
+    ticker: document.getElementById('ticker-content'),
+    hourly: document.getElementById('hourly-row'),
+    daily: document.getElementById('daily-row')
+};
 
+// 1. START-LOGIK (User Interaction für Audio/Video)
 function startApp() {
+    // Overlay ausblenden
     document.getElementById('start-overlay').style.display = 'none';
     
-    // Herzschlag-Video & Audio starten
-    var heartbeat = document.getElementById('logo-heartbeat');
-    var wA = document.getElementById('wake-aud');
-    wA.src = "data:audio/wav;base64,UklGRigAAABXQVZFRm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
-    
-    if(wA) wA.play();
-    if(heartbeat) heartbeat.play();
+    // WACHHALTER: Hintergrund-Video starten (zwingt Tablet wach zu bleiben)
+    var bgVid = document.getElementById('bg-wake-video');
+    if(bgVid) { bgVid.play().catch(e => console.log("Wake-Video Fehler:", e)); }
 
+    // LOGO: Herzschlag starten
+    var logoVid = document.getElementById('logo-video');
+    if(logoVid) { logoVid.play().catch(e => console.log("Logo-Video Fehler:", e)); }
+
+    // Daten laden
+    updateClock();
     loadWeather();
-    update();
-    setInterval(update, 1000);           
-    setInterval(loadWeather, 600000);    
+    loadTicker();
+
+    // Intervalle setzen
+    setInterval(updateClock, 1000);           // Uhrzeit jede Sekunde
+    setInterval(loadWeather, 600000);         // Wetter alle 10 Min
+    setInterval(checkUpdate, 300000);         // Update-Prüfung alle 5 Min
 }
 
-function update() {
+// 2. UHRZEIT & DATUM
+function updateClock() {
     var now = new Date();
-    document.getElementById('clock').innerText = z(now.getHours())+':'+z(now.getMinutes());
-    var d = ['SO','MO','DI','MI','DO','FR','SA'], m = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
-    document.getElementById('date').innerText = d[now.getDay()] + ". " + now.getDate() + ". " + m[now.getMonth()];
+    var h = now.getHours(); var m = now.getMinutes();
+    ui.clock.innerText = (h<10?'0':'')+h + ':' + (m<10?'0':'')+m;
+    
+    var days = ['SONNTAG','MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG'];
+    var months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
+    ui.date.innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 }
 
+// 3. WETTER LADEN (API)
 function loadWeather() {
-    var x = new XMLHttpRequest();
-    x.open("GET", "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API+"&units=metric&lang=de", true);
-    x.onload = function() {
-        if (x.status === 200) {
-            var d = JSON.parse(x.responseText);
-            document.getElementById('city-name').innerText = d.name.toUpperCase();
-            document.getElementById('temp').innerText = Math.round(d.main.temp) + "°";
-            document.getElementById('w-icon').src = d.weather[0].icon + ".gif";
-            document.getElementById('w-desc').innerText = d.weather[0].description.toUpperCase();
-            
-            var r = new Date((d.sys.sunrise + d.timezone - 3600)*1000), s = new Date((d.sys.sunset + d.timezone - 3600)*1000);
-            document.getElementById('sunrise').innerText = z(r.getHours()) + ":" + z(r.getMinutes());
-            document.getElementById('sunset').innerText = z(s.getHours()) + ":" + z(s.getMinutes());
+    fetch("https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API_KEY+"&units=metric&lang=de")
+    .then(r => r.json())
+    .then(data => {
+        // Aktuelles Wetter
+        ui.city.innerText = data.name.toUpperCase();
+        ui.temp.innerText = Math.round(data.main.temp) + "°";
+        ui.desc.innerText = data.weather[0].description.toUpperCase();
+        ui.icon.src = data.weather[0].icon + ".gif";
+        
+        // Astro
+        var sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
+        var ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
+        ui.sunrise.innerText = (sr.getHours()<10?'0':'')+sr.getHours() + ":" + (sr.getMinutes()<10?'0':'')+sr.getMinutes();
+        ui.sunset.innerText = (ss.getHours()<10?'0':'')+ss.getHours() + ":" + (ss.getMinutes()<10?'0':'')+ss.getMinutes();
 
-            loadFore(d.coord.lat, d.coord.lon);
-        }
-    };
-    x.send();
+        // Vorhersage laden (braucht Koordinaten)
+        loadForecast(data.coord.lat, data.coord.lon);
+    })
+    .catch(e => console.log("Wetter Fehler:", e));
 }
 
-function loadWorldTicker() {
-    var caps = ["Berlin", "Paris", "London", "Rom", "New York", "Tokio", "Sydney", "Dubai"];
-    var wd = "+++ WILLKOMMEN ZURÜCK +++ STATION BRAUNSCHWEIG AKTUELL +++ ";
-    var done = 0;
-    caps.forEach(function(c) { 
-        var r = new XMLHttpRequest();
-        r.open("GET","https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API+"&units=metric",true);
-        r.onload = function() {
-            if(r.status===200) { 
-                var j = JSON.parse(r.responseText);
-                wd += " ◈ " + j.name.toUpperCase() + ": " + Math.round(j.main.temp) + "° "; 
+function loadForecast(lat, lon) {
+    fetch("https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API_KEY+"&units=metric&lang=de")
+    .then(r => r.json())
+    .then(data => {
+        // A) STÜNDLICH (nächste 4 Einträge)
+        var hHTML = "";
+        for(var i=0; i<4; i++) {
+            var item = data.list[i];
+            var time = new Date(item.dt*1000).getHours() + "h";
+            hHTML += `<div class="f-item">
+                        <div class="f-time">${time}</div>
+                        <img src="${item.weather[0].icon}.gif" class="f-icon">
+                        <div class="f-temp">${Math.round(item.main.temp)}°</div>
+                      </div>`;
+        }
+        ui.hourly.innerHTML = hHTML;
+
+        // B) TÄGLICH (einfache Logik: Mittagswerte nehmen)
+        var dHTML = "";
+        var daysCount = 0;
+        var usedDays = {};
+        
+        data.list.forEach(entry => {
+            var dObj = new Date(entry.dt*1000);
+            var dayName = dObj.toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
+            // Wir nehmen einen Wert um ca 14 Uhr oder den ersten des Tages
+            if(!usedDays[dayName] && dObj.getHours() >= 12 && daysCount < 4) {
+                usedDays[dayName] = true;
+                daysCount++;
+                dHTML += `<div class="f-item">
+                            <div class="f-time">${dayName}</div>
+                            <img src="${entry.weather[0].icon}.gif" class="f-icon">
+                            <div class="f-temp">${Math.round(entry.main.temp)}°</div>
+                          </div>`;
             }
-            done++; if(done === caps.length) document.getElementById('ticker-text').innerText = wd;
-        };
-        r.send(); 
+        });
+        ui.daily.innerHTML = dHTML;
     });
 }
 
-function loadFore(lat, lon) {
-    var x = new XMLHttpRequest();
-    x.open("GET", "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+API+"&units=metric&lang=de", true);
-    x.onload = function() {
-        if (x.status === 200) {
-            var d = JSON.parse(x.responseText);
-            var h = "";
-            for(var i=0; i<5; i++) {
-                var it = d.list[i], t = new Date(it.dt*1000);
-                h += "<div class='f-item'><div>" + t.getHours() + "h</div><img class='f-icon' src='" + it.weather[0].icon + ".gif'><div>" + Math.round(it.main.temp) + "°</div></div>";
-            }
-            document.getElementById('hourly-row').innerHTML = h;
+// 4. WELT-TICKER
+function loadTicker() {
+    var cities = ["Berlin", "London", "New York", "Tokio", "Sydney", "Moskau", "Dubai", "Paris"];
+    var text = "+++ AURA WETTERSTATION V" + VERSION + " +++ ONLINE +++ ";
+    
+    // Wir bauen den String rekursiv oder einfach nacheinander
+    var promises = cities.map(c => 
+        fetch("https://api.openweathermap.org/data/2.5/weather?q="+c+"&appid="+API_KEY+"&units=metric")
+        .then(r => r.json())
+        .catch(() => null)
+    );
 
-            var days = {};
-            d.list.forEach(function(item) {
-                var dStr = new Date(item.dt * 1000).toLocaleDateString('de-DE', {weekday: 'short'}).toUpperCase();
-                if (!days[dStr]) { days[dStr] = { min: 100, max: -100, icon: item.weather[0].icon }; }
-                if (item.main.temp_min < days[dStr].min) days[dStr].min = item.main.temp_min;
-                if (item.main.temp_max > days[dStr].max) days[dStr].max = item.main.temp_max;
-            });
-            var dy = ""; var cnt = 0;
-            for (var k in days) { if (cnt >= 5) break;
-                dy += "<div class='f-item'><div>" + k + "</div><img class='f-icon' src='" + days[k].icon + ".gif'><div>" + Math.round(days[k].max) + "° / " + Math.round(days[k].min) + "°</div></div>";
-                cnt++;
+    Promise.all(promises).then(results => {
+        results.forEach(res => {
+            if(res) {
+                text += " ◈ " + res.name.toUpperCase() + ": " + Math.round(res.main.temp) + "° ";
             }
-            document.getElementById('daily-row').innerHTML = dy;
-            loadWorldTicker();
-        }
-    };
-    x.send();
+        });
+        ui.ticker.innerText = text;
+    });
 }
 
-function openMenu() { document.getElementById('settings-overlay').style.display='block'; }
-function closeMenu() { document.getElementById('settings-overlay').style.display='none'; }
-function save() { 
-    localStorage.setItem('city', document.getElementById('city-in').value); 
-    location.reload(); 
+// 5. UPDATE-CHECK (Wichtig für Wartung ohne Aufstehen)
+function checkUpdate() {
+    // Zufallszahl ?t=... verhindert Cache, damit er das Update wirklich sieht
+    fetch("version.json?t=" + Date.now())
+    .then(r => r.json())
+    .then(d => {
+        if(d.version > VERSION) {
+            // Neue Version gefunden! Seite neu laden
+            location.reload(true);
+        }
+    })
+    .catch(e => console.log("Update Check Fehler", e));
+}
+
+// 6. EINSTELLUNGEN
+function openSettings() { document.getElementById('settings-modal').style.display = 'block'; }
+function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+function saveSettings() {
+    var newVal = document.getElementById('city-input').value;
+    if(newVal) {
+        localStorage.setItem('aura_city', newVal);
+        city = newVal;
+        loadWeather();
+        closeSettings();
+    }
 }
