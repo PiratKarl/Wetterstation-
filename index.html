@@ -3,66 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Station V21.2</title>
-    <style>
-        /* Kurzes internes CSS für absolute Stabilität */
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: #000; color: #fff; font-family: Arial, sans-serif; 
-            overflow: hidden; 
-        }
-        .container { display: flex; flex-direction: column; height: 100vh; }
-        
-        /* Obere Zeile: Zeit & Stadt */
-        .top-row { flex: 0 0 30%; display: flex; justify-content: space-between; padding: 20px; box-sizing: border-box; }
-        #clock { font-size: 100px; font-weight: bold; line-height: 1; }
-        #city { font-size: 30px; color: #00eaff; text-align: right; }
-
-        /* Mitte: Hauptwetter */
-        .mid-row { flex: 1; display: flex; justify-content: center; align-items: center; text-align: center; }
-        #main-temp { font-size: 140px; font-weight: bold; }
-        #main-icon { width: 150px; height: 150px; }
-
-        /* Unten: Vorhersage */
-        .bottom-row { flex: 0 0 25%; display: flex; justify-content: space-around; background: #0a0a0a; border-top: 1px solid #333; }
-        .f-item { text-align: center; padding: 10px; }
-        .f-icon { width: 50px; height: 50px; }
-    </style>
+    <title>Aura Wetterstation V30.0</title>
+    <link rel="stylesheet" href="style.css?v=30.0">
 </head>
 <body>
 
-    <div class="container">
-        <div class="top-row">
+    <video id="bg-wake-video" loop playsinline muted>
+        <source src="logo.mp4" type="video/mp4">
+    </video>
+
+    <div id="start-overlay" class="overlay">
+        <img src="logo.png" style="width:120px; opacity:0.8;">
+        <button class="btn-start" onclick="startApp()">AURA V30 STARTEN</button>
+        <p style="color:#444; margin-top:15px;">System bereit. Tippen zum Starten.</p>
+    </div>
+
+    <div class="dashboard">
+        <div class="col-left">
+            <div id="city-name">LADE...</div>
             <div id="clock">00:00</div>
-            <div id="city">LADE...</div>
+            <div id="date">...</div>
+            
+            <div class="logo-wrapper">
+                <video id="logo-video" loop playsinline muted>
+                    <source src="logo.mp4" type="video/mp4">
+                </video>
+            </div>
         </div>
 
-        <div class="mid-row">
-            <img id="main-icon" src="01d.gif">
-            <div id="main-temp">--°</div>
+        <div class="col-center">
+            <img id="weather-icon" src="">
+            <div id="temp">--°</div>
+            <div id="desc">INITIALISIERUNG...</div>
         </div>
 
-        <div id="forecast" class="bottom-row">
-            <div class="f-item"><div id="d1">MO</div><img src="02d.gif" class="f-icon"><div>18°</div></div>
-            <div class="f-item"><div id="d2">DI</div><img src="03d.gif" class="f-icon"><div>20°</div></div>
-            <div class="f-item"><div id="d3">MI</div><img src="01d.gif" class="f-icon"><div>22°</div></div>
-            <div class="f-item"><div id="d4">DO</div><img src="04d.gif" class="f-icon"><div>19°</div></div>
+        <div class="col-right">
+            <button class="btn-setup" onclick="openSettings()">⚙</button>
+            <div class="astro-box">
+                <div>☀ <span id="sunrise">--:--</span></div>
+                <div>☾ <span id="sunset">--:--</span></div>
+            </div>
         </div>
     </div>
 
-    <script>
-        // Minimal-Skript für V21.2
-        function updateTime() {
-            var now = new Date();
-            var h = now.getHours();
-            var m = now.getMinutes();
-            document.getElementById('clock').innerHTML = (h<10?'0':'')+h + ":" + (m<10?'0':'')+m;
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
+    <div class="ticker-wrap">
+        <div id="ticker-content">Verbinde mit Wetter-Satellit...</div>
+    </div>
+
+    <div class="forecast-area">
+        <div class="f-row" id="hourly-row"></div>
+        <div class="f-row" id="daily-row"></div>
+    </div>
+
+    <div id="settings-modal">
+        <h2 style="color:#00eaff; margin-bottom:30px;">KONFIGURATION</h2>
+        <p>Neuer Standort:</p>
+        <input type="text" id="city-input" class="inp-city" placeholder="z.B. Braunschweig">
         
-        // Hinweis: Die API-Anbindung erfolgte in dieser Version 
-        // direkt über eine einfache fetch-Funktion in der script.js.
-    </script>
+        <div style="margin-top:40px;">
+            <button class="btn-start" style="font-size:20px; padding:10px 30px;" onclick="saveSettings()">SPEICHERN</button>
+        </div>
+        <div style="margin-top:20px;">
+            <button onclick="closeSettings()" style="background:none; border:none; color:#888; font-size:16px;">ABBRECHEN</button>
+        </div>
+        
+        <p style="margin-top:50px; color:#333; font-size:12px;">Aura Core V30.0 | Code-Werft</p>
+    </div>
+
+    <script src="script.js?v=30.0"></script>
 </body>
-</html> 
+</html>
