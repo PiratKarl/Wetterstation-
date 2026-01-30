@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V36.0</title>
-    <link rel="stylesheet" href="style.css?v=36.0">
+    <title>Aura Wetterstation V37.0</title>
+    <link rel="stylesheet" href="style.css?v=37.0">
 </head>
 <body>
 
@@ -13,18 +13,18 @@
     </video>
 
     <div id="start-overlay">
-        <img src="logo.png" style="width:140px; opacity:0.9;">
+        <img src="logo.png" style="width:140px; opacity:0.8;">
         <button class="btn-start" onclick="document.documentElement.requestFullscreen().catch(e=>{}); startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#555; margin-top:20px;">Aura V36.0 | Code-Werft</p>
+        <p style="color:#444; margin-top:20px;">Aura V37.0 | Code-Werft</p>
     </div>
 
     <div class="dashboard">
         
         <div class="col-left">
             <div id="clock">00:00</div>
-            <div id="date">Lade Datum...</div>
+            <div id="date">LADE DATUM...</div>
             
             <div class="logo-container">
                 <img id="logo-img" src="logo.png"> 
@@ -64,13 +64,9 @@
             </div>
 
             <div class="status-block">
-                <div class="status-row">
-                    <span id="bat-level">--%</span>
-                </div>
-                <div class="status-row">
-                    <span id="net-status">WLAN...</span>
-                </div>
-                <div class="status-row" style="font-size:1.5vh; color:#555; margin-top:5px;">
+                <div class="status-row"><span id="bat-level">--%</span></div>
+                <div class="status-row"><span id="net-status">WLAN...</span></div>
+                <div class="status-row" style="font-size:1.4vh; color:#444; margin-top:5px;">
                     <span id="last-update">--:--</span>
                 </div>
             </div>
@@ -78,7 +74,7 @@
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ INIT AURA V36 +++</div>
+        <div id="ticker-text">+++ VERBINDE MIT AURA CORE V37 +++</div>
     </div>
 
     <div class="forecast-area">
@@ -94,62 +90,41 @@
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-1')">
-                <span>📍 Standort & Ruhezeiten</span> <span>▼</span>
+                <span>📍 Standort & Ort</span> <span>▼</span>
             </button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Hier Ort und Ruhezeiten festlegen.</p>
+                <p class="menu-text">Gib deine Stadt ein (z.B. Braunschweig):</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
-                <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <div style="flex:1;">
-                        <span style="color:#888; font-size:14px;">START (Schlafen)</span>
-                        <input type="time" id="inp-sleep-start" style="background:#222; border:1px solid #555; color:#fff; padding:10px; width:100%; font-size:20px;">
-                    </div>
-                    <div style="flex:1;">
-                        <span style="color:#888; font-size:14px;">ENDE (Aufwachen)</span>
-                        <input type="time" id="inp-sleep-end" style="background:#222; border:1px solid #555; color:#fff; padding:10px; width:100%; font-size:20px;">
-                    </div>
-                </div>
-                <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
+                <button class="btn-save" onclick="saveSettings()">ÜBERNEHMEN</button>
                 <div style="height:15px;"></div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-2')">
-                <span>☕ Einen Kaffee spendieren</span> <span>▼</span>
+                <span>☕ Support</span> <span>▼</span>
             </button>
             <div id="acc-2" class="acc-content">
-                <p class="menu-text">Code schreiben macht durstig! Danke für deine Unterstützung.</p>
+                <p class="menu-text">Code-Werft unterstützen:</p>
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Code-Werft+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">
-                    Jetzt via PayPal spenden
+                    Kaffee spendieren
                 </a>
                 <div style="height:15px;"></div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-3')">
-                <span>📖 Hilfe & Tipps</span> <span>▼</span>
+                <span>§ Info</span> <span>▼</span>
             </button>
             <div id="acc-3" class="acc-content">
                 <p class="menu-text">
-                    • <b>Ticker:</b> Warnt jetzt mit Zeitangabe (z.B. "AB 17:00 UHR").<br>
-                    • <b>Vorhersage:</b> Zeigt jetzt "Uhr" statt "h".<br>
-                    • <b>Layout:</b> Alles optimiert für bessere Lesbarkeit.
+                    <b>Aura Version:</b> 37.0<br>
+                    <b>Design:</b> Code-Werft (Dark Mode)<br>
+                    <b>Update:</b> Automatisch alle 5 Min.
                 </p>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-4')">
-                <span>§ Kontakt & Impressum</span> <span>▼</span>
-            </button>
-            <div id="acc-4" class="acc-content">
-                <p class="menu-text">
-                    <b>Code-Werft</b><br>
-                    <a href="https://code-werft.de" target="_blank" class="contact-link">🌐 www.code-werft.de</a>
-                    <a href="mailto:webmaster@code-werft.de" class="contact-link">📧 webmaster@code-werft.de</a>
-                </p>
-            </div>
-
-            <p style="text-align:center; color:#444; margin-top:40px;">Aura Core V36.0</p>
+            <p style="text-align:center; color:#222; margin-top:40px;">&copy; 2026 Code-Werft</p>
         </div>
     </div>
 
-    <script src="script.js?v=36.0"></script>
+    <script src="script.js?v=37.0"></script>
 </body>
                     </html>
