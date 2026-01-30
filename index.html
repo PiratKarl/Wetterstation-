@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V39.0</title>
-    <link rel="stylesheet" href="style.css?v=39.0">
+    <title>Aura Wetterstation V40.0</title>
+    <link rel="stylesheet" href="style.css?v=40.0">
 </head>
 <body>
 
@@ -13,12 +13,12 @@
     </video>
 
     <div id="start-overlay">
-        <img src="logo.png" style="width:130px; opacity:0.8;">
+        <img src="logo.png" style="width:130px; opacity:0.8; margin-bottom: 20px;">
         <button id="manual-start-btn" class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p id="auto-start-msg" style="color:#00eaff; margin-top:15px; display:none;">Automatischer Neustart läuft...</p>
-        <p style="color:#333; margin-top:20px;">Aura V39.0 | Code-Werft</p>
+        <p id="auto-start-msg" style="color:#00eaff; margin-top:15px; display:none; font-weight:bold;">Automatischer Neustart...</p>
+        <p style="color:#222; margin-top:30px;">AURA PROJECT V40.0 | CODE-WERFT</p>
     </div>
 
     <div class="dashboard">
@@ -27,7 +27,6 @@
             <div id="clock">00:00</div>
             <div id="date">LADE...</div>
             <div class="logo-container">
-                <img id="logo-img" src="logo.png"> 
                 <video id="logo-video" loop playsinline muted>
                     <source src="logo.mp4" type="video/mp4">
                 </video>
@@ -35,13 +34,13 @@
         </div>
 
         <div class="col-center">
-            <div id="location-header">LADE...</div>
+            <div id="location-header">BRAUNSCHWEIG</div>
             <div class="main-row">
                 <img id="main-icon" src=""> 
                 <div id="main-temp">--°</div>
                 <div class="rain-box">
-                    <img src="09d.gif" class="rain-icon" onerror="this.src='logo.png'">
-                    <div id="rain-prob">--%</div>
+                    <img src="09d.gif" class="rain-icon">
+                    <div id="rain-prob">0% Regen</div>
                 </div>
             </div>
             <div id="feels-like">--</div>
@@ -58,19 +57,19 @@
             
             <div class="astro-block">
                 <span class="astro-label">MOND</span>
-                <span class="astro-val" id="moon-phase">--</span>
+                <span id="moon-phase" class="astro-val">--</span>
             </div>
 
             <div class="status-block">
-                <div class="status-row"><span id="bat-level">--%</span></div>
-                <div class="status-row"><span id="net-status">WLAN...</span></div>
-                <div class="ver-label">AURA V39.0</div>
+                <div class="status-row" id="bat-level">BAT: --%</div>
+                <div class="status-row" id="net-status">WLAN: OK</div>
+                <div class="ver-label">AURA V40.0</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ VERBINDE MIT AURA SYSTEM V39.0 +++</div>
+        <div id="ticker-text">+++ CODE-WERFT AURA V40.0 ONLINE +++</div>
     </div>
 
     <div class="forecast-area">
@@ -81,75 +80,17 @@
     <div id="menu-modal">
         <div class="menu-container">
             <div class="menu-header">
-                <h2>EINSTELLUNGEN & HILFE</h2>
+                <h2>EINSTELLUNGEN</h2>
                 <button class="menu-close-btn" onclick="closeMenu()">×</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-1')">
-                <span>📍 Standort & Ort</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-1')"><span>📍 Standort</span> <span>▼</span></button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Wetter für Braunschweig (Lohengrinstraße) oder eine andere Stadt festlegen:</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
-                <button class="btn-save" onclick="saveSettings()">ÜBERNEHMEN</button>
-                <div style="height:10px;"></div>
+                <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
-                <span>🌙 Nachtmodus & Zeitplan</span> <span>▼</span>
-            </button>
-            <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Um dein Display zu schonen, kann Aura nachts schwarz schalten.</p>
-                <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <div style="flex:1;">
-                        <span style="color:#888; font-size:14px;">START (Aus)</span>
-                        <input type="time" id="inp-sleep-start" style="background:#222; border:1px solid #00eaff; color:#fff; padding:10px; width:100%;">
-                    </div>
-                    <div style="flex:1;">
-                        <span style="color:#888; font-size:14px;">ENDE (An)</span>
-                        <input type="time" id="inp-sleep-end" style="background:#222; border:1px solid #00eaff; color:#fff; padding:10px; width:100%;">
-                    </div>
-                </div>
-                <button class="btn-save" onclick="saveSettings()">ZEITEN SPEICHERN</button>
-                <p class="menu-text" style="font-size:14px; margin-top:10px;">(Tipp: Tablet-Entwickleroptionen "Wach bleiben" nutzen, damit das Display bei Stromversorgung nicht sperrt.)</p>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-legende')">
-                <span>📋 Wetter-Legende</span> <span>▼</span>
-            </button>
-            <div id="acc-legende" class="acc-content">
-                <div class="legende-grid">
-                    <img src="01d.gif" class="legende-icon"> <span><b>Sonnig:</b> Klarer Himmel, ideale Sicht.</span>
-                    <img src="02d.gif" class="legende-icon"> <span><b>Leicht bewölkt:</b> Vereinzelte Wolken.</span>
-                    <img src="03d.gif" class="legende-icon"> <span><b>Bewölkt:</b> Überwiegend grauer Himmel.</span>
-                    <img src="09d.gif" class="legende-icon"> <span><b>Schauer:</b> Kurzzeitige Regengüsse.</span>
-                    <img src="10d.gif" class="legende-icon"> <span><b>Regen:</b> Anhaltender Niederschlag.</span>
-                    <img src="11d.gif" class="legende-icon"> <span><b>Gewitter:</b> Blitz- & Sturmgefahr!</span>
-                    <img src="13d.gif" class="legende-icon"> <span><b>Schnee:</b> Winterwetter & Glättegefahr.</span>
-                    <img src="50d.gif" class="legende-icon"> <span><b>Nebel:</b> Dunst oder schlechte Sichtweite.</span>
-                </div>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
-                <span>☕ Code-Werft Kaffeemaschine</span> <span>▼</span>
-            </button>
-            <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Aura läuft mit Leidenschaft und Koffein. Jede Tasse hält die Entwickler wach für neue Updates!</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">Kaffee spendieren (PayPal)</a>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-recht')">
-                <span>⚖️ Datenschutz & Kontakt</span> <span>▼</span>
-            </button>
-            <div id="acc-recht" class="acc-content">
-                <p class="menu-text"><b>Datenschutz:</b> Standortdaten werden nur lokal auf deinem Kymco-Dashboard-Tablet gespeichert. Keine Werbung, kein Tracking.</p>
-                <p class="menu-text"><b>Kontakt:</b> webmaster@code-werft.de</p>
-            </div>
-
-            <p style="text-align:center; color:#222; margin-top:30px;">AURA CORE V39.0 | &copy; 2026</p>
         </div>
     </div>
 
-    <script src="script.js?v=39.0"></script>
+    <script src="script.js?v=40.0"></script>
 </body>
-                        </html>
+                    </html>
