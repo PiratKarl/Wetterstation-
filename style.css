@@ -1,68 +1,134 @@
-/* --- AURA V40.0 FINAL LAYOUT --- */
+/* --- AURA V43.0 (STABLE RESTORE) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
     background-color: #000; color: #fff;
-    font-family: 'Arial', sans-serif; overflow: hidden;
+    font-family: 'Arial', sans-serif; overflow: hidden; user-select: none;
 }
 
+/* WACHHALTER HINTERGRUND */
+#wake-video-layer {
+    position: fixed; top: 0; left: 0; width: 2px; height: 2px;
+    opacity: 0.01; z-index: 0; pointer-events: none;
+}
+
+/* START SCREEN */
 #start-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; z-index: 30000;
+    background: #000; z-index: 5000;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
 }
-
 .btn-start {
-    border: 3px solid #00eaff; color: #00eaff; background: transparent;
-    padding: 20px 60px; font-size: 26px; font-weight: bold; border-radius: 10px;
-    cursor: pointer;
+    border: 2px solid #00eaff; color: #00eaff; background: transparent;
+    padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px;
+    cursor: pointer; margin-top: 20px;
 }
 
+/* HAUPT LAYOUT */
 .dashboard {
-    display: flex; height: 50vh; width: 100%; padding: 10px; box-sizing: border-box;
+    display: flex; height: 55vh; width: 100%;
+    padding: 15px; box-sizing: border-box; position: relative; z-index: 10;
 }
 
-/* LINKS */
-.col-left { width: 28%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
-#clock { font-size: 8vw; font-weight: bold; line-height: 0.9; }
-#date { font-size: 2.2vh; color: #00eaff; margin: 5px 0; }
-.logo-container { width: 140px; height: 140px; position: relative; }
-#logo-video { width: 100%; height: 100%; object-fit: contain; }
+/* SPALTE 1: LINKS (Uhr & Logo) */
+.col-left { 
+    width: 28%; display: flex; flex-direction: column; 
+    align-items: center; justify-content: flex-start; 
+}
+#clock { font-size: 8.5vw; font-weight: bold; line-height: 0.9; margin: 0; }
+#date { font-size: 2.2vh; color: #00eaff; margin-top: 5px; text-transform: uppercase; }
 
-/* MITTE - REGEN ICON FIX */
-.col-center { width: 44%; display: flex; flex-direction: column; align-items: center; }
-#location-header { color: #00eaff; font-size: 5vh; font-weight: bold; }
-.main-row { display: flex; align-items: center; justify-content: center; width: 100%; gap: 10px; }
-#main-icon { width: 15vh; height: 15vh; }
-#main-temp { font-size: 14vh; font-weight: bold; }
-.rain-box { display: flex; flex-direction: column; align-items: center; color: #00eaff; }
-.rain-icon { width: 4.5vh !important; height: auto !important; margin-bottom: 2px; } /* ZÄHMUNG */
-#rain-prob { font-size: 2.5vh; font-weight: bold; }
+.logo-container { 
+    width: 140px; height: 140px; margin-top: 15px; position: relative; 
+}
+#logo-video { 
+    width: 100%; height: 100%; object-fit: contain; 
+}
 
-/* RECHTS */
-.col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-#btn-menu { background: transparent; border: 2px solid #fff; color: #fff; font-size: 18px; padding: 5px 12px; border-radius: 6px; margin-bottom: 20px; }
-.astro-label { color: #00eaff; font-size: 1.5vh; display: block; }
+/* SPALTE 2: MITTE (Wetter) */
+.col-center {
+    width: 44%; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start;
+}
+#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 5px; }
+
+.main-row { 
+    display: flex; align-items: center; justify-content: center; width: 100%; 
+}
+#main-icon { width: 14vh; height: 14vh; }
+#main-temp { font-size: 14vh; font-weight: bold; margin: 0 10px; line-height: 1; }
+
+.rain-box { 
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    margin-left: 5px; 
+}
+.rain-icon { width: 3.5vh !important; height: auto !important; } /* Fix für riesiges Icon */
+#rain-prob { font-size: 2vh; color: #00eaff; font-weight: bold; }
+
+#feels-like { font-size: 2.5vh; color: #ccc; margin-top: 0px; }
+#desc-text { font-size: 3vh; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
+
+/* SPALTE 3: RECHTS (Menü & Status) */
+.col-right {
+    width: 28%; display: flex; flex-direction: column;
+    align-items: flex-end; justify-content: flex-start;
+}
+#btn-menu {
+    background: transparent; border: 2px solid #fff; color: #fff;
+    font-size: 18px; padding: 5px 15px; border-radius: 5px; cursor: pointer;
+    margin-bottom: 20px;
+}
+.astro-block { margin-bottom: 5px; text-align: right; }
+.astro-label { color: #00eaff; font-size: 1.4vh; display: block; }
 .astro-val { font-size: 2.2vh; font-weight: bold; }
 
-.status-block { margin-top: 10px; border-top: 1px solid #333; padding-top: 8px; width: 100%; text-align: right; }
-.status-row { margin-bottom: 5px; font-size: 1.8vh; font-weight: bold; }
-.ver-label { font-size: 1.4vh; color: #444; margin-top: 5px; }
+.status-block { 
+    margin-top: auto; padding-top: 10px; border-top: 1px solid #333; 
+    width: 100%; text-align: right; 
+}
+.status-row { font-size: 1.6vh; margin-bottom: 3px; font-weight: bold; }
+.ver-label { font-size: 1.2vh; color: #555; margin-top: 5px; }
 
-/* TICKER & VORHERSAGE */
-.ticker-wrap { height: 8vh; background: #080808; border-top: 1px solid #222; overflow: hidden; display: flex; align-items: center; }
-#ticker-text { white-space: nowrap; animation: tick 120s linear infinite; font-size: 4vh; color: #00eaff; font-weight: bold; }
-.forecast-area { height: 42vh; display: flex; flex-direction: column; }
+/* TICKER */
+.ticker-wrap {
+    height: 8vh; background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222;
+    overflow: hidden; white-space: nowrap; display: flex; align-items: center;
+}
+#ticker-text {
+    display: inline-block; padding-left: 100%; animation: tick 60s linear infinite;
+    font-size: 3.5vh; color: #00eaff; font-weight: bold;
+}
+@keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+/* VORHERSAGE */
+.forecast-area { height: 37vh; display: flex; flex-direction: column; background: #000; }
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { display: flex; flex-direction: column; align-items: center; }
-.f-head { font-size: 2.8vh; font-weight: bold; }
-.f-icon { width: 8vh; height: 8vh; }
-.f-temp-box { font-size: 3.5vh; font-weight: bold; }
+.f-head { font-size: 2.2vh; font-weight: bold; color: #ddd; margin-bottom: 2px; }
+.f-icon { width: 6vh; height: 6vh; }
+.f-temp { font-size: 2.8vh; font-weight: bold; }
 
-@keyframes tick { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+/* MENÜ (AKKORDEON) */
+#menu-modal { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; 
+}
+.menu-container { max-width: 600px; margin: 0 auto; }
+.menu-header { text-align: center; color: #00eaff; margin-bottom: 20px; position: relative; }
+.menu-close-btn { position: absolute; right: 0; top: -10px; background: none; border: none; color: #fff; font-size: 40px; cursor: pointer; }
 
-/* MENÜ */
-#menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 40000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
-.acc-btn { background: #1a1a1a; color: #fff; padding: 18px; width: 100%; text-align: left; border: none; font-size: 22px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
-.acc-content { display: none; padding: 20px; background: #0c0c0c; border-bottom: 2px solid #00eaff; }
-.acc-show { display: block !important; }
+.acc-btn { 
+    background: #1a1a1a; color: #fff; cursor: pointer; padding: 15px; width: 100%; 
+    text-align: left; border: none; font-size: 20px; border-bottom: 1px solid #333; 
+    display: flex; justify-content: space-between; font-weight: bold;
+}
+.acc-content { 
+    padding: 15px; background-color: #111; display: none; border-bottom: 2px solid #00eaff; 
+}
+.inp-city { width: 100%; padding: 10px; background: #222; border: 1px solid #00eaff; color: #fff; font-size: 18px; box-sizing: border-box; margin-bottom: 10px; }
+.btn-save, .btn-paypal { 
+    background: #00eaff; color: #000; border: none; padding: 12px; font-size: 18px; 
+    font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; display: block; text-align: center; text-decoration: none;
+}
+.btn-paypal { background: #ffc439; }
+.menu-text { font-size: 16px; color: #ccc; line-height: 1.4; margin-bottom: 10px; }
