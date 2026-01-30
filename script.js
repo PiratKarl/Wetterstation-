@@ -1,7 +1,7 @@
-/* --- AURA V34.0 INTELLIGENCE (HYBRID TICKER) --- */
+/* --- AURA V35.0 INTELLIGENCE --- */
 
 const CONFIG = {
-    version: 34.0,
+    version: 35.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     lastTemp: null,
@@ -48,7 +48,7 @@ async function startApp() {
     if(bgVid) bgVid.play().catch(e => {});
 
     runClock();
-    loadData(); // Wetter & Ticker
+    loadData(); 
     checkStatus();
 
     setInterval(runClock, 1000);
@@ -67,7 +67,7 @@ function runClock() {
     ui.date.innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 }
 
-/* --- 3. WETTER DATEN (HAUPT) --- */
+/* --- 3. WETTER DATEN --- */
 function loadData() {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
     .then(r => r.json())
@@ -78,11 +78,9 @@ function loadData() {
     .then(r => r.json())
     .then(forecast => {
         renderForecast(forecast);
-        // Startet den neuen Hybrid-Ticker
         buildHybridTicker(forecast);
     })
     .catch(e => {
-        console.log(e);
         ui.ticker.innerText = "+++ VERBINDUNGSFEHLER +++";
         ui.ticker.classList.add('t-alert');
     });
@@ -94,10 +92,17 @@ function loadData() {
 function renderCurrent(data) {
     ui.locationHeader.innerText = data.name.toUpperCase();
     let t = Math.round(data.main.temp);
-    ui.mainTemp.innerText = t + "°";
-    ui.feelsLike.innerText = "Gefühlt: " + Math.round(data.main.feels_like) + "°";
+    let fl = Math.round(data.main.feels_like);
     
-    // Lokale GIFs
+    ui.mainTemp.innerText = t + "°";
+    
+    // GEFÜHLT FARB-LOGIK
+    ui.feelsLike.innerText = "Gefühlt: " + fl + "°";
+    ui.feelsLike.className = ""; // Reset
+    if(fl < t) ui.feelsLike.classList.add('feel-colder'); // Kälter als echt -> Blau
+    else if(fl > t) ui.feelsLike.classList.add('feel-warmer'); // Wärmer als echt -> Rot
+    else ui.feelsLike.classList.add('feel-same'); // Gleich -> Grau
+
     ui.mainIcon.src = data.weather[0].icon + ".gif";
 
     ui.desc.innerText = data.weather[0].description;
@@ -116,23 +121,25 @@ function renderCurrent(data) {
 }
 
 function renderForecast(data) {
-    let pop = Math.round(data.list[0].pop * 100);
-    ui.rainProb.innerText = pop + "% Regen";
+    let popNow = Math.round(data.list[0].pop * 100);
+    ui.rainProb.innerText = popNow + "% Regen";
     ui.moon.innerText = getMoonPhaseIcon(new Date());
 
+    // STÜNDLICH (Format "13 Uhr")
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
         let hour = new Date(item.dt*1000).getHours();
         hHTML += `
             <div class="f-item">
-                <div class="f-head">${hour}h</div>
+                <div class="f-head">${hour} Uhr</div>
                 <img src="${item.weather[0].icon}.gif" class="f-icon">
                 <div class="f-temp-box">${Math.round(item.main.temp)}°</div>
             </div>`;
     }
     ui.hourly.innerHTML = hHTML;
 
+    // TÄGLICH (Mit Regenwahrscheinlichkeit)
     let dHTML = "";
     let usedDays = [];
     let count = 0;
@@ -144,10 +151,13 @@ function renderForecast(data) {
             count++;
             let max = Math.round(item.main.temp_max);
             let min = Math.round(item.main.temp_min - 2); 
+            let pop = Math.round(item.pop * 100); // Regenrisiko für den Tag
+
             dHTML += `
                 <div class="f-item">
                     <div class="f-head">${dayName}</div>
                     <img src="${item.weather[0].icon}.gif" class="f-icon">
+                    <div class="pop-daily">☂ ${pop}%</div>
                     <div class="f-temp-box">
                         <span class="val-min">${min}°</span><span style="font-size:0.4em;color:#333">|</span><span class="val-max">${max}°</span>
                     </div>
@@ -157,81 +167,60 @@ function renderForecast(data) {
     ui.daily.innerHTML = dHTML;
 }
 
-/* --- 4. HYBRID TICKER (DAS NEUE HERZSTÜCK) --- */
+/* --- 4. HYBRID TICKER --- */
 function buildHybridTicker(localData) {
     let tickerHTML = "";
-
-    // SCHRITT A: LOKALE WARNUNGEN PRÜFEN
     let alerts = [];
-    let severe = false; // Wird true bei Rot
+    let severe = false; 
     
-    // Nächste 12h scannen
     localData.list.slice(0, 4).forEach(item => {
         let id = item.weather[0].id;
         let wind = item.wind.speed;
-
-        // ROT: Sturm, Schnee, Gewitter, Tornado
         if(id >= 200 && id < 300) { alerts.push("⚡ GEWITTER"); severe=true; }
         if(id >= 600 && id < 700) { alerts.push("❄ SCHNEE"); severe=true; }
         if(wind > 15) { alerts.push("💨 STURM ("+Math.round(wind*3.6)+" km/h)"); severe=true; }
-        
-        // GELB: Regen, Niesel
         if(id >= 300 && id < 600 && !severe) { alerts.push("☔ REGEN MÖGLICH"); }
     });
     
-    alerts = [...new Set(alerts)]; // Doppelte entfernen
+    alerts = [...new Set(alerts)]; 
 
     if(alerts.length > 0) {
-        let cssClass = severe ? "t-alert" : "t-warn"; // Rot oder Gelb
+        let cssClass = severe ? "t-alert" : "t-warn"; 
         let symbol = severe ? "⚠" : "☂";
         tickerHTML += `<span class="${cssClass}">${symbol} ACHTUNG: ${alerts.join(" & ")} ${symbol}</span> <span class="t-sep">+++</span> `;
     } else {
-        // Kein Wetter-Alarm -> Standard Start
         tickerHTML += `<span class="t-city">AURA SYSTEM V${CONFIG.version} ONLINE</span> <span class="t-sep">+++</span> `;
     }
 
-    // SCHRITT B: WELTREISE STARTEN
-    // Startet den Abruf der 25 Städte und hängt sie dran
     loadWorldCities(tickerHTML);
 }
 
 function loadWorldCities(prefixHTML) {
-    // Die 25 Metropolen
-    let cities = [
-        "Berlin", "London", "Paris", "Madrid", "Rome", "Moscow", "Istanbul", // Europa
-        "New York", "Los Angeles", "Toronto", "Mexico City", // Nordamerika
-        "Rio de Janeiro", "Buenos Aires", // Südamerika
-        "Tokyo", "Beijing", "Singapore", "Bangkok", "Dubai", "Mumbai", "Hong Kong", "Seoul", // Asien
-        "Cairo", "Cape Town", "Sydney", "Auckland" // Rest
-    ];
+    let cities = ["Berlin", "London", "Paris", "Madrid", "Rome", "Moscow", "Istanbul", 
+                  "New York", "Los Angeles", "Toronto", "Mexico City", 
+                  "Rio de Janeiro", "Buenos Aires", 
+                  "Tokyo", "Beijing", "Singapore", "Bangkok", "Dubai", "Mumbai", "Hong Kong", "Seoul", 
+                  "Cairo", "Cape Town", "Sydney", "Auckland"];
 
-    // Wir nutzen Promise.all um alle parallel zu laden
     let requests = cities.map(c => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${c}&appid=${CONFIG.apiKey}&units=metric`)
-        .then(r => r.json())
-        .catch(e => null) // Fehler ignorieren, damit nicht alles abstürzt
+        .then(r => r.json()).catch(e => null)
     );
 
     Promise.all(requests).then(results => {
         let worldHTML = "";
-        
         results.forEach(res => {
             if(res) {
-                // Zeit berechnen: UTC Zeit + Offset der Stadt
                 let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                 let cityDate = new Date(utc + (1000 * res.timezone));
                 let timeStr = (cityDate.getHours()<10?'0':'')+cityDate.getHours() + ":" + (cityDate.getMinutes()<10?'0':'')+cityDate.getMinutes();
-
                 worldHTML += `
                     <img src="https://openweathermap.org/img/wn/${res.weather[0].icon}.png" class="t-icon">
                     <span class="t-city">${res.name.toUpperCase()}: ${Math.round(res.main.temp)}°</span>
                     <span class="t-time">${timeStr}</span>
-                    <span class="t-sep">+++</span>
-                `;
+                    <span class="t-sep">+++</span>`;
             }
         });
-
-        // Setze den kompletten Ticker Inhalt
         ui.ticker.innerHTML = prefixHTML + worldHTML;
     });
 }

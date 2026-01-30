@@ -1,4 +1,4 @@
-/* --- AURA V34.0 STYLES --- */
+/* --- AURA V35.0 STYLES --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -26,15 +26,25 @@ html, body {
 
 /* HAUPT-LAYOUT */
 .dashboard {
-    display: flex; height: 56vh; width: 100%;
+    display: flex; height: 54vh; /* Etwas weniger Höhe oben, damit Unten mehr Platz hat */
+    width: 100%;
     padding: 10px 10px; box-sizing: border-box; position: relative; z-index: 10;
 }
 
-/* SPALTE 1: LINKS */
-.col-left { width: 28%; display: flex; flex-direction: column; }
-#clock { font-size: 8vw; font-weight: bold; line-height: 0.9; margin-bottom: 5px; color:#fff; }
-#date { font-size: 2.2vh; color: #00eaff; margin-bottom: 20px; }
-.logo-container { width: 140px; height: 140px; position: relative; }
+/* SPALTE 1: LINKS (Uhr, Datum, Logo zentriert) */
+.col-left { 
+    width: 28%; display: flex; flex-direction: column; 
+    align-items: center; /* Alles mittig zentrieren */
+    text-align: center;
+}
+#clock { font-size: 8vw; font-weight: bold; line-height: 0.9; margin-bottom: 5px; color:#fff; width: 100%; text-align: left; /* Uhr bleibt linksbündig wie gewünscht? Oder zentriert? Ich mache sie linksbündig, Logo zentriert */ padding-left: 10px; }
+#date { font-size: 2.2vh; color: #00eaff; margin-bottom: 20px; width: 100%; text-align: left; padding-left: 10px; }
+
+/* Logo Container - Zentriert unter dem Datum */
+.logo-container { 
+    width: 160px; height: 160px; position: relative; 
+    margin-top: 10px; /* Abstand zum Datum */
+}
 #logo-img, #logo-video {
     width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;
 }
@@ -45,110 +55,100 @@ html, body {
 /* SPALTE 2: MITTE */
 .col-center {
     width: 44%; display: flex; flex-direction: column;
-    align-items: center; justify-content: flex-start; padding-top: 10px;
+    align-items: center; justify-content: flex-start; padding-top: 5px;
 }
 #location-header {
     color: #00eaff; font-size: 5vh; font-weight: bold; line-height: 1;
-    text-transform: uppercase; margin-bottom: 2vh; letter-spacing: 2px; text-align: center;
+    text-transform: uppercase; margin-bottom: 1vh; letter-spacing: 2px; text-align: center;
 }
-.main-row { display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 5px; }
-#main-icon { width: 16vh; height: 16vh; margin-right: 10px; object-fit: contain; }
-#main-temp { font-size: 14vh; font-weight: bold; line-height: 1; margin-bottom: 5px; }
-.rain-box { display: flex; flex-direction: column; align-items: center; margin-left: 15px; color: #00eaff; font-size: 2.5vh; }
+.main-row { display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 0; }
+#main-icon { width: 17vh; height: 17vh; margin-right: 10px; object-fit: contain; }
+#main-temp { font-size: 15vh; font-weight: bold; line-height: 1; margin-bottom: 5px; }
+.rain-box { display: flex; flex-direction: column; align-items: center; margin-left: 10px; color: #00eaff; font-size: 2.5vh; }
 .rain-icon { width: 4vh; height: auto; margin-bottom: 3px; }
-#feels-like { font-size: 2.8vh; color: #888; margin-bottom: 5px; }
-#desc-text { font-size: 3.5vh; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 
-/* TREND FARBEN */
+/* Neue Klassen für Gefühlt-Farben */
+#feels-like { font-size: 3vh; margin-bottom: 5px; font-weight: bold; }
+.feel-warmer { color: #ff4444; } /* Rot */
+.feel-colder { color: #4488ff; } /* Blau */
+.feel-same { color: #888; }      /* Grau */
+
+#desc-text { font-size: 3.5vh; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 .trend-up { color: #ff4444; } .trend-down { color: #4488ff; } .trend-same { color: #fff; }
 
-/* SPALTE 3: RECHTS */
+/* SPALTE 3: RECHTS (Status direkt unter Mond) */
 .col-right {
     width: 28%; display: flex; flex-direction: column;
     align-items: flex-end; justify-content: flex-start; 
-    gap: 15px; text-align: right; font-size: 2.2vh; color: #ccc;
+    gap: 10px; text-align: right; font-size: 2.2vh; color: #ccc;
 }
 #btn-menu {
     background: transparent; border: 2px solid #fff; color: #fff;
-    font-size: 24px; padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    font-size: 24px; padding: 8px 16px; border-radius: 8px; cursor: pointer; margin-bottom: 10px;
 }
 .astro-block { margin-bottom: 5px; }
 .astro-label { color: #00eaff; font-size: 1.6vh; display: block; margin-bottom: 2px;}
 .astro-val { font-size: 2.4vh; font-weight: bold; }
+
+/* Status Block direkt hier angehängt (kein margin-top: auto mehr) */
 .status-block { 
-    margin-top: 4vh; display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
+    margin-top: 15px; /* Kleiner Abstand zum Mond */
+    display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
+    border-top: 1px solid #333; /* Trennlinie zur Optik */
+    padding-top: 10px;
 }
 .stat-ok { color: #0f0; } .stat-err { color: #f00; }
 
-/* --- TICKER (V34.0 UPDATE) --- */
+/* TICKER (Höher und Größer) */
 .ticker-wrap {
-    height: 7vh; /* Etwas höher für die Icons */
+    height: 8vh; /* Größer */
     background: #080808; border-top: 1px solid #222; border-bottom: 1px solid #222;
     overflow: hidden; white-space: nowrap; position: relative; z-index: 20;
-    display: flex; align-items: center; /* Vertikal zentrieren */
+    display: flex; align-items: center;
 }
 #ticker-text {
     display: inline-block; padding-left: 100%; 
-    animation: tick 120s linear infinite; /* Langsamere Animation für viel Text */
-    font-size: 3.2vh; color: #00eaff; font-weight: bold;
+    animation: tick 120s linear infinite;
+    font-size: 4vh; /* Größer */
+    color: #00eaff; font-weight: bold;
 }
-
-/* SPEZIAL-KLASSEN IM TICKER */
 .t-alert { color: #ff0000; animation: blink-red 1s infinite; margin-right: 30px; text-shadow: 0 0 5px #ff0000; }
 .t-warn { color: #ffff00; margin-right: 30px; text-shadow: 0 0 5px #aa5500; }
 .t-city { color: #00eaff; margin-right: 15px; }
-.t-time { color: #ffffff; font-weight: normal; font-size: 0.9em; margin-left: 5px; }
+.t-time { color: #ffffff; font-weight: normal; font-size: 0.8em; margin-left: 5px; }
 .t-sep { color: #333; margin: 0 15px; }
-.t-icon { vertical-align: middle; height: 3.5vh; width: auto; margin-right: 5px; margin-top: -3px; }
-
-@keyframes blink-red {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
+.t-icon { vertical-align: middle; height: 5vh; width: auto; margin-right: 5px; margin-top: -5px; }
+@keyframes blink-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-
-/* VORHERSAGE */
+/* VORHERSAGE (Massiv Vergrößert) */
 .forecast-area {
-    height: 37vh; display: flex; flex-direction: column; background: #000;
+    height: 38vh; display: flex; flex-direction: column; background: #000;
 }
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { 
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; flex: 1; height: 100%;
 }
-.f-head { color: #fff; font-size: 3vh; font-weight: bold; margin: 0; line-height: 1.2; }
-.f-icon { width: 9vh; height: 9vh; margin: -5px 0; object-fit: contain; }
-.f-temp-box { font-size: 4vh; font-weight: bold; margin: 0; line-height: 1.1; }
+.f-head { color: #fff; font-size: 3.2vh; font-weight: bold; margin: 0; line-height: 1.1; }
+/* Icons riesig machen */
+.f-icon { width: 11vh; height: 11vh; margin: -8px 0; object-fit: contain; } 
+.f-temp-box { font-size: 4.5vh; font-weight: bold; margin: 0; line-height: 1; }
 .val-min { color: #4488ff; } .val-max { color: #ff4444; }
+/* Regenwahrscheinlichkeit in Tagesvorhersage */
+.pop-daily { color: #00eaff; font-size: 2vh; font-weight: bold; margin-bottom: -2px; }
 
 /* MENÜ */
-#menu-modal {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.98); z-index: 30000; padding: 20px; box-sizing: border-box; overflow-y: auto;
-}
+#menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 30000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .menu-container { max-width: 600px; margin: 0 auto 50px auto; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 20px; position: relative; }
-.menu-close-btn {
-    position: absolute; right: 0; top: -10px; background: none; border: none;
-    color: #fff; font-size: 40px; cursor: pointer;
-}
-.acc-btn {
-    background: #1a1a1a; color: #fff; cursor: pointer; padding: 18px; width: 100%;
-    text-align: left; border: none; outline: none; font-size: 22px; transition: 0.3s;
-    border-bottom: 1px solid #333; display: flex; justify-content: space-between;
-}
+.menu-close-btn { position: absolute; right: 0; top: -10px; background: none; border: none; color: #fff; font-size: 40px; cursor: pointer; }
+.acc-btn { background: #1a1a1a; color: #fff; cursor: pointer; padding: 18px; width: 100%; text-align: left; border: none; outline: none; font-size: 22px; transition: 0.3s; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
 .active-acc, .acc-btn:hover { background-color: #333; color: #00eaff; }
-.acc-content {
-    padding: 0 20px; background-color: #111; display: none; /* Zu */
-    overflow: hidden; border-bottom: 2px solid #00eaff;
-}
+.acc-content { padding: 0 20px; background-color: #111; display: none; overflow: hidden; border-bottom: 2px solid #00eaff; }
 .acc-show { display: block !important; padding: 20px; }
 .menu-text { font-size: 18px; line-height: 1.5; color: #ccc; margin-bottom: 20px; }
-.btn-paypal {
-    background: #ffc439; color: #000; font-weight: bold; padding: 15px 30px;
-    text-decoration: none; border-radius: 25px; display: inline-block; font-size: 20px; margin-top:10px;
-}
+.btn-paypal { background: #ffc439; color: #000; font-weight: bold; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-size: 20px; margin-top:10px; }
 .contact-link { color: #00eaff; text-decoration: none; font-size: 20px; display: block; margin-bottom: 10px;}
 .inp-city { width:100%; padding:15px; margin-bottom:10px; background:#222; border:1px solid #00eaff; color:#fff; font-size:20px; box-sizing: border-box;}
 .btn-save { background: #00eaff; color: #000; border: none; padding: 10px 30px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; }
