@@ -1,4 +1,4 @@
-/* --- AURA V37.0 STYLES (REPAIR) --- */
+/* --- AURA V38.0 STYLES (CONTENT & LAYOUT FIX) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -27,21 +27,22 @@ html, body {
     padding: 10px; box-sizing: border-box; position: relative; z-index: 10;
 }
 
-/* SPALTE 1: LINKS (Massive Zentrierung) */
+/* SPALTE 1: LINKS (Strikte Zentrierung untereinander) */
 .col-left { 
     width: 28%; 
     display: flex !important; 
     flex-direction: column !important; 
-    align-items: center !important; /* Horizontale Mitte erzwingen */
+    align-items: center !important; 
     justify-content: flex-start;
     text-align: center;
 }
 #clock { font-size: 8vw; font-weight: bold; line-height: 0.9; margin: 0; color:#fff; }
 #date { font-size: 2.2vh; color: #00eaff; margin: 5px 0 15px 0; }
 
+/* Das Logo (logo.mp4) mit Herzschlag-Effekt */
 .logo-container { 
     width: 160px; height: 160px; position: relative; 
-    display: block; margin: 0 auto; /* Zusätzliche Sicherheit */
+    display: block; margin: 0 auto; 
 }
 #logo-img, #logo-video {
     width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;
@@ -50,37 +51,34 @@ html, body {
 #logo-video { z-index: 2; opacity: 0; transition: opacity 0.5s; }
 .video-active { opacity: 1 !important; }
 
-/* SPALTE 2: MITTE */
+/* SPALTE 2: MITTE (Wetter & Temperatur) */
 .col-center {
     width: 44%; display: flex; flex-direction: column;
     align-items: center; justify-content: flex-start;
 }
-#location-header {
-    color: #00eaff; font-size: 5vh; font-weight: bold; line-height: 1;
-    text-transform: uppercase; margin-bottom: 1vh;
-}
+#location-header { color: #00eaff; font-size: 5vh; font-weight: bold; text-transform: uppercase; margin-bottom: 1vh; }
 .main-row { display: flex; align-items: center; justify-content: center; width: 100%; }
 #main-icon { width: 16vh; height: 16vh; margin-right: 10px; }
-#main-temp { font-size: 14vh; font-weight: bold; line-height: 1; }
+#main-temp { font-size: 14vh; font-weight: bold; }
 .rain-box { display: flex; flex-direction: column; align-items: center; margin-left: 10px; color: #00eaff; font-size: 2.5vh; }
 .rain-icon { width: 4vh; height: auto; }
 
+/* Gefühlt-Farben */
 #feels-like { font-size: 3vh; font-weight: bold; margin-bottom: 5px; }
 .feel-warmer { color: #ff4444; } 
 .feel-colder { color: #4488ff; } 
 .feel-same { color: #888; }      
 
 #desc-text { font-size: 3.5vh; text-transform: uppercase; font-weight: bold; }
-.trend-up { color: #ff4444; } .trend-down { color: #4488ff; } .trend-same { color: #fff; }
 
-/* SPALTE 3: RECHTS */
+/* SPALTE 3: RECHTS (Astro/Setup) */
 .col-right {
     width: 28%; display: flex; flex-direction: column;
     align-items: flex-end; justify-content: flex-start; gap: 8px;
 }
 #btn-menu {
     background: transparent; border: 2px solid #fff; color: #fff;
-    font-size: 22px; padding: 5px 15px; border-radius: 8px; margin-bottom: 5px;
+    font-size: 22px; padding: 5px 15px; border-radius: 8px; cursor: pointer;
 }
 .astro-block { margin-bottom: 2px; }
 .astro-label { color: #00eaff; font-size: 1.6vh; display: block; }
@@ -92,7 +90,7 @@ html, body {
 }
 .stat-ok { color: #0f0; } .stat-err { color: #f00; }
 
-/* TICKER */
+/* TICKER (Welt-Ticker) */
 .ticker-wrap {
     height: 8vh; background: #080808; border-top: 1px solid #222; border-bottom: 1px solid #222;
     overflow: hidden; white-space: nowrap; display: flex; align-items: center;
@@ -121,13 +119,25 @@ html, body {
 .val-min { color: #4488ff; } .val-max { color: #ff4444; }
 .pop-daily { color: #00eaff; font-size: 1.8vh; font-weight: bold; }
 
-/* MENÜ */
+/* DAS NEUE MENÜ (Akkordeon) */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 30000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-.menu-container { max-width: 600px; margin: 0 auto 50px auto; }
+.menu-container { max-width: 700px; margin: 0 auto 50px auto; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 20px; position: relative; }
-.menu-close-btn { position: absolute; right: 0; top: -10px; background: none; border: none; color: #fff; font-size: 40px; }
-.acc-btn { background: #1a1a1a; color: #fff; cursor: pointer; padding: 18px; width: 100%; text-align: left; border: none; font-size: 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
-.acc-content { padding: 0 20px; background-color: #111; display: none; overflow: hidden; border-bottom: 2px solid #00eaff; }
-.acc-show { display: block !important; padding: 20px; }
+.menu-close-btn { position: absolute; right: 0; top: -10px; background: none; border: none; color: #fff; font-size: 45px; cursor: pointer; }
+
+.acc-btn { background: #1a1a1a; color: #fff; cursor: pointer; padding: 18px; width: 100%; text-align: left; border: none; font-size: 22px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-weight: bold; }
+.acc-btn:hover { background: #222; color: #00eaff; }
+.acc-content { padding: 0 20px; background-color: #0c0c0c; display: none; overflow: hidden; border-bottom: 2px solid #00eaff; }
+.acc-show { display: block !important; padding: 25px 20px; }
+
+/* Menü Texte */
+.menu-text { font-size: 18px; line-height: 1.6; color: #ddd; margin-bottom: 15px; }
+.menu-text b { color: #00eaff; }
+.menu-list { list-style: none; padding: 0; margin-bottom: 20px; }
+.menu-list li { margin-bottom: 10px; padding-left: 25px; position: relative; }
+.menu-list li::before { content: "•"; color: #00eaff; position: absolute; left: 0; font-size: 24px; }
+
+.btn-paypal { background: #ffc439; color: #000; font-weight: bold; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-size: 20px; margin: 10px 0; text-align: center; width: 100%; box-sizing: border-box;}
+.contact-link { color: #00eaff; text-decoration: none; font-size: 18px; display: block; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; }
 .inp-city { width:100%; padding:15px; margin-bottom:10px; background:#222; border:1px solid #00eaff; color:#fff; font-size:20px; box-sizing: border-box;}
-.btn-save { background: #00eaff; color: #000; border: none; padding: 10px 30px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; }
+.btn-save { background: #00eaff; color: #000; border: none; padding: 15px 30px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; }
