@@ -1,4 +1,4 @@
-/* --- AURA V30.0 CORE STYLES --- */
+/* --- AURA V31.0 STYLES --- */
 
 html, body {
     width: 100%;
@@ -7,135 +7,195 @@ html, body {
     padding: 0;
     background-color: #000;
     color: #fff;
-    font-family: Arial, Helvetica, sans-serif; /* Beste Lesbarkeit auf alten Tablets */
-    overflow: hidden; /* Verhindert Scrollbalken */
-    display: flex;
-    flex-direction: column;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+    user-select: none; /* Verhindert Markieren von Text */
 }
 
-/* --- HINTERGRUND-TECHNIK (Wachhalter) --- */
-#bg-wake-video {
+/* --- SYSTEM: WACHHALTER (Hidden Video) --- */
+/* Trick: Muss "sichtbar" sein für den Browser, aber fast unsichtbar für das Auge */
+#wake-video-layer {
     position: fixed;
     top: 0; left: 0;
-    width: 1px; height: 1px;
+    width: 2px; height: 2px;
     opacity: 0.01;
     z-index: 0;
     pointer-events: none;
 }
 
-/* --- OVERLAYS (Start & Update) --- */
-.overlay {
+/* --- OVERLAY (Startscreen) --- */
+#start-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     background: #000;
-    z-index: 10000;
+    z-index: 20000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
 }
 
 .btn-start {
     border: 3px solid #00eaff;
     color: #00eaff;
     background: transparent;
-    padding: 20px 50px;
-    font-size: 24px;
+    padding: 20px 60px;
+    font-size: 26px;
     font-weight: bold;
-    border-radius: 15px;
+    border-radius: 10px;
+    margin-top: 30px;
     cursor: pointer;
-    margin-top: 20px;
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
 }
 
-/* --- HAUPT-BEREICH (Dashboard) --- */
+/* --- HAUPT-LAYOUT --- */
 .dashboard {
     display: flex;
-    height: 55vh; /* Obere Hälfte des Screens */
+    height: 58vh; /* Oberer Bereich etwas größer für die neue Mitte */
     width: 100%;
-    padding: 15px;
+    padding: 10px 20px;
     box-sizing: border-box;
     position: relative;
     z-index: 10;
 }
 
-/* SPALTE LINKS: Uhr & Logo */
+/* SPALTE 1: LINKS (Uhr & Logo) */
 .col-left {
-    width: 30%;
+    width: 28%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 }
-#clock { font-size: 7vw; font-weight: bold; line-height: 1; color: #fff; }
-#date { font-size: 2.5vh; color: #00eaff; margin-bottom: 15px; }
-.logo-wrapper {
-    width: 100%;
-    max-width: 140px;
-    margin-top: 10px;
+#clock { font-size: 8vw; font-weight: bold; line-height: 0.9; color: #fff; margin-bottom: 5px; }
+#date { font-size: 2.2vh; color: #00eaff; margin-bottom: 20px; }
+.logo-container {
+    width: 140px;
+    height: 140px;
+    position: relative;
 }
-#logo-video { width: 100%; height: auto; display: block; }
+/* Fallback: Bild und Video übereinander, JS steuert Sichtbarkeit */
+#logo-img, #logo-video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0; left: 0;
+}
 
-/* SPALTE MITTE: Wetter */
+/* SPALTE 2: MITTE (Das neue Herzstück) */
 .col-center {
-    width: 40%;
+    width: 44%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
 }
-#weather-icon { width: 14vh; height: 14vh; }
-#temp { font-size: 10vh; font-weight: bold; line-height: 1; }
-#desc { font-size: 3vh; color: #aaa; text-transform: uppercase; margin-top: 5px; }
 
-/* SPALTE RECHTS: Astro & Setup */
+/* Zeile 1: Icon - Temp - Regen */
+.main-row {
+    display: flex;
+    align-items: center; /* Vertikal zentriert */
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+#main-icon { width: 12vh; height: 12vh; margin-right: 15px; }
+#main-temp { 
+    font-size: 13vh; /* Riesig */
+    font-weight: bold; 
+    line-height: 1; 
+    margin-bottom: 10px; /* Temp etwas höher ziehen */
+}
+.rain-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 20px;
+    color: #00eaff;
+    font-size: 2.5vh;
+}
+.rain-icon { width: 3vh; height: auto; margin-bottom: 3px; filter: drop-shadow(0 0 2px #00eaff); }
+
+/* Zeile 2: Gefühlt */
+#feels-like { font-size: 2.5vh; color: #888; margin-bottom: 10px; }
+
+/* Zeile 3: Beschreibung (Farb-Logik via Klassen) */
+#desc-text { 
+    font-size: 3vh; 
+    text-transform: uppercase; 
+    font-weight: bold; 
+    letter-spacing: 1px;
+}
+.trend-up { color: #ff4444; } /* Wärmer -> Rot */
+.trend-down { color: #4488ff; } /* Kälter -> Blau */
+.trend-same { color: #fff; } /* Gleich -> Weiss */
+
+
+/* SPALTE 3: RECHTS (Info-Turm) */
 .col-right {
-    width: 30%;
+    width: 28%;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    justify-content: space-between;
+    /* Gleichmäßige Verteilung der Elemente */
+    justify-content: flex-start; 
+    gap: 15px; 
+    text-align: right;
+    font-size: 2.2vh;
+    color: #ccc;
 }
-.btn-setup {
+#btn-menu {
     background: transparent;
-    border: 1px solid #333;
-    color: #555;
-    font-size: 20px;
-    padding: 5px 15px;
+    border: 2px solid #333;
+    color: #fff;
+    font-size: 24px;
+    padding: 8px 12px;
+    border-radius: 8px;
     cursor: pointer;
+    margin-bottom: 10px;
 }
-.astro-box { text-align: right; font-size: 2.5vh; color: #ddd; }
-.astro-label { color: #00eaff; font-size: 1.8vh; }
+.astro-label { color: #00eaff; font-size: 1.5vh; margin-right: 5px; }
+.info-row { display: flex; align-items: center; justify-content: flex-end; }
+.status-icon { width: 2vh; height: 2vh; margin-left: 8px; }
 
-/* --- TICKER (Laufschrift) --- */
+/* Status Farben */
+.stat-ok { color: #0f0; }
+.stat-warn { color: #ff0; }
+.stat-err { color: #f00; }
+
+
+/* --- TICKER (Warnungen & News) --- */
 .ticker-wrap {
     height: 6vh;
-    background: #0a0a0a;
+    background: #080808;
     border-top: 1px solid #222;
     border-bottom: 1px solid #222;
     overflow: hidden;
     white-space: nowrap;
     position: relative;
-    z-index: 10;
+    z-index: 20;
 }
-#ticker-content {
+#ticker-text {
     display: inline-block;
     padding-left: 100%;
-    animation: tick-anim 45s linear infinite;
-    font-size: 3vh;
+    animation: tick 40s linear infinite;
+    font-size: 3.2vh; /* Größer */
     line-height: 6vh;
-    color: #fff;
+    color: #00eaff; /* Standard Cyan */
+    font-weight: bold;
 }
-/* Einfache Animation für alte Tablets */
-@keyframes tick-anim {
+/* Klasse für Warnungen (Rot) */
+.ticker-alert { color: #ff3333 !important; }
+
+@keyframes tick {
     0% { transform: translate3d(0, 0, 0); }
     100% { transform: translate3d(-100%, 0, 0); }
 }
 
-/* --- VORHERSAGE (Unten) --- */
+
+/* --- VORHERSAGE (Unten - 5 Werte) --- */
 .forecast-area {
-    height: 39vh; /* Restliche Höhe */
+    height: 36vh; /* Rest */
     display: flex;
     flex-direction: column;
     background: #000;
@@ -147,26 +207,51 @@ html, body {
     align-items: center;
     border-bottom: 1px solid #111;
 }
-.f-item { text-align: center; }
-.f-time { color: #888; font-size: 2vh; }
-.f-icon { height: 6vh; width: auto; margin: 2px 0; }
-.f-temp { font-weight: bold; font-size: 2.5vh; }
-.f-min { color: #00eaff; }
+.f-item { 
+    text-align: center; 
+    flex: 1; /* Gleichmäßige Breite */
+}
+.f-head { color: #fff; font-size: 2.2vh; font-weight: bold; margin-bottom: 5px; } /* Überschriften Weiß */
+.f-icon { width: 6vh; height: 6vh; margin: 2px 0; }
+.f-temp-box { font-size: 2.5vh; font-weight: bold; }
+.val-min { color: #4488ff; } /* Blau */
+.val-max { color: #ff4444; } /* Rot */
 
-/* --- EINSTELLUNGEN (Modal) --- */
-#settings-modal {
+
+/* --- MENÜ (Modal - Groß) --- */
+#menu-modal {
     display: none;
     position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.95);
-    z-index: 20000;
-    color: #fff;
-    padding: 20px;
+    z-index: 30000;
+    padding: 30px;
     box-sizing: border-box;
-    text-align: center;
+    overflow-y: auto; /* Scrollbar falls nötig auf kleinen Screens */
 }
+.menu-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+.menu-btn {
+    background: #111;
+    border: 1px solid #00eaff;
+    color: #fff;
+    padding: 15px;
+    font-size: 20px;
+    text-align: left;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.menu-btn:active { background: #00eaff; color: #000; }
 .inp-city {
-    background: #222; border: 1px solid #00eaff;
-    color: #fff; padding: 10px; font-size: 20px;
-    width: 80%; margin-top: 10px;
+    background: #222; border: 1px solid #555; color: #fff;
+    padding: 10px; width: 100%; font-size: 18px; box-sizing: border-box;
+}
+.menu-close {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 30px; color: #fff; border: none; background: none;
 }
