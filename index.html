@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V33.0</title>
-    <link rel="stylesheet" href="style.css?v=33.0">
+    <title>Aura Wetterstation V34.0</title>
+    <link rel="stylesheet" href="style.css?v=34.0">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
         <button class="btn-start" onclick="document.documentElement.requestFullscreen().catch(e=>{}); startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#555; margin-top:20px;">Aura V33.0 | Code-Werft</p>
+        <p style="color:#555; margin-top:20px;">Aura V34.0 | Code-Werft</p>
     </div>
 
     <div class="dashboard">
@@ -35,13 +35,14 @@
         </div>
 
         <div class="col-center">
-            <div id="location-header">LADE...</div>
+            <div id="location-header">LADE DATEN...</div>
 
             <div class="main-row">
                 <img id="main-icon" src=""> 
                 <div id="main-temp">--°</div>
                 <div class="rain-box">
-                    <img src="09d.gif" class="rain-icon" onerror="this.src='logo.png'"> <div id="rain-prob">--%</div>
+                    <img src="09d.gif" class="rain-icon" onerror="this.src='logo.png'">
+                    <div id="rain-prob">--%</div>
                 </div>
             </div>
             
@@ -77,7 +78,7 @@
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ AURA V33 SYSTEM BEREIT +++</div>
+        <div id="ticker-text">+++ INIT AURA V34 +++</div>
     </div>
 
     <div class="forecast-area">
@@ -129,9 +130,9 @@
             </button>
             <div id="acc-3" class="acc-content">
                 <p class="menu-text">
-                    • <b>Vollbild:</b> Wird automatisch aktiviert.<br>
-                    • <b>Farben:</b> Rot = Wärmer, Blau = Kälter.<br>
-                    • <b>Symbole:</b> Wenn sie sich bewegen, sind es GIFs.
+                    • <b>Ticker:</b> ROT blinkend = Gefahr, GELB = Regen.<br>
+                    • <b>Uhrzeit:</b> Im Ticker siehst du die Ortszeit der Weltstädte in Weiß.<br>
+                    • <b>Farben:</b> Temperatur Rot = Wärmer, Blau = Kälter.
                 </p>
             </div>
 
@@ -146,10 +147,10 @@
                 </p>
             </div>
 
-            <p style="text-align:center; color:#444; margin-top:40px;">Aura Core V33.0</p>
+            <p style="text-align:center; color:#444; margin-top:40px;">Aura Core V34.0</p>
         </div>
     </div>
 
-    <script src="script.js?v=33.0"></script>
+    <script src="script.js?v=34.0"></script>
 </body>
-    </html>
+</html> 
