@@ -1,10 +1,12 @@
-/* --- AURA V38.0 INTELLIGENCE --- */
+/* --- AURA V39.0 FINAL REPAIR --- */
 
 const CONFIG = {
-    version: 38.0,
+    version: 39.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
-    lastTemp: null
+    sleepStart: localStorage.getItem('aura_sleep_start') || '22:00',
+    sleepEnd: localStorage.getItem('aura_sleep_end') || '06:00',
+    isAutoRestart: localStorage.getItem('aura_restarted') === 'true'
 };
 
 const ui = {
@@ -16,28 +18,32 @@ const ui = {
     feelsLike: document.getElementById('feels-like'),
     rainProb: document.getElementById('rain-prob'),
     desc: document.getElementById('desc-text'),
-    sunrise: document.getElementById('sunrise'),
-    sunset: document.getElementById('sunset'),
-    moon: document.getElementById('moon-phase'),
-    battery: document.getElementById('bat-level'),
-    wifi: document.getElementById('net-status'),
-    updateTime: document.getElementById('last-update'),
     ticker: document.getElementById('ticker-text'),
     hourly: document.getElementById('hourly-row'),
-    daily: document.getElementById('daily-row')
+    daily: document.getElementById('daily-row'),
+    wifi: document.getElementById('net-status'),
+    battery: document.getElementById('bat-level'),
+    updateTime: document.getElementById('last-update')
+};
+
+// AUTO-START LOGIK NACH UPDATE
+window.onload = () => {
+    if (CONFIG.isAutoRestart) {
+        localStorage.removeItem('aura_restarted');
+        document.getElementById('auto-start-msg').style.display = 'block';
+        document.getElementById('manual-start-btn').innerText = "STARTET AUTOMATISCH...";
+        setTimeout(startApp, 3000);
+    }
 };
 
 async function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
     
-    // Logo Video Start-Logik
+    // Logo Video & Wachhalter starten (Muted für Auto-Start Erlaubnis)
     let vid = document.getElementById('logo-video');
-    if (vid) {
-        vid.play().then(_ => { vid.classList.add('video-active'); }).catch(e => {});
-    }
-    
+    if (vid) { vid.play().then(_ => vid.classList.add('video-active')).catch(e => {}); }
     let bgVid = document.getElementById('wake-video-layer');
-    if(bgVid) bgVid.play().catch(e => {});
+    if (bgVid) bgVid.play().catch(e => {});
 
     runClock();
     loadData(); 
@@ -52,10 +58,25 @@ async function startApp() {
 function runClock() {
     let now = new Date();
     let h = now.getHours(); let m = now.getMinutes();
-    ui.clock.innerText = (h<10?'0':'')+h + ':' + (m<10?'0':'')+m;
+    let timeStr = (h<10?'0':'')+h + ':' + (m<10?'0':'')+m;
+    ui.clock.innerText = timeStr;
+    
+    // Datum
     let days = ['SONNTAG','MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG'];
     let months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     ui.date.innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
+
+    // SLEEP-CHECK
+    checkSleepMode(timeStr);
+}
+
+function checkSleepMode(currentTime) {
+    if (currentTime === CONFIG.sleepStart) {
+        document.body.style.opacity = "0.05"; // Fast schwarz
+        document.body.style.backgroundColor = "#000";
+    } else if (currentTime === CONFIG.sleepEnd) {
+        document.body.style.opacity = "1";
+    }
 }
 
 function loadData() {
@@ -71,8 +92,7 @@ function loadData() {
         });
     })
     .catch(e => {
-        ui.ticker.innerText = "+++ VERBINDUNGSFEHLER +++";
-        ui.ticker.classList.add('t-alert');
+        ui.ticker.innerHTML = '<span class="t-alert">+++ VERBINDUNGSFEHLER ZUM SERVER +++</span>';
     });
 
     let now = new Date();
@@ -86,125 +106,95 @@ function renderCurrent(data) {
     ui.mainTemp.innerText = t + "°";
     
     ui.feelsLike.innerText = "Gefühlt: " + fl + "°";
-    ui.feelsLike.className = ""; 
-    if(fl < t) ui.feelsLike.classList.add('feel-colder'); 
-    else if(fl > t) ui.feelsLike.classList.add('feel-warmer'); 
-    else ui.feelsLike.classList.add('feel-same'); 
+    ui.feelsLike.className = (fl < t) ? 'feel-colder' : (fl > t ? 'feel-warmer' : '');
 
     ui.mainIcon.src = data.weather[0].icon + ".gif";
     ui.desc.innerText = data.weather[0].description;
-    
-    let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
-    let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
-    ui.sunrise.innerText = formatTime(sr);
-    ui.sunset.innerText = formatTime(ss);
+
+    document.getElementById('sunrise').innerText = formatTime(new Date((data.sys.sunrise + data.timezone - 3600) * 1000));
+    document.getElementById('sunset').innerText = formatTime(new Date((data.sys.sunset + data.timezone - 3600) * 1000));
 }
 
 function renderForecast(data) {
     ui.rainProb.innerText = Math.round(data.list[0].pop * 100) + "% Regen";
-    ui.moon.innerText = getMoonPhaseIcon(new Date());
-
+    
+    // Stunden-Leiste
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
-        let hour = new Date(item.dt*1000).getHours();
-        hHTML += `<div class="f-item"><div class="f-head">${hour} Uhr</div><img src="${item.weather[0].icon}.gif" class="f-icon"><div class="f-temp-box">${Math.round(item.main.temp)}°</div></div>`;
+        hHTML += `<div class="f-item"><div class="f-head">${new Date(item.dt*1000).getHours()}h</div><img src="${item.weather[0].icon}.gif" class="f-icon"><div>${Math.round(item.main.temp)}°</div></div>`;
     }
     ui.hourly.innerHTML = hHTML;
 
-    let dHTML = "";
-    let usedDays = [];
-    let count = 0;
+    // Tage-Leiste
+    let dHTML = ""; let used = []; let count = 0;
     data.list.forEach(item => {
-        let date = new Date(item.dt*1000);
-        let dayName = date.toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
-        if(!usedDays.includes(dayName) && date.getHours() >= 12 && count < 5) {
-            usedDays.push(dayName); count++;
-            dHTML += `<div class="f-item"><div class="f-head">${dayName}</div><img src="${item.weather[0].icon}.gif" class="f-icon"><div class="pop-daily">☂ ${Math.round(item.pop * 100)}%</div><div class="f-temp-box"><span class="val-min">${Math.round(item.main.temp_min-2)}°</span><span style="font-size:0.4em;color:#333">|</span><span class="val-max">${Math.round(item.main.temp_max)}°</span></div></div>`;
+        let d = new Date(item.dt*1000);
+        let name = d.toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
+        if(!used.includes(name) && d.getHours() >= 12 && count < 5) {
+            used.push(name); count++;
+            dHTML += `<div class="f-item"><div class="f-head">${name}</div><img src="${item.weather[0].icon}.gif" class="f-icon"><div class="pop-daily">☂${Math.round(item.pop*100)}%</div><div>${Math.round(item.main.temp)}°</div></div>`;
         }
     });
     ui.daily.innerHTML = dHTML;
 }
 
 function buildHybridTicker(forecastData, currentData) {
-    let tickerHTML = "";
-    let alerts = [];
-    let severe = false; 
-
-    function isBad(id, wind) {
-        if(id >= 200 && id < 300) return "GEWITTER";
-        if(id >= 600 && id < 700) return "SCHNEE";
-        if(wind > 15) return "STURM";
-        return null;
-    }
-
-    let badNow = isBad(currentData.weather[0].id, currentData.wind.speed);
-    if(badNow) { alerts.push(`${badNow} (AKTUELL)`); severe = true; }
-
-    for(let i=0; i<4; i++) {
-        let item = forecastData.list[i];
-        let badFuture = isBad(item.weather[0].id, item.wind.speed);
-        if(badFuture && !severe) {
-            let time = new Date(item.dt*1000);
-            alerts.push(`${badFuture} (AB ${time.getHours()}:00 UHR)`);
-            severe = true; break;
-        }
-    }
-
-    if(alerts.length > 0) {
-        tickerHTML += `<span class="${severe?'t-alert':'t-warn'}">⚠ ACHTUNG: ${alerts.join(" & ")} ⚠</span> <span class="t-sep">+++</span> `;
-    } else {
-        tickerHTML += `<span class="t-city">AURA V${CONFIG.version} ONLINE</span> <span class="t-sep">+++</span> `;
-    }
-
-    loadWorldCities(tickerHTML);
-}
-
-function loadWorldCities(prefixHTML) {
-    let cities = ["Berlin", "London", "Paris", "New York", "Tokyo", "Dubai", "Sydney", "Singapore"];
+    let tickerHTML = `<span class="t-city">AURA V${CONFIG.version} ONLINE</span> <span class="t-sep">+++</span> `;
+    
+    // Weltstädte mit lokalen GIF-Pfaden
+    let cities = ["Berlin", "London", "Paris", "New York", "Tokyo"];
     let requests = cities.map(c => fetch(`https://api.openweathermap.org/data/2.5/weather?q=${c}&appid=${CONFIG.apiKey}&units=metric`).then(r => r.json()).catch(e => null));
 
     Promise.all(requests).then(results => {
-        let worldHTML = "";
         results.forEach(res => {
             if(res && res.main) {
-                let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
-                let cityDate = new Date(utc + (1000 * res.timezone));
-                let timeStr = (cityDate.getHours()<10?'0':'')+cityDate.getHours() + ":" + (cityDate.getMinutes()<10?'0':'')+cityDate.getMinutes();
-                worldHTML += `<img src="https://openweathermap.org/img/wn/${res.weather[0].icon}.png" class="t-icon"><span class="t-city">${res.name.toUpperCase()}: ${Math.round(res.main.temp)}°</span><span class="t-time">${timeStr}</span><span class="t-sep">+++</span>`;
+                // Hier der Fix: Lokale GIFs auch im Ticker nutzen
+                tickerHTML += `<img src="${res.weather[0].icon}.gif" class="t-icon"><span class="t-city">${res.name.toUpperCase()}: ${Math.round(res.main.temp)}°</span><span class="t-sep">+++</span>`;
             }
         });
-        ui.ticker.innerHTML = prefixHTML + worldHTML;
+        ui.ticker.innerHTML = tickerHTML;
     });
 }
 
 function checkStatus() {
-    if(navigator.onLine) { ui.wifi.innerText = "WLAN: OK"; ui.wifi.className = "stat-ok"; }
-    else { ui.wifi.innerText = "OFFLINE"; ui.wifi.className = "stat-err"; }
+    ui.wifi.innerText = navigator.onLine ? "WLAN: OK" : "OFFLINE";
+    ui.wifi.className = navigator.onLine ? "stat-ok" : "stat-err";
     if('getBattery' in navigator) {
         navigator.getBattery().then(bat => { ui.battery.innerText = "BAT: " + Math.round(bat.level * 100) + "%"; });
     }
 }
 
-function checkUpdate() { fetch("version.json?t=" + Date.now()).then(r => r.json()).then(d => { if(d.version > CONFIG.version) location.reload(true); }); }
-function formatTime(d) { return (d.getHours()<10?'0':'')+d.getHours() + ":" + (d.getMinutes()<10?'0':'')+d.getMinutes(); }
-function getMoonPhaseIcon(date) {
-    let jd = 365.25*date.getFullYear()+30.6*(date.getMonth()+2)+date.getDate()-694039.09; jd/=29.5305882; 
-    let b = Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
-    const moons = ['🌑 Neumond','🌒 Zunehmend','🌓 Halbmond','🌔 Zunehmend','🌕 Vollmond','🌖 Abnehmend','🌗 Halbmond','🌘 Abnehmend'];
-    return moons[b];
+function checkUpdate() { 
+    fetch("version.json?t=" + Date.now()).then(r => r.json()).then(d => { 
+        if(d.version > CONFIG.version) {
+            localStorage.setItem('aura_restarted', 'true');
+            location.reload(true); 
+        }
+    }); 
 }
 
-function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
-function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; document.documentElement.requestFullscreen().catch(e=>{}); }
+function formatTime(d) { return (d.getHours()<10?'0':'')+d.getHours() + ":" + (d.getMinutes()<10?'0':'')+d.getMinutes(); }
+
 function toggleAccordion(id) {
     let content = document.getElementById(id);
     let isVisible = content.classList.contains('acc-show');
     document.querySelectorAll('.acc-content').forEach(el => el.classList.remove('acc-show'));
     if(!isVisible) content.classList.add('acc-show');
 }
+
+function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
+function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
+
 function saveSettings() {
-    let cityInp = document.getElementById('inp-city-val').value;
-    if(cityInp) { localStorage.setItem('aura_city', cityInp); CONFIG.city = cityInp; loadData(); }
+    let city = document.getElementById('inp-city-val').value;
+    let sStart = document.getElementById('inp-sleep-start').value;
+    let sEnd = document.getElementById('inp-sleep-end').value;
+    
+    if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; }
+    if(sStart) { localStorage.setItem('aura_sleep_start', sStart); CONFIG.sleepStart = sStart; }
+    if(sEnd) { localStorage.setItem('aura_sleep_end', sEnd); CONFIG.sleepEnd = sEnd; }
+    
+    loadData();
     closeMenu();
 }
