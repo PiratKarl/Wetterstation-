@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V31.0</title>
-    <link rel="stylesheet" href="style.css?v=31.0">
+    <title>Aura Wetterstation V32.0</title>
+    <link rel="stylesheet" href="style.css?v=32.0">
 </head>
 <body>
 
@@ -17,17 +17,17 @@
         <button class="btn-start" onclick="document.documentElement.requestFullscreen().catch(e=>{}); startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#555; margin-top:20px;">Aura V31.0 Ready</p>
+        <p style="color:#555; margin-top:20px;">Aura V32.0 | Code-Werft</p>
     </div>
 
     <div class="dashboard">
         
         <div class="col-left">
             <div id="clock">00:00</div>
-            <div id="date">Lade Datum...</div>
+            <div id="date">...</div>
             
             <div class="logo-container">
-                <img id="logo-img" src="logo.png" style="display:none;"> 
+                <img id="logo-img" src="logo.png"> 
                 <video id="logo-video" loop playsinline muted>
                     <source src="logo.mp4" type="video/mp4">
                 </video>
@@ -35,6 +35,8 @@
         </div>
 
         <div class="col-center">
+            <div id="location-header">LADE DATEN...</div>
+
             <div class="main-row">
                 <img id="main-icon" src="">
                 <div id="main-temp">--°</div>
@@ -45,35 +47,38 @@
             </div>
             
             <div id="feels-like">--</div>
-
             <div id="desc-text">SYSTEM START...</div>
         </div>
 
         <div class="col-right">
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
             
-            <div class="info-row" style="margin-top:10px;">
-                <span class="astro-label">SONNE:</span> <span id="sunrise">--:--</span> / <span id="sunset">--:--</span>
+            <div class="astro-block">
+                <span class="astro-label">SONNE</span>
+                <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
             </div>
             
-            <div class="info-row">
-                <span class="astro-label">MOND:</span> <span id="moon-phase">--</span>
+            <div class="astro-block">
+                <span class="astro-label">MOND</span>
+                <span class="astro-val" id="moon-phase">--</span>
             </div>
 
-            <div style="flex-grow:1;"></div> <div class="info-row">
-                <span id="bat-level">--%</span> <img src="" class="status-icon" id="bat-icon" style="display:none;">
-            </div>
-            <div class="info-row">
-                <span id="net-status">WLAN Check...</span>
-            </div>
-            <div class="info-row" style="font-size:1.5vh; color:#555; margin-top:5px;">
-                <span id="last-update">--:--</span>
+            <div class="status-block">
+                <div class="status-row">
+                    <span id="bat-level">--%</span>
+                </div>
+                <div class="status-row">
+                    <span id="net-status">WLAN...</span>
+                </div>
+                <div class="status-row" style="font-size:1.5vh; color:#555; margin-top:5px;">
+                    <span id="last-update">--:--</span>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ VERBINDUNG ZUM WETTER-SATELLITEN HERGESTELLT +++</div>
+        <div id="ticker-text">+++ AURA V32 SYSTEM BEREIT +++</div>
     </div>
 
     <div class="forecast-area">
@@ -82,40 +87,74 @@
     </div>
 
     <div id="menu-modal">
-        <button class="menu-close" onclick="closeMenu()">X</button>
-        <h2 style="text-align:center; color:#00eaff; margin-bottom:30px;">EINSTELLUNGEN</h2>
-        
-        <div class="menu-grid">
-            <div style="background:#111; padding:15px; border-radius:5px; border:1px solid #333;">
-                <p style="margin:0 0 10px 0; color:#888;">STANDORT:</p>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
-                    <button onclick="saveCity()" style="background:#00eaff; border:none; padding:0 20px; font-weight:bold;">OK</button>
+        <div class="menu-container">
+            <div class="menu-header">
+                <h2>EINSTELLUNGEN</h2>
+                <button class="menu-close-btn" onclick="closeMenu()">×</button>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-1')">
+                <span>📍 Standort & Ruhezeiten</span> <span class="acc-arrow">▼</span>
+            </button>
+            <div id="acc-1" class="acc-content">
+                <p class="menu-text">Hier kannst du deinen Ort und die Zeiten festlegen, wann das Display dunkel werden soll.</p>
+                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben" style="width:100%; padding:15px; margin-bottom:20px; background:#222; border:1px solid #00eaff; color:#fff; font-size:20px;">
+                
+                <div class="time-inp-row">
+                    <div>
+                        <span style="display:block; color:#888; font-size:14px;">START (Schlafen)</span>
+                        <input type="time" id="inp-sleep-start" class="time-inp">
+                    </div>
+                    <div>
+                        <span style="display:block; color:#888; font-size:14px;">ENDE (Aufwachen)</span>
+                        <input type="time" id="inp-sleep-end" class="time-inp">
+                    </div>
                 </div>
+                <button class="btn-action" onclick="saveSettings()">SPEICHERN</button>
+                <div style="height:20px;"></div>
             </div>
 
-            <div class="menu-btn" onclick="alertInfo('Sleep-Timer Einstellungen: \n\nHier kannst du bald einstellen, wann das Display ausgehen soll.\n(Funktion folgt im nächsten Update)')">
-                💤 RUHEZEITEN EINSTELLEN
+            <button class="acc-btn" onclick="toggleAccordion('acc-2')">
+                <span>📖 Hilfe & Tipps</span> <span class="acc-arrow">▼</span>
+            </button>
+            <div id="acc-2" class="acc-content">
+                <p class="menu-text">
+                    • <b>Vollbild:</b> Tippe beim Starten auf den Button, um die Leisten auszublenden.<br>
+                    • <b>Farben:</b> Rote Schrift bedeutet, es wird wärmer als zuletzt. Blau bedeutet kälter.<br>
+                    • <b>Vorhersage:</b> Unten siehst du die Min- und Max-Temperaturen der nächsten 5 Tage.
+                </p>
             </div>
 
-            <div class="menu-btn" onclick="alertInfo('Tipp 1: Tippe auf Start, um Vollbild zu aktivieren.\nTipp 2: Rote Schrift bedeutet es wird wärmer.')">
-                📖 ANLEITUNG & TIPPS
+            <button class="acc-btn" onclick="toggleAccordion('acc-3')">
+                <span>☕ Einen Kaffee spendieren</span> <span class="acc-arrow">▼</span>
+            </button>
+            <div id="acc-3" class="acc-content">
+                <p class="menu-text">
+                    Software-Entwicklung macht durstig! Wenn dir die Aura Wetterstation gefällt, freue ich mich riesig über einen virtuellen Kaffee.
+                </p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Code-Werft+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">
+                    Jetzt via PayPal spenden
+                </a>
+                <div style="height:20px;"></div>
             </div>
 
-            <div class="menu-btn" onclick="alertInfo('Danke, dass du an uns denkst! \nEine Spenden-Funktion via PayPal wird bald integriert.')">
-                ☕ KAFFEE SPENDIEREN
+            <button class="acc-btn" onclick="toggleAccordion('acc-4')">
+                <span>§ Kontakt & Impressum</span> <span class="acc-arrow">▼</span>
+            </button>
+            <div id="acc-4" class="acc-content">
+                <p class="menu-text">
+                    <b>Code-Werft</b><br>
+                    Entwicklung: Aura Projekt<br>
+                    <br>
+                    <a href="https://code-werft.de" target="_blank" class="contact-link">🌐 www.code-werft.de</a>
+                    <a href="mailto:webmaster@code-werft.de" class="contact-link">📧 webmaster@code-werft.de</a>
+                </p>
             </div>
 
-            <div class="menu-btn" onclick="alertInfo('Datenschutz:\nEs werden keine persönlichen Daten gespeichert.\nNur der Stadtname liegt lokal auf diesem Tablet.')">
-                § IMPRESSUM & DATENSCHUTZ
-            </div>
-            
-            <div style="text-align:center; color:#444; margin-top:20px; font-size:12px;">
-                Aura Wetterstation V31.0 | Code-Werft
-            </div>
+            <p style="text-align:center; color:#444; margin-top:40px;">Aura Core V32.0</p>
         </div>
     </div>
 
-    <script src="script.js?v=31.0"></script>
+    <script src="script.js?v=32.0"></script>
 </body>
-                    </html> 
+                </html> 
