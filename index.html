@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V34.0</title>
-    <link rel="stylesheet" href="style.css?v=34.0">
+    <title>Aura Wetterstation V35.0</title>
+    <link rel="stylesheet" href="style.css?v=35.0">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
         <button class="btn-start" onclick="document.documentElement.requestFullscreen().catch(e=>{}); startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#555; margin-top:20px;">Aura V34.0 | Code-Werft</p>
+        <p style="color:#555; margin-top:20px;">Aura V35.0 | Code-Werft</p>
     </div>
 
     <div class="dashboard">
@@ -78,7 +78,7 @@
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ INIT AURA V34 +++</div>
+        <div id="ticker-text">+++ INIT AURA V35 +++</div>
     </div>
 
     <div class="forecast-area">
@@ -99,7 +99,6 @@
             <div id="acc-1" class="acc-content">
                 <p class="menu-text">Hier Ort und Ruhezeiten festlegen.</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
-                
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
                     <div style="flex:1;">
                         <span style="color:#888; font-size:14px;">START (Schlafen)</span>
@@ -130,9 +129,9 @@
             </button>
             <div id="acc-3" class="acc-content">
                 <p class="menu-text">
-                    • <b>Ticker:</b> ROT blinkend = Gefahr, GELB = Regen.<br>
-                    • <b>Uhrzeit:</b> Im Ticker siehst du die Ortszeit der Weltstädte in Weiß.<br>
-                    • <b>Farben:</b> Temperatur Rot = Wärmer, Blau = Kälter.
+                    • <b>Gefühlt:</b> Rot = Wärmer als angezeigt, Blau = Kälter.<br>
+                    • <b>Vorhersage:</b> Zeigt jetzt auch Regenrisiko pro Tag.<br>
+                    • <b>Ticker:</b> Warnt bei Unwetter in Gelb oder Rot.
                 </p>
             </div>
 
@@ -147,10 +146,10 @@
                 </p>
             </div>
 
-            <p style="text-align:center; color:#444; margin-top:40px;">Aura Core V34.0</p>
+            <p style="text-align:center; color:#444; margin-top:40px;">Aura Core V35.0</p>
         </div>
     </div>
 
-    <script src="script.js?v=34.0"></script>
+    <script src="script.js?v=35.0"></script>
 </body>
-</html> 
+                    </html>
