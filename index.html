@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V45.0</title>
-    <link rel="stylesheet" href="style.css?v=45.0">
+    <title>Aura Wetterstation V46.0</title>
+    <link rel="stylesheet" href="style.css?v=46.0">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">AURA V45.0 UPDATE</p>
+        <p style="color:#444; margin-top:20px;">AURA V46.0 UPDATE</p>
     </div>
 
     <div class="dashboard">
@@ -29,10 +29,10 @@
             <div id="date">LADE...</div>
             
             <div class="logo-container">
+                <img id="logo-bg" src="logo.png" alt="Aura Logo">
                 <video id="logo-video" loop playsinline muted>
                     <source src="logo.mp4" type="video/mp4">
                 </video>
-                <img id="logo-fallback" src="logo.png" alt="Aura Logo">
             </div>
         </div>
 
@@ -71,14 +71,14 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 45.0</div>
+                <div class="status-row">VER: 46.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ LADE WELTWETTER DATEN (25 STÄDTE) +++</div>
+        <div id="ticker-text">+++ LADE DATEN +++</div>
     </div>
 
     <div class="forecast-area">
@@ -129,12 +129,12 @@
                 <span>⚖️ Info</span> <span>▼</span>
             </button>
             <div id="acc-imp" class="acc-content">
-                <p class="menu-text">Code-Werft Aura V45.0</p>
+                <p class="menu-text">Code-Werft Aura V46.0</p>
                 <p class="menu-text">Kontakt: webmaster@code-werft.de</p>
             </div>
         </div>
     </div>
 
-    <script src="script.js?v=45.0"></script>
+    <script src="script.js?v=46.0"></script>
 </body>
-                    </html> 
+                                       </html>
