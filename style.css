@@ -1,4 +1,4 @@
-/* --- AURA V45.0 (TROPFEN & FIXES) --- */
+/* --- AURA V46.0 (LAYOUT OPTIMIERUNG) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -6,17 +6,9 @@ html, body {
     font-family: 'Arial', sans-serif; overflow: hidden; user-select: none;
 }
 
-/* WACHHALTER HINTERGRUND */
-#wake-video-layer {
-    position: fixed; top: 0; left: 0; width: 2px; height: 2px;
-    opacity: 0.01; z-index: 0; pointer-events: none;
-}
-
-/* SLEEP OVERLAY */
-#sleep-overlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; z-index: 9999; cursor: pointer;
-}
+/* WACHHALTER & SLEEP */
+#wake-video-layer { position: fixed; top: 0; left: 0; width: 2px; height: 2px; opacity: 0.01; z-index: 0; pointer-events: none; }
+#sleep-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; cursor: pointer; }
 
 /* START SCREEN */
 #start-overlay {
@@ -30,32 +22,37 @@ html, body {
     cursor: pointer; margin-top: 20px;
 }
 
-/* DASHBOARD (Höhe reduziert auf 48vh -> Ticker rutscht hoch) */
+/* DASHBOARD (Kompakter: 42vh, damit Ticker hoch rutscht) */
 .dashboard {
-    display: flex; height: 48vh; width: 100%;
+    display: flex; height: 42vh; width: 100%;
     padding: 10px 15px; box-sizing: border-box; position: relative; z-index: 10;
 }
 
-/* SPALTE 1: LINKS */
+/* LINKS: Logo Fix */
 .col-left { width: 28%; display: flex; flex-direction: column; align-items: center; }
 #clock { font-size: 8.5vw; font-weight: bold; line-height: 0.9; margin: 0; }
 #date { font-size: 2.2vh; color: #00eaff; margin-top: 5px; text-transform: uppercase; }
 
-/* Logo Container (Video & Bild übereinander) */
+/* Logo Container: Bild unten, Video oben */
 .logo-container { 
-    width: 140px; height: 140px; margin-top: -5px; position: relative; 
+    width: 140px; height: 140px; margin-top: 5px; position: relative; 
 }
-#logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; }
-#logo-fallback { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; display: none; }
+/* Das Bild liegt immer drunter (z-index 1) */
+#logo-bg { 
+    width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 1; 
+}
+/* Das Video liegt drüber (z-index 2). Wenn es nicht lädt, sieht man das Bild. */
+#logo-video { 
+    width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 2; 
+}
 
-/* SPALTE 2: MITTE */
+/* MITTE */
 .col-center { width: 44%; display: flex; flex-direction: column; align-items: center; }
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 5px; }
 .main-row { display: flex; align-items: center; justify-content: center; width: 100%; }
-#main-icon { width: 14vh; height: 14vh; }
-#main-temp { font-size: 14vh; font-weight: bold; margin: 0 10px; line-height: 1; }
+#main-icon { width: 12vh; height: 12vh; }
+#main-temp { font-size: 13vh; font-weight: bold; margin: 0 10px; line-height: 1; }
 
-/* Der neue SVG Tropfen */
 .rain-box { display: flex; flex-direction: column; align-items: center; margin-left: 10px; }
 .drop-icon { width: 40px; height: 40px; fill: #00eaff; margin-bottom: 5px; filter: drop-shadow(0 0 5px #00eaff); }
 #rain-prob { font-size: 2vh; color: #00eaff; font-weight: bold; }
@@ -63,13 +60,13 @@ html, body {
 #feels-like { font-size: 2.5vh; color: #ccc; margin-top: 0px; }
 #desc-text { font-size: 3vh; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
 
-/* SPALTE 3: RECHTS */
+/* RECHTS */
 .col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; }
 #btn-menu {
     background: transparent; border: 2px solid #fff; color: #fff;
-    font-size: 18px; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 10px;
+    font-size: 18px; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 5px;
 }
-.astro-block { margin-bottom: 5px; text-align: right; }
+.astro-block { margin-bottom: 3px; text-align: right; }
 .astro-label { color: #00eaff; font-size: 1.4vh; display: block; }
 .astro-val { font-size: 2.2vh; font-weight: bold; }
 
@@ -77,37 +74,39 @@ html, body {
     margin-top: 5px; border-top: 1px solid #333; padding-top: 5px;
     width: 100%; text-align: right; 
 }
-.status-row { font-size: 1.5vh; margin-bottom: 2px; font-weight: bold; color: #bbb; }
-.ver-label { font-size: 1.2vh; color: #555; margin-top: 5px; }
+.status-row { font-size: 1.4vh; margin-bottom: 2px; font-weight: bold; color: #bbb; }
+.ver-label { font-size: 1.2vh; color: #555; margin-top: 2px; }
 
-/* TICKER (Höher durch margin-top: auto im Dashboard nicht nötig, da Flexbox, aber wir geben ihm Platz) */
+/* TICKER (Höher) */
 .ticker-wrap {
     height: 9vh; background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222;
-    overflow: hidden; white-space: nowrap; display: flex; align-items: center;
-    margin-bottom: 0; /* Kein Abstand nach unten */
+    overflow: hidden; white-space: nowrap; display: flex; align-items: center; margin-bottom: 0;
 }
 #ticker-text {
     display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; 
-    font-size: 3vh; color: #fff; font-weight: bold; display: flex; align-items: center;
+    font-size: 3.2vh; color: #fff; font-weight: bold; display: flex; align-items: center;
 }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
+.t-alert { color: #ff3333; margin-right: 50px; font-weight: bold; display: flex; align-items: center; text-shadow: 0 0 5px #ff0000; }
 .t-icon { width: 35px; height: 35px; margin: 0 10px; vertical-align: middle; }
 .t-time { color: #aaa; font-size: 0.8em; margin-right: 10px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-/* VORHERSAGE (Icons GRÖSSER!) */
-.forecast-area { height: 43vh; display: flex; flex-direction: column; background: #000; }
+/* VORHERSAGE (Viel größer - nutzt den gewonnenen Platz) */
+.forecast-area { height: 49vh; display: flex; flex-direction: column; background: #000; }
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
-.f-item { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
-.f-head { font-size: 2vh; font-weight: bold; color: #ddd; margin-bottom: 5px; }
+.f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
+.f-head { font-size: 2.2vh; font-weight: bold; color: #ddd; margin-bottom: 5px; }
+/* Riesige Icons */
+.f-icon { width: 8.5vh; height: 8.5vh; margin: 5px 0; }
+.f-temp { font-size: 3vh; font-weight: bold; }
+.f-rain { font-size: 2vh; color: #00eaff; font-weight: bold; margin-bottom: 0px; }
 
-/* Hier die Änderung: Icons deutlich größer (7.5vh) */
-.f-icon { width: 7.5vh; height: 7.5vh; margin-bottom: 5px; }
-
-.f-temp { font-size: 2.5vh; font-weight: bold; }
-.f-rain { font-size: 1.5vh; color: #00eaff; margin-bottom: 2px; }
-.temp-high { color: #ff3333; font-weight: bold; font-size: 2vh; display: block;}
-.temp-low { color: #00eaff; font-weight: bold; font-size: 2vh; display: block;}
+/* Layout für Temperaturen (Min - Max) */
+.temp-range { display: flex; gap: 8px; font-size: 2.5vh; font-weight: bold; align-items: center; }
+.temp-low { color: #00eaff; }
+.temp-high { color: #ff3333; }
+.temp-sep { color: #555; }
 
 /* MENÜ */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }

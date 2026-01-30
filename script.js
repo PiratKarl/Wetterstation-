@@ -1,7 +1,7 @@
-/* --- AURA V45.0 (VIDEO FIX & LOGIC) --- */
+/* --- AURA V46.0 (ALERT & LAYOUT UPDATE) --- */
 
 const CONFIG = {
-    version: 45.0,
+    version: 46.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig'
 };
@@ -22,56 +22,46 @@ function startApp() {
     let el = document.documentElement;
     if(el.requestFullscreen) { el.requestFullscreen().catch(e=>{}); }
     
-    // WACHHALTER Video (Hintergrund)
+    // WACHHALTER
     let bgVid = document.getElementById('wake-video-layer');
     if(bgVid) { bgVid.play().catch(e=>{}); }
 
-    // LOGO VIDEO FIX (Versucht Play, sonst Fallback Bild)
+    // LOGO LOGIK (Video vs Bild)
     initVideoFallback();
 
-    // Daten laden
+    // Init
     runClock();
     loadData();
     checkStatus();
 
-    // Intervalle
+    // Timer
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     
     setInterval(checkUpdate, 300000);  
     setInterval(checkStatus, 60000);   
 }
 
-/* --- VIDEO FALLBACK LOGIK --- */
+/* --- LOGO SICHERHEIT --- */
 function initVideoFallback() {
     let vid = document.getElementById('logo-video');
-    let img = document.getElementById('logo-fallback');
+    // Wir versuchen zu spielen. Wenn es fehlschlägt oder pausiert bleibt -> ausblenden
+    // Damit wird das Bild (logo-bg), das per CSS darunter liegt, sichtbar.
     
-    if(!vid) return;
-
-    // Versuche zu spielen
     let playPromise = vid.play();
-
+    
     if (playPromise !== undefined) {
-        playPromise.then(_ => {
-            // Autoplay hat geklappt!
-            // Video läuft, Bild bleibt versteckt.
-        })
-        .catch(error => {
-            // Autoplay wurde blockiert oder Fehler
-            console.log("Video Autoplay blockiert, zeige Bild.");
-            vid.style.display = 'none';
-            img.style.display = 'block';
+        playPromise.catch(error => {
+            console.log("Video Autoplay failed -> Show Image");
+            vid.style.display = 'none'; // Video weg, Bild ist da
         });
-    } else {
-        // Ältere Browser ohne Promise Rückgabe
-        // Wir prüfen einfach nach 1 Sekunde ob es läuft
-        setTimeout(() => {
-            if(vid.paused) {
-                vid.style.display = 'none';
-                img.style.display = 'block';
-            }
-        }, 1000);
     }
+    
+    // Doppelter Boden für alte Android Webviews
+    setTimeout(() => {
+        if(vid.paused || vid.readyState < 3) {
+            vid.style.display = 'none';
+        }
+    }, 1500);
 }
 
 /* --- UHRZEIT --- */
@@ -85,7 +75,7 @@ function runClock() {
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 }
 
-/* --- WETTER --- */
+/* --- WETTER HAUPTDATEN --- */
 function loadData() {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
     .then(r => r.json())
@@ -96,10 +86,11 @@ function loadData() {
     .then(r => r.json())
     .then(forecast => {
         renderForecast(forecast);
-        loadWorldTicker();
+        // Wir übergeben die lokalen Daten auch an den Ticker für Warnungen
+        loadTicker(forecast);
     })
     .catch(e => {
-        document.getElementById('ticker-text').innerHTML = '<span class="t-item" style="color:red">+++ OFFLINE +++</span>';
+        document.getElementById('ticker-text').innerHTML = '<span class="t-alert">+++ OFFLINE +++</span>';
     });
     
     let now = new Date();
@@ -125,6 +116,7 @@ function renderCurrent(data) {
 }
 
 function renderForecast(data) {
+    // 1. STUNDEN
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
@@ -137,6 +129,7 @@ function renderForecast(data) {
     }
     document.getElementById('hourly-row').innerHTML = hHTML;
 
+    // 2. TAGE (Aggregation Min/Max)
     let dailyMap = {};
     data.list.forEach(item => {
         let d = new Date(item.dt*1000);
@@ -148,51 +141,73 @@ function renderForecast(data) {
         if(item.main.temp_min < dayData.min) dayData.min = item.main.temp_min;
         if(item.main.temp_max > dayData.max) dayData.max = item.main.temp_max;
         if(item.pop > dayData.pop) dayData.pop = item.pop;
+        // Mittags-Icon bevorzugen
         if(d.getHours() >= 11 && d.getHours() <= 14) dayData.icon = item.weather[0].icon;
     });
 
+    // Aufbau HTML (Reihenfolge: Regen -> Icon -> Temp)
     let dHTML = "";
-    let keys = Object.keys(dailyMap).slice(0, 5); 
+    let keys = Object.keys(dailyMap).slice(0, 5);
     keys.forEach(key => {
         let d = dailyMap[key];
         dHTML += `<div class="f-item">
                     <span class="f-head">${key}</span>
                     <div class="f-rain">${Math.round(d.pop*100)}%</div>
                     <img src="${d.icon}.gif" class="f-icon">
-                    <span class="temp-low">${Math.round(d.min)}°</span>
-                    <span class="temp-high">${Math.round(d.max)}°</span>
+                    <div class="temp-range">
+                        <span class="temp-low">${Math.round(d.min)}°</span>
+                        <span class="temp-sep">-</span>
+                        <span class="temp-high">${Math.round(d.max)}°</span>
+                    </div>
                   </div>`;
     });
     document.getElementById('daily-row').innerHTML = dHTML;
     document.getElementById('moon-phase').innerText = getMoonPhase(new Date());
 }
 
-/* --- WELTWETTER --- */
-async function loadWorldTicker() {
-    let tickerHTML = `<span class="t-item">+++ AURA V${CONFIG.version} ONLINE +++</span>`;
+/* --- TICKER (WARNUNG + WELT) --- */
+async function loadTicker(localForecast) {
+    let alertHTML = "";
+    
+    // 1. Lokale Warnung prüfen (Nächste 9 Stunden / 3 Einträge)
+    for(let i=0; i<3; i++) {
+        let id = localForecast.list[i].weather[0].id;
+        // 2xx = Gewitter, 502-504 = Starkregen, 6xx = Schnee, 7xx = Nebel/Atmosphäre
+        if(id >= 200 && id < 300) alertHTML = `<span class="t-alert">⚡ ACHTUNG: GEWITTER ERWARTET</span>`;
+        else if(id >= 600 && id < 700) alertHTML = `<span class="t-alert">❄ ACHTUNG: SCHNEEFALL ERWARTET</span>`;
+        else if(id === 502 || id === 503 || id === 504) alertHTML = `<span class="t-alert">🌧 ACHTUNG: STARKREGEN MÖGLICH</span>`;
+    }
+    
+    // Standard Start
+    let tickerContent = alertHTML + `<span class="t-item">+++ AURA V${CONFIG.version} ONLINE +++</span>`;
+
+    // 2. Weltwetter holen
     let requests = WORLD_CITIES.map(city => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric`)
         .then(r => r.json())
         .catch(e => null)
     );
+
     const results = await Promise.all(requests);
     results.forEach(data => {
         if(data && data.main) {
             let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
             let cityTime = new Date(utc + (1000 * data.timezone));
             let timeStr = (cityTime.getHours()<10?'0':'')+cityTime.getHours() + ":" + (cityTime.getMinutes()<10?'0':'')+cityTime.getMinutes();
-            tickerHTML += `<div class="t-item">
-                            ${data.name.toUpperCase()} 
-                            <img src="${data.weather[0].icon}.gif" class="t-icon">
-                            <span class="t-time">${timeStr}</span> 
-                            ${Math.round(data.main.temp)}°
-                           </div>`;
+            
+            tickerContent += `<div class="t-item">
+                                ${data.name.toUpperCase()} 
+                                <img src="${data.weather[0].icon}.gif" class="t-icon">
+                                <span class="t-time">${timeStr}</span> 
+                                ${Math.round(data.main.temp)}°
+                              </div>`;
         }
     });
-    document.getElementById('ticker-text').innerHTML = tickerHTML;
+
+    document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
-/* --- HELFER --- */
+/* --- HELFER & SYSTEM --- */
 function toggleSleep() {
     let ol = document.getElementById('sleep-overlay');
     if(ol.style.display === 'block') ol.style.display = 'none';
