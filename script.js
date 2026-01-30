@@ -1,12 +1,11 @@
-/* --- AURA V44.0 (FEATURE SCRIPT) --- */
+/* --- AURA V45.0 (VIDEO FIX & LOGIC) --- */
 
 const CONFIG = {
-    version: 44.0,
+    version: 45.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig'
 };
 
-// 25 Weltstädte für den Ticker
 const WORLD_CITIES = [
     "Berlin", "London", "New York", "Tokyo", "Sydney", 
     "Paris", "Moskau", "Beijing", "Dubai", "Los Angeles",
@@ -19,26 +18,60 @@ const WORLD_CITIES = [
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
     
-    // Vollbild & Video Start
+    // Vollbild
     let el = document.documentElement;
     if(el.requestFullscreen) { el.requestFullscreen().catch(e=>{}); }
     
-    let logoVid = document.getElementById('logo-video');
-    if(logoVid) { logoVid.play().catch(e=>{}); }
-    
+    // WACHHALTER Video (Hintergrund)
     let bgVid = document.getElementById('wake-video-layer');
     if(bgVid) { bgVid.play().catch(e=>{}); }
 
-    // Initiale Daten
+    // LOGO VIDEO FIX (Versucht Play, sonst Fallback Bild)
+    initVideoFallback();
+
+    // Daten laden
     runClock();
     loadData();
     checkStatus();
 
     // Intervalle
     setInterval(runClock, 1000);       
-    setInterval(loadData, 600000);     // 10 Min Wetter Update
-    setInterval(checkUpdate, 300000);  // 5 Min Update Check
-    setInterval(checkStatus, 60000);   // 1 Min Status Check
+    setInterval(loadData, 600000);     
+    setInterval(checkUpdate, 300000);  
+    setInterval(checkStatus, 60000);   
+}
+
+/* --- VIDEO FALLBACK LOGIK --- */
+function initVideoFallback() {
+    let vid = document.getElementById('logo-video');
+    let img = document.getElementById('logo-fallback');
+    
+    if(!vid) return;
+
+    // Versuche zu spielen
+    let playPromise = vid.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(_ => {
+            // Autoplay hat geklappt!
+            // Video läuft, Bild bleibt versteckt.
+        })
+        .catch(error => {
+            // Autoplay wurde blockiert oder Fehler
+            console.log("Video Autoplay blockiert, zeige Bild.");
+            vid.style.display = 'none';
+            img.style.display = 'block';
+        });
+    } else {
+        // Ältere Browser ohne Promise Rückgabe
+        // Wir prüfen einfach nach 1 Sekunde ob es läuft
+        setTimeout(() => {
+            if(vid.paused) {
+                vid.style.display = 'none';
+                img.style.display = 'block';
+            }
+        }, 1000);
+    }
 }
 
 /* --- UHRZEIT --- */
@@ -52,7 +85,7 @@ function runClock() {
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 }
 
-/* --- HAUPT WETTER DATEN --- */
+/* --- WETTER --- */
 function loadData() {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
     .then(r => r.json())
@@ -63,15 +96,12 @@ function loadData() {
     .then(r => r.json())
     .then(forecast => {
         renderForecast(forecast);
-        // Weltwetter erst laden, wenn lokales Wetter da ist (um API Stau zu vermeiden)
         loadWorldTicker();
     })
     .catch(e => {
-        console.error(e);
-        document.getElementById('ticker-text').innerHTML = '<span class="t-item" style="color:red">+++ OFFLINE: KEINE DATEN +++</span>';
+        document.getElementById('ticker-text').innerHTML = '<span class="t-item" style="color:red">+++ OFFLINE +++</span>';
     });
     
-    // Update Zeitstempel setzen
     let now = new Date();
     let ts = (now.getHours()<10?'0':'')+now.getHours() + ":" + (now.getMinutes()<10?'0':'')+now.getMinutes();
     document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
@@ -88,7 +118,6 @@ function renderCurrent(data) {
     document.getElementById('feels-like').innerText = "Gefühlt: " + Math.round(data.main.feels_like) + "°";
     document.getElementById('desc-text').innerText = data.weather[0].description.toUpperCase();
 
-    // Astro
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
     document.getElementById('sunrise').innerText = formatTime(sr);
@@ -96,7 +125,6 @@ function renderCurrent(data) {
 }
 
 function renderForecast(data) {
-    // 1. Stunden (nächste 5) - Jetzt mit "Uhr"
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
@@ -109,27 +137,22 @@ function renderForecast(data) {
     }
     document.getElementById('hourly-row').innerHTML = hHTML;
 
-    // 2. Tage (Min/Max Berechnung)
     let dailyMap = {};
     data.list.forEach(item => {
         let d = new Date(item.dt*1000);
         let dayKey = d.toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
-        // Wir ignorieren den heutigen Tag für die Tagesvorhersage meistens, 
-        // oder nehmen ihn dazu. Hier gruppieren wir einfach alles.
         if(!dailyMap[dayKey]) {
-            dailyMap[dayKey] = { min: 100, max: -100, icon: item.weather[0].icon, pop: 0, count: 0 };
+            dailyMap[dayKey] = { min: 100, max: -100, icon: item.weather[0].icon, pop: 0 };
         }
         let dayData = dailyMap[dayKey];
         if(item.main.temp_min < dayData.min) dayData.min = item.main.temp_min;
         if(item.main.temp_max > dayData.max) dayData.max = item.main.temp_max;
         if(item.pop > dayData.pop) dayData.pop = item.pop;
-        // Icon um 12 Uhr nehmen (simuliert)
         if(d.getHours() >= 11 && d.getHours() <= 14) dayData.icon = item.weather[0].icon;
-        dayData.count++;
     });
 
     let dHTML = "";
-    let keys = Object.keys(dailyMap).slice(0, 5); // Nimm erste 5 Tage
+    let keys = Object.keys(dailyMap).slice(0, 5); 
     keys.forEach(key => {
         let d = dailyMap[key];
         dHTML += `<div class="f-item">
@@ -141,34 +164,23 @@ function renderForecast(data) {
                   </div>`;
     });
     document.getElementById('daily-row').innerHTML = dHTML;
-    
-    // Mondphase update
     document.getElementById('moon-phase').innerText = getMoonPhase(new Date());
 }
 
-/* --- WELTWETTER TICKER --- */
+/* --- WELTWETTER --- */
 async function loadWorldTicker() {
     let tickerHTML = `<span class="t-item">+++ AURA V${CONFIG.version} ONLINE +++</span>`;
-    
-    // Wir holen die Daten nacheinander (Promise.all wäre schneller, aber riskanter für API Limit)
-    // Trick: Wir nutzen Promise.allSettled für 5er Gruppen oder einfach alle.
-    // Bei 25 Städten: Achtung API Limit (60/min). Wir machen es langsam.
-    
     let requests = WORLD_CITIES.map(city => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric`)
         .then(r => r.json())
         .catch(e => null)
     );
-
     const results = await Promise.all(requests);
-    
     results.forEach(data => {
         if(data && data.main) {
-            // Ortszeit berechnen
             let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
             let cityTime = new Date(utc + (1000 * data.timezone));
             let timeStr = (cityTime.getHours()<10?'0':'')+cityTime.getHours() + ":" + (cityTime.getMinutes()<10?'0':'')+cityTime.getMinutes();
-            
             tickerHTML += `<div class="t-item">
                             ${data.name.toUpperCase()} 
                             <img src="${data.weather[0].icon}.gif" class="t-icon">
@@ -177,26 +189,20 @@ async function loadWorldTicker() {
                            </div>`;
         }
     });
-
     document.getElementById('ticker-text').innerHTML = tickerHTML;
 }
 
-/* --- FUNKTIONEN --- */
+/* --- HELFER --- */
 function toggleSleep() {
     let ol = document.getElementById('sleep-overlay');
-    if(ol.style.display === 'block') {
-        ol.style.display = 'none'; // Aufwachen
-    } else {
-        ol.style.display = 'block'; // Schlafen
-        closeMenu();
-    }
+    if(ol.style.display === 'block') ol.style.display = 'none';
+    else { ol.style.display = 'block'; closeMenu(); }
 }
 
 function checkStatus() {
     let net = document.getElementById('net-status');
     if(navigator.onLine) { net.innerText = "WLAN: OK"; net.style.color = "#0f0"; }
     else { net.innerText = "OFFLINE"; net.style.color = "#f00"; }
-    
     if(navigator.getBattery) {
         navigator.getBattery().then(bat => {
             document.getElementById('bat-level').innerText = "BAT: " + Math.round(bat.level*100) + "%";
@@ -232,14 +238,12 @@ function getMoonPhase(date) {
 /* --- MENÜ --- */
 function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
 function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
-
 function toggleAccordion(id) {
     let content = document.getElementById(id);
     let isVisible = content.style.display === "block";
     document.querySelectorAll('.acc-content').forEach(el => el.style.display = 'none');
     if(!isVisible) content.style.display = "block";
 }
-
 function saveSettings() {
     let val = document.getElementById('inp-city-val').value;
     if(val) {
