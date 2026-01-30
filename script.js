@@ -1,7 +1,7 @@
-/* --- AURA V36.0 INTELLIGENCE --- */
+/* --- AURA V37.0 REPAIR --- */
 
 const CONFIG = {
-    version: 36.0,
+    version: 37.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     lastTemp: null,
@@ -29,21 +29,15 @@ const ui = {
     daily: document.getElementById('daily-row')
 };
 
-/* --- 1. START --- */
 async function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
-
-    // Wake Lock
     if ('wakeLock' in navigator) { try { await navigator.wakeLock.request('screen'); } catch (err) {} }
 
-    // Logo Retter
     let vid = document.getElementById('logo-video');
-    let playPromise = vid.play();
-    if (playPromise !== undefined) {
-        playPromise.then(_ => { vid.classList.add('video-active'); }).catch(e => {});
+    if (vid) {
+        vid.play().then(_ => { vid.classList.add('video-active'); }).catch(e => { console.log("Video-Autoplay blockiert"); });
     }
     
-    // Background Audio Loop
     let bgVid = document.getElementById('wake-video-layer');
     if(bgVid) bgVid.play().catch(e => {});
 
@@ -52,12 +46,11 @@ async function startApp() {
     checkStatus();
 
     setInterval(runClock, 1000);
-    setInterval(loadData, 600000); // 10 Min
-    setInterval(checkUpdate, 300000); // 5 Min
-    setInterval(checkStatus, 60000); // 1 Min
+    setInterval(loadData, 600000); 
+    setInterval(checkUpdate, 300000); 
+    setInterval(checkStatus, 60000); 
 }
 
-/* --- 2. UHRZEIT --- */
 function runClock() {
     let now = new Date();
     let h = now.getHours(); let m = now.getMinutes();
@@ -67,21 +60,23 @@ function runClock() {
     ui.date.innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 }
 
-/* --- 3. WETTER DATEN --- */
 function loadData() {
+    // 1. Aktuelles Wetter laden
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
     .then(r => r.json())
-    .then(curr => {
-        renderCurrent(curr);
-        return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${curr.coord.lat}&lon=${curr.coord.lon}&appid=${CONFIG.apiKey}&units=metric&lang=de`);
-    })
-    .then(r => r.json())
-    .then(forecast => {
-        renderForecast(forecast);
-        buildHybridTicker(forecast, curr); // Übergebe auch aktuelles Wetter
+    .then(currentWeather => {
+        renderCurrent(currentWeather);
+        // 2. Vorhersage laden
+        return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${currentWeather.coord.lat}&lon=${currentWeather.coord.lon}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
+        .then(r => r.json())
+        .then(forecastData => {
+            renderForecast(forecastData);
+            buildHybridTicker(forecastData, currentWeather); // Übergabe beider Datensätze
+        });
     })
     .catch(e => {
-        ui.ticker.innerText = "+++ VERBINDUNGSFEHLER +++";
+        console.error("API Fehler:", e);
+        ui.ticker.innerText = "+++ VERBINDUNGSFEHLER: PRÜFE INTERNET ODER API-KEY +++";
         ui.ticker.classList.add('t-alert');
     });
 
@@ -93,10 +88,7 @@ function renderCurrent(data) {
     ui.locationHeader.innerText = data.name.toUpperCase();
     let t = Math.round(data.main.temp);
     let fl = Math.round(data.main.feels_like);
-    
     ui.mainTemp.innerText = t + "°";
-    
-    // GEFÜHLT FARB-LOGIK
     ui.feelsLike.innerText = "Gefühlt: " + fl + "°";
     ui.feelsLike.className = ""; 
     if(fl < t) ui.feelsLike.classList.add('feel-colder'); 
@@ -104,7 +96,6 @@ function renderCurrent(data) {
     else ui.feelsLike.classList.add('feel-same'); 
 
     ui.mainIcon.src = data.weather[0].icon + ".gif";
-
     ui.desc.innerText = data.weather[0].description;
     ui.desc.className = ''; 
     if (CONFIG.lastTemp !== null) {
@@ -125,7 +116,6 @@ function renderForecast(data) {
     ui.rainProb.innerText = popNow + "% Regen";
     ui.moon.innerText = getMoonPhaseIcon(new Date());
 
-    // STÜNDLICH (Format "13 Uhr")
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
@@ -139,7 +129,6 @@ function renderForecast(data) {
     }
     ui.hourly.innerHTML = hHTML;
 
-    // TÄGLICH (Mit Regenwahrscheinlichkeit)
     let dHTML = "";
     let usedDays = [];
     let count = 0;
@@ -152,7 +141,6 @@ function renderForecast(data) {
             let max = Math.round(item.main.temp_max);
             let min = Math.round(item.main.temp_min - 2); 
             let pop = Math.round(item.pop * 100); 
-
             dHTML += `
                 <div class="f-item">
                     <div class="f-head">${dayName}</div>
@@ -167,146 +155,95 @@ function renderForecast(data) {
     ui.daily.innerHTML = dHTML;
 }
 
-/* --- 4. HYBRID TICKER (ZEIT-SCANNER LOGIK) --- */
 function buildHybridTicker(forecastData, currentData) {
     let tickerHTML = "";
     let alerts = [];
     let severe = false; 
 
-    // Helper: Prüft ob Wetter-ID "schlimm" ist
     function isBad(id, wind) {
-        if(id >= 200 && id < 300) return "GEWITTER"; // Rot
-        if(id >= 600 && id < 700) return "SCHNEE";   // Rot
-        if(wind > 15) return "STURM ("+Math.round(wind*3.6)+" km/h)"; // Rot
+        if(id >= 200 && id < 300) return "GEWITTER";
+        if(id >= 600 && id < 700) return "SCHNEE";
+        if(wind > 15) return "STURM";
         return null;
     }
 
-    // 1. Check AKTUELLES Wetter
-    let badCurrent = isBad(currentData.weather[0].id, currentData.wind.speed);
-    if(badCurrent) {
-        alerts.push(`${badCurrent} (AKTUELL)`);
-        severe = true;
-    }
+    let badNow = isBad(currentData.weather[0].id, currentData.wind.speed);
+    if(badNow) { alerts.push(`${badNow} (AKTUELL)`); severe = true; }
 
-    // 2. Check ZUKUNFT (Nächste 12h)
-    // Wir suchen das ERSTE Auftreten eines Unwetters
-    let futureWarning = null;
-    for(let i=0; i<4; i++) { // nächste 4 Einträge = 12h
+    for(let i=0; i<4; i++) {
         let item = forecastData.list[i];
         let badFuture = isBad(item.weather[0].id, item.wind.speed);
-        
-        if(badFuture && !severe) { // Nur wenn nicht eh schon aktuell Alarm ist
+        if(badFuture && !severe) {
             let time = new Date(item.dt*1000);
             let timeStr = (time.getHours()<10?'0':'')+time.getHours() + ":00 UHR";
-            futureWarning = `${badFuture} (ERWARTET AB ${timeStr})`;
-            severe = true;
-            break; // Erste Warnung reicht
+            alerts.push(`${badFuture} (AB ${timeStr})`);
+            severe = true; break;
         }
     }
-    if(futureWarning) alerts.push(futureWarning);
 
-    // 3. Check REGEN (Gelb) - Nur wenn kein Rot-Alarm
     if(!severe) {
-        // Aktuell Regen?
-        if(currentData.weather[0].id >= 300 && currentData.weather[0].id < 600) {
-            alerts.push("REGEN (AKTUELL)");
-        } else {
-            // Kommt Regen?
+        if(currentData.weather[0].id >= 300 && currentData.weather[0].id < 600) alerts.push("REGEN (AKTUELL)");
+        else {
             for(let i=0; i<3; i++) {
-                let id = forecastData.list[i].weather[0].id;
-                if(id >= 300 && id < 600) {
+                if(forecastData.list[i].weather[0].id >= 300 && forecastData.list[i].weather[0].id < 600) {
                     let time = new Date(forecastData.list[i].dt*1000);
-                    let timeStr = (time.getHours()<10?'0':'')+time.getHours() + ":00 UHR";
-                    alerts.push(`REGEN (AB ${timeStr})`);
-                    break;
+                    alerts.push(`REGEN (AB ${time.getHours()}:00 UHR)`); break;
                 }
             }
         }
     }
     
-    // HTML BAUEN
     if(alerts.length > 0) {
-        let cssClass = severe ? "t-alert" : "t-warn"; 
-        let symbol = severe ? "⚠" : "☂";
-        // Entferne Duplikate falls Logik doppelt greift
-        let uniqueAlerts = [...new Set(alerts)];
-        tickerHTML += `<span class="${cssClass}">${symbol} ACHTUNG: ${uniqueAlerts.join(" & ")} ${symbol}</span> <span class="t-sep">+++</span> `;
+        tickerHTML += `<span class="${severe?'t-alert':'t-warn'}">⚠ ACHTUNG: ${alerts.join(" & ")} ⚠</span> <span class="t-sep">+++</span> `;
     } else {
-        tickerHTML += `<span class="t-city">AURA SYSTEM V${CONFIG.version} ONLINE</span> <span class="t-sep">+++</span> `;
+        tickerHTML += `<span class="t-city">AURA V${CONFIG.version} ONLINE</span> <span class="t-sep">+++</span> `;
     }
 
     loadWorldCities(tickerHTML);
 }
 
 function loadWorldCities(prefixHTML) {
-    let cities = ["Berlin", "London", "Paris", "Madrid", "Rome", "Moscow", "Istanbul", 
-                  "New York", "Los Angeles", "Toronto", "Mexico City", 
-                  "Rio de Janeiro", "Buenos Aires", 
-                  "Tokyo", "Beijing", "Singapore", "Bangkok", "Dubai", "Mumbai", "Hong Kong", "Seoul", 
-                  "Cairo", "Cape Town", "Sydney", "Auckland"];
-
-    let requests = cities.map(c => 
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${c}&appid=${CONFIG.apiKey}&units=metric`)
-        .then(r => r.json()).catch(e => null)
-    );
+    let cities = ["Berlin", "London", "Paris", "Madrid", "Rome", "Moscow", "Istanbul", "New York", "Los Angeles", "Tokyo", "Beijing", "Dubai", "Sydney"];
+    let requests = cities.map(c => fetch(`https://api.openweathermap.org/data/2.5/weather?q=${c}&appid=${CONFIG.apiKey}&units=metric`).then(r => r.json()).catch(e => null));
 
     Promise.all(requests).then(results => {
         let worldHTML = "";
         results.forEach(res => {
-            if(res) {
+            if(res && res.main) {
                 let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                 let cityDate = new Date(utc + (1000 * res.timezone));
                 let timeStr = (cityDate.getHours()<10?'0':'')+cityDate.getHours() + ":" + (cityDate.getMinutes()<10?'0':'')+cityDate.getMinutes();
-                worldHTML += `
-                    <img src="https://openweathermap.org/img/wn/${res.weather[0].icon}.png" class="t-icon">
-                    <span class="t-city">${res.name.toUpperCase()}: ${Math.round(res.main.temp)}°</span>
-                    <span class="t-time">${timeStr}</span>
-                    <span class="t-sep">+++</span>`;
+                worldHTML += `<img src="https://openweathermap.org/img/wn/${res.weather[0].icon}.png" class="t-icon"><span class="t-city">${res.name.toUpperCase()}: ${Math.round(res.main.temp)}°</span><span class="t-time">${timeStr}</span><span class="t-sep">+++</span>`;
             }
         });
         ui.ticker.innerHTML = prefixHTML + worldHTML;
+        ui.ticker.classList.remove('t-alert');
     });
 }
 
-/* --- 5. SYSTEM --- */
 function checkStatus() {
     if(navigator.onLine) { ui.wifi.innerText = "WLAN: OK"; ui.wifi.className = "stat-ok"; }
     else { ui.wifi.innerText = "OFFLINE"; ui.wifi.className = "stat-err"; }
     if('getBattery' in navigator) {
         navigator.getBattery().then(bat => {
-            let level = Math.round(bat.level * 100);
-            ui.battery.innerText = "BAT: " + level + "%";
-            if(level < 20 && !bat.charging) ui.battery.className = "stat-err"; else ui.battery.className = "stat-ok";
+            ui.battery.innerText = "BAT: " + Math.round(bat.level * 100) + "%";
         });
     }
 }
-function checkUpdate() {
-    fetch("version.json?t=" + Date.now()).then(r => r.json()).then(d => {
-        if(d.version > CONFIG.version) location.reload(true);
-    });
-}
+
+function checkUpdate() { fetch("version.json?t=" + Date.now()).then(r => r.json()).then(d => { if(d.version > CONFIG.version) location.reload(true); }); }
 function formatTime(d) { return (d.getHours()<10?'0':'')+d.getHours() + ":" + (d.getMinutes()<10?'0':'')+d.getMinutes(); }
 function getMoonPhaseIcon(date) {
     let year = date.getFullYear(); let month = date.getMonth()+1; let day = date.getDate();
     if(month<3){year--;month+=12;} ++month;
-    let c=365.25*year; let e=30.6*month;
-    let jd=c+e+day-694039.09; jd/=29.5305882; 
-    let b=parseInt(jd); jd-=b; b=Math.round(jd*8); if(b>=8)b=0;
+    let jd=365.25*year+30.6*month+day-694039.09; jd/=29.5305882; 
+    let b=Math.round((jd-parseInt(jd))*8); if(b>=8)b=0;
     const moons = ['🌑 Neumond','🌒 Zunehmend','🌓 Halbmond','🌔 Zunehmend','🌕 Vollmond','🌖 Abnehmend','🌗 Halbmond','🌘 Abnehmend'];
     return moons[b];
 }
 
-/* --- 6. MENÜ --- */
-function openMenu() { 
-    document.getElementById('menu-modal').style.display = 'block'; 
-    document.getElementById('inp-city-val').value = CONFIG.city;
-    document.getElementById('inp-sleep-start').value = CONFIG.sleepStart;
-    document.getElementById('inp-sleep-end').value = CONFIG.sleepEnd;
-}
-function closeMenu() { 
-    document.getElementById('menu-modal').style.display = 'none';
-    document.documentElement.requestFullscreen().catch(e=>{});
-}
+function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
+function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; document.documentElement.requestFullscreen().catch(e=>{}); }
 function toggleAccordion(id) {
     let content = document.getElementById(id);
     let isVisible = content.classList.contains('acc-show');
@@ -316,9 +253,5 @@ function toggleAccordion(id) {
 function saveSettings() {
     let cityInp = document.getElementById('inp-city-val').value;
     if(cityInp) { localStorage.setItem('aura_city', cityInp); CONFIG.city = cityInp; loadData(); }
-    let sS = document.getElementById('inp-sleep-start').value;
-    let sE = document.getElementById('inp-sleep-end').value;
-    localStorage.setItem('aura_sleep_start', sS); localStorage.setItem('aura_sleep_end', sE);
-    CONFIG.sleepStart = sS; CONFIG.sleepEnd = sE;
     closeMenu();
 }
