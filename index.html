@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V38.0</title>
-    <link rel="stylesheet" href="style.css?v=38.0">
+    <title>Aura Wetterstation V39.0</title>
+    <link rel="stylesheet" href="style.css?v=39.0">
 </head>
 <body>
 
@@ -13,17 +13,19 @@
     </video>
 
     <div id="start-overlay">
-        <img src="logo.png" style="width:140px; opacity:0.8;">
-        <button class="btn-start" onclick="document.documentElement.requestFullscreen().catch(e=>{}); startApp()">
+        <img src="logo.png" style="width:130px; opacity:0.8;">
+        <button id="manual-start-btn" class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">Aura V38.0 | Code-Werft</p>
+        <p id="auto-start-msg" style="color:#00eaff; margin-top:15px; display:none;">Automatischer Neustart läuft...</p>
+        <p style="color:#333; margin-top:20px;">Aura V39.0 | Code-Werft</p>
     </div>
 
     <div class="dashboard">
+        
         <div class="col-left">
             <div id="clock">00:00</div>
-            <div id="date">LADE DATUM...</div>
+            <div id="date">LADE...</div>
             <div class="logo-container">
                 <img id="logo-img" src="logo.png"> 
                 <video id="logo-video" loop playsinline muted>
@@ -43,31 +45,32 @@
                 </div>
             </div>
             <div id="feels-like">--</div>
-            <div id="desc-text">SYSTEM START...</div>
+            <div id="desc-text">WETTERDATEN...</div>
         </div>
 
         <div class="col-right">
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
+            
             <div class="astro-block">
                 <span class="astro-label">SONNE</span>
                 <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
             </div>
+            
             <div class="astro-block">
                 <span class="astro-label">MOND</span>
                 <span class="astro-val" id="moon-phase">--</span>
             </div>
+
             <div class="status-block">
                 <div class="status-row"><span id="bat-level">--%</span></div>
                 <div class="status-row"><span id="net-status">WLAN...</span></div>
-                <div class="status-row" style="font-size:1.4vh; color:#444; margin-top:5px;">
-                    <span id="last-update">--:--</span>
-                </div>
+                <div class="ver-label">AURA V39.0</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ CODE-WERFT AURA V38 LÄDT +++</div>
+        <div id="ticker-text">+++ VERBINDE MIT AURA SYSTEM V39.0 +++</div>
     </div>
 
     <div class="forecast-area">
@@ -78,7 +81,7 @@
     <div id="menu-modal">
         <div class="menu-container">
             <div class="menu-header">
-                <h2>AURA SYSTEM-ZENTRALE</h2>
+                <h2>EINSTELLUNGEN & HILFE</h2>
                 <button class="menu-close-btn" onclick="closeMenu()">×</button>
             </div>
 
@@ -86,72 +89,67 @@
                 <span>📍 Standort & Ort</span> <span>▼</span>
             </button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Ändere hier deinen Standort, um das Wetter für deine Region zu erhalten.</p>
+                <p class="menu-text">Wetter für Braunschweig (Lohengrinstraße) oder eine andere Stadt festlegen:</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
                 <button class="btn-save" onclick="saveSettings()">ÜBERNEHMEN</button>
                 <div style="height:10px;"></div>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-2')">
+            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
+                <span>🌙 Nachtmodus & Zeitplan</span> <span>▼</span>
+            </button>
+            <div id="acc-sleep" class="acc-content">
+                <p class="menu-text">Um dein Display zu schonen, kann Aura nachts schwarz schalten.</p>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <div style="flex:1;">
+                        <span style="color:#888; font-size:14px;">START (Aus)</span>
+                        <input type="time" id="inp-sleep-start" style="background:#222; border:1px solid #00eaff; color:#fff; padding:10px; width:100%;">
+                    </div>
+                    <div style="flex:1;">
+                        <span style="color:#888; font-size:14px;">ENDE (An)</span>
+                        <input type="time" id="inp-sleep-end" style="background:#222; border:1px solid #00eaff; color:#fff; padding:10px; width:100%;">
+                    </div>
+                </div>
+                <button class="btn-save" onclick="saveSettings()">ZEITEN SPEICHERN</button>
+                <p class="menu-text" style="font-size:14px; margin-top:10px;">(Tipp: Tablet-Entwickleroptionen "Wach bleiben" nutzen, damit das Display bei Stromversorgung nicht sperrt.)</p>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-legende')">
                 <span>📋 Wetter-Legende</span> <span>▼</span>
             </button>
-            <div id="acc-2" class="acc-content">
-                <p class="menu-text">Was der Himmel uns sagt:</p>
-                <ul class="menu-list">
-                    <li>☀️ <b>Sonne:</b> Klarer Himmel, perfekt für Touren.</li>
-                    <li>🌤️ <b>Leicht bewölkt:</b> Ein Mix aus Sonne und Wolken.</li>
-                    <li>☁️ <b>Bedeckt:</b> Grauer Himmel, meist trocken.</li>
-                    <li>🌫️ <b>Nebel:</b> Eingeschränkte Sichtweite.</li>
-                    <li>🌦️ <b>Schauer:</b> Kurze Regengüsse, teils mit Sonne.</li>
-                    <li>🌧️ <b>Regen:</b> Klassischer Dauerregen.</li>
-                    <li>⛈️ <b>Gewitter:</b> Achtung vor Blitz, Donner und Böen!</li>
-                    <li>❄️ <b>Schnee:</b> Winterliche Bedingungen und Glätte.</li>
-                </ul>
+            <div id="acc-legende" class="acc-content">
+                <div class="legende-grid">
+                    <img src="01d.gif" class="legende-icon"> <span><b>Sonnig:</b> Klarer Himmel, ideale Sicht.</span>
+                    <img src="02d.gif" class="legende-icon"> <span><b>Leicht bewölkt:</b> Vereinzelte Wolken.</span>
+                    <img src="03d.gif" class="legende-icon"> <span><b>Bewölkt:</b> Überwiegend grauer Himmel.</span>
+                    <img src="09d.gif" class="legende-icon"> <span><b>Schauer:</b> Kurzzeitige Regengüsse.</span>
+                    <img src="10d.gif" class="legende-icon"> <span><b>Regen:</b> Anhaltender Niederschlag.</span>
+                    <img src="11d.gif" class="legende-icon"> <span><b>Gewitter:</b> Blitz- & Sturmgefahr!</span>
+                    <img src="13d.gif" class="legende-icon"> <span><b>Schnee:</b> Winterwetter & Glättegefahr.</span>
+                    <img src="50d.gif" class="legende-icon"> <span><b>Nebel:</b> Dunst oder schlechte Sichtweite.</span>
+                </div>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-3')">
-                <span>💡 Profi-Tricks & Hilfe</span> <span>▼</span>
-            </button>
-            <div id="acc-3" class="acc-content">
-                <p class="menu-text"><b>Der Wachhalter-Trick:</b></p>
-                <p class="menu-text">Damit das Display deines Tablets niemals ausgeht, aktiviere in den Android-Einstellungen die <b>Entwickleroptionen</b> (7x auf 'Build-Nummer' tippen) und schalte dort <b>'Wach bleiben'</b> ein.</p>
-                <p class="menu-text"><b>Farben lesen:</b></p>
-                <p class="menu-text">Gefühlte Temperatur in <b>Blau</b> = Kälter als gemessen (Windchill). In <b>Rot</b> = Wärmer durch Sonne.</p>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-4')">
+            <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
                 <span>☕ Code-Werft Kaffeemaschine</span> <span>▼</span>
             </button>
-            <div id="acc-4" class="acc-content">
-                <p class="menu-text">Wusstest du, dass Aura fast ausschließlich mit Koffein betrieben wird? Jede neue Funktion und die langen Nächte zur Fehlerbehebung verbrauchen literweise Espresso.</p>
-                <p class="menu-text">Wenn dir das Dashboard gefällt, kannst du hier einen <b>virtuellen Kaffee</b> spendieren und die Entwickler wach halten!</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Code-Werft+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">
-                    Jetzt Espresso spendieren (PayPal)
-                </a>
-                <div style="height:10px;"></div>
+            <div id="acc-sleep" class="acc-content">
+                <p class="menu-text">Aura läuft mit Leidenschaft und Koffein. Jede Tasse hält die Entwickler wach für neue Updates!</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">Kaffee spendieren (PayPal)</a>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-5')">
-                <span>🔒 Datenschutz</span> <span>▼</span>
+            <button class="acc-btn" onclick="toggleAccordion('acc-recht')">
+                <span>⚖️ Datenschutz & Kontakt</span> <span>▼</span>
             </button>
-            <div id="acc-5" class="acc-content">
-                <p class="menu-text">Deine Daten sind privat: <b>Dein Standort</b> wird nur lokal auf diesem Tablet gespeichert. Es gibt <b>keine Werbung</b> und <b>kein Tracking</b>. Nur die Stadt wird zum Abruf der Wetterdaten an OpenWeatherMap gesendet.</p>
+            <div id="acc-recht" class="acc-content">
+                <p class="menu-text"><b>Datenschutz:</b> Standortdaten werden nur lokal auf deinem Kymco-Dashboard-Tablet gespeichert. Keine Werbung, kein Tracking.</p>
+                <p class="menu-text"><b>Kontakt:</b> webmaster@code-werft.de</p>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-6')">
-                <span>⚖️ Impressum & Kontakt</span> <span>▼</span>
-            </button>
-            <div id="acc-6" class="acc-content">
-                <p class="menu-text"><b>Projekt:</b> Code-Werft Aura</p>
-                <p class="menu-text">Braunschweig, Deutschland</p>
-                <a href="mailto:webmaster@code-werft.de" class="contact-link">📧 webmaster@code-werft.de</a>
-                <a href="https://code-werft.de" target="_blank" class="contact-link">🌐 www.code-werft.de</a>
-            </div>
-
-            <p style="text-align:center; color:#222; margin-top:40px;">&copy; 2026 Code-Werft | V38.0</p>
+            <p style="text-align:center; color:#222; margin-top:30px;">AURA CORE V39.0 | &copy; 2026</p>
         </div>
     </div>
 
-    <script src="script.js?v=38.0"></script>
+    <script src="script.js?v=39.0"></script>
 </body>
-                    </html>
+                        </html>
