@@ -1,7 +1,7 @@
-/* --- AURA V33.0 INTELLIGENCE --- */
+/* --- AURA V34.0 INTELLIGENCE (HYBRID TICKER) --- */
 
 const CONFIG = {
-    version: 33.0,
+    version: 34.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     lastTemp: null,
@@ -29,28 +29,26 @@ const ui = {
     daily: document.getElementById('daily-row')
 };
 
-/* --- 1. START & LOGO RETTER --- */
+/* --- 1. START --- */
 async function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
 
-    // Wake Lock (Modern)
-    if ('wakeLock' in navigator) {
-        try { await navigator.wakeLock.request('screen'); } catch (err) {}
-    }
+    // Wake Lock
+    if ('wakeLock' in navigator) { try { await navigator.wakeLock.request('screen'); } catch (err) {} }
 
-    // Video-Logik (Alt)
+    // Logo Retter
     let vid = document.getElementById('logo-video');
     let playPromise = vid.play();
     if (playPromise !== undefined) {
         playPromise.then(_ => { vid.classList.add('video-active'); }).catch(e => {});
     }
     
-    // Hintergrund Audio-Loop
+    // Background Audio Loop
     let bgVid = document.getElementById('wake-video-layer');
     if(bgVid) bgVid.play().catch(e => {});
 
     runClock();
-    loadData();
+    loadData(); // Wetter & Ticker
     checkStatus();
 
     setInterval(runClock, 1000);
@@ -69,7 +67,7 @@ function runClock() {
     ui.date.innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 }
 
-/* --- 3. WETTER DATEN --- */
+/* --- 3. WETTER DATEN (HAUPT) --- */
 function loadData() {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
     .then(r => r.json())
@@ -80,11 +78,13 @@ function loadData() {
     .then(r => r.json())
     .then(forecast => {
         renderForecast(forecast);
-        renderTicker(forecast);
+        // Startet den neuen Hybrid-Ticker
+        buildHybridTicker(forecast);
     })
     .catch(e => {
-        ui.ticker.innerText = "+++ DATEN-FEHLER - PRÜFE INTERNET +++";
-        ui.ticker.classList.add('ticker-alert');
+        console.log(e);
+        ui.ticker.innerText = "+++ VERBINDUNGSFEHLER +++";
+        ui.ticker.classList.add('t-alert');
     });
 
     let now = new Date();
@@ -93,12 +93,11 @@ function loadData() {
 
 function renderCurrent(data) {
     ui.locationHeader.innerText = data.name.toUpperCase();
-    
     let t = Math.round(data.main.temp);
     ui.mainTemp.innerText = t + "°";
     ui.feelsLike.innerText = "Gefühlt: " + Math.round(data.main.feels_like) + "°";
     
-    // WICHTIG: Nutze lokale GIFs!
+    // Lokale GIFs
     ui.mainIcon.src = data.weather[0].icon + ".gif";
 
     ui.desc.innerText = data.weather[0].description;
@@ -121,7 +120,6 @@ function renderForecast(data) {
     ui.rainProb.innerText = pop + "% Regen";
     ui.moon.innerText = getMoonPhaseIcon(new Date());
 
-    // Stündlich (5 Werte) - Lokale GIFs nutzen!
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
@@ -135,7 +133,6 @@ function renderForecast(data) {
     }
     ui.hourly.innerHTML = hHTML;
 
-    // Täglich (5 Werte)
     let dHTML = "";
     let usedDays = [];
     let count = 0;
@@ -160,32 +157,82 @@ function renderForecast(data) {
     ui.daily.innerHTML = dHTML;
 }
 
-/* --- 4. TICKER --- */
-function renderTicker(data) {
+/* --- 4. HYBRID TICKER (DAS NEUE HERZSTÜCK) --- */
+function buildHybridTicker(localData) {
+    let tickerHTML = "";
+
+    // SCHRITT A: LOKALE WARNUNGEN PRÜFEN
     let alerts = [];
-    data.list.slice(0, 8).forEach(item => {
+    let severe = false; // Wird true bei Rot
+    
+    // Nächste 12h scannen
+    localData.list.slice(0, 4).forEach(item => {
         let id = item.weather[0].id;
-        if(id >= 200 && id < 600) alerts.push("REGEN/GEWITTER");
-        if(id >= 600 && id < 700) alerts.push("SCHNEE");
-        if(item.wind.speed > 15) alerts.push("STURM");
+        let wind = item.wind.speed;
+
+        // ROT: Sturm, Schnee, Gewitter, Tornado
+        if(id >= 200 && id < 300) { alerts.push("⚡ GEWITTER"); severe=true; }
+        if(id >= 600 && id < 700) { alerts.push("❄ SCHNEE"); severe=true; }
+        if(wind > 15) { alerts.push("💨 STURM ("+Math.round(wind*3.6)+" km/h)"); severe=true; }
+        
+        // GELB: Regen, Niesel
+        if(id >= 300 && id < 600 && !severe) { alerts.push("☔ REGEN MÖGLICH"); }
     });
-    alerts = [...new Set(alerts)];
+    
+    alerts = [...new Set(alerts)]; // Doppelte entfernen
 
     if(alerts.length > 0) {
-        ui.ticker.classList.add('ticker-alert');
-        ui.ticker.innerText = "+++ WARNUNG: " + alerts.join(" & ") + " +++";
+        let cssClass = severe ? "t-alert" : "t-warn"; // Rot oder Gelb
+        let symbol = severe ? "⚠" : "☂";
+        tickerHTML += `<span class="${cssClass}">${symbol} ACHTUNG: ${alerts.join(" & ")} ${symbol}</span> <span class="t-sep">+++</span> `;
     } else {
-        ui.ticker.classList.remove('ticker-alert');
-        loadWorldTicker();
+        // Kein Wetter-Alarm -> Standard Start
+        tickerHTML += `<span class="t-city">AURA SYSTEM V${CONFIG.version} ONLINE</span> <span class="t-sep">+++</span> `;
     }
+
+    // SCHRITT B: WELTREISE STARTEN
+    // Startet den Abruf der 25 Städte und hängt sie dran
+    loadWorldCities(tickerHTML);
 }
-function loadWorldTicker() {
-    let cities = ["Berlin", "London", "New York", "Tokio"];
-    let text = "+++ AURA V33 ONLINE +++ ";
-    let fetches = cities.map(c => fetch(`https://api.openweathermap.org/data/2.5/weather?q=${c}&appid=${CONFIG.apiKey}&units=metric`).then(r=>r.json()));
-    Promise.all(fetches).then(results => {
-        results.forEach(res => { text += ` ◈ ${res.name.toUpperCase()}: ${Math.round(res.main.temp)}° `; });
-        ui.ticker.innerText = text + " +++";
+
+function loadWorldCities(prefixHTML) {
+    // Die 25 Metropolen
+    let cities = [
+        "Berlin", "London", "Paris", "Madrid", "Rome", "Moscow", "Istanbul", // Europa
+        "New York", "Los Angeles", "Toronto", "Mexico City", // Nordamerika
+        "Rio de Janeiro", "Buenos Aires", // Südamerika
+        "Tokyo", "Beijing", "Singapore", "Bangkok", "Dubai", "Mumbai", "Hong Kong", "Seoul", // Asien
+        "Cairo", "Cape Town", "Sydney", "Auckland" // Rest
+    ];
+
+    // Wir nutzen Promise.all um alle parallel zu laden
+    let requests = cities.map(c => 
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${c}&appid=${CONFIG.apiKey}&units=metric`)
+        .then(r => r.json())
+        .catch(e => null) // Fehler ignorieren, damit nicht alles abstürzt
+    );
+
+    Promise.all(requests).then(results => {
+        let worldHTML = "";
+        
+        results.forEach(res => {
+            if(res) {
+                // Zeit berechnen: UTC Zeit + Offset der Stadt
+                let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
+                let cityDate = new Date(utc + (1000 * res.timezone));
+                let timeStr = (cityDate.getHours()<10?'0':'')+cityDate.getHours() + ":" + (cityDate.getMinutes()<10?'0':'')+cityDate.getMinutes();
+
+                worldHTML += `
+                    <img src="https://openweathermap.org/img/wn/${res.weather[0].icon}.png" class="t-icon">
+                    <span class="t-city">${res.name.toUpperCase()}: ${Math.round(res.main.temp)}°</span>
+                    <span class="t-time">${timeStr}</span>
+                    <span class="t-sep">+++</span>
+                `;
+            }
+        });
+
+        // Setze den kompletten Ticker Inhalt
+        ui.ticker.innerHTML = prefixHTML + worldHTML;
     });
 }
 
@@ -217,41 +264,29 @@ function getMoonPhaseIcon(date) {
     return moons[b];
 }
 
-/* --- 6. MENÜ (AKKORDEON & VOLLBILD RETTER) --- */
+/* --- 6. MENÜ --- */
 function openMenu() { 
     document.getElementById('menu-modal').style.display = 'block'; 
     document.getElementById('inp-city-val').value = CONFIG.city;
     document.getElementById('inp-sleep-start').value = CONFIG.sleepStart;
     document.getElementById('inp-sleep-end').value = CONFIG.sleepEnd;
 }
-
 function closeMenu() { 
     document.getElementById('menu-modal').style.display = 'none';
-    // WICHTIG: Erneut Vollbild anfordern, falls es verloren ging
     document.documentElement.requestFullscreen().catch(e=>{});
 }
-
 function toggleAccordion(id) {
     let content = document.getElementById(id);
     let isVisible = content.classList.contains('acc-show');
-    // Alle schließen
     document.querySelectorAll('.acc-content').forEach(el => el.classList.remove('acc-show'));
-    // Gewähltes öffnen
     if(!isVisible) content.classList.add('acc-show');
 }
-
 function saveSettings() {
     let cityInp = document.getElementById('inp-city-val').value;
-    if(cityInp) {
-        localStorage.setItem('aura_city', cityInp);
-        CONFIG.city = cityInp;
-        loadData();
-    }
+    if(cityInp) { localStorage.setItem('aura_city', cityInp); CONFIG.city = cityInp; loadData(); }
     let sS = document.getElementById('inp-sleep-start').value;
     let sE = document.getElementById('inp-sleep-end').value;
-    localStorage.setItem('aura_sleep_start', sS);
-    localStorage.setItem('aura_sleep_end', sE);
+    localStorage.setItem('aura_sleep_start', sS); localStorage.setItem('aura_sleep_end', sE);
     CONFIG.sleepStart = sS; CONFIG.sleepEnd = sE;
-    
-    closeMenu(); // Schließt Menü und stellt Vollbild wieder her
+    closeMenu();
 }
