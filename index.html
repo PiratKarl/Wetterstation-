@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V37.0</title>
-    <link rel="stylesheet" href="style.css?v=37.0">
+    <title>Aura Wetterstation V38.0</title>
+    <link rel="stylesheet" href="style.css?v=38.0">
 </head>
 <body>
 
@@ -17,15 +17,13 @@
         <button class="btn-start" onclick="document.documentElement.requestFullscreen().catch(e=>{}); startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">Aura V37.0 | Code-Werft</p>
+        <p style="color:#444; margin-top:20px;">Aura V38.0 | Code-Werft</p>
     </div>
 
     <div class="dashboard">
-        
         <div class="col-left">
             <div id="clock">00:00</div>
             <div id="date">LADE DATUM...</div>
-            
             <div class="logo-container">
                 <img id="logo-img" src="logo.png"> 
                 <video id="logo-video" loop playsinline muted>
@@ -36,7 +34,6 @@
 
         <div class="col-center">
             <div id="location-header">LADE...</div>
-
             <div class="main-row">
                 <img id="main-icon" src=""> 
                 <div id="main-temp">--°</div>
@@ -45,24 +42,20 @@
                     <div id="rain-prob">--%</div>
                 </div>
             </div>
-            
             <div id="feels-like">--</div>
             <div id="desc-text">SYSTEM START...</div>
         </div>
 
         <div class="col-right">
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
-            
             <div class="astro-block">
                 <span class="astro-label">SONNE</span>
                 <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
             </div>
-            
             <div class="astro-block">
                 <span class="astro-label">MOND</span>
                 <span class="astro-val" id="moon-phase">--</span>
             </div>
-
             <div class="status-block">
                 <div class="status-row"><span id="bat-level">--%</span></div>
                 <div class="status-row"><span id="net-status">WLAN...</span></div>
@@ -74,7 +67,7 @@
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ VERBINDE MIT AURA CORE V37 +++</div>
+        <div id="ticker-text">+++ CODE-WERFT AURA V38 LÄDT +++</div>
     </div>
 
     <div class="forecast-area">
@@ -85,7 +78,7 @@
     <div id="menu-modal">
         <div class="menu-container">
             <div class="menu-header">
-                <h2>EINSTELLUNGEN</h2>
+                <h2>AURA SYSTEM-ZENTRALE</h2>
                 <button class="menu-close-btn" onclick="closeMenu()">×</button>
             </div>
 
@@ -93,38 +86,72 @@
                 <span>📍 Standort & Ort</span> <span>▼</span>
             </button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Gib deine Stadt ein (z.B. Braunschweig):</p>
+                <p class="menu-text">Ändere hier deinen Standort, um das Wetter für deine Region zu erhalten.</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
                 <button class="btn-save" onclick="saveSettings()">ÜBERNEHMEN</button>
-                <div style="height:15px;"></div>
+                <div style="height:10px;"></div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-2')">
-                <span>☕ Support</span> <span>▼</span>
+                <span>📋 Wetter-Legende</span> <span>▼</span>
             </button>
             <div id="acc-2" class="acc-content">
-                <p class="menu-text">Code-Werft unterstützen:</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Code-Werft+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">
-                    Kaffee spendieren
-                </a>
-                <div style="height:15px;"></div>
+                <p class="menu-text">Was der Himmel uns sagt:</p>
+                <ul class="menu-list">
+                    <li>☀️ <b>Sonne:</b> Klarer Himmel, perfekt für Touren.</li>
+                    <li>🌤️ <b>Leicht bewölkt:</b> Ein Mix aus Sonne und Wolken.</li>
+                    <li>☁️ <b>Bedeckt:</b> Grauer Himmel, meist trocken.</li>
+                    <li>🌫️ <b>Nebel:</b> Eingeschränkte Sichtweite.</li>
+                    <li>🌦️ <b>Schauer:</b> Kurze Regengüsse, teils mit Sonne.</li>
+                    <li>🌧️ <b>Regen:</b> Klassischer Dauerregen.</li>
+                    <li>⛈️ <b>Gewitter:</b> Achtung vor Blitz, Donner und Böen!</li>
+                    <li>❄️ <b>Schnee:</b> Winterliche Bedingungen und Glätte.</li>
+                </ul>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-3')">
-                <span>§ Info</span> <span>▼</span>
+                <span>💡 Profi-Tricks & Hilfe</span> <span>▼</span>
             </button>
             <div id="acc-3" class="acc-content">
-                <p class="menu-text">
-                    <b>Aura Version:</b> 37.0<br>
-                    <b>Design:</b> Code-Werft (Dark Mode)<br>
-                    <b>Update:</b> Automatisch alle 5 Min.
-                </p>
+                <p class="menu-text"><b>Der Wachhalter-Trick:</b></p>
+                <p class="menu-text">Damit das Display deines Tablets niemals ausgeht, aktiviere in den Android-Einstellungen die <b>Entwickleroptionen</b> (7x auf 'Build-Nummer' tippen) und schalte dort <b>'Wach bleiben'</b> ein.</p>
+                <p class="menu-text"><b>Farben lesen:</b></p>
+                <p class="menu-text">Gefühlte Temperatur in <b>Blau</b> = Kälter als gemessen (Windchill). In <b>Rot</b> = Wärmer durch Sonne.</p>
             </div>
 
-            <p style="text-align:center; color:#222; margin-top:40px;">&copy; 2026 Code-Werft</p>
+            <button class="acc-btn" onclick="toggleAccordion('acc-4')">
+                <span>☕ Code-Werft Kaffeemaschine</span> <span>▼</span>
+            </button>
+            <div id="acc-4" class="acc-content">
+                <p class="menu-text">Wusstest du, dass Aura fast ausschließlich mit Koffein betrieben wird? Jede neue Funktion und die langen Nächte zur Fehlerbehebung verbrauchen literweise Espresso.</p>
+                <p class="menu-text">Wenn dir das Dashboard gefällt, kannst du hier einen <b>virtuellen Kaffee</b> spendieren und die Entwickler wach halten!</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Code-Werft+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">
+                    Jetzt Espresso spendieren (PayPal)
+                </a>
+                <div style="height:10px;"></div>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-5')">
+                <span>🔒 Datenschutz</span> <span>▼</span>
+            </button>
+            <div id="acc-5" class="acc-content">
+                <p class="menu-text">Deine Daten sind privat: <b>Dein Standort</b> wird nur lokal auf diesem Tablet gespeichert. Es gibt <b>keine Werbung</b> und <b>kein Tracking</b>. Nur die Stadt wird zum Abruf der Wetterdaten an OpenWeatherMap gesendet.</p>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-6')">
+                <span>⚖️ Impressum & Kontakt</span> <span>▼</span>
+            </button>
+            <div id="acc-6" class="acc-content">
+                <p class="menu-text"><b>Projekt:</b> Code-Werft Aura</p>
+                <p class="menu-text">Braunschweig, Deutschland</p>
+                <a href="mailto:webmaster@code-werft.de" class="contact-link">📧 webmaster@code-werft.de</a>
+                <a href="https://code-werft.de" target="_blank" class="contact-link">🌐 www.code-werft.de</a>
+            </div>
+
+            <p style="text-align:center; color:#222; margin-top:40px;">&copy; 2026 Code-Werft | V38.0</p>
         </div>
     </div>
 
-    <script src="script.js?v=37.0"></script>
+    <script src="script.js?v=38.0"></script>
 </body>
                     </html>
