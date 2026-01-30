@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V43.0</title>
-    <link rel="stylesheet" href="style.css?v=43.0">
+    <title>Aura Wetterstation V44.0</title>
+    <link rel="stylesheet" href="style.css?v=44.0">
 </head>
 <body>
 
@@ -12,12 +12,15 @@
         <source src="logo.mp4" type="video/mp4">
     </video>
 
+    <div id="sleep-overlay" onclick="toggleSleep()">
+        </div>
+
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">AURA RESTORE V43.0</p>
+        <p style="color:#444; margin-top:20px;">AURA V44.0 FEATURE UPDATE</p>
     </div>
 
     <div class="dashboard">
@@ -65,13 +68,14 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="ver-label">AURA V43.0</div>
+                <div class="status-row">VER: 44.0</div>
+                <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ SYSTEM WIRD WIEDERHERGESTELLT +++</div>
+        <div id="ticker-text">+++ LADE WELTWETTER DATEN (25 STÄDTE) +++</div>
     </div>
 
     <div class="forecast-area">
@@ -94,24 +98,44 @@
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
             </div>
 
+            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
+                <span>🌙 Sleep Mode</span> <span>▼</span>
+            </button>
+            <div id="acc-sleep" class="acc-content">
+                <p class="menu-text">Schaltet den Bildschirm schwarz (Standby), aber das System läuft weiter.</p>
+                <button class="btn-action" onclick="toggleSleep()">BILDSCHIRM AUSSCHALTEN</button>
+                <p class="menu-text" style="font-size:12px; margin-top:5px;">(Zum Aufwecken einfach auf den schwarzen Bildschirm tippen)</p>
+            </div>
+
             <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
-                <span>☕ Support</span> <span>▼</span>
+                <span>☕ Kaffeekasse</span> <span>▼</span>
             </button>
             <div id="acc-kaffee" class="acc-content">
-                <p class="menu-text">Unterstütze die Code-Werft:</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">Spenden</a>
+                <p class="menu-text">Gefällt dir die Aura Station?</p>
+                <p class="menu-text">Programmieren macht müde! Unterstütze die <b>Code-Werft</b> mit einem virtuellen Kaffee, damit die Updates weiterfließen.</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt+Kaffee&currency_code=EUR" target="_blank" class="btn-paypal">JETZT KAFFEE SPENDEN</a>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-tipps')">
+                <span>💡 Anleitung & Tipps</span> <span>▼</span>
+            </button>
+            <div id="acc-tipps" class="acc-content">
+                <p class="menu-text"><span class="menu-highlight">1. Wach bleiben:</span><br>Damit das Tablet nicht ausgeht: Android Einstellungen > Anzeige > Ruhezustand > "Niemals".</p>
+                <p class="menu-text"><span class="menu-highlight">2. Vollbild:</span><br>Wenn die Adressleiste stört, einmal kurz ins Menü und wieder zurück, oder neu laden und "Start" drücken.</p>
+                <p class="menu-text"><span class="menu-highlight">3. Installation:</span><br>Am besten als Web-App "Zum Startbildschirm hinzufügen".</p>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-imp')">
                 <span>⚖️ Info</span> <span>▼</span>
             </button>
             <div id="acc-imp" class="acc-content">
-                <p class="menu-text">Code-Werft Aura V43.0</p>
-                <p class="menu-text">Build: Stable Restore</p>
+                <p class="menu-text">Code-Werft Aura V44.0</p>
+                <p class="menu-text">Entwickelt für Android Tablets (Legacy Support).</p>
+                <p class="menu-text">Kontakt: webmaster@code-werft.de</p>
             </div>
         </div>
     </div>
 
-    <script src="script.js?v=43.0"></script>
+    <script src="script.js?v=44.0"></script>
 </body>
-    </html> 
+</html>
