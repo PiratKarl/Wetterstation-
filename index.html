@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V51.0</title>
-    <link rel="stylesheet" href="style.css?v=51.0">
+    <title>Aura Wetterstation V52.0</title>
+    <link rel="stylesheet" href="style.css?v=52.0">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">AURA V51.0 MENÜ UPDATE</p>
+        <p style="color:#444; margin-top:20px;">AURA V52.0 BIG SIZE</p>
     </div>
 
     <div class="dashboard">
@@ -27,7 +27,6 @@
         <div class="col-left">
             <div id="clock">00:00</div>
             <div id="date">LADE...</div>
-            
             <div class="logo-container">
                 <img id="logo-bg" src="logo.png" alt="Aura Logo">
                 <video id="logo-video" loop playsinline muted>
@@ -38,11 +37,9 @@
 
         <div class="col-center">
             <div id="location-header">BRAUNSCHWEIG</div>
-            
             <div class="main-row">
                 <div id="main-icon"></div> 
                 <div id="main-temp">--°</div>
-                
                 <div class="rain-box">
                     <svg class="drop-icon" viewBox="0 0 24 24">
                         <path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/>
@@ -50,29 +47,24 @@
                     <div id="rain-prob">--%</div>
                 </div>
             </div>
-
             <div id="feels-like">Gefühlt: --°</div>
-            
             <div id="desc-text">LADE DATEN...</div>
         </div>
 
         <div class="col-right">
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
-            
             <div class="astro-block">
                 <span class="astro-label">SONNE</span>
                 <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
             </div>
-            
             <div class="astro-block">
                 <span class="astro-label">MOND</span>
                 <span id="moon-phase" class="astro-val">--</span>
             </div>
-
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 51.0</div>
+                <div class="status-row">VER: 52.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
@@ -95,31 +87,31 @@
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-1')">
-                <span>📍 Standort & Ort</span> <span>▼</span>
+                <span>📍 Standort</span> <span>▼</span>
             </button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Bitte geben Sie hier den gewünschten Ort für die Wetterdaten ein. Die Station lädt anschließend automatisch die aktuellen Werte sowie die Unwetterwarnungen für diese Region.</p>
+                <p class="menu-text">Geben Sie Ihren Ort ein:</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
-                <button class="btn-save" onclick="saveSettings()">STANDORT SPEICHERN</button>
+                <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
-                <span>🌙 Ruhemodus / Zeitplan</span> <span>▼</span>
+                <span>🌙 Ruhemodus</span> <span>▼</span>
             </button>
             <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Hier können Sie festlegen, wann sich der Bildschirm automatisch ausschalten soll (z.B. nachts), um Strom zu sparen. Tippen Sie einfach auf den dunklen Bildschirm, um ihn wieder aufzuwecken.</p>
+                <p class="menu-text">Bildschirm automatisch ausschalten:</p>
                 <div class="inp-time-row">
-                    <span class="inp-label">Abschalten um:</span>
+                    <span class="inp-label">Von:</span>
                     <input type="time" id="inp-time-from" class="inp-time">
                 </div>
                 <div class="inp-time-row">
-                    <span class="inp-label">Aufwecken um:</span>
+                    <span class="inp-label">Bis:</span>
                     <input type="time" id="inp-time-to" class="inp-time">
                 </div>
-                <button class="btn-save" onclick="saveSettings()">ZEITPLAN SPEICHERN</button>
+                <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
-                <button class="btn-action" onclick="toggleSleep()">JETZT MANUELL AUSSCHALTEN</button>
+                <button class="btn-action" onclick="toggleSleep()">JETZT AUSSCHALTEN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
             </div>
 
@@ -127,56 +119,89 @@
                 <span>📘 Legende & Symbole</span> <span>▼</span>
             </button>
             <div id="acc-legende" class="acc-content">
-                <p class="menu-text">Erklärung der Symbole für die gefühlte Temperatur (unter dem Hauptwetter):</p>
+                <p class="menu-text">Erklärung der Wetter-Symbole:</p>
                 
-                <div class="legend-row">
-                    <div class="legend-icon" style="color:#00eaff">↓</div>
-                    <div class="legend-desc">Gefühlte Temperatur ist <strong>kälter</strong> als gemessen (Windchill).</div>
-                </div>
-                
-                <div class="legend-row">
-                    <div class="legend-icon" style="color:#ff3333">↑</div>
-                    <div class="legend-desc">Gefühlte Temperatur ist <strong>wärmer</strong> als gemessen (Schwüle).</div>
-                </div>
+                <div class="legend-grid">
+                    <div class="legend-row">
+                        <div class="legend-icon-box" style="border:none;">
+                            <span style="color:#00eaff; font-size:30px; font-weight:bold;">↓</span>
+                        </div>
+                        <div class="legend-desc">Gefühlt <strong>kälter</strong> als gemessen (Wind/Kälte).</div>
+                    </div>
+                    <div class="legend-row">
+                        <div class="legend-icon-box" style="border:none;">
+                            <span style="color:#ff3333; font-size:30px; font-weight:bold;">↑</span>
+                        </div>
+                        <div class="legend-desc">Gefühlt <strong>wärmer</strong> als gemessen (Schwüle).</div>
+                    </div>
 
-                <div class="legend-row">
-                    <div class="legend-icon" style="color:#ffffff; font-size:18px;">=</div>
-                    <div class="legend-desc">Kein Pfeil: Gefühlte Temperatur entspricht exakt der Messung.</div>
+                    <div class="legend-row">
+                        <div class="legend-icon-box">
+                            <svg class="svg-icon" viewBox="0 0 24 24"><circle class="svg-sun" cx="12" cy="12" r="5" /><g class="svg-sun"><line x1="12" y1="1" x2="12" y2="4" stroke="#00eaff" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="#00eaff" stroke-width="2"/><line x1="1" y1="12" x2="4" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="#00eaff" stroke-width="2"/></g></svg>
+                        </div>
+                        <div class="legend-desc">Klarer Himmel / Sonnig.</div>
+                    </div>
+
+                    <div class="legend-row">
+                        <div class="legend-icon-box">
+                            <svg class="svg-icon" viewBox="0 0 24 24"><path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" /></svg>
+                        </div>
+                        <div class="legend-desc">Bewölkt / Bedeckt (Helles Weiß).</div>
+                    </div>
+
+                    <div class="legend-row">
+                        <div class="legend-icon-box">
+                            <svg class="svg-icon" viewBox="0 0 24 24"><path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" /><line class="svg-rain" x1="12" y1="18" x2="12" y2="22" /></svg>
+                        </div>
+                        <div class="legend-desc">Regenschauer oder leichter Regen.</div>
+                    </div>
+
+                    <div class="legend-row">
+                        <div class="legend-icon-box">
+                            <svg class="svg-icon" viewBox="0 0 24 24"><path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" /><polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9" fill="#ff3333"/></svg>
+                        </div>
+                        <div class="legend-desc">Gewitter / Sturm (Roter Blitz).</div>
+                    </div>
+
+                    <div class="legend-row">
+                        <div class="legend-icon-box">
+                            <svg class="svg-icon" viewBox="0 0 24 24"><line class="svg-mist" x1="4" y1="12" x2="20" y2="12" /></svg>
+                        </div>
+                        <div class="legend-desc">Nebel / Trüb (Weißer Schleier).</div>
+                    </div>
                 </div>
 
                 <button class="btn-back" onclick="closeAccordion('acc-legende')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
-                <span>☕ Support & Kaffeekasse</span> <span>▼</span>
+                <span>☕ Kaffeekasse</span> <span>▼</span>
             </button>
             <div id="acc-kaffee" class="acc-content">
-                <p class="menu-text">Diese Software wurde individuell für die Code-Werft entwickelt. Wenn Ihnen das Projekt gefällt, freut sich der Entwickler über einen kleinen Kaffee für die langen Nächte.</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">JETZT EINEN KAFFEE SPENDEN</a>
+                <p class="menu-text">Unterstützen Sie das Projekt:</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">KAFFEE SPENDEN</a>
                 <button class="btn-back" onclick="closeAccordion('acc-kaffee')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-tipps')">
-                <span>💡 Tipps & Tricks</span> <span>▼</span>
+                <span>💡 Tipps</span> <span>▼</span>
             </button>
             <div id="acc-tipps" class="acc-content">
-                <p class="menu-text"><span class="menu-highlight">Dauerbetrieb:</span> Damit das Tablet nicht ausgeht, stellen Sie in den Android-Einstellungen unter "Anzeige" > "Ruhezustand" bitte auf "Niemals".</p>
-                <p class="menu-text"><span class="menu-highlight">Vollbild:</span> Starten Sie die App über "Zum Startbildschirm hinzufügen", um die Adressleiste auszublenden.</p>
+                <p class="menu-text"><span class="menu-highlight">Vollbild:</span> "Zum Startbildschirm hinzufügen" nutzen.</p>
                 <button class="btn-back" onclick="closeAccordion('acc-tipps')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-imp')">
-                <span>⚖️ Info & Version</span> <span>▼</span>
+                <span>⚖️ Info</span> <span>▼</span>
             </button>
             <div id="acc-imp" class="acc-content">
-                <p class="menu-text">System: Aura Wetterstation</p>
-                <p class="menu-text">Version: 51.0 (Menu Update)</p>
-                <p class="menu-text">Kontakt: webmaster@code-werft.de</p>
+                <p class="menu-text">Aura V52.0</p>
+                <p class="menu-text">Design: Big Size & Full Legend</p>
                 <button class="btn-back" onclick="closeAccordion('acc-imp')">ZURÜCK</button>
             </div>
         </div>
     </div>
 
-    <script src="script.js?v=51.0"></script>
+    <script src="script.js?v=52.0"></script>
 </body>
-                                                      </html>
+                </html>
