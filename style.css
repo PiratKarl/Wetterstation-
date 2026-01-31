@@ -1,4 +1,4 @@
-/* --- AURA V51.0 (MENU & BRIGHTNESS) --- */
+/* --- AURA V52.0 (LEGEND & BIG SIZE) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -56,85 +56,87 @@ html, body {
 
 #desc-text { font-size: 3vh; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
 
-/* RECHTS */
+/* RECHTS (GRÖSSER) */
 .col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; }
 #btn-menu {
     background: transparent; border: 2px solid #fff; color: #fff;
     font-size: 18px; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 5px;
 }
 .astro-block { margin-bottom: 3px; text-align: right; }
-.astro-label { color: #00eaff; font-size: 1.4vh; display: block; }
-.astro-val { font-size: 2.2vh; font-weight: bold; }
+/* Astro Label & Wert größer */
+.astro-label { color: #00eaff; font-size: 1.6vh; display: block; } /* War 1.4 */
+.astro-val { font-size: 2.6vh; font-weight: bold; } /* War 2.2 */
 
 .status-block { margin-top: 5px; border-top: 1px solid #333; padding-top: 5px; width: 100%; text-align: right; }
-.status-row { font-size: 1.4vh; margin-bottom: 2px; font-weight: bold; color: #bbb; }
-.ver-label { font-size: 1.2vh; color: #555; margin-top: 2px; }
+/* Status Text größer */
+.status-row { font-size: 1.6vh; margin-bottom: 2px; font-weight: bold; color: #bbb; } /* War 1.4 */
+.ver-label { font-size: 1.3vh; color: #555; margin-top: 2px; }
 
-/* TICKER (GRÖSSER & HÖHER) */
+/* TICKER (MAX SIZE) */
 .ticker-wrap {
-    height: 10vh; /* Etwas höher für den großen Text */
+    height: 10vh; /* Platz für die große Schrift */
     background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222;
     overflow: hidden; white-space: nowrap; display: flex; align-items: center; margin-bottom: 0;
 }
 #ticker-text {
     display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; 
-    font-size: 4.0vh; /* UPDATE: Exakt 4.0vh */
+    font-size: 4.5vh; /* UPDATE: Exakt 4.5vh */
     color: #fff; font-weight: bold; display: flex; align-items: center;
 }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
 .t-alert { color: #ff3333; margin-right: 50px; font-weight: bold; display: flex; align-items: center; text-shadow: 0 0 5px #ff0000; }
-.t-icon { width: 40px; height: 40px; margin: 0 10px; vertical-align: middle; display: inline-block; } /* Icon auch etwas größer */
-.t-time { color: #aaa; font-size: 0.8em; margin-right: 10px; }
+.t-icon { width: 45px; height: 45px; margin: 0 10px; vertical-align: middle; display: inline-block; } 
+.t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-/* VORHERSAGE (ALLES VERGRÖSSERT) */
+/* VORHERSAGE (NOCH GRÖSSER) */
 .forecast-area { height: 49vh; display: flex; flex-direction: column; background: #000; }
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
 
-/* UPDATE: Vorhersage Schriftgrößen */
-.f-head { font-size: 2.6vh; font-weight: bold; color: #ddd; margin-bottom: 5px; } /* War 2.2 */
-.f-icon { width: 9vh; height: 9vh; margin: 5px 0; display: flex; justify-content: center; align-items: center; }
-.f-temp { font-size: 3.5vh; font-weight: bold; } /* War 3.0 */
-.f-rain { font-size: 2.4vh; color: #00eaff; font-weight: bold; margin-bottom: 0px; } /* War 2.0 */
+/* UPDATE: Vorhersage Schriftgrößen ans Limit */
+.f-head { font-size: 2.8vh; font-weight: bold; color: #ddd; margin-bottom: 5px; } /* War 2.6 */
+.f-icon { width: 9.5vh; height: 9.5vh; margin: 3px 0; display: flex; justify-content: center; align-items: center; }
+.f-temp { font-size: 3.8vh; font-weight: bold; } /* War 3.5 */
+.f-rain { font-size: 2.6vh; color: #00eaff; font-weight: bold; margin-bottom: 0px; } /* War 2.4 */
 
-.temp-range { display: flex; gap: 8px; font-size: 2.8vh; font-weight: bold; align-items: center; } /* War 2.5 */
+.temp-range { display: flex; gap: 8px; font-size: 3.0vh; font-weight: bold; align-items: center; } /* War 2.8 */
 .temp-low { color: #00eaff; }
 .temp-high { color: #ff3333; }
 .temp-sep { color: #555; }
 
 /* MENÜ & LEGENDE */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-.menu-container { max-width: 600px; margin: 0 auto; padding-bottom: 50px; }
+.menu-container { max-width: 650px; margin: 0 auto; padding-bottom: 50px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 20px; position: relative; }
 .menu-close-btn { position: absolute; right: 0; top: -10px; background: none; border: none; color: #fff; font-size: 40px; cursor: pointer; }
 
-.acc-btn { background: #1a1a1a; color: #fff; cursor: pointer; padding: 15px; width: 100%; text-align: left; border: none; font-size: 18px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-weight: bold; margin-top: 5px; }
+.acc-btn { background: #1a1a1a; color: #fff; cursor: pointer; padding: 15px; width: 100%; text-align: left; border: none; font-size: 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-weight: bold; margin-top: 5px; }
 .acc-content { padding: 20px 15px; background-color: #111; display: none; border-bottom: 2px solid #00eaff; }
 
-.inp-city { width: 100%; padding: 10px; background: #222; border: 1px solid #00eaff; color: #fff; font-size: 18px; margin-bottom: 10px; }
-.inp-time-row { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
-.inp-time { background: #222; color: #fff; border: 1px solid #00eaff; padding: 5px; font-size: 18px; width: 45%; }
-.inp-label { font-size: 16px; color: #ccc; }
+.inp-city { width: 100%; padding: 12px; background: #222; border: 1px solid #00eaff; color: #fff; font-size: 20px; margin-bottom: 15px; }
+.inp-time-row { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
+.inp-time { background: #222; color: #fff; border: 1px solid #00eaff; padding: 8px; font-size: 20px; width: 45%; }
+.inp-label { font-size: 18px; color: #ccc; }
 
 .btn-save, .btn-paypal, .btn-action, .btn-back { 
-    background: #00eaff; color: #000; border: none; padding: 12px; font-size: 18px; 
-    font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; display: block; text-align: center; text-decoration: none; margin-top: 10px;
+    background: #00eaff; color: #000; border: none; padding: 15px; font-size: 20px; 
+    font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; display: block; text-align: center; text-decoration: none; margin-top: 15px;
 }
 .btn-paypal { background: #ffc439; }
 .btn-action { background: #333; color: #fff; border: 1px solid #fff; }
-.btn-back { background: #444; color: #fff; border: 1px solid #666; margin-top: 15px; }
+.btn-back { background: #444; color: #fff; border: 1px solid #666; margin-top: 20px; }
 
-/* Menü Text Update: Besser lesbar */
-.menu-text { font-size: 16px; color: #ccc; line-height: 1.6; margin-bottom: 15px; text-align: justify; }
+.menu-text { font-size: 18px; color: #ccc; line-height: 1.6; margin-bottom: 15px; text-align: justify; }
 .menu-highlight { color: #00eaff; font-weight: bold; }
 
-/* NEU: LEGENDE STYLES */
-.legend-row { display: flex; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #222; padding-bottom: 8px; }
-.legend-icon { width: 40px; text-align: center; font-size: 24px; font-weight: bold; margin-right: 15px; }
-.legend-desc { font-size: 16px; color: #ddd; }
+/* LEGENDE UPDATE */
+.legend-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 10px; }
+.legend-row { display: flex; align-items: center; border-bottom: 1px solid #222; padding-bottom: 10px; }
+.legend-icon-box { width: 50px; height: 50px; margin-right: 20px; display: flex; justify-content: center; align-items: center; background: #000; border: 1px solid #333; border-radius: 5px; }
+.legend-desc { font-size: 18px; color: #ddd; line-height: 1.3; }
 
-/* --- ANIMATIONEN & VEKTOREN (BRIGHTNESS FIX) --- */
+/* --- ANIMATIONEN & VEKTOREN --- */
 @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-3px); } 100% { transform: translateY(0px); } }
 @keyframes rain { 0% { transform: translateY(-5px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(5px); opacity:0; } }
 @keyframes snow { 0% { transform: translateY(-3px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(3px); opacity:0; } }
@@ -146,16 +148,10 @@ html, body {
 .svg-sun { fill: #00eaff; animation: spin 20s linear infinite; transform-origin: center; }
 .svg-moon { fill: #00eaff; animation: float 4s ease-in-out infinite; }
 .svg-cloud { fill: #ffffff; opacity: 1; filter: drop-shadow(0 0 5px #ffffff); animation: float 6s ease-in-out infinite; }
-
-/* FIX: Dunkle Wolke heller (#bbb statt #e0e0e0) für mehr Kontrast */
 .svg-cloud-dark { fill: #bbb; opacity: 1; filter: drop-shadow(0 0 2px #fff); animation: float 6s ease-in-out infinite; }
-
 .svg-rain { stroke: #00eaff; stroke-width: 2; animation: rain 1s linear infinite; }
 .svg-snow { fill: #fff; animation: snow 2s linear infinite; }
 .svg-bolt { fill: #ff3333; animation: flash 1s infinite; }
-
-/* FIX: Nebel jetzt WEISS und LEUCHTEND (vorher grau und unsichtbar) */
 .svg-mist { stroke: #ffffff; stroke-width: 2.5; opacity: 0.9; filter: drop-shadow(0 0 4px #ffffff); animation: float 5s ease-in-out infinite; }
 
-/* Static Ticker */
 .ticker-wrap .svg-icon * { animation: none !important; }
