@@ -1,7 +1,7 @@
-/* --- AURA V52.0 (LEGEND & BIG SIZE) --- */
+/* --- AURA V53.0 (LAYOUT SHIFT) --- */
 
 const CONFIG = {
-    version: 52.0,
+    version: 53.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',

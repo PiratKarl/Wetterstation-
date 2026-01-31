@@ -1,4 +1,4 @@
-/* --- AURA V52.0 (LEGEND & BIG SIZE) --- */
+/* --- AURA V53.0 (LAYOUT SHIFT) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -21,9 +21,11 @@ html, body {
     padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px;
 }
 
-/* DASHBOARD */
+/* DASHBOARD (HÖHE REDUZIERT -> ALLES RUTSCHT HOCH) */
 .dashboard {
-    display: flex; height: 41vh; width: 100%;
+    display: flex; 
+    height: 33vh; /* UPDATE: Von 41vh auf 33vh reduziert */
+    width: 100%;
     padding: 10px 15px; box-sizing: border-box; position: relative; z-index: 10;
 }
 
@@ -32,55 +34,55 @@ html, body {
 #clock { font-size: 8.5vw; font-weight: bold; line-height: 0.9; margin: 0; }
 #date { font-size: 2.2vh; color: #00eaff; margin-top: 5px; text-transform: uppercase; }
 
-.logo-container { width: 140px; height: 140px; margin-top: 5px; position: relative; }
+.logo-container { width: 120px; height: 120px; margin-top: 5px; position: relative; } /* Etwas kleiner für neues Layout */
 #logo-bg { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 1; }
 #logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 2; }
 
 /* MITTE */
 .col-center { width: 44%; display: flex; flex-direction: column; align-items: center; }
-#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 5px; }
+#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; } /* Margin reduziert */
 .main-row { display: flex; align-items: center; justify-content: center; width: 100%; }
 
-#main-icon { width: 14vh; height: 14vh; display: flex; justify-content: center; align-items: center; }
-#main-temp { font-size: 19vh; font-weight: bold; margin: 0 10px; line-height: 0.9; }
+#main-icon { width: 13vh; height: 13vh; display: flex; justify-content: center; align-items: center; }
+#main-temp { font-size: 19vh; font-weight: bold; margin: 0 10px; line-height: 0.85; }
 
 .rain-box { display: flex; flex-direction: column; align-items: center; margin-left: 10px; }
 .drop-icon { width: 30px; height: 30px; fill: #00eaff; margin-bottom: 5px; filter: drop-shadow(0 0 5px #00eaff); }
 #rain-prob { font-size: 2vh; color: #00eaff; font-weight: bold; }
 
 /* GEFÜHLT */
-#feels-like { font-size: 3.5vh; font-weight: bold; margin-top: 5px; }
+#feels-like { font-size: 3.5vh; font-weight: bold; margin-top: 0px; }
 .feels-cold { color: #00eaff; } 
 .feels-hot { color: #ff3333; }  
 .feels-same { color: #ffffff; } 
 
-#desc-text { font-size: 3vh; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
+#desc-text { font-size: 3vh; font-weight: bold; margin-top: 2px; text-transform: uppercase; }
 
-/* RECHTS (GRÖSSER) */
+/* RECHTS */
 .col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; }
 #btn-menu {
     background: transparent; border: 2px solid #fff; color: #fff;
     font-size: 18px; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 5px;
 }
 .astro-block { margin-bottom: 3px; text-align: right; }
-/* Astro Label & Wert größer */
-.astro-label { color: #00eaff; font-size: 1.6vh; display: block; } /* War 1.4 */
-.astro-val { font-size: 2.6vh; font-weight: bold; } /* War 2.2 */
+.astro-label { color: #00eaff; font-size: 1.6vh; display: block; }
+.astro-val { font-size: 2.6vh; font-weight: bold; }
 
 .status-block { margin-top: 5px; border-top: 1px solid #333; padding-top: 5px; width: 100%; text-align: right; }
-/* Status Text größer */
-.status-row { font-size: 1.6vh; margin-bottom: 2px; font-weight: bold; color: #bbb; } /* War 1.4 */
-.ver-label { font-size: 1.3vh; color: #555; margin-top: 2px; }
 
-/* TICKER (MAX SIZE) */
+/* UPDATE: Status deutlich größer */
+.status-row { font-size: 2.2vh; margin-bottom: 4px; font-weight: bold; color: #bbb; } /* War 1.6vh */
+.ver-label { font-size: 1.6vh; color: #555; margin-top: 2px; }
+
+/* TICKER */
 .ticker-wrap {
-    height: 10vh; /* Platz für die große Schrift */
+    height: 10vh; 
     background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222;
     overflow: hidden; white-space: nowrap; display: flex; align-items: center; margin-bottom: 0;
 }
 #ticker-text {
     display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; 
-    font-size: 4.5vh; /* UPDATE: Exakt 4.5vh */
+    font-size: 4.5vh; 
     color: #fff; font-weight: bold; display: flex; align-items: center;
 }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
@@ -89,18 +91,17 @@ html, body {
 .t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-/* VORHERSAGE (NOCH GRÖSSER) */
-.forecast-area { height: 49vh; display: flex; flex-direction: column; background: #000; }
+/* VORHERSAGE */
+.forecast-area { height: 52vh; display: flex; flex-direction: column; background: #000; } /* Etwas höher, aber Startpunkt ist weiter oben */
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
 
-/* UPDATE: Vorhersage Schriftgrößen ans Limit */
-.f-head { font-size: 2.8vh; font-weight: bold; color: #ddd; margin-bottom: 5px; } /* War 2.6 */
+.f-head { font-size: 2.8vh; font-weight: bold; color: #ddd; margin-bottom: 5px; }
 .f-icon { width: 9.5vh; height: 9.5vh; margin: 3px 0; display: flex; justify-content: center; align-items: center; }
-.f-temp { font-size: 3.8vh; font-weight: bold; } /* War 3.5 */
-.f-rain { font-size: 2.6vh; color: #00eaff; font-weight: bold; margin-bottom: 0px; } /* War 2.4 */
+.f-temp { font-size: 3.8vh; font-weight: bold; }
+.f-rain { font-size: 2.6vh; color: #00eaff; font-weight: bold; margin-bottom: 0px; }
 
-.temp-range { display: flex; gap: 8px; font-size: 3.0vh; font-weight: bold; align-items: center; } /* War 2.8 */
+.temp-range { display: flex; gap: 8px; font-size: 3.0vh; font-weight: bold; align-items: center; }
 .temp-low { color: #00eaff; }
 .temp-high { color: #ff3333; }
 .temp-sep { color: #555; }
@@ -126,17 +127,16 @@ html, body {
 .btn-paypal { background: #ffc439; }
 .btn-action { background: #333; color: #fff; border: 1px solid #fff; }
 .btn-back { background: #444; color: #fff; border: 1px solid #666; margin-top: 20px; }
-
 .menu-text { font-size: 18px; color: #ccc; line-height: 1.6; margin-bottom: 15px; text-align: justify; }
 .menu-highlight { color: #00eaff; font-weight: bold; }
 
-/* LEGENDE UPDATE */
+/* LEGENDE */
 .legend-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 10px; }
 .legend-row { display: flex; align-items: center; border-bottom: 1px solid #222; padding-bottom: 10px; }
 .legend-icon-box { width: 50px; height: 50px; margin-right: 20px; display: flex; justify-content: center; align-items: center; background: #000; border: 1px solid #333; border-radius: 5px; }
 .legend-desc { font-size: 18px; color: #ddd; line-height: 1.3; }
 
-/* --- ANIMATIONEN & VEKTOREN --- */
+/* ANIMATIONEN */
 @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-3px); } 100% { transform: translateY(0px); } }
 @keyframes rain { 0% { transform: translateY(-5px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(5px); opacity:0; } }
 @keyframes snow { 0% { transform: translateY(-3px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(3px); opacity:0; } }
@@ -153,5 +153,4 @@ html, body {
 .svg-snow { fill: #fff; animation: snow 2s linear infinite; }
 .svg-bolt { fill: #ff3333; animation: flash 1s infinite; }
 .svg-mist { stroke: #ffffff; stroke-width: 2.5; opacity: 0.9; filter: drop-shadow(0 0 4px #ffffff); animation: float 5s ease-in-out infinite; }
-
 .ticker-wrap .svg-icon * { animation: none !important; }
