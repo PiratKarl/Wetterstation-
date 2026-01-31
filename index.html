@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V47.0</title>
-    <link rel="stylesheet" href="style.css?v=47.0">
+    <title>Aura Wetterstation V48.0</title>
+    <link rel="stylesheet" href="style.css?v=48.0">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">AURA V47.0 UPDATE</p>
+        <p style="color:#444; margin-top:20px;">AURA V48.0 VECTOR UPDATE</p>
     </div>
 
     <div class="dashboard">
@@ -40,7 +40,8 @@
             <div id="location-header">BRAUNSCHWEIG</div>
             
             <div class="main-row">
-                <img id="main-icon" src=""> 
+                <div id="main-icon"></div> 
+                
                 <div id="main-temp">--°</div>
                 
                 <div class="rain-box">
@@ -71,7 +72,7 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 47.0</div>
+                <div class="status-row">VER: 48.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
@@ -106,8 +107,7 @@
                 <span>🌙 Ruhemodus</span> <span>▼</span>
             </button>
             <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Automatisch Bildschirm ausschalten:</p>
-                
+                <p class="menu-text">Zeitsteuerung:</p>
                 <div class="inp-time-row">
                     <span class="inp-label">Von:</span>
                     <input type="time" id="inp-time-from" class="inp-time">
@@ -116,11 +116,8 @@
                     <span class="inp-label">Bis:</span>
                     <input type="time" id="inp-time-to" class="inp-time">
                 </div>
-                
                 <button class="btn-save" onclick="saveSettings()">ZEITEN SPEICHERN</button>
-                
                 <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
-                
                 <button class="btn-action" onclick="toggleSleep()">JETZT AUSSCHALTEN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
             </div>
@@ -139,7 +136,6 @@
             </button>
             <div id="acc-tipps" class="acc-content">
                 <p class="menu-text"><span class="menu-highlight">Wach bleiben:</span> Android Einstellungen > Anzeige > Ruhezustand > "Niemals".</p>
-                <p class="menu-text"><span class="menu-highlight">Installation:</span> "Zum Startbildschirm hinzufügen" nutzen.</p>
                 <button class="btn-back" onclick="closeAccordion('acc-tipps')">ZURÜCK</button>
             </div>
 
@@ -147,13 +143,13 @@
                 <span>⚖️ Info</span> <span>▼</span>
             </button>
             <div id="acc-imp" class="acc-content">
-                <p class="menu-text">Code-Werft Aura V47.0</p>
-                <p class="menu-text">Kontakt: webmaster@code-werft.de</p>
+                <p class="menu-text">Code-Werft Aura V48.0</p>
+                <p class="menu-text">Technik: Vektor Engine</p>
                 <button class="btn-back" onclick="closeAccordion('acc-imp')">ZURÜCK</button>
             </div>
         </div>
     </div>
 
-    <script src="script.js?v=47.0"></script>
+    <script src="script.js?v=48.0"></script>
 </body>
-                </html> 
+    </html>
