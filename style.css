@@ -1,4 +1,4 @@
-/* --- AURA V53.0 (LAYOUT SHIFT) --- */
+/* --- AURA V54.0 (FINAL TOUCH) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -21,11 +21,9 @@ html, body {
     padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px;
 }
 
-/* DASHBOARD (HÖHE REDUZIERT -> ALLES RUTSCHT HOCH) */
+/* DASHBOARD (33vh) */
 .dashboard {
-    display: flex; 
-    height: 33vh; /* UPDATE: Von 41vh auf 33vh reduziert */
-    width: 100%;
+    display: flex; height: 33vh; width: 100%;
     padding: 10px 15px; box-sizing: border-box; position: relative; z-index: 10;
 }
 
@@ -34,13 +32,13 @@ html, body {
 #clock { font-size: 8.5vw; font-weight: bold; line-height: 0.9; margin: 0; }
 #date { font-size: 2.2vh; color: #00eaff; margin-top: 5px; text-transform: uppercase; }
 
-.logo-container { width: 120px; height: 120px; margin-top: 5px; position: relative; } /* Etwas kleiner für neues Layout */
+.logo-container { width: 120px; height: 120px; margin-top: 5px; position: relative; }
 #logo-bg { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 1; }
 #logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 2; }
 
 /* MITTE */
 .col-center { width: 44%; display: flex; flex-direction: column; align-items: center; }
-#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; } /* Margin reduziert */
+#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; }
 .main-row { display: flex; align-items: center; justify-content: center; width: 100%; }
 
 #main-icon { width: 13vh; height: 13vh; display: flex; justify-content: center; align-items: center; }
@@ -69,12 +67,10 @@ html, body {
 .astro-val { font-size: 2.6vh; font-weight: bold; }
 
 .status-block { margin-top: 5px; border-top: 1px solid #333; padding-top: 5px; width: 100%; text-align: right; }
-
-/* UPDATE: Status deutlich größer */
-.status-row { font-size: 2.2vh; margin-bottom: 4px; font-weight: bold; color: #bbb; } /* War 1.6vh */
+.status-row { font-size: 2.2vh; margin-bottom: 4px; font-weight: bold; color: #bbb; }
 .ver-label { font-size: 1.6vh; color: #555; margin-top: 2px; }
 
-/* TICKER */
+/* TICKER (10vh) */
 .ticker-wrap {
     height: 10vh; 
     background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222;
@@ -91,20 +87,30 @@ html, body {
 .t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-/* VORHERSAGE */
-.forecast-area { height: 52vh; display: flex; flex-direction: column; background: #000; } /* Etwas höher, aber Startpunkt ist weiter oben */
+/* VORHERSAGE (53vh - Platz für Footer) */
+.forecast-area { height: 53vh; display: flex; flex-direction: column; background: #000; }
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
 
 .f-head { font-size: 2.8vh; font-weight: bold; color: #ddd; margin-bottom: 5px; }
 .f-icon { width: 9.5vh; height: 9.5vh; margin: 3px 0; display: flex; justify-content: center; align-items: center; }
 .f-temp { font-size: 3.8vh; font-weight: bold; }
-.f-rain { font-size: 2.6vh; color: #00eaff; font-weight: bold; margin-bottom: 0px; }
+
+/* UPDATE: Neue Regen-Zeile in der Vorhersage */
+.f-rain-row { display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
+.f-drop-small { width: 2.0vh; height: 2.0vh; fill: #00eaff; margin-right: 4px; filter: drop-shadow(0 0 2px #00eaff); }
+.f-rain-text { font-size: 2.6vh; color: #00eaff; font-weight: bold; }
 
 .temp-range { display: flex; gap: 8px; font-size: 3.0vh; font-weight: bold; align-items: center; }
 .temp-low { color: #00eaff; }
 .temp-high { color: #ff3333; }
-.temp-sep { color: #555; }
+.temp-sep { color: #fff; margin: 0 5px; } /* Bindestrich in Weiß */
+
+/* NEU: FOOTER COPYRIGHT */
+.footer-copyright {
+    position: fixed; bottom: 5px; width: 100%; text-align: center;
+    color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100;
+}
 
 /* MENÜ & LEGENDE */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }

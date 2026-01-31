@@ -1,7 +1,7 @@
-/* --- AURA V53.0 (LAYOUT SHIFT) --- */
+/* --- AURA V54.0 (FINAL TOUCH) --- */
 
 const CONFIG = {
-    version: 53.0,
+    version: 54.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -111,13 +111,10 @@ function renderCurrent(data) {
     let feelsHTML = "";
     
     if(feels < temp) {
-        // Kälter -> Blau + Pfeil runter
         feelsHTML = `Gefühlt: <span class="feels-cold">${feels}° ↓</span>`;
     } else if (feels > temp) {
-        // Wärmer -> Rot + Pfeil hoch
         feelsHTML = `Gefühlt: <span class="feels-hot">${feels}° ↑</span>`;
     } else {
-        // Gleich -> Weiß + KEIN SYMBOL
         feelsHTML = `Gefühlt: <span class="feels-same">${feels}°</span>`;
     }
     document.getElementById('feels-like').innerHTML = feelsHTML;
@@ -157,12 +154,20 @@ function renderForecast(data) {
 
     let dHTML = "";
     let keys = Object.keys(dailyMap).slice(0, 5);
+    const dropSvg = '<svg class="f-drop-small" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>';
+
     keys.forEach(key => {
         let d = dailyMap[key];
         dHTML += `<div class="f-item">
                     <span class="f-head">${key}</span>
-                    <div class="f-rain">${Math.round(d.pop*100)}%</div>
+                    
                     <div class="f-icon">${getVectorIcon(d.icon)}</div>
+                    
+                    <div class="f-rain-row">
+                        ${dropSvg}
+                        <span class="f-rain-text">${Math.round(d.pop*100)}%</span>
+                    </div>
+
                     <div class="temp-range">
                         <span class="temp-low">${Math.round(d.min)}°</span>
                         <span class="temp-sep">-</span>
@@ -206,18 +211,12 @@ function getVectorIcon(code) {
     let svgContent = "";
 
     const cloudPath = '<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
-    
-    // Cloud Dark - passt zum helleren CSS (#bbb)
     const cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
-    
     const sunObj = '<circle class="svg-sun" cx="12" cy="12" r="5" /><g class="svg-sun"><line x1="12" y1="1" x2="12" y2="4" stroke="#00eaff" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="#00eaff" stroke-width="2"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3" stroke="#00eaff" stroke-width="2"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8" stroke="#00eaff" stroke-width="2"/><line x1="1" y1="12" x2="4" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7" stroke="#00eaff" stroke-width="2"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2" stroke="#00eaff" stroke-width="2"/></g>';
     const moonObj = '<path class="svg-moon" d="M12,3 C10,3 8,4 7,6 C10,6 13,9 13,12 C13,15 10,18 7,18 C8,20 10,21 12,21 C17,21 21,17 21,12 C21,7 17,3 12,3 Z" fill="#00eaff"/>';
-    
     const rainObj = '<line class="svg-rain" x1="8" y1="18" x2="8" y2="22" /><line class="svg-rain" x1="12" y1="18" x2="12" y2="22" style="animation-delay:0.2s" /><line class="svg-rain" x1="16" y1="18" x2="16" y2="22" style="animation-delay:0.4s"/>';
     const snowObj = '<circle class="svg-snow" cx="8" cy="20" r="1.5"/><circle class="svg-snow" cx="16" cy="20" r="1.5" style="animation-delay:1s"/><circle class="svg-snow" cx="12" cy="22" r="1.5" style="animation-delay:0.5s"/>';
     const boltObj = '<polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9" fill="#ff3333"/>';
-    
-    // Nebel/Trüb: Nutzt jetzt die WEISSE Klasse aus style.css
     const mistObj = '<line class="svg-mist" x1="4" y1="10" x2="20" y2="10" /><line class="svg-mist" x1="4" y1="14" x2="20" y2="14" style="animation-delay:1s"/><line class="svg-mist" x1="4" y1="18" x2="20" y2="18" style="animation-delay:2s"/>';
 
     if(code === '01d') svgContent = sunObj; 
