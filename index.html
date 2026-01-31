@@ -3,10 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V54.0</title>
-    <link rel="stylesheet" href="style.css?v=54.0">
+    <title>Aura Wetterstation V55.0</title>
+    <link rel="stylesheet" href="style.css?v=55.0">
 </head>
 <body>
+
+    <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+        <defs>
+            <radialGradient id="gradSun" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1" />
+                <stop offset="40%" style="stop-color:rgb(0,234,255);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(0,119,170);stop-opacity:1" />
+            </radialGradient>
+        </defs>
+    </svg>
 
     <video id="wake-video-layer" loop playsinline muted>
         <source src="logo.mp4" type="video/mp4">
@@ -19,7 +29,7 @@
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">AURA V54.0 FINAL TOUCH</p>
+        <p style="color:#444; margin-top:20px;">AURA V55.0 SCHNAPSZAHL</p>
     </div>
 
     <div class="dashboard">
@@ -64,7 +74,7 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 54.0</div>
+                <div class="status-row">VER: 55.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
@@ -94,118 +104,102 @@
                 <span>📍 Standort</span> <span>▼</span>
             </button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Geben Sie Ihren Ort ein:</p>
+                <p class="menu-text">Bitte geben Sie hier Ihren gewünschten Standort ein, um lokale Wetterdaten und Warnungen zu empfangen.</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
+                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
                 <span>🌙 Ruhemodus</span> <span>▼</span>
             </button>
             <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Bildschirm automatisch ausschalten:</p>
+                <p class="menu-text">Definieren Sie hier Zeiten, zu denen sich das Display automatisch ausschaltet (Strom sparen). Tippen Sie auf den Bildschirm, um ihn jederzeit zu wecken.</p>
                 <div class="inp-time-row">
-                    <span class="inp-label">Von:</span>
+                    <span class="inp-label">Abschalten um:</span>
                     <input type="time" id="inp-time-from" class="inp-time">
                 </div>
                 <div class="inp-time-row">
-                    <span class="inp-label">Bis:</span>
+                    <span class="inp-label">Aufwecken um:</span>
                     <input type="time" id="inp-time-to" class="inp-time">
                 </div>
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
                 <button class="btn-action" onclick="toggleSleep()">JETZT AUSSCHALTEN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
+                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-legende')">
                 <span>📘 Legende & Symbole</span> <span>▼</span>
             </button>
             <div id="acc-legende" class="acc-content">
-                <p class="menu-text">Erklärung der Wetter-Symbole:</p>
-                
+                <p class="menu-text">Hier finden Sie eine Übersicht aller verwendeten Symbole:</p>
                 <div class="legend-grid">
                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;">
-                            <span style="color:#00eaff; font-size:30px; font-weight:bold;">↓</span>
-                        </div>
-                        <div class="legend-desc">Gefühlt <strong>kälter</strong> als gemessen (Wind/Kälte).</div>
+                        <div class="legend-icon-box" style="border:none;"><span style="color:#00eaff; font-size:30px; font-weight:bold;">↓</span></div>
+                        <div class="legend-desc">Gefühlt <strong>kälter</strong> als gemessen (Windchill).</div>
                     </div>
                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;">
-                            <span style="color:#ff3333; font-size:30px; font-weight:bold;">↑</span>
-                        </div>
+                        <div class="legend-icon-box" style="border:none;"><span style="color:#ff3333; font-size:30px; font-weight:bold;">↑</span></div>
                         <div class="legend-desc">Gefühlt <strong>wärmer</strong> als gemessen (Schwüle).</div>
                     </div>
-
-                    <div class="legend-row">
-                        <div class="legend-icon-box">
-                            <svg class="svg-icon" viewBox="0 0 24 24"><circle class="svg-sun" cx="12" cy="12" r="5" /><g class="svg-sun"><line x1="12" y1="1" x2="12" y2="4" stroke="#00eaff" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="#00eaff" stroke-width="2"/><line x1="1" y1="12" x2="4" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="#00eaff" stroke-width="2"/></g></svg>
-                        </div>
-                        <div class="legend-desc">Klarer Himmel / Sonnig.</div>
-                    </div>
-
-                    <div class="legend-row">
-                        <div class="legend-icon-box">
-                            <svg class="svg-icon" viewBox="0 0 24 24"><path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" /></svg>
-                        </div>
-                        <div class="legend-desc">Bewölkt / Bedeckt (Helles Weiß).</div>
-                    </div>
-
-                    <div class="legend-row">
-                        <div class="legend-icon-box">
-                            <svg class="svg-icon" viewBox="0 0 24 24"><path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" /><line class="svg-rain" x1="12" y1="18" x2="12" y2="22" /></svg>
-                        </div>
-                        <div class="legend-desc">Regenschauer oder leichter Regen.</div>
-                    </div>
-
-                    <div class="legend-row">
-                        <div class="legend-icon-box">
-                            <svg class="svg-icon" viewBox="0 0 24 24"><path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" /><polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9" fill="#ff3333"/></svg>
-                        </div>
-                        <div class="legend-desc">Gewitter / Sturm (Roter Blitz).</div>
-                    </div>
-
-                    <div class="legend-row">
-                        <div class="legend-icon-box">
-                            <svg class="svg-icon" viewBox="0 0 24 24"><line class="svg-mist" x1="4" y1="12" x2="20" y2="12" /></svg>
-                        </div>
-                        <div class="legend-desc">Nebel / Trüb (Weißer Schleier).</div>
-                    </div>
+                    <div class="legend-row"><div class="legend-desc">Die Symbole (Sonne, Wolke, etc.) entsprechen dem aktuellen Wetterbericht.</div></div>
                 </div>
-
                 <button class="btn-back" onclick="closeAccordion('acc-legende')">ZURÜCK</button>
+                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-contact')">
+                <span>🌐 Kontakt & Homepage</span> <span>▼</span>
+            </button>
+            <div id="acc-contact" class="acc-content">
+                <p class="menu-text">Haben Sie Fragen, Anregungen oder Wünsche? Wir sind für Sie da. Besuchen Sie auch unsere Projekt-Webseite für Updates.</p>
+                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL SCHREIBEN</a>
+                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WWW.CODE-WERFT.DE</a>
+                <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
+                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-legal')">
+                <span>⚖️ Impressum & Datenschutz</span> <span>▼</span>
+            </button>
+            <div id="acc-legal" class="acc-content">
+                <p class="menu-text"><span class="menu-highlight">Impressum:</span><br>
+                Angaben gemäß § 5 TMG:<br>
+                Code-Werft Projects<br>
+                Karl Altmannshofer<br>
+                Lohengrinstraße 25<br>
+                38106 Braunschweig<br>
+                Deutschland</p>
+                
+                <p class="menu-text"><span class="menu-highlight">Kontakt:</span><br>
+                E-Mail: webmaster@code-werft.de<br>
+                Web: code-werft.de</p>
+                
+                <p class="menu-text"><span class="menu-highlight">Datenschutz:</span><br>
+                Diese Anwendung ("Aura Wetterstation") speichert Ihre Einstellungen (Ort, Zeiten) ausschließlich lokal auf Ihrem Endgerät (LocalStorage). Es werden keine personenbezogenen Daten an Dritte übermittelt. Die Wetterdaten werden anonymisiert über die OpenWeatherMap API abgerufen.</p>
+
+                <p class="menu-text">Software Version: 55.0 (Build 2026)</p>
+                
+                <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
+                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
                 <span>☕ Kaffeekasse</span> <span>▼</span>
             </button>
             <div id="acc-kaffee" class="acc-content">
-                <p class="menu-text">Unterstützen Sie das Projekt:</p>
+                <p class="menu-text">Wenn Ihnen dieses Projekt gefällt, freue ich mich riesig über einen virtuellen Kaffee als Unterstützung für die Weiterentwicklung.</p>
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">KAFFEE SPENDEN</a>
                 <button class="btn-back" onclick="closeAccordion('acc-kaffee')">ZURÜCK</button>
+                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-tipps')">
-                <span>💡 Tipps</span> <span>▼</span>
-            </button>
-            <div id="acc-tipps" class="acc-content">
-                <p class="menu-text"><span class="menu-highlight">Vollbild:</span> "Zum Startbildschirm hinzufügen" nutzen.</p>
-                <button class="btn-back" onclick="closeAccordion('acc-tipps')">ZURÜCK</button>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-imp')">
-                <span>⚖️ Info</span> <span>▼</span>
-            </button>
-            <div id="acc-imp" class="acc-content">
-                <p class="menu-text">Aura V54.0</p>
-                <p class="menu-text">Design: Final Touch</p>
-                <button class="btn-back" onclick="closeAccordion('acc-imp')">ZURÜCK</button>
-            </div>
         </div>
     </div>
 
-    <script src="script.js?v=54.0"></script>
+    <script src="script.js?v=55.0"></script>
 </body>
-    </html> 
+    </html>
