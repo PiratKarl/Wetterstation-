@@ -1,7 +1,7 @@
-/* --- AURA V49.0 (BRIGHT CLOUD UPDATE) --- */
+/* --- AURA V50.0 (PRECISION LOGIC) --- */
 
 const CONFIG = {
-    version: 49.0,
+    version: 50.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -97,13 +97,31 @@ function loadData() {
 
 function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
-    document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
+    
+    let temp = Math.round(data.main.temp);
+    document.getElementById('main-temp').innerText = temp + "°";
     
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon);
     
     let rain = data.rain ? "Regen" : "0% Regen";
     document.getElementById('rain-prob').innerText = rain;
-    document.getElementById('feels-like').innerText = "Gefühlt: " + Math.round(data.main.feels_like) + "°";
+    
+    // NEUE LOGIK FÜR GEFÜHLTE TEMP
+    let feels = Math.round(data.main.feels_like);
+    let feelsHTML = "";
+    
+    if(feels < temp) {
+        // Gefühlt kälter -> Blau + Pfeil runter
+        feelsHTML = `Gefühlt: <span class="feels-cold">${feels}° ↓</span>`;
+    } else if (feels > temp) {
+        // Gefühlt wärmer -> Rot + Pfeil hoch
+        feelsHTML = `Gefühlt: <span class="feels-hot">${feels}° ↑</span>`;
+    } else {
+        // Gleich -> Weiß + KEIN SYMBOL
+        feelsHTML = `Gefühlt: <span class="feels-same">${feels}°</span>`;
+    }
+    document.getElementById('feels-like').innerHTML = feelsHTML;
+
     document.getElementById('desc-text').innerText = data.weather[0].description.toUpperCase();
 
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
@@ -113,7 +131,6 @@ function renderCurrent(data) {
 }
 
 function renderForecast(data) {
-    // Stunden
     let hHTML = "";
     for(let i=0; i<5; i++) {
         let item = data.list[i];
@@ -126,7 +143,6 @@ function renderForecast(data) {
     }
     document.getElementById('hourly-row').innerHTML = hHTML;
 
-    // Tage
     let dailyMap = {};
     data.list.forEach(item => {
         let d = new Date(item.dt*1000);
@@ -184,16 +200,12 @@ async function loadTicker(localForecast) {
     document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
-/* --- VECTOR GENERATOR --- */
 function getVectorIcon(code) {
     let icon = code.replace('n','d'); 
     let isNight = code.includes('n');
     let svgContent = "";
 
-    // Helle Wolke (aus CSS style.css gesteuert)
     const cloudPath = '<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
-    
-    // Dunklere Wolke (jetzt hellgrau statt dunkelgrau)
     const cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
     
     const sunObj = '<circle class="svg-sun" cx="12" cy="12" r="5" /><g class="svg-sun"><line x1="12" y1="1" x2="12" y2="4" stroke="#00eaff" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="#00eaff" stroke-width="2"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3" stroke="#00eaff" stroke-width="2"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8" stroke="#00eaff" stroke-width="2"/><line x1="1" y1="12" x2="4" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7" stroke="#00eaff" stroke-width="2"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2" stroke="#00eaff" stroke-width="2"/></g>';
