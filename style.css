@@ -1,4 +1,4 @@
-/* --- AURA V47.0 (AUTO-SLEEP & DESIGN) --- */
+/* --- AURA V48.0 (VECTOR ENGINE) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -21,7 +21,7 @@ html, body {
     padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px;
 }
 
-/* DASHBOARD (42vh) */
+/* DASHBOARD */
 .dashboard {
     display: flex; height: 42vh; width: 100%;
     padding: 10px 15px; box-sizing: border-box; position: relative; z-index: 10;
@@ -36,18 +36,16 @@ html, body {
 #logo-bg { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 1; }
 #logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 2; }
 
-/* MITTE (Angepasst: Größer & Kleiner) */
+/* MITTE */
 .col-center { width: 44%; display: flex; flex-direction: column; align-items: center; }
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 5px; }
 .main-row { display: flex; align-items: center; justify-content: center; width: 100%; }
 
-/* GRÖSSER: Icon (12vh -> 14vh) */
-#main-icon { width: 14vh; height: 14vh; }
-/* GRÖSSER: Temp (13vh -> 15vh) */
+/* NEU: Div statt Img für Vektoren */
+#main-icon { width: 14vh; height: 14vh; display: flex; justify-content: center; align-items: center; }
 #main-temp { font-size: 15vh; font-weight: bold; margin: 0 10px; line-height: 1; }
 
 .rain-box { display: flex; flex-direction: column; align-items: center; margin-left: 10px; }
-/* KLEINER: Tropfen (40px -> 30px) */
 .drop-icon { width: 30px; height: 30px; fill: #00eaff; margin-bottom: 5px; filter: drop-shadow(0 0 5px #00eaff); }
 #rain-prob { font-size: 2vh; color: #00eaff; font-weight: bold; }
 
@@ -79,7 +77,8 @@ html, body {
 }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
 .t-alert { color: #ff3333; margin-right: 50px; font-weight: bold; display: flex; align-items: center; text-shadow: 0 0 5px #ff0000; }
-.t-icon { width: 35px; height: 35px; margin: 0 10px; vertical-align: middle; }
+/* Ticker Icon jetzt auch Div */
+.t-icon { width: 35px; height: 35px; margin: 0 10px; vertical-align: middle; display: inline-block; }
 .t-time { color: #aaa; font-size: 0.8em; margin-right: 10px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
@@ -88,7 +87,8 @@ html, body {
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
 .f-head { font-size: 2.2vh; font-weight: bold; color: #ddd; margin-bottom: 5px; }
-.f-icon { width: 8.5vh; height: 8.5vh; margin: 5px 0; }
+/* Vorhersage Icon jetzt auch Div */
+.f-icon { width: 8.5vh; height: 8.5vh; margin: 5px 0; display: flex; justify-content: center; align-items: center; }
 .f-temp { font-size: 3vh; font-weight: bold; }
 .f-rain { font-size: 2vh; color: #00eaff; font-weight: bold; margin-bottom: 0px; }
 .temp-range { display: flex; gap: 8px; font-size: 2.5vh; font-weight: bold; align-items: center; }
@@ -105,7 +105,6 @@ html, body {
 .acc-btn { background: #1a1a1a; color: #fff; cursor: pointer; padding: 15px; width: 100%; text-align: left; border: none; font-size: 18px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-weight: bold; margin-top: 5px; }
 .acc-content { padding: 15px; background-color: #111; display: none; border-bottom: 2px solid #00eaff; }
 
-/* Inputs & Buttons */
 .inp-city { width: 100%; padding: 10px; background: #222; border: 1px solid #00eaff; color: #fff; font-size: 18px; margin-bottom: 10px; }
 .inp-time-row { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
 .inp-time { background: #222; color: #fff; border: 1px solid #00eaff; padding: 5px; font-size: 18px; width: 45%; }
@@ -117,7 +116,25 @@ html, body {
 }
 .btn-paypal { background: #ffc439; }
 .btn-action { background: #333; color: #fff; border: 1px solid #fff; }
-.btn-back { background: #444; color: #fff; border: 1px solid #666; margin-top: 15px; } /* Zurück-Button Grau */
+.btn-back { background: #444; color: #fff; border: 1px solid #666; margin-top: 15px; }
 
 .menu-text { font-size: 16px; color: #ccc; line-height: 1.5; margin-bottom: 10px; }
 .menu-highlight { color: #00eaff; font-weight: bold; }
+
+/* --- ANIMATIONEN FÜR VEKTOREN --- */
+@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-3px); } 100% { transform: translateY(0px); } }
+@keyframes rain { 0% { transform: translateY(-5px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(5px); opacity:0; } }
+@keyframes snow { 0% { transform: translateY(-3px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(3px); opacity:0; } }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
+@keyframes flash { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 0; } 50% { opacity: 1; } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.svg-icon { width: 100%; height: 100%; overflow: visible; }
+.svg-sun { fill: #00eaff; animation: spin 20s linear infinite; transform-origin: center; }
+.svg-moon { fill: #00eaff; animation: float 4s ease-in-out infinite; }
+.svg-cloud { fill: #fff; opacity: 0.8; animation: float 6s ease-in-out infinite; }
+.svg-cloud-dark { fill: #555; animation: float 6s ease-in-out infinite; }
+.svg-rain { stroke: #00eaff; stroke-width: 2; animation: rain 1s linear infinite; }
+.svg-snow { fill: #fff; animation: snow 2s linear infinite; }
+.svg-bolt { fill: #ff3333; animation: flash 1s infinite; }
+.svg-mist { stroke: #999; stroke-width: 2; opacity: 0.5; animation: float 5s ease-in-out infinite; }

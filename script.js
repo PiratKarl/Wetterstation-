@@ -1,7 +1,7 @@
-/* --- AURA V47.0 (AUTO-SLEEP & LOGIC) --- */
+/* --- AURA V48.0 (VECTOR ENGINE) --- */
 
 const CONFIG = {
-    version: 47.0,
+    version: 48.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -19,48 +19,36 @@ const WORLD_CITIES = [
 /* --- SYSTEM START --- */
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
-    
-    // Vollbild
     let el = document.documentElement;
     if(el.requestFullscreen) { el.requestFullscreen().catch(e=>{}); }
     
-    // Wachhalter
     let bgVid = document.getElementById('wake-video-layer');
     if(bgVid) { bgVid.play().catch(e=>{}); }
 
-    // Logo Logik
     initVideoFallback();
 
-    // Inputs füllen
     document.getElementById('inp-city-val').value = CONFIG.city;
     document.getElementById('inp-time-from').value = CONFIG.sleepFrom;
     document.getElementById('inp-time-to').value = CONFIG.sleepTo;
 
-    // Start
     runClock();
     loadData();
     checkStatus();
 
-    // Timer
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     
     setInterval(checkUpdate, 300000);  
     setInterval(checkStatus, 60000);   
 }
 
-/* --- LOGO SICHERHEIT --- */
 function initVideoFallback() {
     let vid = document.getElementById('logo-video');
     let playPromise = vid.play();
-    if (playPromise !== undefined) {
-        playPromise.catch(error => { vid.style.display = 'none'; });
-    }
-    setTimeout(() => {
-        if(vid.paused || vid.readyState < 3) vid.style.display = 'none';
-    }, 1500);
+    if (playPromise !== undefined) { playPromise.catch(error => { vid.style.display = 'none'; }); }
+    setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- UHRZEIT & AUTO-SLEEP CHECK --- */
+/* --- TIME & SLEEP --- */
 function runClock() {
     let now = new Date();
     let h = (now.getHours()<10?'0':'')+now.getHours();
@@ -68,35 +56,24 @@ function runClock() {
     let timeStr = h + ":" + m;
     
     document.getElementById('clock').innerText = timeStr;
-    
     let days = ['SONNTAG','MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG'];
     let months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 
-    // AUTO-SLEEP PRÜFUNG (Jede Minute genau einmal beim Wechsel)
-    // Wir prüfen, ob die Sekunde 0 ist, um mehrfaches Triggern zu vermeiden, 
-    // oder wir prüfen einfach Status. Hier: Einfacher Vergleich.
-    if(now.getSeconds() === 0) {
-        checkAutoSleep(timeStr);
-    }
+    if(now.getSeconds() === 0) checkAutoSleep(timeStr);
 }
 
 function checkAutoSleep(currentTime) {
     if(CONFIG.sleepFrom && currentTime === CONFIG.sleepFrom) {
-        // Zeit zum Schlafen
         let ol = document.getElementById('sleep-overlay');
-        if(ol.style.display !== 'block') {
-            ol.style.display = 'block';
-            closeMenu(); 
-        }
+        if(ol.style.display !== 'block') { ol.style.display = 'block'; closeMenu(); }
     }
     if(CONFIG.sleepTo && currentTime === CONFIG.sleepTo) {
-        // Zeit zum Aufwachen
         document.getElementById('sleep-overlay').style.display = 'none';
     }
 }
 
-/* --- WETTER --- */
+/* --- WETTER ENGINE --- */
 function loadData() {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
     .then(r => r.json())
@@ -121,11 +98,12 @@ function loadData() {
 function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
     document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
-    document.getElementById('main-icon').src = data.weather[0].icon + ".gif";
+    
+    // NEU: Vektor-Icon statt GIF
+    document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon);
     
     let rain = data.rain ? "Regen" : "0% Regen";
     document.getElementById('rain-prob').innerText = rain;
-    
     document.getElementById('feels-like').innerText = "Gefühlt: " + Math.round(data.main.feels_like) + "°";
     document.getElementById('desc-text').innerText = data.weather[0].description.toUpperCase();
 
@@ -143,7 +121,7 @@ function renderForecast(data) {
         let h = new Date(item.dt*1000).getHours();
         hHTML += `<div class="f-item">
                     <span class="f-head">${h} Uhr</span>
-                    <img src="${item.weather[0].icon}.gif" class="f-icon">
+                    <div class="f-icon">${getVectorIcon(item.weather[0].icon)}</div>
                     <span class="f-temp">${Math.round(item.main.temp)}°</span>
                   </div>`;
     }
@@ -169,7 +147,7 @@ function renderForecast(data) {
         dHTML += `<div class="f-item">
                     <span class="f-head">${key}</span>
                     <div class="f-rain">${Math.round(d.pop*100)}%</div>
-                    <img src="${d.icon}.gif" class="f-icon">
+                    <div class="f-icon">${getVectorIcon(d.icon)}</div>
                     <div class="temp-range">
                         <span class="temp-low">${Math.round(d.min)}°</span>
                         <span class="temp-sep">-</span>
@@ -185,8 +163,8 @@ async function loadTicker(localForecast) {
     let alertHTML = "";
     for(let i=0; i<3; i++) {
         let id = localForecast.list[i].weather[0].id;
-        if(id >= 200 && id < 300) alertHTML = `<span class="t-alert">⚡ ACHTUNG: GEWITTER</span>`;
-        else if(id >= 600 && id < 700) alertHTML = `<span class="t-alert">❄ ACHTUNG: SCHNEEFALL</span>`;
+        if(id >= 200 && id < 300) alertHTML = `<span class="t-alert">⚡ GEWITTER</span>`;
+        else if(id >= 600 && id < 700) alertHTML = `<span class="t-alert">❄ SCHNEEFALL</span>`;
         else if(id === 502 || id === 503 || id === 504) alertHTML = `<span class="t-alert">🌧 STARKREGEN</span>`;
     }
     let tickerContent = alertHTML + `<span class="t-item">+++ AURA V${CONFIG.version} ONLINE +++</span>`;
@@ -201,10 +179,41 @@ async function loadTicker(localForecast) {
             let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
             let cityTime = new Date(utc + (1000 * data.timezone));
             let timeStr = (cityTime.getHours()<10?'0':'')+cityTime.getHours() + ":" + (cityTime.getMinutes()<10?'0':'')+cityTime.getMinutes();
-            tickerContent += `<div class="t-item">${data.name.toUpperCase()} <img src="${data.weather[0].icon}.gif" class="t-icon"> <span class="t-time">${timeStr}</span> ${Math.round(data.main.temp)}°</div>`;
+            // Auch im Ticker Vektoren nutzen
+            tickerContent += `<div class="t-item">${data.name.toUpperCase()} <div class="t-icon">${getVectorIcon(data.weather[0].icon)}</div> <span class="t-time">${timeStr}</span> ${Math.round(data.main.temp)}°</div>`;
         }
     });
     document.getElementById('ticker-text').innerHTML = tickerContent;
+}
+
+/* --- DIE VEKTOR FABRIK (SVG GENERATOR) --- */
+function getVectorIcon(code) {
+    // Code Mapping: 01d=Sun, 01n=Moon, 02-04=Cloud, 09-10=Rain, 11=Bolt, 13=Snow, 50=Mist
+    let icon = code.replace('n','d'); // Nachts oft ähnlich, wir vereinfachen für Vektor-Stil
+    let isNight = code.includes('n');
+    let svgContent = "";
+
+    // Basis Wolke Pfad
+    const cloudPath = '<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
+    const cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
+    const sunObj = '<circle class="svg-sun" cx="12" cy="12" r="5" /><g class="svg-sun"><line x1="12" y1="1" x2="12" y2="4" stroke="#00eaff" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="#00eaff" stroke-width="2"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3" stroke="#00eaff" stroke-width="2"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8" stroke="#00eaff" stroke-width="2"/><line x1="1" y1="12" x2="4" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7" stroke="#00eaff" stroke-width="2"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2" stroke="#00eaff" stroke-width="2"/></g>';
+    const moonObj = '<path class="svg-moon" d="M12,3 C10,3 8,4 7,6 C10,6 13,9 13,12 C13,15 10,18 7,18 C8,20 10,21 12,21 C17,21 21,17 21,12 C21,7 17,3 12,3 Z" fill="#00eaff"/>';
+    const rainObj = '<line class="svg-rain" x1="8" y1="18" x2="8" y2="22" /><line class="svg-rain" x1="12" y1="18" x2="12" y2="22" style="animation-delay:0.2s" /><line class="svg-rain" x1="16" y1="18" x2="16" y2="22" style="animation-delay:0.4s"/>';
+    const snowObj = '<circle class="svg-snow" cx="8" cy="20" r="1.5"/><circle class="svg-snow" cx="16" cy="20" r="1.5" style="animation-delay:1s"/><circle class="svg-snow" cx="12" cy="22" r="1.5" style="animation-delay:0.5s"/>';
+    const boltObj = '<polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9" fill="#ff3333"/>';
+    const mistObj = '<line class="svg-mist" x1="4" y1="10" x2="20" y2="10" /><line class="svg-mist" x1="4" y1="14" x2="20" y2="14" style="animation-delay:1s"/><line class="svg-mist" x1="4" y1="18" x2="20" y2="18" style="animation-delay:2s"/>';
+
+    if(code === '01d') svgContent = sunObj; // Klar Tag
+    else if(code === '01n') svgContent = moonObj; // Klar Nacht
+    else if(code === '02d' || code === '02n') svgContent = (isNight ? moonObj : sunObj) + cloudPath; // Leicht bewölkt
+    else if(code === '03d' || code === '03n' || code === '04d' || code === '04n') svgContent = cloudPath + cloudDark; // Bewölkt
+    else if(code === '09d' || code === '09n' || code === '10d' || code === '10n') svgContent = cloudPath + rainObj; // Regen
+    else if(code === '11d' || code === '11n') svgContent = cloudDark + boltObj; // Gewitter
+    else if(code === '13d' || code === '13n') svgContent = cloudPath + snowObj; // Schnee
+    else if(code === '50d' || code === '50n') svgContent = mistObj; // Nebel
+    else svgContent = sunObj; // Fallback
+
+    return `<svg class="svg-icon" viewBox="0 0 24 24">${svgContent}</svg>`;
 }
 
 /* --- HELFER --- */
@@ -213,75 +222,40 @@ function toggleSleep() {
     if(ol.style.display === 'block') ol.style.display = 'none';
     else { ol.style.display = 'block'; closeMenu(); }
 }
-
 function checkStatus() {
     let net = document.getElementById('net-status');
     if(navigator.onLine) { net.innerText = "WLAN: OK"; net.style.color = "#0f0"; }
     else { net.innerText = "OFFLINE"; net.style.color = "#f00"; }
     if(navigator.getBattery) {
-        navigator.getBattery().then(bat => {
-            document.getElementById('bat-level').innerText = "BAT: " + Math.round(bat.level*100) + "%";
-        });
+        navigator.getBattery().then(bat => { document.getElementById('bat-level').innerText = "BAT: " + Math.round(bat.level*100) + "%"; });
     }
 }
-
 function checkUpdate() {
-    fetch("version.json?t=" + Date.now()).then(r=>r.json()).then(d=>{
-        if(d.version > CONFIG.version) location.reload(true);
-    });
+    fetch("version.json?t=" + Date.now()).then(r=>r.json()).then(d=>{ if(d.version > CONFIG.version) location.reload(true); });
 }
-
 function formatTime(d) { return (d.getHours()<10?'0':'')+d.getHours() + ":" + (d.getMinutes()<10?'0':'')+d.getMinutes(); }
-
 function getMoonPhase(date) {
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
+    let year = date.getFullYear(); let month = date.getMonth() + 1; let day = date.getDate();
     if (month < 3) { year--; month += 12; }
-    let c = 365.25 * year;
-    let e = 30.6 * month;
-    let jd = c + e + day - 694039.09;
-    jd /= 29.5305882;
-    let b = parseInt(jd);
-    jd -= b;
-    b = Math.round(jd * 8);
-    if (b >= 8) b = 0;
-    const phases = ['🌑 Neumond', '🌒 Zunehmend', '🌓 Halbmond', '🌔 Zunehmend', '🌕 Vollmond', '🌖 Abnehmend', '🌗 Halbmond', '🌘 Abnehmend'];
-    return phases[b];
+    let c = 365.25 * year; let e = 30.6 * month; let jd = c + e + day - 694039.09;
+    jd /= 29.5305882; let b = parseInt(jd); jd -= b; b = Math.round(jd * 8); if (b >= 8) b = 0;
+    return ['🌑 Neumond', '🌒 Zunehmend', '🌓 Halbmond', '🌔 Zunehmend', '🌕 Vollmond', '🌖 Abnehmend', '🌗 Halbmond', '🌘 Abnehmend'][b];
 }
-
-/* --- MENÜ --- */
 function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
 function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
-
 function toggleAccordion(id) {
     let content = document.getElementById(id);
     let isVisible = content.style.display === "block";
     document.querySelectorAll('.acc-content').forEach(el => el.style.display = 'none');
     if(!isVisible) content.style.display = "block";
 }
-
-// NEU: Explizite Funktion für den Zurück-Button
-function closeAccordion(id) {
-    document.getElementById(id).style.display = 'none';
-}
-
+function closeAccordion(id) { document.getElementById(id).style.display = 'none'; }
 function saveSettings() {
     let city = document.getElementById('inp-city-val').value;
     let tFrom = document.getElementById('inp-time-from').value;
     let tTo = document.getElementById('inp-time-to').value;
-    
-    if(city) {
-        localStorage.setItem('aura_city', city);
-        CONFIG.city = city;
-        loadData();
-    }
-    
-    localStorage.setItem('aura_sleep_from', tFrom);
-    CONFIG.sleepFrom = tFrom;
-    
-    localStorage.setItem('aura_sleep_to', tTo);
-    CONFIG.sleepTo = tTo;
-    
+    if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; loadData(); }
+    localStorage.setItem('aura_sleep_from', tFrom); CONFIG.sleepFrom = tFrom;
+    localStorage.setItem('aura_sleep_to', tTo); CONFIG.sleepTo = tTo;
     closeMenu();
 }
