@@ -1,7 +1,7 @@
-/* --- AURA V48.0 (VECTOR ENGINE) --- */
+/* --- AURA V49.0 (BRIGHT CLOUD UPDATE) --- */
 
 const CONFIG = {
-    version: 48.0,
+    version: 49.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -99,7 +99,6 @@ function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
     document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
     
-    // NEU: Vektor-Icon statt GIF
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon);
     
     let rain = data.rain ? "Regen" : "0% Regen";
@@ -179,39 +178,41 @@ async function loadTicker(localForecast) {
             let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
             let cityTime = new Date(utc + (1000 * data.timezone));
             let timeStr = (cityTime.getHours()<10?'0':'')+cityTime.getHours() + ":" + (cityTime.getMinutes()<10?'0':'')+cityTime.getMinutes();
-            // Auch im Ticker Vektoren nutzen
             tickerContent += `<div class="t-item">${data.name.toUpperCase()} <div class="t-icon">${getVectorIcon(data.weather[0].icon)}</div> <span class="t-time">${timeStr}</span> ${Math.round(data.main.temp)}°</div>`;
         }
     });
     document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
-/* --- DIE VEKTOR FABRIK (SVG GENERATOR) --- */
+/* --- VECTOR GENERATOR --- */
 function getVectorIcon(code) {
-    // Code Mapping: 01d=Sun, 01n=Moon, 02-04=Cloud, 09-10=Rain, 11=Bolt, 13=Snow, 50=Mist
-    let icon = code.replace('n','d'); // Nachts oft ähnlich, wir vereinfachen für Vektor-Stil
+    let icon = code.replace('n','d'); 
     let isNight = code.includes('n');
     let svgContent = "";
 
-    // Basis Wolke Pfad
+    // Helle Wolke (aus CSS style.css gesteuert)
     const cloudPath = '<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
+    
+    // Dunklere Wolke (jetzt hellgrau statt dunkelgrau)
     const cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
+    
     const sunObj = '<circle class="svg-sun" cx="12" cy="12" r="5" /><g class="svg-sun"><line x1="12" y1="1" x2="12" y2="4" stroke="#00eaff" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="#00eaff" stroke-width="2"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3" stroke="#00eaff" stroke-width="2"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8" stroke="#00eaff" stroke-width="2"/><line x1="1" y1="12" x2="4" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="#00eaff" stroke-width="2"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7" stroke="#00eaff" stroke-width="2"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2" stroke="#00eaff" stroke-width="2"/></g>';
     const moonObj = '<path class="svg-moon" d="M12,3 C10,3 8,4 7,6 C10,6 13,9 13,12 C13,15 10,18 7,18 C8,20 10,21 12,21 C17,21 21,17 21,12 C21,7 17,3 12,3 Z" fill="#00eaff"/>';
+    
     const rainObj = '<line class="svg-rain" x1="8" y1="18" x2="8" y2="22" /><line class="svg-rain" x1="12" y1="18" x2="12" y2="22" style="animation-delay:0.2s" /><line class="svg-rain" x1="16" y1="18" x2="16" y2="22" style="animation-delay:0.4s"/>';
     const snowObj = '<circle class="svg-snow" cx="8" cy="20" r="1.5"/><circle class="svg-snow" cx="16" cy="20" r="1.5" style="animation-delay:1s"/><circle class="svg-snow" cx="12" cy="22" r="1.5" style="animation-delay:0.5s"/>';
     const boltObj = '<polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9" fill="#ff3333"/>';
     const mistObj = '<line class="svg-mist" x1="4" y1="10" x2="20" y2="10" /><line class="svg-mist" x1="4" y1="14" x2="20" y2="14" style="animation-delay:1s"/><line class="svg-mist" x1="4" y1="18" x2="20" y2="18" style="animation-delay:2s"/>';
 
-    if(code === '01d') svgContent = sunObj; // Klar Tag
-    else if(code === '01n') svgContent = moonObj; // Klar Nacht
-    else if(code === '02d' || code === '02n') svgContent = (isNight ? moonObj : sunObj) + cloudPath; // Leicht bewölkt
-    else if(code === '03d' || code === '03n' || code === '04d' || code === '04n') svgContent = cloudPath + cloudDark; // Bewölkt
-    else if(code === '09d' || code === '09n' || code === '10d' || code === '10n') svgContent = cloudPath + rainObj; // Regen
-    else if(code === '11d' || code === '11n') svgContent = cloudDark + boltObj; // Gewitter
-    else if(code === '13d' || code === '13n') svgContent = cloudPath + snowObj; // Schnee
-    else if(code === '50d' || code === '50n') svgContent = mistObj; // Nebel
-    else svgContent = sunObj; // Fallback
+    if(code === '01d') svgContent = sunObj; 
+    else if(code === '01n') svgContent = moonObj; 
+    else if(code === '02d' || code === '02n') svgContent = (isNight ? moonObj : sunObj) + cloudPath; 
+    else if(code === '03d' || code === '03n' || code === '04d' || code === '04n') svgContent = cloudPath + cloudDark; 
+    else if(code === '09d' || code === '09n' || code === '10d' || code === '10n') svgContent = cloudPath + rainObj; 
+    else if(code === '11d' || code === '11n') svgContent = cloudDark + boltObj; 
+    else if(code === '13d' || code === '13n') svgContent = cloudPath + snowObj; 
+    else if(code === '50d' || code === '50n') svgContent = mistObj; 
+    else svgContent = sunObj; 
 
     return `<svg class="svg-icon" viewBox="0 0 24 24">${svgContent}</svg>`;
 }
