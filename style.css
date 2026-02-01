@@ -1,4 +1,4 @@
-/* --- AURA V55.0 (PREMIUM & INFO UPDATE) --- */
+/* --- AURA V56.0 (SMART BATTERY & CLOUD DRIFT) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -21,7 +21,7 @@ html, body {
     padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px;
 }
 
-/* DASHBOARD (33vh) */
+/* DASHBOARD */
 .dashboard {
     display: flex; height: 33vh; width: 100%;
     padding: 10px 15px; box-sizing: border-box; position: relative; z-index: 10;
@@ -41,7 +41,6 @@ html, body {
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; }
 .main-row { display: flex; align-items: center; justify-content: center; width: 100%; }
 
-/* HAUPT-ICON (Mitte) - Größer & Premium */
 #main-icon { width: 14vh; height: 14vh; display: flex; justify-content: center; align-items: center; }
 #main-temp { font-size: 19vh; font-weight: bold; margin: 0 10px; line-height: 0.85; }
 
@@ -68,8 +67,13 @@ html, body {
 .astro-val { font-size: 2.6vh; font-weight: bold; }
 
 .status-block { margin-top: 5px; border-top: 1px solid #333; padding-top: 5px; width: 100%; text-align: right; }
-.status-row { font-size: 2.2vh; margin-bottom: 4px; font-weight: bold; color: #bbb; }
+.status-row { font-size: 2.2vh; margin-bottom: 4px; font-weight: bold; color: #bbb; display: flex; justify-content: flex-end; align-items: center; }
 .ver-label { font-size: 1.6vh; color: #555; margin-top: 2px; }
+
+/* Trend Pfeile für Akku */
+.bat-trend-up { color: #00eaff; margin-left: 5px; font-weight: bold; }
+.bat-trend-down { color: #ff3333; margin-left: 5px; font-weight: bold; }
+.bat-trend-eq { color: #fff; margin-left: 5px; }
 
 /* TICKER */
 .ticker-wrap {
@@ -84,6 +88,7 @@ html, body {
 }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
 .t-alert { color: #ff3333; margin-right: 50px; font-weight: bold; display: flex; align-items: center; text-shadow: 0 0 5px #ff0000; }
+.t-warn-crit { color: #ff0000; font-weight: 900; background: #220000; padding: 0 10px; border: 2px solid red; margin-right: 50px; animation: flash 1s infinite; }
 .t-icon { width: 45px; height: 45px; margin: 0 10px; vertical-align: middle; display: inline-block; } 
 .t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
@@ -106,13 +111,12 @@ html, body {
 .temp-high { color: #ff3333; }
 .temp-sep { color: #fff; margin: 0 5px; }
 
-/* FOOTER COPYRIGHT (Unten am Screen) */
 .footer-copyright {
     position: fixed; bottom: 5px; width: 100%; text-align: center;
     color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100;
 }
 
-/* MENÜ & LEGENDE */
+/* MENÜ */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .menu-container { max-width: 650px; margin: 0 auto; padding-bottom: 50px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 20px; position: relative; }
@@ -134,11 +138,8 @@ html, body {
 .btn-action { background: #333; color: #fff; border: 1px solid #fff; }
 .btn-back { background: #444; color: #fff; border: 1px solid #666; margin-top: 20px; }
 .btn-link { background: #111; color: #00eaff; border: 1px solid #00eaff; }
-
 .menu-text { font-size: 18px; color: #ccc; line-height: 1.6; margin-bottom: 15px; text-align: justify; }
 .menu-highlight { color: #00eaff; font-weight: bold; }
-
-/* NEU: MENÜ COPYRIGHT (Unter dem Zurück-Button) */
 .menu-copyright { text-align: center; font-size: 12px; color: #666; margin-top: 10px; margin-bottom: 5px; }
 
 /* LEGENDE */
@@ -147,33 +148,44 @@ html, body {
 .legend-icon-box { width: 50px; height: 50px; margin-right: 20px; display: flex; justify-content: center; align-items: center; background: #000; border: 1px solid #333; border-radius: 5px; }
 .legend-desc { font-size: 18px; color: #ddd; line-height: 1.3; }
 
-/* --- ICON LOGIK: PREMIUM vs. SIMPLE --- */
+/* --- ICON LOGIK: PREMIUM (Animiert) vs. SIMPLE (Statisch) --- */
 .svg-icon { width: 100%; height: 100%; overflow: visible; }
 
-/* PREMIUM: Starker Glow & Animationen */
+/* PREMIUM: Starker Glow */
 .icon-premium { filter: drop-shadow(0 0 10px rgba(0, 234, 255, 0.6)); }
 
 /* SIMPLE: KEINE ANIMATION, Statisch */
 .icon-simple * { animation: none !important; filter: none !important; }
 
-/* BASIS ANIMATIONEN (Nur für Premium aktiv) */
-@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
+/* --- NEUE ANIMATIONEN (Kino-Effekt) --- */
+/* Drift: Wolken ziehen von rechts nach links (Dauerschleife) */
+@keyframes drift { 
+    0% { transform: translateX(20px); opacity: 0; } 
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(-20px); opacity: 0; } 
+}
+/* Fog Pulse: Geisterhafter Nebel */
+@keyframes fog-pulse { 0% { opacity: 0.6; transform: translateX(-2px); } 50% { opacity: 1; transform: translateX(2px); } 100% { opacity: 0.6; transform: translateX(-2px); } }
+/* Rotation: Für Sonne */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* Flash: Für Blitz und Alarm */
+@keyframes flash { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 0; } 50% { opacity: 1; } }
+/* Rain/Snow: Fallen */
 @keyframes rain { 0% { transform: translateY(-5px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(5px); opacity:0; } }
 @keyframes snow { 0% { transform: translateY(-3px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(3px); opacity:0; } }
-@keyframes flash { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 0; } 50% { opacity: 1; } }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* Zuweisung Animationen */
-.icon-premium .svg-sun { animation: spin 25s linear infinite; transform-origin: center; }
-.icon-premium .svg-moon { animation: float 5s ease-in-out infinite; }
-.icon-premium .svg-cloud, .icon-premium .svg-cloud-dark { animation: float 6s ease-in-out infinite; }
+/* Zuweisung Animationen (Nur Premium) */
+.icon-premium .svg-sun { animation: spin 30s linear infinite; transform-origin: center; }
+.icon-premium .svg-cloud { animation: drift 15s linear infinite; } /* NEU: Vorbeiziehen */
+.icon-premium .svg-cloud-dark { animation: drift 15s linear infinite; }
 .icon-premium .svg-rain { animation: rain 1.2s linear infinite; }
 .icon-premium .svg-snow { animation: snow 2.5s linear infinite; }
 .icon-premium .svg-bolt { animation: flash 1.5s infinite; }
-.icon-premium .svg-mist { animation: float 5s ease-in-out infinite; }
+.icon-premium .svg-mist { animation: fog-pulse 6s ease-in-out infinite; } /* NEU: Wabern */
 
-/* Farben */
-.svg-sun { fill: url(#gradSun); } /* NEU: Verlauf im HTML definiert */
+/* Farben & Fills */
+.svg-sun { fill: url(#gradSun); }
 .svg-moon { fill: #00eaff; }
 .svg-cloud { fill: #ffffff; }
 .svg-cloud-dark { fill: #bbb; }
