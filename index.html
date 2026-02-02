@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V58.0</title>
-    <link rel="stylesheet" href="style.css?v=58.0">
+    <title>Aura Wetterstation V59.0</title>
+    <link rel="stylesheet" href="style.css?v=59.0">
 </head>
 <body>
 
@@ -38,7 +38,7 @@
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">AURA V58.0 PREMIUM</p>
+        <p style="color:#444; margin-top:20px;">AURA V59.0 XXL RETRO</p>
     </div>
 
     <div class="dashboard">
@@ -62,24 +62,27 @@
                 
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <div id="main-temp">--°</div>
-                    <div class="rain-box-small" id="rain-prob">--% Regen</div>
+                    <div class="rain-box-small" id="rain-prob">
+                        <svg class="rain-icon-inline" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>
+                        <span id="rain-val">--%</span>
+                    </div>
                 </div>
 
                 <div class="info-stack">
                     <div class="info-item" title="Gefühlte Temperatur">
-                        <span class="info-icon">🌡️</span> 
+                        <svg class="cockpit-icon" viewBox="0 0 24 24"><path d="M12 2c-2.2 0-4 1.8-4 4v7.2c-1.2 1.3-2 3-2 4.8 0 3.3 2.7 6 6 6s6-2.7 6-6c0-1.8-.8-3.5-2-4.8V6c0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2v7h-4V6c0-1.1.9-2 2-2z"/></svg>
                         <span id="val-feels" class="info-val">--°</span>
                     </div>
                     <div class="info-item" title="Wind">
-                        <span id="icon-wind" class="info-icon" style="display:inline-block">➤</span> 
+                        <svg id="icon-wind" class="cockpit-icon" viewBox="0 0 24 24" style="transform-origin:center;"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
                         <span id="val-wind" class="info-val">-- <span class="info-unit">km/h</span></span>
                     </div>
                     <div class="info-item" title="Luftdruck">
-                        <span class="info-icon">⏲️</span> 
+                        <svg class="cockpit-icon" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
                         <span id="val-press" class="info-val">-- <span class="info-unit">hPa</span></span>
                     </div>
                     <div class="info-item" title="Sichtweite">
-                        <span class="info-icon">👁️</span> 
+                        <svg class="cockpit-icon" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                         <span id="val-vis" class="info-val">-- <span class="info-unit">km</span></span>
                     </div>
                 </div>
@@ -99,7 +102,7 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 58.0</div>
+                <div class="status-row">VER: 59.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
@@ -124,138 +127,57 @@
                 <h2>EINSTELLUNGEN</h2>
                 <button class="menu-close-btn" onclick="closeMenu()">×</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-1')">
-                <span>📍 Standort</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-1')"><span>📍 Standort</span> <span>▼</span></button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Bitte geben Sie hier Ihren gewünschten Standort ein, um lokale Wetterdaten und Warnungen zu empfangen.</p>
-                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
+                <p class="menu-text">Standort eingeben:</p>
+                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt">
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
-                <span>🌙 Ruhemodus</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')"><span>🌙 Ruhemodus</span> <span>▼</span></button>
             <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Definieren Sie hier Zeiten, zu denen sich das Display automatisch ausschaltet.</p>
-                <div class="inp-time-row">
-                    <span class="inp-label">Abschalten um:</span>
-                    <input type="time" id="inp-time-from" class="inp-time">
-                </div>
-                <div class="inp-time-row">
-                    <span class="inp-label">Aufwecken um:</span>
-                    <input type="time" id="inp-time-to" class="inp-time">
-                </div>
-                <div class="menu-tip-box">
-                    <span class="menu-tip-title">ℹ TIPP: Display leuchtet schwarz?</span>
-                    <p style="font-size:16px; color:#aaa; margin:0;">Da Webseiten die Hardware nicht ausschalten können, bleibt bei LCD-Displays oft ein "graues Leuchten". Wir empfehlen die kostenlose App <strong>"Darker (Screen Filter)"</strong> aus dem Play Store, um die Helligkeit nachts extrem abzusenken.</p>
-                </div>
+                <div class="inp-time-row"><span class="inp-label">Aus:</span><input type="time" id="inp-time-from" class="inp-time"></div>
+                <div class="inp-time-row"><span class="inp-label">An:</span><input type="time" id="inp-time-to" class="inp-time"></div>
+                <div class="menu-tip-box"><span class="menu-tip-title">ℹ TIPP</span><p style="color:#aaa;margin:0">App "Darker" nutzen für dunkles Display nachts.</p></div>
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
-                <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
-                <button class="btn-action" onclick="toggleSleep()">JETZT AUSSCHALTEN</button>
+                <button class="btn-action" onclick="toggleSleep()" style="margin-top:10px">JETZT AUS</button>
                 <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-help')">
-                <span>💡 Hilfe & Display Tipps</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-help')"><span>💡 Hilfe & Tipps</span> <span>▼</span></button>
             <div id="acc-help" class="acc-content">
-                <p class="menu-text">Damit Ihre Wetterstation perfekt läuft, hier unsere besten Tipps für Dauernutzung auf Tablets:</p>
-                
-                <div class="menu-tip-box">
-                    <span class="menu-tip-title">1. Das "graue Leuchten" nachts</span>
-                    <p style="font-size:16px; color:#bbb;">LCD-Bildschirme leuchten immer, auch bei schwarzem Bild. 
-                    <br><strong>Lösung einfach:</strong> Installieren Sie die App "Darker (Screen Filter)" oder "Night Screen".
-                    <br><strong>Lösung Profi:</strong> Nutzen Sie den "Fully Kiosk Browser" (erlaubt Hardware-Display-Aus).</p>
-                </div>
-                
-                <div class="menu-tip-box">
-                    <span class="menu-tip-title">2. Akku & Laden</span>
-                    <p style="font-size:16px; color:#bbb;">Lassen Sie das Gerät am Strom. Nutzen Sie eine Zeitschaltuhr (z.B. 08:00 an, 20:00 aus), um den Akku zu schonen („Pendeln“).</p>
-                </div>
-
+                <p class="menu-text">Tipps für das Galaxy Tab 3:</p>
+                <div class="menu-tip-box"><span class="menu-tip-title">Display</span><p style="color:#bbb">LCD leuchtet nachts grau? "Darker" App nutzen.</p></div>
                 <button class="btn-back" onclick="closeAccordion('acc-help')">ZURÜCK</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-legende')">
-                <span>📘 Wetter-Symbole</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-legende')"><span>📘 Symbole</span> <span>▼</span></button>
             <div id="acc-legende" class="acc-content">
-                <p class="menu-text">Übersicht aller Symbole und Warnungen:</p>
+                <p class="menu-text">Übersicht Symbole:</p>
                 <div class="legend-grid">
-                    <div class="legend-row">
-                        <div class="legend-icon-box"><svg viewBox="0 0 24 24" style="width:40px;height:40px;"><circle cx="12" cy="12" r="6" fill="url(#gradSun)"/><line x1="12" y1="1" x2="12" y2="4" stroke="#ff9900" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="#ff9900" stroke-width="2"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3" stroke="#ff9900" stroke-width="2"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8" stroke="#ff9900" stroke-width="2"/><line x1="1" y1="12" x2="4" y2="12" stroke="#ff9900" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="#ff9900" stroke-width="2"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7" stroke="#ff9900" stroke-width="2"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2" stroke="#ff9900" stroke-width="2"/></svg>
-                        </div>
-                        <div class="legend-desc">Klarer Himmel / Sonnig</div>
-                    </div>
-                    <div class="legend-row">
-                        <div class="legend-icon-box"><svg viewBox="0 0 24 24" style="width:40px;height:40px;"><path d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" fill="url(#gradCloud)"/></svg>
-                        </div>
-                        <div class="legend-desc">Bewölkt / Bedeckt</div>
-                    </div>
-                    <div class="legend-row">
-                        <div class="legend-icon-box"><svg viewBox="0 0 24 24" style="width:40px;height:40px;"><path d="M7,15 L17,15 C19.2,15 21,13.2 21,11 C21,8.8 19.2,7 17,7 L17,6 C17,2.7 14.3,0 11,0 C7.7,0 5,2.7 5,6 C2.8,6 1,7.8 1,10 C1,12.2 2.8,15 5,15 Z" fill="#888"/><line x1="8" y1="16" x2="8" y2="20" stroke="#00eaff" stroke-width="2"/><line x1="12" y1="16" x2="12" y2="20" stroke="#00eaff" stroke-width="2"/><line x1="16" y1="16" x2="16" y2="20" stroke="#00eaff" stroke-width="2"/></svg>
-                        </div>
-                        <div class="legend-desc">Regen / Schauer</div>
-                    </div>
-                    <div class="legend-row">
-                        <div class="legend-icon-box"><svg viewBox="0 0 24 24" style="width:40px;height:40px;"><path d="M7,15 L17,15 C19.2,15 21,13.2 21,11 C21,8.8 19.2,7 17,7 L17,6 C17,2.7 14.3,0 11,0 C7.7,0 5,2.7 5,6 C2.8,6 1,7.8 1,10 C1,12.2 2.8,15 5,15 Z" fill="#666"/><polygon points="10,15 13,15 12,21 16,13 13,13 14,8" fill="#ff3333"/></svg>
-                        </div>
-                        <div class="legend-desc">Gewitter / Sturm</div>
-                    </div>
-                    <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;"><span style="color:#ffd700; font-size:25px; font-weight:bold;">⚠ GELB</span></div>
-                        <div class="legend-desc">DWD Warnstufe 1: Wetterwarnung (mittlere Gefahr).</div>
-                    </div>
-                    <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;"><span style="color:#ff3333; font-size:25px; font-weight:bold;">‼ ROT</span></div>
-                        <div class="legend-desc">DWD Warnstufe 2: Unwetterwarnung (hohe Gefahr).</div>
-                    </div>
+                     <div class="legend-row"><div class="legend-icon-box" style="border:none"><span style="color:#ffd700;font-weight:bold;font-size:20px">⚠ GELB</span></div><div class="legend-desc">Wetterwarnung</div></div>
+                     <div class="legend-row"><div class="legend-icon-box" style="border:none"><span style="color:#ff3333;font-weight:bold;font-size:20px">‼ ROT</span></div><div class="legend-desc">Unwetterwarnung</div></div>
                 </div>
                 <button class="btn-back" onclick="closeAccordion('acc-legende')">ZURÜCK</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-contact')">
-                <span>🌐 Kontakt & Homepage</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-contact')"><span>🌐 Kontakt</span> <span>▼</span></button>
             <div id="acc-contact" class="acc-content">
-                <p class="menu-text">Haben Sie Fragen, Anregungen oder Wünsche? Besuchen Sie unsere Projekt-Webseite oder schreiben Sie uns.</p>
-                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL: webmaster@code-werft.de</a>
-                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WEB: code-werft.de</a>
+                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL</a>
+                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 HOMEPAGE</a>
                 <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
-                <span>☕ Support Development</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')"><span>☕ Support</span> <span>▼</span></button>
             <div id="acc-kaffee" class="acc-content">
-                <p class="menu-text">Liebe Nutzerin, lieber Nutzer,<br><br>hinter diesem Projekt steckt viel Herzblut und hunderte Stunden an Programmierung, um es perfekt auf Ihr Tablet abzustimmen. <br><br>Um die laufenden Serverkosten für die präzisen Wetterdaten zu decken und neue Funktionen (wie das Smart-Update) zu entwickeln, würde ich mich riesig über einen virtuellen Kaffee freuen. <br><br><strong>Deine Unterstützung hält dieses Projekt am Leben! Danke!</strong></p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT KAFFEE SPENDEN</a>
+                <p class="menu-text">Unterstütze die Weiterentwicklung!</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ SPENDEN</a>
                 <button class="btn-back" onclick="closeAccordion('acc-kaffee')">ZURÜCK</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-legal')">
-                <span>⚖️ Impressum</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-legal')"><span>⚖️ Impressum</span> <span>▼</span></button>
             <div id="acc-legal" class="acc-content">
-                <p class="menu-text"><span class="menu-highlight">Impressum:</span><br>
-                Angaben gemäß § 5 TMG:<br>
-                Code-Werft Projects<br>
-                Karl Altmannshofer<br>
-                Lohengrinstraße 25<br>
-                38106 Braunschweig<br>
-                Deutschland</p>
-                
-                <p class="menu-text">Software Version: 58.0 (Premium)</p>
+                <p class="menu-text">Code-Werft Projects<br>Karl Altmannshofer<br>Lohengrinstraße 25<br>38106 Braunschweig</p>
                 <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
-                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
             </div>
-
         </div>
     </div>
 
-    <script src="script.js?v=58.0"></script>
+    <script src="script.js?v=59.0"></script>
 </body>
-    </html>
+            </html>
