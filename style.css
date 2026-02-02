@@ -1,4 +1,4 @@
-/* --- AURA V56.0 (SMART BATTERY & CLOUD DRIFT) --- */
+/* --- AURA V57.0 (COCKPIT & DWD TICKER) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -28,7 +28,7 @@ html, body {
 }
 
 /* LINKS */
-.col-left { width: 28%; display: flex; flex-direction: column; align-items: center; }
+.col-left { width: 25%; display: flex; flex-direction: column; align-items: center; }
 #clock { font-size: 8.5vw; font-weight: bold; line-height: 0.9; margin: 0; }
 #date { font-size: 2.2vh; color: #00eaff; margin-top: 5px; text-transform: uppercase; }
 
@@ -36,28 +36,46 @@ html, body {
 #logo-bg { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 1; }
 #logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 2; }
 
-/* MITTE */
-.col-center { width: 44%; display: flex; flex-direction: column; align-items: center; }
-#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; }
-.main-row { display: flex; align-items: center; justify-content: center; width: 100%; }
+/* MITTE (NEUES LAYOUT V57) */
+.col-center { width: 50%; display: flex; flex-direction: column; align-items: center; }
+#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 5px; width:100%; text-align:center; }
 
-#main-icon { width: 14vh; height: 14vh; display: flex; justify-content: center; align-items: center; }
-#main-temp { font-size: 19vh; font-weight: bold; margin: 0 10px; line-height: 0.85; }
+.main-row { 
+    display: flex; align-items: center; justify-content: center; width: 100%; 
+    margin-top: 10px;
+}
 
-.rain-box { display: flex; flex-direction: column; align-items: center; margin-left: 10px; }
-.drop-icon { width: 30px; height: 30px; fill: #00eaff; margin-bottom: 5px; filter: drop-shadow(0 0 5px #00eaff); }
-#rain-prob { font-size: 2vh; color: #00eaff; font-weight: bold; }
+/* 1. ICON: Schmaler (50%) & mehr Abstand */
+#main-icon { 
+    width: 9vh; height: 14vh; /* Schmaler als vorher */
+    display: flex; justify-content: center; align-items: center; 
+    margin-right: 40px; /* Viel Abstand zur Temperatur */
+}
 
-/* GEFÜHLT */
-#feels-like { font-size: 3.5vh; font-weight: bold; margin-top: 0px; }
-.feels-cold { color: #00eaff; } 
-.feels-hot { color: #ff3333; }  
-.feels-same { color: #ffffff; } 
+/* 2. TEMP: Groß */
+#main-temp { font-size: 16vh; font-weight: bold; line-height: 0.85; margin: 0; }
 
-#desc-text { font-size: 3vh; font-weight: bold; margin-top: 2px; text-transform: uppercase; }
+/* 3. INFO-STACK (Rechts daneben) */
+.info-stack {
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    margin-left: 30px; /* Abstand zur Temp */
+    gap: 6px; /* Abstand zwischen den Zeilen */
+}
+
+.info-item { display: flex; align-items: center; font-size: 2.0vh; color: #ddd; font-weight: bold; }
+.info-icon { width: 25px; text-align: center; color: #00eaff; margin-right: 8px; font-size: 1.8vh; }
+.info-val { color: #fff; }
+.info-unit { font-size: 0.8em; color: #aaa; margin-left: 2px; }
+.trend-arrow { color: #00eaff; margin-left: 5px; font-weight: bold; }
+
+/* Regen-Wahrscheinlichkeit (integriert in Info Stack oder separat, hier separat klein drunter bei Temp?) 
+   Wir packen es mit in den Stack oder lassen es klein unter der Temp. 
+   Für V57 integrieren wir es nicht in den Stack, da der Stack voll ist. Wir lassen es klein unter der Temp.
+*/
+.rain-box-small { text-align: center; margin-top: 5px; font-size: 2vh; color: #00eaff; font-weight: bold; }
 
 /* RECHTS */
-.col-right { width: 28%; display: flex; flex-direction: column; align-items: flex-end; }
+.col-right { width: 25%; display: flex; flex-direction: column; align-items: flex-end; }
 #btn-menu {
     background: transparent; border: 2px solid #fff; color: #fff;
     font-size: 18px; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 5px;
@@ -83,11 +101,15 @@ html, body {
 }
 #ticker-text {
     display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; 
-    font-size: 4.5vh; 
+    font-size: 4.0vh; /* Etwas kleiner damit der lange DWD Text passt */
     color: #fff; font-weight: bold; display: flex; align-items: center;
 }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
-.t-alert { color: #ff3333; margin-right: 50px; font-weight: bold; display: flex; align-items: center; text-shadow: 0 0 5px #ff0000; }
+
+/* DWD WARN FARBEN */
+.dwd-warn-yellow { color: #ffd700; margin-right: 50px; font-weight: bold; display: flex; align-items: center; text-shadow: 0 0 5px #aa8800; }
+.dwd-warn-red { color: #ff3333; margin-right: 50px; font-weight: 900; display: flex; align-items: center; text-shadow: 0 0 8px #ff0000; animation: flash 2s infinite; }
+
 .t-warn-crit { color: #ff0000; font-weight: 900; background: #220000; padding: 0 10px; border: 2px solid red; margin-right: 50px; animation: flash 1s infinite; }
 .t-icon { width: 45px; height: 45px; margin: 0 10px; vertical-align: middle; display: inline-block; } 
 .t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
@@ -121,15 +143,12 @@ html, body {
 .menu-container { max-width: 650px; margin: 0 auto; padding-bottom: 50px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 20px; position: relative; }
 .menu-close-btn { position: absolute; right: 0; top: -10px; background: none; border: none; color: #fff; font-size: 40px; cursor: pointer; }
-
 .acc-btn { background: #1a1a1a; color: #fff; cursor: pointer; padding: 15px; width: 100%; text-align: left; border: none; font-size: 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-weight: bold; margin-top: 5px; }
 .acc-content { padding: 20px 15px; background-color: #111; display: none; border-bottom: 2px solid #00eaff; }
-
 .inp-city { width: 100%; padding: 12px; background: #222; border: 1px solid #00eaff; color: #fff; font-size: 20px; margin-bottom: 15px; }
 .inp-time-row { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
 .inp-time { background: #222; color: #fff; border: 1px solid #00eaff; padding: 8px; font-size: 20px; width: 45%; }
 .inp-label { font-size: 18px; color: #ccc; }
-
 .btn-save, .btn-paypal, .btn-action, .btn-back, .btn-link { 
     background: #00eaff; color: #000; border: none; padding: 15px; font-size: 20px; 
     font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; display: block; text-align: center; text-decoration: none; margin-top: 15px;
@@ -148,43 +167,32 @@ html, body {
 .legend-icon-box { width: 50px; height: 50px; margin-right: 20px; display: flex; justify-content: center; align-items: center; background: #000; border: 1px solid #333; border-radius: 5px; }
 .legend-desc { font-size: 18px; color: #ddd; line-height: 1.3; }
 
-/* --- ICON LOGIK: PREMIUM (Animiert) vs. SIMPLE (Statisch) --- */
+/* --- ICON LOGIK --- */
 .svg-icon { width: 100%; height: 100%; overflow: visible; }
-
-/* PREMIUM: Starker Glow */
 .icon-premium { filter: drop-shadow(0 0 10px rgba(0, 234, 255, 0.6)); }
-
-/* SIMPLE: KEINE ANIMATION, Statisch */
 .icon-simple * { animation: none !important; filter: none !important; }
 
-/* --- NEUE ANIMATIONEN (Kino-Effekt) --- */
-/* Drift: Wolken ziehen von rechts nach links (Dauerschleife) */
+/* ANIMATIONEN (Kino-Effekt) - schmaler Bereich angepasst */
 @keyframes drift { 
-    0% { transform: translateX(20px); opacity: 0; } 
+    0% { transform: translateX(15px); opacity: 0; } 
     10% { opacity: 1; }
     90% { opacity: 1; }
-    100% { transform: translateX(-20px); opacity: 0; } 
+    100% { transform: translateX(-15px); opacity: 0; } 
 }
-/* Fog Pulse: Geisterhafter Nebel */
 @keyframes fog-pulse { 0% { opacity: 0.6; transform: translateX(-2px); } 50% { opacity: 1; transform: translateX(2px); } 100% { opacity: 0.6; transform: translateX(-2px); } }
-/* Rotation: Für Sonne */
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-/* Flash: Für Blitz und Alarm */
 @keyframes flash { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 0; } 50% { opacity: 1; } }
-/* Rain/Snow: Fallen */
 @keyframes rain { 0% { transform: translateY(-5px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(5px); opacity:0; } }
 @keyframes snow { 0% { transform: translateY(-3px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(3px); opacity:0; } }
 
-/* Zuweisung Animationen (Nur Premium) */
 .icon-premium .svg-sun { animation: spin 30s linear infinite; transform-origin: center; }
-.icon-premium .svg-cloud { animation: drift 15s linear infinite; } /* NEU: Vorbeiziehen */
+.icon-premium .svg-cloud { animation: drift 15s linear infinite; }
 .icon-premium .svg-cloud-dark { animation: drift 15s linear infinite; }
 .icon-premium .svg-rain { animation: rain 1.2s linear infinite; }
 .icon-premium .svg-snow { animation: snow 2.5s linear infinite; }
 .icon-premium .svg-bolt { animation: flash 1.5s infinite; }
-.icon-premium .svg-mist { animation: fog-pulse 6s ease-in-out infinite; } /* NEU: Wabern */
+.icon-premium .svg-mist { animation: fog-pulse 6s ease-in-out infinite; }
 
-/* Farben & Fills */
 .svg-sun { fill: url(#gradSun); }
 .svg-moon { fill: #00eaff; }
 .svg-cloud { fill: #ffffff; }

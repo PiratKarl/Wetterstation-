@@ -1,7 +1,7 @@
-/* --- AURA V56.0 (SMART GUARD & CLOUD DRIFT) --- */
+/* --- AURA V57.0 (COCKPIT & DWD TICKER) --- */
 
 const CONFIG = {
-    version: 56.0,
+    version: 57.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -16,10 +16,11 @@ const WORLD_CITIES = [
     "Kairo", "Seoul", "Hong Kong", "Chicago", "Athen"
 ];
 
-// VARIABLEN FÜR BATTERY GUARD
+// VARIABLEN FÜR BATTERY GUARD & DRUCK TENDENZ
 let lastBatLevel = null;
 let batDropCounter = 0;
 let batteryCritical = false;
+let lastPressure = parseFloat(localStorage.getItem('aura_last_press')) || 0;
 
 /* --- SYSTEM START --- */
 function startApp() {
@@ -38,13 +39,13 @@ function startApp() {
 
     runClock();
     loadData();
-    checkStatus(); // Initialer Batterie-Check (Anzeige)
-    initBatteryGuard(); // Startet die Intelligenz
+    checkStatus(); 
+    initBatteryGuard(); 
 
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     
     setInterval(checkUpdate, 300000);  
-    setInterval(checkStatus, 60000);   // Aktualisiert nur die Anzeige %
+    setInterval(checkStatus, 60000);   
 }
 
 function initVideoFallback() {
@@ -87,14 +88,7 @@ function checkStatus() {
     
     if(navigator.getBattery) {
         navigator.getBattery().then(bat => { 
-            // Hier nur Anzeige aktualisieren, Logik läuft im Guard Interval
-            let pfeil = "";
-            let trendElem = document.getElementById('bat-trend-icon'); 
-            // Wenn wir schon ein Trend-Element haben (wird unten erzeugt), nichts tun
-            // Der Textinhalt wird aktualisiert:
             let levelText = "BAT: " + Math.round(bat.level*100) + "%";
-            
-            // Wir hängen den Pfeil visuell an, falls Trend bekannt
             let trendHTML = "";
             let diff = 0;
             if(lastBatLevel !== null) {
@@ -103,55 +97,40 @@ function checkStatus() {
                 else if(diff < -0.005) trendHTML = '<span class="bat-trend-down">↓</span>';
                 else trendHTML = '<span class="bat-trend-eq">=</span>';
             }
-            
             document.getElementById('bat-level').innerHTML = levelText + trendHTML;
         });
     }
 }
 
 function initBatteryGuard() {
-    // Initialer Wert setzen
     if(navigator.getBattery) {
         navigator.getBattery().then(bat => { lastBatLevel = bat.level; });
     }
-
-    // Check alle 30 Minuten (1800000 ms)
     setInterval(() => {
         if(navigator.getBattery) {
             navigator.getBattery().then(bat => {
                 let current = bat.level;
-                
                 if(lastBatLevel !== null) {
-                    if(current < lastBatLevel) {
-                        // Akku ist gefallen!
-                        batDropCounter++;
-                    } else if (current > lastBatLevel) {
-                        // Akku steigt -> Alles gut, Reset
+                    if(current < lastBatLevel) batDropCounter++;
+                    else if (current > lastBatLevel) {
                         batDropCounter = 0;
                         batteryCritical = false;
-                        loadTicker(globalForecastCache); // Ticker Warnung entfernen falls da
-                    } else {
-                        // Gleich -> Auch gut (Erhaltung)
-                        // Counter nicht resetten, aber auch nicht erhöhen
+                        loadTicker(globalForecastCache); 
                     }
                 }
-
-                // ALARM LOGIK (Nach 1 Stunde sinken)
                 if(batDropCounter >= 2) {
                     batteryCritical = true;
-                    // Ticker sofort neu laden um Warnung zu zeigen
                     if(globalForecastCache) loadTicker(globalForecastCache);
                 }
-
                 lastBatLevel = current;
-                checkStatus(); // Anzeige aktualisieren
+                checkStatus();
             });
         }
-    }, 1800000); // 30 Min
+    }, 1800000); 
 }
 
 /* --- WETTER ENGINE --- */
-let globalForecastCache = null; // Für Ticker-Refresh ohne API Call
+let globalForecastCache = null; 
 
 function loadData() {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
@@ -181,21 +160,49 @@ function renderCurrent(data) {
     let temp = Math.round(data.main.temp);
     document.getElementById('main-temp').innerText = temp + "°";
     
-    // PREMIUM ICON: true -> Animiert
+    // PREMIUM ICON
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
+    // REGEN
     let rain = data.rain ? "Regen" : "0% Regen";
     document.getElementById('rain-prob').innerText = rain;
     
+    // COCKPIT DATEN (Rechts neben Temp)
+    // 1. Gefühlt
     let feels = Math.round(data.main.feels_like);
-    let feelsHTML = "";
-    if(feels < temp) feelsHTML = `Gefühlt: <span class="feels-cold">${feels}° ↓</span>`;
-    else if (feels > temp) feelsHTML = `Gefühlt: <span class="feels-hot">${feels}° ↑</span>`;
-    else feelsHTML = `Gefühlt: <span class="feels-same">${feels}°</span>`;
-    
-    document.getElementById('feels-like').innerHTML = feelsHTML;
-    document.getElementById('desc-text').innerText = data.weather[0].description.toUpperCase();
+    document.getElementById('val-feels').innerText = feels + "°";
 
+    // 2. Wind (km/h & Pfeil)
+    let speed = Math.round(data.wind.speed * 3.6); // m/s zu km/h
+    let deg = data.wind.deg;
+    let dirs = ['N','NO','O','SO','S','SW','W','NW'];
+    let dirStr = dirs[Math.round(deg/45)%8];
+    // Pfeil drehen (einfach Zeichen oder CSS rotate, wir nehmen Text für Stabilität)
+    let arrowWind = "➤"; // Symbolisch
+    document.getElementById('val-wind').innerHTML = `${speed} km/h <span style="font-size:0.8em">${dirStr}</span>`;
+    document.getElementById('icon-wind').style.transform = `rotate(${deg-90}deg)`; // Icon drehen
+
+    // 3. Druck (mit Tendenz)
+    let press = data.main.pressure;
+    let pressTrend = "→";
+    let pressColor = "#fff";
+    if(lastPressure > 0) {
+        if(press > lastPressure) { pressTrend = "↗"; pressColor = "#00eaff"; }
+        else if(press < lastPressure) { pressTrend = "↘"; pressColor = "#ff3333"; }
+    }
+    // Speichern für nächstes Mal, wenn abweichend
+    if(press !== lastPressure) {
+        localStorage.setItem('aura_last_press', press);
+        lastPressure = press;
+    }
+    document.getElementById('val-press').innerHTML = `${press} <span class="info-unit">hPa</span> <span style="color:${pressColor}">${pressTrend}</span>`;
+
+    // 4. Sicht
+    let vis = (data.visibility / 1000).toFixed(1);
+    if(vis > 99) vis = ">10"; // Begrenzen
+    document.getElementById('val-vis').innerText = vis + " km";
+
+    // Astro update
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
     document.getElementById('sunrise').innerText = formatTime(sr);
@@ -254,22 +261,41 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     if(!localForecast) return;
     
-    // 1. Kritische Batterie Warnung?
+    // 1. Kritische Batterie Warnung
     let batteryAlert = "";
     if(batteryCritical) {
         batteryAlert = `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! NETZTEIL PRÜFEN +++</span>`;
     }
 
-    // 2. Wetter Warnungen
-    let weatherAlert = "";
-    for(let i=0; i<3; i++) {
-        let id = localForecast.list[i].weather[0].id;
-        if(id >= 200 && id < 300) weatherAlert = `<span class="t-alert">⚡ GEWITTER</span>`;
-        else if(id >= 600 && id < 700) weatherAlert = `<span class="t-alert">❄ SCHNEEFALL</span>`;
-        else if(id === 502 || id === 503 || id === 504) weatherAlert = `<span class="t-alert">🌧 STARKREGEN</span>`;
+    // 2. DWD WARN LOGIK (NEU)
+    // Wir prüfen die kommenden Wetter-Codes
+    let dwdAlert = "";
+    let now = new Date();
+    // Um eine "Gültig bis" Zeit zu simulieren, nehmen wir den nächsten 3h-Block
+    let validUntil = new Date(localForecast.list[1].dt * 1000); 
+    let validUntilStr = (validUntil.getHours()<10?'0':'')+validUntil.getHours() + ":" + (validUntil.getMinutes()<10?'0':'')+validUntil.getMinutes();
+    let validFromStr = (now.getHours()<10?'0':'')+now.getHours() + ":" + (now.getMinutes()<10?'0':'')+now.getMinutes();
+
+    let weatherId = localForecast.list[0].weather[0].id; // Aktuelles Wetter
+    let warningText = "";
+    let severityClass = "";
+
+    // Kategorisierung der Warnungen
+    if(weatherId >= 200 && weatherId < 300) { warningText = "GEWITTER / STURMBÖEN"; severityClass = "dwd-warn-red"; }
+    else if(weatherId >= 600 && weatherId < 700) { warningText = "SCHNEEFALL / GLÄTTE"; severityClass = "dwd-warn-red"; }
+    else if(weatherId === 502 || weatherId === 503 || weatherId === 504) { warningText = "STARKREGEN"; severityClass = "dwd-warn-red"; }
+    else if(weatherId >= 500 && weatherId < 600) { warningText = "REGEN"; severityClass = "dwd-warn-yellow"; }
+    else if(weatherId >= 300 && weatherId < 400) { warningText = "SPRÜHREGEN"; severityClass = "dwd-warn-yellow"; }
+    else if(weatherId === 741) { warningText = "NEBEL (SICHT < 150M)"; severityClass = "dwd-warn-yellow"; }
+
+    if(warningText !== "") {
+        dwdAlert = `<span class="${severityClass}">
+            Der Deutsche Wetterdienst "DWD" gibt folgende Unwetterwarnung raus: ${warningText}. 
+            Gültig von ${validFromStr} Uhr bis voraussichtlich ${validUntilStr} Uhr.
+        </span>`;
     }
-    
-    let tickerContent = batteryAlert + weatherAlert + `<span class="t-item">+++ AURA V${CONFIG.version} ONLINE +++</span>`;
+
+    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} ONLINE +++</span>`;
     
     let requests = WORLD_CITIES.map(city => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric`)
@@ -281,14 +307,13 @@ async function loadTicker(localForecast) {
             let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
             let cityTime = new Date(utc + (1000 * data.timezone));
             let timeStr = (cityTime.getHours()<10?'0':'')+cityTime.getHours() + ":" + (cityTime.getMinutes()<10?'0':'')+cityTime.getMinutes();
-            // SIMPLE ICON: false -> Statisch im Ticker
             tickerContent += `<div class="t-item">${data.name.toUpperCase()} <div class="t-icon">${getVectorIcon(data.weather[0].icon, false)}</div> <span class="t-time">${timeStr}</span> ${Math.round(data.main.temp)}°</div>`;
         }
     });
     document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
-/* --- VECTOR ICON ENGINE (PREMIUM VS SIMPLE) --- */
+/* --- VECTOR ICON ENGINE --- */
 function getVectorIcon(code, isPremium) {
     let icon = code.replace('n','d'); 
     let isNight = code.includes('n');
@@ -305,8 +330,6 @@ function getVectorIcon(code, isPremium) {
     const boltObj = '<polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9" fill="#ff3333"/>';
     const mistObj = '<line class="svg-mist" x1="4" y1="10" x2="20" y2="10" /><line class="svg-mist" x1="4" y1="14" x2="20" y2="14" style="animation-delay:1s"/><line class="svg-mist" x1="4" y1="18" x2="20" y2="18" style="animation-delay:2s"/>';
 
-    // AUFBAU LOGIK: Hintergrund (Sonne/Mond) zuerst, dann Vordergrund (Wolken)
-    // Damit die Wolken ÜBER der Sonne driften können.
     if(code === '01d') svgContent = sunObj; 
     else if(code === '01n') svgContent = moonObj; 
     else if(code === '02d' || code === '02n') svgContent = (isNight ? moonObj : sunObj) + cloudPath; 
