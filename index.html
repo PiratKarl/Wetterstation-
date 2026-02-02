@@ -3,18 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V57.0</title>
-    <link rel="stylesheet" href="style.css?v=57.0">
+    <title>Aura Wetterstation V58.0</title>
+    <link rel="stylesheet" href="style.css?v=58.0">
 </head>
 <body>
 
     <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
         <defs>
             <radialGradient id="gradSun" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:1" />
-                <stop offset="40%" style="stop-color:rgb(0,234,255);stop-opacity:1" />
-                <stop offset="100%" style="stop-color:rgb(0,119,170);stop-opacity:1" />
+                <stop offset="0%" style="stop-color:#fff700;stop-opacity:1" />
+                <stop offset="60%" style="stop-color:#ff9900;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ff4500;stop-opacity:1" />
             </radialGradient>
+            <radialGradient id="gradMoon" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#00eaff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#005577;stop-opacity:1" />
+            </radialGradient>
+            <linearGradient id="gradCloud" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#bbbbbb;stop-opacity:1" />
+            </linearGradient>
         </defs>
     </svg>
 
@@ -29,7 +38,7 @@
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">AURA V57.0 COCKPIT</p>
+        <p style="color:#444; margin-top:20px;">AURA V58.0 PREMIUM</p>
     </div>
 
     <div class="dashboard">
@@ -63,15 +72,15 @@
                     </div>
                     <div class="info-item" title="Wind">
                         <span id="icon-wind" class="info-icon" style="display:inline-block">➤</span> 
-                        <span id="val-wind" class="info-val">-- km/h</span>
+                        <span id="val-wind" class="info-val">-- <span class="info-unit">km/h</span></span>
                     </div>
                     <div class="info-item" title="Luftdruck">
                         <span class="info-icon">⏲️</span> 
-                        <span id="val-press" class="info-val">-- hPa</span>
+                        <span id="val-press" class="info-val">-- <span class="info-unit">hPa</span></span>
                     </div>
                     <div class="info-item" title="Sichtweite">
                         <span class="info-icon">👁️</span> 
-                        <span id="val-vis" class="info-val">-- km</span>
+                        <span id="val-vis" class="info-val">-- <span class="info-unit">km</span></span>
                     </div>
                 </div>
             </div>
@@ -90,7 +99,7 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 57.0</div>
+                <div class="status-row">VER: 58.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
@@ -124,14 +133,13 @@
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
-                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
                 <span>🌙 Ruhemodus</span> <span>▼</span>
             </button>
             <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Definieren Sie hier Zeiten, zu denen sich das Display automatisch ausschaltet (Strom sparen). Tippen Sie auf den Bildschirm, um ihn jederzeit zu wecken.</p>
+                <p class="menu-text">Definieren Sie hier Zeiten, zu denen sich das Display automatisch ausschaltet.</p>
                 <div class="inp-time-row">
                     <span class="inp-label">Abschalten um:</span>
                     <input type="time" id="inp-time-from" class="inp-time">
@@ -140,53 +148,96 @@
                     <span class="inp-label">Aufwecken um:</span>
                     <input type="time" id="inp-time-to" class="inp-time">
                 </div>
+                <div class="menu-tip-box">
+                    <span class="menu-tip-title">ℹ TIPP: Display leuchtet schwarz?</span>
+                    <p style="font-size:16px; color:#aaa; margin:0;">Da Webseiten die Hardware nicht ausschalten können, bleibt bei LCD-Displays oft ein "graues Leuchten". Wir empfehlen die kostenlose App <strong>"Darker (Screen Filter)"</strong> aus dem Play Store, um die Helligkeit nachts extrem abzusenken.</p>
+                </div>
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
                 <button class="btn-action" onclick="toggleSleep()">JETZT AUSSCHALTEN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
-                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-help')">
+                <span>💡 Hilfe & Display Tipps</span> <span>▼</span>
+            </button>
+            <div id="acc-help" class="acc-content">
+                <p class="menu-text">Damit Ihre Wetterstation perfekt läuft, hier unsere besten Tipps für Dauernutzung auf Tablets:</p>
+                
+                <div class="menu-tip-box">
+                    <span class="menu-tip-title">1. Das "graue Leuchten" nachts</span>
+                    <p style="font-size:16px; color:#bbb;">LCD-Bildschirme leuchten immer, auch bei schwarzem Bild. 
+                    <br><strong>Lösung einfach:</strong> Installieren Sie die App "Darker (Screen Filter)" oder "Night Screen".
+                    <br><strong>Lösung Profi:</strong> Nutzen Sie den "Fully Kiosk Browser" (erlaubt Hardware-Display-Aus).</p>
+                </div>
+                
+                <div class="menu-tip-box">
+                    <span class="menu-tip-title">2. Akku & Laden</span>
+                    <p style="font-size:16px; color:#bbb;">Lassen Sie das Gerät am Strom. Nutzen Sie eine Zeitschaltuhr (z.B. 08:00 an, 20:00 aus), um den Akku zu schonen („Pendeln“).</p>
+                </div>
+
+                <button class="btn-back" onclick="closeAccordion('acc-help')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-legende')">
-                <span>📘 Legende & Symbole</span> <span>▼</span>
+                <span>📘 Wetter-Symbole</span> <span>▼</span>
             </button>
             <div id="acc-legende" class="acc-content">
-                <p class="menu-text">Hier finden Sie eine Übersicht aller verwendeten Symbole:</p>
+                <p class="menu-text">Übersicht aller Symbole und Warnungen:</p>
                 <div class="legend-grid">
                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;"><span style="color:#00eaff; font-size:30px; font-weight:bold;">↓</span></div>
-                        <div class="legend-desc">Gefühlt <strong>kälter</strong> als gemessen.</div>
+                        <div class="legend-icon-box"><svg viewBox="0 0 24 24" style="width:40px;height:40px;"><circle cx="12" cy="12" r="6" fill="url(#gradSun)"/><line x1="12" y1="1" x2="12" y2="4" stroke="#ff9900" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="#ff9900" stroke-width="2"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3" stroke="#ff9900" stroke-width="2"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8" stroke="#ff9900" stroke-width="2"/><line x1="1" y1="12" x2="4" y2="12" stroke="#ff9900" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="#ff9900" stroke-width="2"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7" stroke="#ff9900" stroke-width="2"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2" stroke="#ff9900" stroke-width="2"/></svg>
+                        </div>
+                        <div class="legend-desc">Klarer Himmel / Sonnig</div>
                     </div>
                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;"><span style="color:#ff3333; font-size:30px; font-weight:bold;">↑</span></div>
-                        <div class="legend-desc">Gefühlt <strong>wärmer</strong> als gemessen.</div>
+                        <div class="legend-icon-box"><svg viewBox="0 0 24 24" style="width:40px;height:40px;"><path d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" fill="url(#gradCloud)"/></svg>
+                        </div>
+                        <div class="legend-desc">Bewölkt / Bedeckt</div>
                     </div>
                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;"><span style="color:#ffd700; font-size:20px; font-weight:bold;">⚠</span></div>
-                        <div class="legend-desc">DWD Warnstufe 1 (Gelb): Mittlere Gefahr.</div>
+                        <div class="legend-icon-box"><svg viewBox="0 0 24 24" style="width:40px;height:40px;"><path d="M7,15 L17,15 C19.2,15 21,13.2 21,11 C21,8.8 19.2,7 17,7 L17,6 C17,2.7 14.3,0 11,0 C7.7,0 5,2.7 5,6 C2.8,6 1,7.8 1,10 C1,12.2 2.8,15 5,15 Z" fill="#888"/><line x1="8" y1="16" x2="8" y2="20" stroke="#00eaff" stroke-width="2"/><line x1="12" y1="16" x2="12" y2="20" stroke="#00eaff" stroke-width="2"/><line x1="16" y1="16" x2="16" y2="20" stroke="#00eaff" stroke-width="2"/></svg>
+                        </div>
+                        <div class="legend-desc">Regen / Schauer</div>
                     </div>
                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;"><span style="color:#ff3333; font-size:20px; font-weight:bold;">‼</span></div>
-                        <div class="legend-desc">DWD Warnstufe 2 (Rot): Hohe Gefahr.</div>
+                        <div class="legend-icon-box"><svg viewBox="0 0 24 24" style="width:40px;height:40px;"><path d="M7,15 L17,15 C19.2,15 21,13.2 21,11 C21,8.8 19.2,7 17,7 L17,6 C17,2.7 14.3,0 11,0 C7.7,0 5,2.7 5,6 C2.8,6 1,7.8 1,10 C1,12.2 2.8,15 5,15 Z" fill="#666"/><polygon points="10,15 13,15 12,21 16,13 13,13 14,8" fill="#ff3333"/></svg>
+                        </div>
+                        <div class="legend-desc">Gewitter / Sturm</div>
+                    </div>
+                    <div class="legend-row">
+                        <div class="legend-icon-box" style="border:none;"><span style="color:#ffd700; font-size:25px; font-weight:bold;">⚠ GELB</span></div>
+                        <div class="legend-desc">DWD Warnstufe 1: Wetterwarnung (mittlere Gefahr).</div>
+                    </div>
+                    <div class="legend-row">
+                        <div class="legend-icon-box" style="border:none;"><span style="color:#ff3333; font-size:25px; font-weight:bold;">‼ ROT</span></div>
+                        <div class="legend-desc">DWD Warnstufe 2: Unwetterwarnung (hohe Gefahr).</div>
                     </div>
                 </div>
                 <button class="btn-back" onclick="closeAccordion('acc-legende')">ZURÜCK</button>
-                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-contact')">
                 <span>🌐 Kontakt & Homepage</span> <span>▼</span>
             </button>
             <div id="acc-contact" class="acc-content">
-                <p class="menu-text">Haben Sie Fragen, Anregungen oder Wünsche? Wir sind für Sie da. Besuchen Sie auch unsere Projekt-Webseite für Updates.</p>
-                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL SCHREIBEN</a>
-                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WWW.CODE-WERFT.DE</a>
+                <p class="menu-text">Haben Sie Fragen, Anregungen oder Wünsche? Besuchen Sie unsere Projekt-Webseite oder schreiben Sie uns.</p>
+                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL: webmaster@code-werft.de</a>
+                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WEB: code-werft.de</a>
                 <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
-                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
+                <span>☕ Support Development</span> <span>▼</span>
+            </button>
+            <div id="acc-kaffee" class="acc-content">
+                <p class="menu-text">Liebe Nutzerin, lieber Nutzer,<br><br>hinter diesem Projekt steckt viel Herzblut und hunderte Stunden an Programmierung, um es perfekt auf Ihr Tablet abzustimmen. <br><br>Um die laufenden Serverkosten für die präzisen Wetterdaten zu decken und neue Funktionen (wie das Smart-Update) zu entwickeln, würde ich mich riesig über einen virtuellen Kaffee freuen. <br><br><strong>Deine Unterstützung hält dieses Projekt am Leben! Danke!</strong></p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT KAFFEE SPENDEN</a>
+                <button class="btn-back" onclick="closeAccordion('acc-kaffee')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-legal')">
-                <span>⚖️ Impressum & Datenschutz</span> <span>▼</span>
+                <span>⚖️ Impressum</span> <span>▼</span>
             </button>
             <div id="acc-legal" class="acc-content">
                 <p class="menu-text"><span class="menu-highlight">Impressum:</span><br>
@@ -197,32 +248,14 @@
                 38106 Braunschweig<br>
                 Deutschland</p>
                 
-                <p class="menu-text"><span class="menu-highlight">Kontakt:</span><br>
-                E-Mail: webmaster@code-werft.de<br>
-                Web: code-werft.de</p>
-                
-                <p class="menu-text"><span class="menu-highlight">Datenschutz:</span><br>
-                Diese Anwendung ("Aura Wetterstation") speichert Ihre Einstellungen (Ort, Zeiten) ausschließlich lokal auf Ihrem Endgerät (LocalStorage). Es werden keine personenbezogenen Daten an Dritte übermittelt. Die Wetterdaten werden anonymisiert über die OpenWeatherMap API abgerufen.</p>
-
-                <p class="menu-text">Software Version: 57.0 (Cockpit)</p>
-                
+                <p class="menu-text">Software Version: 58.0 (Premium)</p>
                 <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
-                <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
-                <span>☕ Kaffeekasse</span> <span>▼</span>
-            </button>
-            <div id="acc-kaffee" class="acc-content">
-                <p class="menu-text">Wenn Ihnen dieses Projekt gefällt, freue ich mich riesig über einen virtuellen Kaffee als Unterstützung für die Weiterentwicklung.</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">KAFFEE SPENDEN</a>
-                <button class="btn-back" onclick="closeAccordion('acc-kaffee')">ZURÜCK</button>
                 <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
             </div>
 
         </div>
     </div>
 
-    <script src="script.js?v=57.0"></script>
+    <script src="script.js?v=58.0"></script>
 </body>
     </html>
