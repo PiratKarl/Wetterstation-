@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V60.0</title>
-    <link rel="stylesheet" href="style.css?v=60.0">
+    <title>Aura Wetterstation V61.0</title>
+    <link rel="stylesheet" href="style.css?v=61.0">
 </head>
 <body>
 
@@ -36,9 +36,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V60 STARTEN
+            AURA V61 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">JUBILÄUMS EDITION</p>
+        <p style="color:#444; margin-top:20px;">PERFECT CENTER</p>
     </div>
 
     <div class="dashboard">
@@ -57,19 +57,20 @@
         <div class="col-center">
             <div id="location-header">BRAUNSCHWEIG</div>
             
-            <div class="main-row">
-                <div id="main-icon"></div> 
+            <div class="main-row-v61">
                 
-                <div style="display:flex; flex-direction:column; align-items:center;">
-                    <div id="main-temp">--°</div>
-                    
-                    <div class="rain-box-small" id="rain-prob">
-                        <svg class="rain-icon-inline" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>
-                        <span id="rain-val">--%</span>
+                <div class="centered-group">
+                    <div id="main-icon"></div> 
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <div id="main-temp">--°</div>
+                        <div class="rain-box-small" id="rain-prob">
+                            <svg class="rain-icon-inline" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>
+                            <span id="rain-val">--%</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="info-stack">
+                <div class="info-stack-absolute">
                     <div class="info-item" title="Gefühlt">
                         <svg class="cockpit-icon" viewBox="0 0 24 24"><path d="M12 2c-2.2 0-4 1.8-4 4v7.2c-1.2 1.3-2 3-2 4.8 0 3.3 2.7 6 6 6s6-2.7 6-6c0-1.8-.8-3.5-2-4.8V6c0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2v7h-4V6c0-1.1.9-2 2-2z"/></svg>
                         <span id="val-feels" class="info-val">--°</span>
@@ -87,6 +88,7 @@
                         <span id="val-vis" class="info-val">-- <span class="info-unit">km</span></span>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -103,14 +105,14 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 60.0</div>
+                <div class="status-row">VER: 61.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ AURA V60 INITIALISIERUNG +++</div>
+        <div id="ticker-text">+++ AURA V61 SYSTEM BEREIT +++</div>
     </div>
 
     <div class="forecast-area">
@@ -130,20 +132,20 @@
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-1')">
-                <span>📍 Standort Konfiguration</span> <span>▼</span>
+                <span>📍 Standort & Daten</span> <span>▼</span>
             </button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Um Ihnen exakte Wetterdaten und Unwetterwarnungen des Deutschen Wetterdienstes (DWD) liefern zu können, benötigt das System Ihren genauen Wohnort. Die Daten werden lokal gespeichert.</p>
-                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben (z.B. Braunschweig)">
-                <button class="btn-save" onclick="saveSettings()">STANDORT SPEICHERN</button>
+                <p class="menu-text">Um präzise Wetterdaten und lokale Warnungen des DWD zu empfangen, geben Sie bitte Ihren Wohnort ein. Die Daten werden nur lokal auf Ihrem Tablet gespeichert.</p>
+                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
+                <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
-                <span>🌙 Ruhemodus & Display</span> <span>▼</span>
+                <span>🌙 Display & Ruhemodus</span> <span>▼</span>
             </button>
             <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Hier können Sie Zeiten festlegen, zu denen das Display schwarz geschaltet wird, um Strom zu sparen.</p>
+                <p class="menu-text">Legen Sie fest, wann das Display schwarz geschaltet werden soll, um Energie zu sparen und Licht im Raum zu vermeiden.</p>
                 <div class="inp-time-row">
                     <span class="inp-label">Abschalten um:</span>
                     <input type="time" id="inp-time-from" class="inp-time">
@@ -154,51 +156,47 @@
                 </div>
                 
                 <div class="menu-tip-box">
-                    <span class="menu-tip-title">⚠️ WICHTIG: Das "Graue Leuchten"</span>
-                    <p class="menu-text">Nutzen Sie ein älteres Tablet (wie das Galaxy Tab 3)? Diese Geräte verwenden LCD-Technik. Das bedeutet: Auch wenn das Bild schwarz ist, bleibt die Hintergrundbeleuchtung technisch an. Das Display "leuchtet" daher im Dunkeln grau.</p>
-                    <p class="menu-text"><strong>Unsere Empfehlung:</strong> Installieren Sie die kostenlose App <strong>"Darker (Screen Filter)"</strong> aus dem Play Store. Damit können Sie die Helligkeit weit unter das System-Minimum regeln, sodass es nachts wirklich dunkel ist.</p>
+                    <span class="menu-tip-title">⚠️ WICHTIG: Display leuchtet nachts?</span>
+                    <p class="menu-text">Ältere Tablets nutzen LCD-Technik. Das bedeutet: Auch bei schwarzem Bild bleibt die Hintergrundbeleuchtung technisch an ("graues Leuchten").</p>
+                    <p class="menu-text"><strong>Die Lösung:</strong> Installieren Sie die kostenlose App <strong>"Darker (Screen Filter)"</strong> aus dem Play Store. Damit können Sie die Helligkeit weit unter das normale Minimum absenken!</p>
                 </div>
 
-                <button class="btn-save" onclick="saveSettings()">ZEITEN SPEICHERN</button>
-                <button class="btn-action" onclick="toggleSleep()" style="margin-top:10px">JETZT TESTEN (SCHWARZ)</button>
+                <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
+                <button class="btn-action" onclick="toggleSleep()" style="margin-top:10px">JETZT TESTEN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-legende')">
-                <span>📘 Symbole & Erklärung</span> <span>▼</span>
+                <span>📘 Symbole & Bedeutung</span> <span>▼</span>
             </button>
             <div id="acc-legende" class="acc-content">
-                <p class="menu-text">Damit Sie alle Daten auf einen Blick verstehen, hier die Erklärung der Anzeigen:</p>
+                <p class="menu-text">Hier eine Erklärung der Anzeigen auf Ihrem Dashboard:</p>
                 
                 <div class="menu-tip-box">
                     <span class="menu-tip-title">🌡️ Gefühlte Temperatur</span>
-                    <p class="menu-text">Warum weicht dieser Wert oft ab? <br>Im Winter sorgt Wind dafür, dass sich 0°C wie -5°C anfühlen (Windchill). Im Sommer sorgt hohe Luftfeuchtigkeit dafür, dass 30°C wie 35°C wirken (Schwüle). Aura berechnet diesen Wert, damit Sie wissen, wie Sie sich kleiden müssen.</p>
+                    <p class="menu-text">Dieser Wert unterscheidet sich oft vom Thermometer. Im Winter lässt Wind die Luft kälter wirken (Windchill), im Sommer lässt hohe Feuchtigkeit die Hitze drückender wirken (Schwüle). Aura berechnet dies für Sie.</p>
                 </div>
 
                 <div class="legend-grid">
                      <div class="legend-row">
                         <div class="legend-icon-box" style="border:none"><span style="color:#ffd700;font-weight:bold;font-size:24px">⚠ GELB</span></div>
-                        <div class="legend-desc">Wetterwarnung (Stufe 1): Es wird ungemütlich (z.B. starker Wind, Dauerregen).</div>
+                        <div class="legend-desc">Wetterwarnung: Achtung, Wetterlage ändert sich (z.B. starker Wind).</div>
                      </div>
                      <div class="legend-row">
                         <div class="legend-icon-box" style="border:none"><span style="color:#ff3333;font-weight:bold;font-size:24px">‼ ROT</span></div>
-                        <div class="legend-desc">Unwetterwarnung (Stufe 2): Gefahr! (z.B. Sturm, Gewitter, Glatteis).</div>
-                     </div>
-                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none"><span style="color:#00eaff;font-weight:bold;font-size:24px">↗ / ↘</span></div>
-                        <div class="legend-desc">Luftdruck-Tendenz: Ein Pfeil nach unten deutet oft auf schlechteres Wetter hin.</div>
+                        <div class="legend-desc">Unwetterwarnung: Gefahr für Leib & Leben möglich (Sturm, Eis).</div>
                      </div>
                 </div>
                 <button class="btn-back" onclick="closeAccordion('acc-legende')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-contact')">
-                <span>🌐 Kontakt & Web</span> <span>▼</span>
+                <span>🌐 Kontakt & Code-Werft</span> <span>▼</span>
             </button>
             <div id="acc-contact" class="acc-content">
-                <p class="menu-text">Wir freuen uns immer über Feedback, Fotos Ihrer Wetterstation oder Verbesserungsvorschläge.</p>
-                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL: webmaster@code-werft.de</a>
-                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 HOMEPAGE: code-werft.de</a>
+                <p class="menu-text">Wir freuen uns über Feedback, Fotos oder Anregungen zu diesem Projekt.</p>
+                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL SCHREIBEN</a>
+                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WWW.CODE-WERFT.DE</a>
                 <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
             </div>
 
@@ -206,8 +204,8 @@
                 <span>☕ Projekt unterstützen</span> <span>▼</span>
             </button>
             <div id="acc-kaffee" class="acc-content">
-                <p class="menu-text">Liebe Nutzerin, lieber Nutzer,<br><br>hinter der <strong>Aura Wetterstation</strong> stecken hunderte Stunden an Entwicklung, Design-Arbeit und Optimierung speziell für ältere Tablets. Unser Ziel ist es, Hardware vor dem Elektroschrott zu retten und ihr ein neues, nützliches Leben zu schenken.<br><br>Dieses Projekt ist kostenlos und werbefrei. Um die laufenden Kosten für Server und die Wetter-Daten-Schnittstellen zu decken, sind wir auf die Unterstützung der Community angewiesen.<br><br>Wenn Ihnen Aura gefällt und Sie jeden Tag Freude beim Blick auf das Wetter haben, würden wir uns riesig über einen "virtuellen Kaffee" freuen. Das motiviert uns, weiterzumachen!</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT EINEN KAFFEE SPENDEN</a>
+                <p class="menu-text">Liebe Nutzerin, lieber Nutzer,<br><br>die Aura Wetterstation ist ein Projekt aus Leidenschaft, um ältere Hardware sinnvoll weiterzunutzen. Es ist komplett werbefrei.<br><br>Um die Serverkosten für die Wetterdaten zu decken und die Entwicklung voranzutreiben, sind wir auf Spenden angewiesen. Wenn Ihnen Aura gefällt, laden Sie uns doch auf einen virtuellen Kaffee ein!</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT KAFFEE SPENDEN</a>
                 <button class="btn-back" onclick="closeAccordion('acc-kaffee')">ZURÜCK</button>
             </div>
 
@@ -215,14 +213,14 @@
                 <span>⚖️ Impressum</span> <span>▼</span>
             </button>
             <div id="acc-legal" class="acc-content">
-                <p class="menu-text"><strong>Code-Werft Projects</strong><br>Inhaber: Karl Altmannshofer<br>Lohengrinstraße 25<br>38106 Braunschweig<br>Deutschland</p>
-                <p class="menu-text">Software Version: 60.0 (Jubiläum)<br>Alle Wetterdaten bereitgestellt durch OpenWeatherMap.</p>
+                <p class="menu-text"><strong>Code-Werft Projects</strong><br>Karl Altmannshofer<br>Lohengrinstraße 25<br>38106 Braunschweig</p>
+                <p class="menu-text">Version: 61.0 (Perfect Center)</p>
                 <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
             </div>
 
         </div>
     </div>
 
-    <script src="script.js?v=60.0"></script>
+    <script src="script.js?v=61.0"></script>
 </body>
-                                                                          </html>
+    </html>
