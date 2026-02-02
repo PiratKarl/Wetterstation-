@@ -1,7 +1,7 @@
-/* --- AURA V61.0 (PERFECT CENTER ENGINE) --- */
+/* --- AURA V62.0 (SPACE FIX ENGINE) --- */
 
 const CONFIG = {
-    version: 61.0,
+    version: 62.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -159,10 +159,10 @@ function renderCurrent(data) {
     let temp = Math.round(data.main.temp);
     document.getElementById('main-temp').innerText = temp + "°";
     
-    // ICON ENGINE (V61)
+    // ICON (In der absoluten Mitte)
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
-    // REGEN (V61 Logik für Mitte)
+    // REGEN (Unter der Temp)
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
@@ -171,7 +171,7 @@ function renderCurrent(data) {
     }
     document.getElementById('rain-val').innerText = rainProb;
     
-    // COCKPIT DATEN (Jetzt im Side-Stack)
+    // COCKPIT DATEN (Rechts außen)
     // 1. Gefühlt
     let feels = Math.round(data.main.feels_like);
     document.getElementById('val-feels').innerText = feels + "°";
@@ -183,7 +183,7 @@ function renderCurrent(data) {
     let dirStr = dirs[Math.round(deg/45)%8];
     document.getElementById('val-wind').innerHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.5em; color:#00eaff">${dirStr}</span>`;
     
-    // Wind Pfeil Rotation (SVG im Side-Stack)
+    // Wind Pfeil Rotation (SVG)
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
     // 3. Druck (mit Tendenz)
@@ -293,7 +293,7 @@ async function loadTicker(localForecast) {
         </span>`;
     }
 
-    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} PERFECT CENTER +++</span>`;
+    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} SPACE FIX +++</span>`;
     
     let requests = WORLD_CITIES.map(city => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric`)

@@ -1,4 +1,4 @@
-/* --- AURA V61.0 (PERFECT CENTER & HUGE MENU) --- */
+/* --- AURA V62.0 (SPACE FIX & ABSOLUTE CENTER) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -36,39 +36,40 @@ html, body {
 #logo-bg { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 1; }
 #logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 2; }
 
-/* MITTE (V61: PERFECT CENTER LOGIK) */
+/* MITTE (V62: ABSOLUTE TRENNUNG) */
 .col-center { width: 56%; display: flex; flex-direction: column; align-items: center; }
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; width:100%; text-align:center; }
 
-/* NEUER CONTAINER FÜR DIE MITTE (V61) */
-/* Ermöglicht absolute Positionierung der Kinder */
+/* CONTAINER */
 .main-row-v61 { 
     position: relative; 
     width: 100%; 
-    height: 20vh; /* Feste Höhe für den Bereich */
-    display: flex; 
-    justify-content: center; /* Zentriert die .centered-group horizontal */
-    align-items: center; /* Zentriert vertikal */
+    height: 20vh; 
     margin-top: 5px;
+    /* Flexbox entfernt, da wir jetzt absolut positionieren */
 }
 
-/* DIE ZENTRIERTE GRUPPE (Icon + Temp) */
+/* GRUPPE 1: DIE MITTE (Icon + Temp) - V62 UPDATE */
 .centered-group {
+    position: absolute; /* Nagel es fest */
+    left: 45%; /* Etwas weiter links als 50%, um Platz für den rechten Block zu machen */
+    top: 50%;
+    transform: translate(-50%, -50%); /* Exakte mathematische Zentrierung auf dem Punkt */
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Diese Gruppe sitzt jetzt immer exakt in der Mitte */
+    white-space: nowrap;
 }
 
-/* 1. ULTRA-ICON (Abstand angepasst) */
+/* ICON */
 #main-icon { 
     width: 14vh; height: 14vh; 
     display: flex; justify-content: center; align-items: center; 
-    margin-right: 10px; /* Enger an der Temp */
+    margin-right: 10px; 
     filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); 
 }
 
-/* 2. TEMP (Gigantisch) */
+/* TEMP */
 #main-temp { 
     font-size: 19vh; 
     font-weight: bold; 
@@ -87,34 +88,35 @@ html, body {
 }
 .rain-icon-inline { width: 4.0vh; height: 4.0vh; fill: #00eaff; margin-right: 8px; }
 
-/* 3. DER "SCHWEBENDE" INFO-STACK (V61 ABSOLUT) */
+/* GRUPPE 2: DER INFO STACK (V62 RECHTSBÜNDIG) */
 .info-stack-absolute {
-    position: absolute; /* Nimmt ihn aus dem Fluss */
-    left: 62%; /* Startet bei 62% der Breite des Containers (rechts von der Mitte) */
-    top: 50%; /* Vertikal mittig ansetzen... */
-    transform: translateY(-50%); /* ...und exakt zentrieren */
+    position: absolute; 
+    right: 0; /* Klebt am rechten Rand der mittleren Spalte */
+    top: 50%; 
+    transform: translateY(-50%); 
     display: flex; 
     flex-direction: column; 
     gap: 8px;
-    /* margin-left wird nicht mehr gebraucht */
+    align-items: flex-start; /* Linksbündig innerhalb des Blocks */
+    width: 25%; /* Begrenzte Breite damit er nicht in die Temp ragt */
 }
 
 .info-item { 
     display: flex; align-items: center; 
-    font-size: 4.0vh; /* XXL */
+    font-size: 4.0vh; 
     color: #ddd; font-weight: bold; text-shadow: 1px 1px 2px #000; 
-    white-space: nowrap; /* Verhindert Umbruch */
+    white-space: nowrap; 
 }
 
 .cockpit-icon { 
     width: 4.0vh; height: 4.0vh; 
     fill: #00eaff; 
-    margin-right: 15px; 
+    margin-right: 10px; /* Etwas weniger Abstand um Platz zu sparen */
     filter: drop-shadow(0 0 5px #00eaff); 
 }
 
 .info-val { color: #fff; font-weight: 800; }
-.info-unit { font-size: 0.5em; color: #aaa; margin-left: 5px; font-weight: normal; vertical-align: middle; }
+.info-unit { font-size: 0.5em; color: #aaa; margin-left: 3px; font-weight: normal; vertical-align: middle; }
 
 /* RECHTS */
 .col-right { width: 22%; display: flex; flex-direction: column; align-items: flex-end; }
@@ -174,7 +176,7 @@ html, body {
     color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100;
 }
 
-/* MENÜ STYLES V61 (NOCH GRÖSSER) */
+/* MENÜ STYLES V61 (GROSS) */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .menu-container { max-width: 850px; margin: 0 auto; padding-bottom: 80px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 25px; position: relative; }
@@ -194,22 +196,17 @@ html, body {
 .btn-action { background: #333; color: #fff; border: 1px solid #fff; }
 .btn-back { background: #444; color: #fff; border: 1px solid #666; margin-top: 30px; }
 .btn-link { background: #111; color: #00eaff; border: 1px solid #00eaff; }
-
-/* V61: Menü Text noch größer */
 .menu-text { font-size: 22px; color: #ccc; line-height: 1.5; margin-bottom: 20px; text-align: justify; }
 .menu-highlight { color: #00eaff; font-weight: bold; }
 .menu-tip-box { border: 1px solid #333; background: #1a1a1a; padding: 25px; border-radius: 5px; margin-bottom: 25px; }
 .menu-tip-title { color: #ffd700; font-weight: bold; font-size: 24px; margin-bottom: 10px; display: block; }
-
 .menu-copyright { text-align: center; font-size: 16px; color: #666; margin-top: 25px; margin-bottom: 10px; }
-
-/* LEGENDE */
 .legend-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 15px; }
 .legend-row { display: flex; align-items: center; border-bottom: 1px solid #222; padding-bottom: 15px; }
 .legend-icon-box { width: 80px; height: 80px; margin-right: 25px; display: flex; justify-content: center; align-items: center; background: #000; border: 1px solid #333; border-radius: 5px; }
 .legend-desc { font-size: 22px; color: #ddd; line-height: 1.3; }
 
-/* ANIMATIONEN (Vektor-Engine) */
+/* ANIMATIONEN */
 .svg-icon { width: 100%; height: 100%; overflow: visible; }
 .icon-premium { filter: drop-shadow(0 0 10px rgba(0, 234, 255, 0.4)); }
 .icon-simple * { animation: none !important; filter: none !important; }
