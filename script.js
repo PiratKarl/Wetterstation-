@@ -1,7 +1,7 @@
-/* --- AURA V58.0 (PREMIUM ENGINE & COCKPIT) --- */
+/* --- AURA V59.0 (XXL RETRO ENGINE) --- */
 
 const CONFIG = {
-    version: 58.0,
+    version: 59.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -127,7 +127,7 @@ function initBatteryGuard() {
                 checkStatus();
             });
         }
-    }, 1800000); // 30 Min
+    }, 1800000); 
 }
 
 /* --- WETTER ENGINE --- */
@@ -159,13 +159,20 @@ function renderCurrent(data) {
     let temp = Math.round(data.main.temp);
     document.getElementById('main-temp').innerText = temp + "°";
     
-    // PREMIUM ICON (Animiert = true)
+    // ICON Engine V59
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
-    let rain = data.rain ? "Regen" : "0% Regen";
-    document.getElementById('rain-prob').innerText = rain;
+    // REGEN (XXL Feld)
+    let rainProb = data.rain ? "Regen" : "0%";
+    // Wir versuchen die Regen-Wahrscheinlichkeit aus dem Forecast zu holen, falls hier keine Daten
+    // Aber für Current nehmen wir oft "0%" wenn kein Rain Object da ist.
+    // Wenn Forecast Cache da ist, nehmen wir den Wert der ersten Stunde für genauere %
+    if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
+       rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
+    }
+    document.getElementById('rain-val').innerText = rainProb;
     
-    // COCKPIT DATEN
+    // COCKPIT DATEN (XXL)
     // 1. Gefühlt
     let feels = Math.round(data.main.feels_like);
     document.getElementById('val-feels').innerText = feels + "°";
@@ -176,8 +183,12 @@ function renderCurrent(data) {
     let dirs = ['N','NO','O','SO','S','SW','W','NW'];
     let dirStr = dirs[Math.round(deg/45)%8];
     document.getElementById('val-wind').innerHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.7em; color:#00eaff">${dirStr}</span>`;
-    // Wind-Icon Drehung
-    document.getElementById('icon-wind').style.transform = `rotate(${deg-90}deg)`; 
+    // Wind-Icon Drehung (Das SVG Element selbst)
+    document.getElementById('icon-wind').style.transform = `rotate(${deg-135}deg)`; // -135 weil der Pfeil im SVG schräg ist (bei 45 Grad) oder wir passen an.
+    // Mein SVG Pfeil zeigt nach Rechts-Oben (ca 45 Grad). Norden ist 0. 
+    // Wir nehmen einfach an: SVG zeigt nach OBEN (0 deg).
+    // Korrektur: Mein SVG Pfad oben zeigt nach Rechts-Oben. Sagen wir 0 Grad ist Norden.
+    document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
     // 3. Druck (mit Tendenz)
     let press = data.main.pressure;
@@ -195,7 +206,7 @@ function renderCurrent(data) {
 
     // 4. Sicht
     let vis = (data.visibility / 1000).toFixed(1);
-    if(vis > 30) vis = ">10"; // Standard OWM Limit oft 10km
+    if(vis > 30) vis = ">10"; 
     document.getElementById('val-vis').innerHTML = `${vis} <span class="info-unit">km</span>`;
 
     // Astro
@@ -272,7 +283,6 @@ async function loadTicker(localForecast) {
     let warningText = "";
     let severityClass = "";
 
-    // DWD LOGIK
     if(weatherId >= 200 && weatherId < 300) { warningText = "GEWITTER / STURMBÖEN"; severityClass = "dwd-warn-red"; }
     else if(weatherId >= 600 && weatherId < 700) { warningText = "SCHNEEFALL / GLÄTTE"; severityClass = "dwd-warn-red"; }
     else if(weatherId === 502 || weatherId === 503 || weatherId === 504) { warningText = "STARKREGEN"; severityClass = "dwd-warn-red"; }
@@ -287,7 +297,7 @@ async function loadTicker(localForecast) {
         </span>`;
     }
 
-    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} PREMIUM +++</span>`;
+    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} XXL +++</span>`;
     
     let requests = WORLD_CITIES.map(city => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric`)
@@ -305,19 +315,17 @@ async function loadTicker(localForecast) {
     document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
-/* --- VECTOR ICON ENGINE (PREMIUM V58) --- */
+/* --- VECTOR ICON ENGINE --- */
 function getVectorIcon(code, isPremium) {
     let icon = code.replace('n','d'); 
     let isNight = code.includes('n');
     let svgContent = "";
     let cssClass = isPremium ? "icon-premium" : "icon-simple";
     
-    // NEU: Wir nutzen die <defs> Gradients aus der index.html
     let sunFill = isPremium ? "url(#gradSun)" : "#00eaff";
     let cloudFill = isPremium ? "url(#gradCloud)" : "#fff";
     let moonFill = isPremium ? "url(#gradMoon)" : "#00eaff";
 
-    // SVG PFADE
     const cloudPath = `<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" fill="${cloudFill}" />`;
     const cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
     

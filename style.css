@@ -1,4 +1,4 @@
-/* --- AURA V58.0 (PREMIUM DESIGN & DOKU) --- */
+/* --- AURA V59.0 (RETRO FIX & XXL SIZE) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -36,7 +36,7 @@ html, body {
 #logo-bg { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 1; }
 #logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 2; }
 
-/* MITTE (PREMIUM LAYOUT V58) */
+/* MITTE (XXL LAYOUT V59) */
 .col-center { width: 50%; display: flex; flex-direction: column; align-items: center; }
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 5px; width:100%; text-align:center; }
 
@@ -45,30 +45,48 @@ html, body {
     margin-top: 5px;
 }
 
-/* 1. ULTRA-ICON: Größer & Animiert */
+/* 1. ULTRA-ICON */
 #main-icon { 
-    width: 16vh; height: 16vh; /* Deutlich größer für Details */
+    width: 16vh; height: 16vh; 
     display: flex; justify-content: center; align-items: center; 
     margin-right: 20px; 
-    filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); /* Grund-Glow */
+    filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); 
 }
 
-/* 2. TEMP: Groß */
+/* 2. TEMP */
 #main-temp { font-size: 16vh; font-weight: bold; line-height: 0.85; margin: 0; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
 
-/* 3. COCKPIT-STACK (V58: Viel größer & weiter rechts) */
+/* REGEN (V59: DEUTLICH GRÖSSER) */
+.rain-box-small { 
+    text-align: center; margin-top: 8px; 
+    font-size: 3.5vh; /* V59: XXL */
+    color: #00eaff; font-weight: bold; 
+    display: flex; align-items: center; justify-content: center;
+}
+.rain-icon-inline { width: 3.5vh; height: 3.5vh; fill: #00eaff; margin-right: 8px; }
+
+/* 3. COCKPIT-STACK (V59: XXL & NEUE ICONS) */
 .info-stack {
     display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-    margin-left: 60px; /* V58: Großer Abstand zur Temp */
-    gap: 8px; 
+    margin-left: 90px; /* V59: Noch mehr Abstand */
+    gap: 10px; 
 }
 
-.info-item { display: flex; align-items: center; font-size: 2.4vh; color: #ddd; font-weight: bold; text-shadow: 1px 1px 2px #000; }
-.info-icon { width: 32px; text-align: center; color: #00eaff; margin-right: 12px; font-size: 2.2vh; filter: drop-shadow(0 0 3px #00eaff); }
-.info-val { color: #fff; font-weight: 800; }
-.info-unit { font-size: 0.7em; color: #aaa; margin-left: 3px; font-weight: normal; }
+.info-item { 
+    display: flex; align-items: center; 
+    font-size: 3.2vh; /* V59: XXL Schrift */
+    color: #ddd; font-weight: bold; text-shadow: 1px 1px 2px #000; 
+}
+/* Neue Klasse für die SVG Icons im Cockpit (statt Emojis) */
+.cockpit-icon { 
+    width: 3.5vh; height: 3.5vh; 
+    fill: #00eaff; 
+    margin-right: 15px; 
+    filter: drop-shadow(0 0 5px #00eaff); 
+}
 
-.rain-box-small { text-align: center; margin-top: 5px; font-size: 2.2vh; color: #00eaff; font-weight: bold; }
+.info-val { color: #fff; font-weight: 800; }
+.info-unit { font-size: 0.6em; color: #aaa; margin-left: 3px; font-weight: normal; }
 
 /* RECHTS */
 .col-right { width: 25%; display: flex; flex-direction: column; align-items: flex-end; }
@@ -100,8 +118,6 @@ html, body {
     font-size: 4.0vh; color: #fff; font-weight: bold; display: flex; align-items: center;
 }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
-
-/* DWD WARN FARBEN */
 .dwd-warn-yellow { color: #ffd700; margin-right: 50px; font-weight: bold; display: flex; align-items: center; text-shadow: 0 0 5px #aa8800; }
 .dwd-warn-red { color: #ff3333; margin-right: 50px; font-weight: 900; display: flex; align-items: center; text-shadow: 0 0 8px #ff0000; animation: flash 2s infinite; }
 .t-warn-crit { color: #ff0000; font-weight: 900; background: #220000; padding: 0 10px; border: 2px solid red; margin-right: 50px; animation: flash 1s infinite; }
@@ -130,7 +146,7 @@ html, body {
     color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100;
 }
 
-/* MENÜ STYLES (V58) */
+/* MENÜ STYLES */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .menu-container { max-width: 700px; margin: 0 auto; padding-bottom: 50px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 20px; position: relative; }
@@ -158,18 +174,17 @@ html, body {
 
 .menu-copyright { text-align: center; font-size: 12px; color: #666; margin-top: 10px; margin-bottom: 5px; }
 
-/* LEGENDE V58 */
+/* LEGENDE */
 .legend-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 10px; }
 .legend-row { display: flex; align-items: center; border-bottom: 1px solid #222; padding-bottom: 10px; }
 .legend-icon-box { width: 60px; height: 60px; margin-right: 20px; display: flex; justify-content: center; align-items: center; background: #000; border: 1px solid #333; border-radius: 5px; }
 .legend-desc { font-size: 18px; color: #ddd; line-height: 1.3; }
 
-/* --- PREMIUM ICON ANIMATIONEN (V58) --- */
+/* ANIMATIONEN */
 .svg-icon { width: 100%; height: 100%; overflow: visible; }
 .icon-premium { filter: drop-shadow(0 0 10px rgba(0, 234, 255, 0.4)); }
 .icon-simple * { animation: none !important; filter: none !important; }
 
-/* NEUE ANIMATIONEN */
 @keyframes drift { 
     0% { transform: translateX(10px); opacity: 0.8; } 
     50% { transform: translateX(-10px); opacity: 1; }
@@ -185,7 +200,6 @@ html, body {
 @keyframes rain { 0% { transform: translateY(-5px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(5px); opacity:0; } }
 @keyframes snow { 0% { transform: translateY(-3px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(3px); opacity:0; } }
 
-/* Zuweisung */
 .icon-premium .svg-sun { animation: spin 40s linear infinite, sun-pulse 4s ease-in-out infinite; transform-origin: center; }
 .icon-premium .svg-cloud { animation: drift 8s ease-in-out infinite; }
 .icon-premium .svg-cloud-dark { animation: drift 8s ease-in-out infinite; animation-delay: 1s; }
@@ -194,7 +208,7 @@ html, body {
 .icon-premium .svg-bolt { animation: flash 1.5s infinite; }
 .icon-premium .svg-mist { animation: drift 10s ease-in-out infinite; opacity: 0.6; }
 
-/* Farben & Fills (Werden in HTML <defs> definiert, hier Fallback) */
+/* FALLBACKS */
 .svg-sun { fill: url(#gradSun); }
 .svg-moon { fill: url(#gradMoon); }
 .svg-cloud { fill: url(#gradCloud); }
