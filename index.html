@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V56.0</title>
-    <link rel="stylesheet" href="style.css?v=56.0">
+    <title>Aura Wetterstation V57.0</title>
+    <link rel="stylesheet" href="style.css?v=57.0">
 </head>
 <body>
 
@@ -29,7 +29,7 @@
         <button class="btn-start" onclick="startApp()">
             SYSTEM STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">AURA V56.0 SMART GUARD</p>
+        <p style="color:#444; margin-top:20px;">AURA V57.0 COCKPIT</p>
     </div>
 
     <div class="dashboard">
@@ -47,18 +47,34 @@
 
         <div class="col-center">
             <div id="location-header">BRAUNSCHWEIG</div>
+            
             <div class="main-row">
                 <div id="main-icon"></div> 
-                <div id="main-temp">--°</div>
-                <div class="rain-box">
-                    <svg class="drop-icon" viewBox="0 0 24 24">
-                        <path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/>
-                    </svg>
-                    <div id="rain-prob">--%</div>
+                
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div id="main-temp">--°</div>
+                    <div class="rain-box-small" id="rain-prob">--% Regen</div>
+                </div>
+
+                <div class="info-stack">
+                    <div class="info-item" title="Gefühlte Temperatur">
+                        <span class="info-icon">🌡️</span> 
+                        <span id="val-feels" class="info-val">--°</span>
+                    </div>
+                    <div class="info-item" title="Wind">
+                        <span id="icon-wind" class="info-icon" style="display:inline-block">➤</span> 
+                        <span id="val-wind" class="info-val">-- km/h</span>
+                    </div>
+                    <div class="info-item" title="Luftdruck">
+                        <span class="info-icon">⏲️</span> 
+                        <span id="val-press" class="info-val">-- hPa</span>
+                    </div>
+                    <div class="info-item" title="Sichtweite">
+                        <span class="info-icon">👁️</span> 
+                        <span id="val-vis" class="info-val">-- km</span>
+                    </div>
                 </div>
             </div>
-            <div id="feels-like">Gefühlt: --°</div>
-            <div id="desc-text">LADE DATEN...</div>
         </div>
 
         <div class="col-right">
@@ -74,7 +90,7 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 56.0</div>
+                <div class="status-row">VER: 57.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
@@ -139,19 +155,19 @@
                 <div class="legend-grid">
                     <div class="legend-row">
                         <div class="legend-icon-box" style="border:none;"><span style="color:#00eaff; font-size:30px; font-weight:bold;">↓</span></div>
-                        <div class="legend-desc">Gefühlt <strong>kälter</strong> als gemessen (Windchill).</div>
+                        <div class="legend-desc">Gefühlt <strong>kälter</strong> als gemessen.</div>
                     </div>
                     <div class="legend-row">
                         <div class="legend-icon-box" style="border:none;"><span style="color:#ff3333; font-size:30px; font-weight:bold;">↑</span></div>
-                        <div class="legend-desc">Gefühlt <strong>wärmer</strong> als gemessen (Schwüle).</div>
+                        <div class="legend-desc">Gefühlt <strong>wärmer</strong> als gemessen.</div>
                     </div>
                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;"><span style="color:#00eaff; font-size:20px; font-weight:bold;">↑</span></div>
-                        <div class="legend-desc">Akku wird geladen / Füllstand steigt.</div>
+                        <div class="legend-icon-box" style="border:none;"><span style="color:#ffd700; font-size:20px; font-weight:bold;">⚠</span></div>
+                        <div class="legend-desc">DWD Warnstufe 1 (Gelb): Mittlere Gefahr.</div>
                     </div>
                     <div class="legend-row">
-                        <div class="legend-icon-box" style="border:none;"><span style="color:#ff3333; font-size:20px; font-weight:bold;">↓</span></div>
-                        <div class="legend-desc">Akku entlädt sich trotz Kabel! (Warnung).</div>
+                        <div class="legend-icon-box" style="border:none;"><span style="color:#ff3333; font-size:20px; font-weight:bold;">‼</span></div>
+                        <div class="legend-desc">DWD Warnstufe 2 (Rot): Hohe Gefahr.</div>
                     </div>
                 </div>
                 <button class="btn-back" onclick="closeAccordion('acc-legende')">ZURÜCK</button>
@@ -188,7 +204,7 @@
                 <p class="menu-text"><span class="menu-highlight">Datenschutz:</span><br>
                 Diese Anwendung ("Aura Wetterstation") speichert Ihre Einstellungen (Ort, Zeiten) ausschließlich lokal auf Ihrem Endgerät (LocalStorage). Es werden keine personenbezogenen Daten an Dritte übermittelt. Die Wetterdaten werden anonymisiert über die OpenWeatherMap API abgerufen.</p>
 
-                <p class="menu-text">Software Version: 56.0 (Smart Guard)</p>
+                <p class="menu-text">Software Version: 57.0 (Cockpit)</p>
                 
                 <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
                 <div class="menu-copyright">© Code-Werft 2026 Karl Altmannshofer (Piratkarl)</div>
@@ -207,6 +223,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=56.0"></script>
+    <script src="script.js?v=57.0"></script>
 </body>
-                    </html>
+    </html>
