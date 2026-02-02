@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V61.0</title>
-    <link rel="stylesheet" href="style.css?v=61.0">
+    <title>Aura Wetterstation V62.0</title>
+    <link rel="stylesheet" href="style.css?v=62.0">
 </head>
 <body>
 
@@ -36,9 +36,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V61 STARTEN
+            AURA V62 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">PERFECT CENTER</p>
+        <p style="color:#444; margin-top:20px;">SPACE FIX UPDATE</p>
     </div>
 
     <div class="dashboard">
@@ -105,14 +105,14 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 61.0</div>
+                <div class="status-row">VER: 62.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ AURA V61 SYSTEM BEREIT +++</div>
+        <div id="ticker-text">+++ AURA V62 INITIALISIERUNG +++</div>
     </div>
 
     <div class="forecast-area">
@@ -135,7 +135,7 @@
                 <span>📍 Standort & Daten</span> <span>▼</span>
             </button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Um präzise Wetterdaten und lokale Warnungen des DWD zu empfangen, geben Sie bitte Ihren Wohnort ein. Die Daten werden nur lokal auf Ihrem Tablet gespeichert.</p>
+                <p class="menu-text">Um präzise Wetterdaten und lokale Warnungen des DWD zu empfangen, geben Sie bitte Ihren Wohnort ein.</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
@@ -145,7 +145,7 @@
                 <span>🌙 Display & Ruhemodus</span> <span>▼</span>
             </button>
             <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Legen Sie fest, wann das Display schwarz geschaltet werden soll, um Energie zu sparen und Licht im Raum zu vermeiden.</p>
+                <p class="menu-text">Legen Sie fest, wann das Display schwarz geschaltet werden soll.</p>
                 <div class="inp-time-row">
                     <span class="inp-label">Abschalten um:</span>
                     <input type="time" id="inp-time-from" class="inp-time">
@@ -154,58 +154,47 @@
                     <span class="inp-label">Aufwecken um:</span>
                     <input type="time" id="inp-time-to" class="inp-time">
                 </div>
-                
                 <div class="menu-tip-box">
-                    <span class="menu-tip-title">⚠️ WICHTIG: Display leuchtet nachts?</span>
-                    <p class="menu-text">Ältere Tablets nutzen LCD-Technik. Das bedeutet: Auch bei schwarzem Bild bleibt die Hintergrundbeleuchtung technisch an ("graues Leuchten").</p>
-                    <p class="menu-text"><strong>Die Lösung:</strong> Installieren Sie die kostenlose App <strong>"Darker (Screen Filter)"</strong> aus dem Play Store. Damit können Sie die Helligkeit weit unter das normale Minimum absenken!</p>
+                    <span class="menu-tip-title">⚠️ WICHTIG: Graues Leuchten?</span>
+                    <p class="menu-text">Ältere LCD-Tablets leuchten nachts oft grau. Installieren Sie die App <strong>"Darker (Screen Filter)"</strong>, um die Helligkeit weiter zu senken!</p>
                 </div>
-
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-action" onclick="toggleSleep()" style="margin-top:10px">JETZT TESTEN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-legende')">
-                <span>📘 Symbole & Bedeutung</span> <span>▼</span>
+                <span>📘 Symbole</span> <span>▼</span>
             </button>
             <div id="acc-legende" class="acc-content">
-                <p class="menu-text">Hier eine Erklärung der Anzeigen auf Ihrem Dashboard:</p>
-                
-                <div class="menu-tip-box">
-                    <span class="menu-tip-title">🌡️ Gefühlte Temperatur</span>
-                    <p class="menu-text">Dieser Wert unterscheidet sich oft vom Thermometer. Im Winter lässt Wind die Luft kälter wirken (Windchill), im Sommer lässt hohe Feuchtigkeit die Hitze drückender wirken (Schwüle). Aura berechnet dies für Sie.</p>
-                </div>
-
                 <div class="legend-grid">
                      <div class="legend-row">
                         <div class="legend-icon-box" style="border:none"><span style="color:#ffd700;font-weight:bold;font-size:24px">⚠ GELB</span></div>
-                        <div class="legend-desc">Wetterwarnung: Achtung, Wetterlage ändert sich (z.B. starker Wind).</div>
+                        <div class="legend-desc">Wetterwarnung (z.B. Wind).</div>
                      </div>
                      <div class="legend-row">
                         <div class="legend-icon-box" style="border:none"><span style="color:#ff3333;font-weight:bold;font-size:24px">‼ ROT</span></div>
-                        <div class="legend-desc">Unwetterwarnung: Gefahr für Leib & Leben möglich (Sturm, Eis).</div>
+                        <div class="legend-desc">Unwetterwarnung (Gefahr).</div>
                      </div>
                 </div>
                 <button class="btn-back" onclick="closeAccordion('acc-legende')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-contact')">
-                <span>🌐 Kontakt & Code-Werft</span> <span>▼</span>
+                <span>🌐 Kontakt</span> <span>▼</span>
             </button>
             <div id="acc-contact" class="acc-content">
-                <p class="menu-text">Wir freuen uns über Feedback, Fotos oder Anregungen zu diesem Projekt.</p>
-                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL SCHREIBEN</a>
-                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WWW.CODE-WERFT.DE</a>
+                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL</a>
+                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WEBSEITE</a>
                 <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-kaffee')">
-                <span>☕ Projekt unterstützen</span> <span>▼</span>
+                <span>☕ Support</span> <span>▼</span>
             </button>
             <div id="acc-kaffee" class="acc-content">
-                <p class="menu-text">Liebe Nutzerin, lieber Nutzer,<br><br>die Aura Wetterstation ist ein Projekt aus Leidenschaft, um ältere Hardware sinnvoll weiterzunutzen. Es ist komplett werbefrei.<br><br>Um die Serverkosten für die Wetterdaten zu decken und die Entwicklung voranzutreiben, sind wir auf Spenden angewiesen. Wenn Ihnen Aura gefällt, laden Sie uns doch auf einen virtuellen Kaffee ein!</p>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT KAFFEE SPENDEN</a>
+                <p class="menu-text">Unterstütze das Projekt mit einem virtuellen Kaffee!</p>
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT SPENDEN</a>
                 <button class="btn-back" onclick="closeAccordion('acc-kaffee')">ZURÜCK</button>
             </div>
 
@@ -213,14 +202,14 @@
                 <span>⚖️ Impressum</span> <span>▼</span>
             </button>
             <div id="acc-legal" class="acc-content">
-                <p class="menu-text"><strong>Code-Werft Projects</strong><br>Karl Altmannshofer<br>Lohengrinstraße 25<br>38106 Braunschweig</p>
-                <p class="menu-text">Version: 61.0 (Perfect Center)</p>
+                <p class="menu-text">Code-Werft Projects<br>Karl Altmannshofer<br>Braunschweig</p>
+                <p class="menu-text">Version: 62.0 (Space Fix)</p>
                 <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
             </div>
 
         </div>
     </div>
 
-    <script src="script.js?v=61.0"></script>
+    <script src="script.js?v=62.0"></script>
 </body>
-    </html>
+                    </html>
