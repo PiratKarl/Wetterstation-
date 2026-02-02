@@ -1,7 +1,7 @@
-/* --- AURA V59.0 (XXL RETRO ENGINE) --- */
+/* --- AURA V60.0 (JUBILÄUMS EDITION ENGINE) --- */
 
 const CONFIG = {
-    version: 59.0,
+    version: 60.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -159,20 +159,19 @@ function renderCurrent(data) {
     let temp = Math.round(data.main.temp);
     document.getElementById('main-temp').innerText = temp + "°";
     
-    // ICON Engine V59
+    // PREMIUM VECTOR ICON (V60)
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
-    // REGEN (XXL Feld)
-    let rainProb = data.rain ? "Regen" : "0%";
-    // Wir versuchen die Regen-Wahrscheinlichkeit aus dem Forecast zu holen, falls hier keine Daten
-    // Aber für Current nehmen wir oft "0%" wenn kein Rain Object da ist.
-    // Wenn Forecast Cache da ist, nehmen wir den Wert der ersten Stunde für genauere %
+    // REGEN (V60 XXL Logik)
+    let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
+    } else if (data.rain) {
+       rainProb = "Regen";
     }
     document.getElementById('rain-val').innerText = rainProb;
     
-    // COCKPIT DATEN (XXL)
+    // COCKPIT DATEN (V60 XXL)
     // 1. Gefühlt
     let feels = Math.round(data.main.feels_like);
     document.getElementById('val-feels').innerText = feels + "°";
@@ -182,12 +181,9 @@ function renderCurrent(data) {
     let deg = data.wind.deg;
     let dirs = ['N','NO','O','SO','S','SW','W','NW'];
     let dirStr = dirs[Math.round(deg/45)%8];
-    document.getElementById('val-wind').innerHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.7em; color:#00eaff">${dirStr}</span>`;
-    // Wind-Icon Drehung (Das SVG Element selbst)
-    document.getElementById('icon-wind').style.transform = `rotate(${deg-135}deg)`; // -135 weil der Pfeil im SVG schräg ist (bei 45 Grad) oder wir passen an.
-    // Mein SVG Pfeil zeigt nach Rechts-Oben (ca 45 Grad). Norden ist 0. 
-    // Wir nehmen einfach an: SVG zeigt nach OBEN (0 deg).
-    // Korrektur: Mein SVG Pfad oben zeigt nach Rechts-Oben. Sagen wir 0 Grad ist Norden.
+    document.getElementById('val-wind').innerHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.5em; color:#00eaff">${dirStr}</span>`;
+    
+    // Wind Pfeil Rotation (SVG)
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
     // 3. Druck (mit Tendenz)
@@ -202,7 +198,7 @@ function renderCurrent(data) {
         localStorage.setItem('aura_last_press', press);
         lastPressure = press;
     }
-    document.getElementById('val-press').innerHTML = `${press} <span class="info-unit">hPa</span> <span style="color:${pressColor}; margin-left:5px;">${pressTrend}</span>`;
+    document.getElementById('val-press').innerHTML = `${press} <span class="info-unit">hPa</span> <span style="color:${pressColor}; font-size:0.8em; margin-left:5px;">${pressTrend}</span>`;
 
     // 4. Sicht
     let vis = (data.visibility / 1000).toFixed(1);
@@ -297,7 +293,7 @@ async function loadTicker(localForecast) {
         </span>`;
     }
 
-    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} XXL +++</span>`;
+    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} JUBILÄUM +++</span>`;
     
     let requests = WORLD_CITIES.map(city => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric`)
@@ -315,7 +311,7 @@ async function loadTicker(localForecast) {
     document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
-/* --- VECTOR ICON ENGINE --- */
+/* --- VECTOR ICON ENGINE (V60 GRADS) --- */
 function getVectorIcon(code, isPremium) {
     let icon = code.replace('n','d'); 
     let isNight = code.includes('n');
