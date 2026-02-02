@@ -1,7 +1,7 @@
-/* --- AURA V62.0 (SPACE FIX ENGINE) --- */
+/* --- AURA V62.1 (SMART SLEEP FIX) --- */
 
 const CONFIG = {
-    version: 62.0,
+    version: 62.1,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -38,10 +38,13 @@ function startApp() {
     document.getElementById('inp-time-from').value = CONFIG.sleepFrom;
     document.getElementById('inp-time-to').value = CONFIG.sleepTo;
 
-    runClock();
-    loadData();
+    runClock(); // Uhr sofort starten
+    loadData(); // Wetter laden
     checkStatus(); 
     initBatteryGuard(); 
+    
+    // Sofort prüfen, ob wir schlafen müssen (Fix für App-Neustart nachts)
+    checkAutoSleep();
 
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     // 10 Min Update
@@ -56,7 +59,7 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- TIME & SLEEP --- */
+/* --- TIME & SLEEP (SMART LOGIC V62.1) --- */
 function runClock() {
     let now = new Date();
     let h = (now.getHours()<10?'0':'')+now.getHours();
@@ -68,16 +71,50 @@ function runClock() {
     let months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 
-    if(now.getSeconds() === 0) checkAutoSleep(timeStr);
+    // Jede Sekunde prüfen (sicherer als nur bei Sekunde 0)
+    checkAutoSleep();
 }
 
-function checkAutoSleep(currentTime) {
-    if(CONFIG.sleepFrom && currentTime === CONFIG.sleepFrom) {
-        let ol = document.getElementById('sleep-overlay');
-        if(ol.style.display !== 'block') { ol.style.display = 'block'; closeMenu(); }
+function checkAutoSleep() {
+    // Wenn keine Zeiten gesetzt sind, Abbruch
+    if(!CONFIG.sleepFrom || !CONFIG.sleepTo) return;
+
+    let now = new Date();
+    let curMin = now.getHours() * 60 + now.getMinutes();
+    
+    let fromParts = CONFIG.sleepFrom.split(':');
+    let fromMin = parseInt(fromParts[0]) * 60 + parseInt(fromParts[1]);
+    
+    let toParts = CONFIG.sleepTo.split(':');
+    let toMin = parseInt(toParts[0]) * 60 + parseInt(toParts[1]);
+
+    let shouldSleep = false;
+
+    if(fromMin < toMin) {
+        // Beispiel: 13:00 bis 15:00 (Tagesschlaf)
+        if(curMin >= fromMin && curMin < toMin) shouldSleep = true;
+    } else {
+        // Beispiel: 22:00 bis 06:00 (Über Mitternacht)
+        if(curMin >= fromMin || curMin < toMin) shouldSleep = true;
     }
-    if(CONFIG.sleepTo && currentTime === CONFIG.sleepTo) {
-        document.getElementById('sleep-overlay').style.display = 'none';
+
+    let ol = document.getElementById('sleep-overlay');
+    
+    // Status anwenden
+    if(shouldSleep) {
+        if(ol.style.display !== 'block') {
+            ol.style.display = 'block';
+            closeMenu(); // Menü zu, falls offen
+        }
+    } else {
+        // Nur aufwecken, wenn es NICHT manuell aktiviert wurde? 
+        // Wir gehen davon aus: Automatismus gewinnt.
+        // Wenn Schlafzeit vorbei ist, wach werden.
+        if(ol.style.display === 'block') {
+             // Kurzer Check: Hat der User vielleicht gerade manuell "Testen" gedrückt?
+             // Egal, der Zeitplan hat Vorrang.
+             ol.style.display = 'none';
+        }
     }
 }
 
@@ -159,10 +196,10 @@ function renderCurrent(data) {
     let temp = Math.round(data.main.temp);
     document.getElementById('main-temp').innerText = temp + "°";
     
-    // ICON (In der absoluten Mitte)
+    // ICON (V62: Mittig)
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
-    // REGEN (Unter der Temp)
+    // REGEN
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
@@ -171,7 +208,7 @@ function renderCurrent(data) {
     }
     document.getElementById('rain-val').innerText = rainProb;
     
-    // COCKPIT DATEN (Rechts außen)
+    // COCKPIT (V62: Rechts)
     // 1. Gefühlt
     let feels = Math.round(data.main.feels_like);
     document.getElementById('val-feels').innerText = feels + "°";
@@ -183,10 +220,9 @@ function renderCurrent(data) {
     let dirStr = dirs[Math.round(deg/45)%8];
     document.getElementById('val-wind').innerHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.5em; color:#00eaff">${dirStr}</span>`;
     
-    // Wind Pfeil Rotation (SVG)
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
-    // 3. Druck (mit Tendenz)
+    // 3. Druck
     let press = data.main.pressure;
     let pressTrend = "→";
     let pressColor = "#fff";
@@ -293,7 +329,7 @@ async function loadTicker(localForecast) {
         </span>`;
     }
 
-    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} SPACE FIX +++</span>`;
+    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} PERFECT CENTER +++</span>`;
     
     let requests = WORLD_CITIES.map(city => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric`)
