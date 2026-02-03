@@ -1,4 +1,4 @@
-/* --- AURA V62.0 (SPACE FIX & ABSOLUTE CENTER) --- */
+/* --- AURA V63.0 (DEEP DATA & CACHE FIX) --- */
 
 html, body {
     width: 100%; height: 100%; margin: 0; padding: 0;
@@ -36,32 +36,29 @@ html, body {
 #logo-bg { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 1; }
 #logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; z-index: 2; }
 
-/* MITTE (V62: ABSOLUTE TRENNUNG) */
+/* MITTE */
 .col-center { width: 56%; display: flex; flex-direction: column; align-items: center; }
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; width:100%; text-align:center; }
 
-/* CONTAINER */
 .main-row-v61 { 
     position: relative; 
     width: 100%; 
     height: 20vh; 
     margin-top: 5px;
-    /* Flexbox entfernt, da wir jetzt absolut positionieren */
 }
 
-/* GRUPPE 1: DIE MITTE (Icon + Temp) - V62 UPDATE */
+/* GRUPPE 1: ABSOLUTE MITTE (Icon + Temp) */
 .centered-group {
-    position: absolute; /* Nagel es fest */
-    left: 45%; /* Etwas weiter links als 50%, um Platz für den rechten Block zu machen */
+    position: absolute; 
+    left: 42%; /* V63: Noch ein Stück nach links, um Platz für die langen Böen-Daten rechts zu machen */
     top: 50%;
-    transform: translate(-50%, -50%); /* Exakte mathematische Zentrierung auf dem Punkt */
+    transform: translate(-50%, -50%); 
     display: flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
 }
 
-/* ICON */
 #main-icon { 
     width: 14vh; height: 14vh; 
     display: flex; justify-content: center; align-items: center; 
@@ -69,7 +66,6 @@ html, body {
     filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); 
 }
 
-/* TEMP */
 #main-temp { 
     font-size: 19vh; 
     font-weight: bold; 
@@ -79,44 +75,49 @@ html, body {
     text-align: center;
 }
 
-/* REGEN */
+/* REGEN (Zentriert) */
 .rain-box-small { 
     text-align: center; margin-top: 2px; 
-    font-size: 4.0vh; 
+    font-size: 3.5vh; /* V63: Etwas kleiner, falls mm-Angabe kommt */
     color: #00eaff; font-weight: bold; 
     display: flex; align-items: center; justify-content: center;
 }
-.rain-icon-inline { width: 4.0vh; height: 4.0vh; fill: #00eaff; margin-right: 8px; }
+.rain-icon-inline { width: 3.5vh; height: 3.5vh; fill: #00eaff; margin-right: 8px; }
 
-/* GRUPPE 2: DER INFO STACK (V62 RECHTSBÜNDIG) */
+/* GRUPPE 2: INFO STACK (V63 DEEP DATA) */
 .info-stack-absolute {
     position: absolute; 
-    right: 0; /* Klebt am rechten Rand der mittleren Spalte */
+    right: 0; 
     top: 50%; 
     transform: translateY(-50%); 
     display: flex; 
     flex-direction: column; 
-    gap: 8px;
-    align-items: flex-start; /* Linksbündig innerhalb des Blocks */
-    width: 25%; /* Begrenzte Breite damit er nicht in die Temp ragt */
+    gap: 6px; /* Etwas enger, da mehr Daten */
+    align-items: flex-start; 
+    width: auto; /* V63: Darf wachsen für lange Texte */
+    padding-right: 10px; /* Sicherheitsabstand zum Rand */
 }
 
 .info-item { 
     display: flex; align-items: center; 
-    font-size: 4.0vh; 
+    font-size: 3.5vh; /* V63: Leicht kleiner damit 4 Zeilen gut passen */
     color: #ddd; font-weight: bold; text-shadow: 1px 1px 2px #000; 
     white-space: nowrap; 
 }
 
 .cockpit-icon { 
-    width: 4.0vh; height: 4.0vh; 
+    width: 3.5vh; height: 3.5vh; 
     fill: #00eaff; 
-    margin-right: 10px; /* Etwas weniger Abstand um Platz zu sparen */
+    margin-right: 10px; 
     filter: drop-shadow(0 0 5px #00eaff); 
 }
 
 .info-val { color: #fff; font-weight: 800; }
-.info-unit { font-size: 0.5em; color: #aaa; margin-left: 3px; font-weight: normal; vertical-align: middle; }
+.info-unit { font-size: 0.6em; color: #aaa; margin-left: 3px; font-weight: normal; vertical-align: middle; }
+
+/* V63: Styles für Böen und Details */
+.gust-val { color: #ff3333; font-size: 0.7em; margin-left: 5px; }
+.mm-val { color: #00eaff; font-size: 0.8em; margin-left: 5px; }
 
 /* RECHTS */
 .col-right { width: 22%; display: flex; flex-direction: column; align-items: flex-end; }
@@ -176,7 +177,7 @@ html, body {
     color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100;
 }
 
-/* MENÜ STYLES V61 (GROSS) */
+/* MENÜ STYLES */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .menu-container { max-width: 850px; margin: 0 auto; padding-bottom: 80px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 25px; position: relative; }

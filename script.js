@@ -1,7 +1,7 @@
-/* --- AURA V62.1 (SMART SLEEP FIX) --- */
+/* --- AURA V63.0 (DEEP DATA & CACHE BUSTER ENGINE) --- */
 
 const CONFIG = {
-    version: 62.1,
+    version: 63.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -38,13 +38,11 @@ function startApp() {
     document.getElementById('inp-time-from').value = CONFIG.sleepFrom;
     document.getElementById('inp-time-to').value = CONFIG.sleepTo;
 
-    runClock(); // Uhr sofort starten
-    loadData(); // Wetter laden
+    runClock(); 
+    loadData(); 
     checkStatus(); 
     initBatteryGuard(); 
-    
-    // Sofort prüfen, ob wir schlafen müssen (Fix für App-Neustart nachts)
-    checkAutoSleep();
+    checkAutoSleep(); // Sofort-Check beim Start
 
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     // 10 Min Update
@@ -59,7 +57,7 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- TIME & SLEEP (SMART LOGIC V62.1) --- */
+/* --- TIME & SLEEP (SMART LOGIC V62.1/63) --- */
 function runClock() {
     let now = new Date();
     let h = (now.getHours()<10?'0':'')+now.getHours();
@@ -71,12 +69,10 @@ function runClock() {
     let months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
 
-    // Jede Sekunde prüfen (sicherer als nur bei Sekunde 0)
     checkAutoSleep();
 }
 
 function checkAutoSleep() {
-    // Wenn keine Zeiten gesetzt sind, Abbruch
     if(!CONFIG.sleepFrom || !CONFIG.sleepTo) return;
 
     let now = new Date();
@@ -89,32 +85,17 @@ function checkAutoSleep() {
     let toMin = parseInt(toParts[0]) * 60 + parseInt(toParts[1]);
 
     let shouldSleep = false;
-
     if(fromMin < toMin) {
-        // Beispiel: 13:00 bis 15:00 (Tagesschlaf)
         if(curMin >= fromMin && curMin < toMin) shouldSleep = true;
     } else {
-        // Beispiel: 22:00 bis 06:00 (Über Mitternacht)
         if(curMin >= fromMin || curMin < toMin) shouldSleep = true;
     }
 
     let ol = document.getElementById('sleep-overlay');
-    
-    // Status anwenden
     if(shouldSleep) {
-        if(ol.style.display !== 'block') {
-            ol.style.display = 'block';
-            closeMenu(); // Menü zu, falls offen
-        }
+        if(ol.style.display !== 'block') { ol.style.display = 'block'; closeMenu(); }
     } else {
-        // Nur aufwecken, wenn es NICHT manuell aktiviert wurde? 
-        // Wir gehen davon aus: Automatismus gewinnt.
-        // Wenn Schlafzeit vorbei ist, wach werden.
-        if(ol.style.display === 'block') {
-             // Kurzer Check: Hat der User vielleicht gerade manuell "Testen" gedrückt?
-             // Egal, der Zeitplan hat Vorrang.
-             ol.style.display = 'none';
-        }
+        if(ol.style.display === 'block') { ol.style.display = 'none'; }
     }
 }
 
@@ -167,13 +148,16 @@ function initBatteryGuard() {
     }, 1800000); 
 }
 
-/* --- WETTER ENGINE --- */
+/* --- WETTER ENGINE (V63: CACHE BUSTER & DEEP DATA) --- */
 function loadData() {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de`)
+    // CACHE BUSTER TRICK: &_t=Date.now() zwingt den Browser, neu zu laden!
+    let cb = Date.now(); 
+    
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de&_t=${cb}`)
     .then(r => r.json())
     .then(current => {
         renderCurrent(current);
-        return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${current.coord.lat}&lon=${current.coord.lon}&appid=${CONFIG.apiKey}&units=metric&lang=de`);
+        return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${current.coord.lat}&lon=${current.coord.lon}&appid=${CONFIG.apiKey}&units=metric&lang=de&_t=${cb}`);
     })
     .then(r => r.json())
     .then(forecast => {
@@ -196,33 +180,53 @@ function renderCurrent(data) {
     let temp = Math.round(data.main.temp);
     document.getElementById('main-temp').innerText = temp + "°";
     
-    // ICON (V62: Mittig)
+    // ICON 
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
-    // REGEN
+    // REGEN (V63: Mit Menge in mm falls vorhanden)
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
     } else if (data.rain) {
        rainProb = "Regen";
     }
-    document.getElementById('rain-val').innerText = rainProb;
     
-    // COCKPIT (V62: Rechts)
+    // Deep Data: Regenmenge (mm) prüfen
+    let rainMM = "";
+    if(data.rain && data.rain['1h']) {
+        rainMM = `<span class="mm-val">${data.rain['1h']}mm</span>`;
+    }
+    document.getElementById('rain-val').innerHTML = rainProb + rainMM;
+    
+    // COCKPIT
     // 1. Gefühlt
     let feels = Math.round(data.main.feels_like);
     document.getElementById('val-feels').innerText = feels + "°";
+    
+    // 2. NEU: Luftfeuchtigkeit
+    let hum = data.main.humidity;
+    document.getElementById('val-humidity').innerText = hum + "%";
 
-    // 2. Wind
+    // 3. Wind (Deep Data: Böen)
     let speed = Math.round(data.wind.speed * 3.6);
     let deg = data.wind.deg;
     let dirs = ['N','NO','O','SO','S','SW','W','NW'];
     let dirStr = dirs[Math.round(deg/45)%8];
-    document.getElementById('val-wind').innerHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.5em; color:#00eaff">${dirStr}</span>`;
+    
+    let windHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.5em; color:#00eaff">${dirStr}</span>`;
+    
+    // Böen-Logik: Nur anzeigen wenn signifikant (> speed + 5)
+    if(data.wind.gust) {
+        let gust = Math.round(data.wind.gust * 3.6);
+        if(gust > (speed + 5)) {
+            windHTML += `<span class="gust-val">Böen ${gust}</span>`;
+        }
+    }
+    document.getElementById('val-wind').innerHTML = windHTML;
     
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
-    // 3. Druck
+    // 4. Druck
     let press = data.main.pressure;
     let pressTrend = "→";
     let pressColor = "#fff";
@@ -235,11 +239,6 @@ function renderCurrent(data) {
         lastPressure = press;
     }
     document.getElementById('val-press').innerHTML = `${press} <span class="info-unit">hPa</span> <span style="color:${pressColor}; font-size:0.8em; margin-left:5px;">${pressTrend}</span>`;
-
-    // 4. Sicht
-    let vis = (data.visibility / 1000).toFixed(1);
-    if(vis > 30) vis = ">10"; 
-    document.getElementById('val-vis').innerHTML = `${vis} <span class="info-unit">km</span>`;
 
     // Astro
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
@@ -329,10 +328,12 @@ async function loadTicker(localForecast) {
         </span>`;
     }
 
-    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} PERFECT CENTER +++</span>`;
+    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} DEEP DATA +++</span>`;
     
+    // CACHE BUSTER AUCH FÜR WELT-STÄDTE
+    let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric`)
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric&_t=${cb}`)
         .then(r => r.json()).catch(e => null)
     );
     const results = await Promise.all(requests);
