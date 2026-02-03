@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V63.0</title>
-    <link rel="stylesheet" href="style.css?v=63.0">
+    <title>Aura Wetterstation V64.0</title>
+    <link rel="stylesheet" href="style.css?v=64.0">
 </head>
 <body>
+
+    <div id="loader"></div>
 
     <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
         <defs>
@@ -36,9 +38,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V63 STARTEN
+            AURA V64 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">DEEP DATA UPDATE</p>
+        <p style="color:#444; margin-top:20px;">GENERALÜBERHOLUNG</p>
     </div>
 
     <div class="dashboard">
@@ -90,8 +92,7 @@
                         <svg class="cockpit-icon" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
                         <span id="val-press" class="info-val">-- <span class="info-unit">hPa</span></span>
                     </div>
-                    
-                    </div>
+                </div>
 
             </div>
         </div>
@@ -109,14 +110,14 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 63.0</div>
+                <div class="status-row">VER: 64.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ AURA V63 DEEP DATA INITIALISIERUNG +++</div>
+        <div id="ticker-text">+++ AURA V64 GENERALÜBERHOLUNG GESTARTET +++</div>
     </div>
 
     <div class="forecast-area">
@@ -168,12 +169,16 @@
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-contact')">
-                <span>🌐 Kontakt & Support</span> <span>▼</span>
+                <span>☕ Kontakt & Support</span> <span>▼</span>
             </button>
             <div id="acc-contact" class="acc-content">
+                <p class="menu-text">Bei Fragen oder Wünschen:</p>
                 <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL</a>
                 <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WEBSEITE</a>
-                <p class="menu-text" style="margin-top:15px">Gefällt Ihnen Aura? Wir freuen uns über einen virtuellen Kaffee!</p>
+                
+                <p class="menu-text" style="margin-top:25px; border-top:1px solid #333; padding-top:15px;">
+                    Gefällt Ihnen Aura? Ich freue mich über einen virtuellen Kaffee für die langen Nächte!
+                </p>
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT SPENDEN</a>
                 <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
             </div>
@@ -183,13 +188,13 @@
             </button>
             <div id="acc-legal" class="acc-content">
                 <p class="menu-text">Code-Werft Projects<br>Karl Altmannshofer<br>Braunschweig</p>
-                <p class="menu-text">Version: 63.0 (Deep Data)</p>
+                <p class="menu-text">Version: 64.0 (Generalüberholung)</p>
                 <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
             </div>
 
         </div>
     </div>
 
-    <script src="script.js?v=63.0"></script>
+    <script src="script.js?v=64.0"></script>
 </body>
-                                </html>
+        </html>
