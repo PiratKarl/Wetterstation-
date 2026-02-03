@@ -1,7 +1,7 @@
-/* --- AURA V63.0 (DEEP DATA & CACHE BUSTER ENGINE) --- */
+/* --- AURA V64.0 (GENERALÜBERHOLUNG ENGINE) --- */
 
 const CONFIG = {
-    version: 63.0,
+    version: 64.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -39,10 +39,10 @@ function startApp() {
     document.getElementById('inp-time-to').value = CONFIG.sleepTo;
 
     runClock(); 
-    loadData(); 
+    loadData(); // Hier startet der Lade-Vorgang
     checkStatus(); 
     initBatteryGuard(); 
-    checkAutoSleep(); // Sofort-Check beim Start
+    checkAutoSleep(); 
 
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     // 10 Min Update
@@ -57,7 +57,18 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- TIME & SLEEP (SMART LOGIC V62.1/63) --- */
+/* --- LOADER LOGIK (NEU V64) --- */
+function showLoader() {
+    document.getElementById('loader').style.display = 'block';
+}
+function hideLoader() {
+    // Kurze Verzögerung, damit man das Blinken auch sieht
+    setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+    }, 1000);
+}
+
+/* --- TIME & SLEEP --- */
 function runClock() {
     let now = new Date();
     let h = (now.getHours()<10?'0':'')+now.getHours();
@@ -148,9 +159,11 @@ function initBatteryGuard() {
     }, 1800000); 
 }
 
-/* --- WETTER ENGINE (V63: CACHE BUSTER & DEEP DATA) --- */
+/* --- WETTER ENGINE (V64: MIT LADE-PUNKT) --- */
 function loadData() {
-    // CACHE BUSTER TRICK: &_t=Date.now() zwingt den Browser, neu zu laden!
+    showLoader(); // Gelben Punkt einschalten
+
+    // CACHE BUSTER: Zeitstempel erzwingt neue Daten
     let cb = Date.now(); 
     
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de&_t=${cb}`)
@@ -163,10 +176,15 @@ function loadData() {
     .then(forecast => {
         globalForecastCache = forecast;
         renderForecast(forecast);
-        loadTicker(forecast);
+        return loadTicker(forecast); // Ticker laden
+    })
+    .then(() => {
+        // Alles fertig? Lade-Punkt aus!
+        hideLoader();
     })
     .catch(e => {
         document.getElementById('ticker-text').innerHTML = '<span class="t-alert">+++ OFFLINE +++</span>';
+        hideLoader();
     });
     
     let now = new Date();
@@ -180,10 +198,9 @@ function renderCurrent(data) {
     let temp = Math.round(data.main.temp);
     document.getElementById('main-temp').innerText = temp + "°";
     
-    // ICON 
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
-    // REGEN (V63: Mit Menge in mm falls vorhanden)
+    // REGEN & MENGE (Deep Data)
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
@@ -191,23 +208,22 @@ function renderCurrent(data) {
        rainProb = "Regen";
     }
     
-    // Deep Data: Regenmenge (mm) prüfen
-    let rainMM = "";
+    // Menge in mm (Anzeige erzwingen)
+    let rainMM = "0mm";
     if(data.rain && data.rain['1h']) {
-        rainMM = `<span class="mm-val">${data.rain['1h']}mm</span>`;
+        rainMM = data.rain['1h'] + "mm";
     }
-    document.getElementById('rain-val').innerHTML = rainProb + rainMM;
+    // HTML mit Deep Data Klasse
+    document.getElementById('rain-val').innerHTML = `${rainProb} <span class="mm-val">${rainMM}</span>`;
     
-    // COCKPIT
-    // 1. Gefühlt
+    // COCKPIT DATEN
     let feels = Math.round(data.main.feels_like);
     document.getElementById('val-feels').innerText = feels + "°";
     
-    // 2. NEU: Luftfeuchtigkeit
     let hum = data.main.humidity;
     document.getElementById('val-humidity').innerText = hum + "%";
 
-    // 3. Wind (Deep Data: Böen)
+    // WIND & BÖEN (Deep Data: Immer sichtbar machen)
     let speed = Math.round(data.wind.speed * 3.6);
     let deg = data.wind.deg;
     let dirs = ['N','NO','O','SO','S','SW','W','NW'];
@@ -215,18 +231,20 @@ function renderCurrent(data) {
     
     let windHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.5em; color:#00eaff">${dirStr}</span>`;
     
-    // Böen-Logik: Nur anzeigen wenn signifikant (> speed + 5)
+    // Böen Logik: Zeige "--" wenn keine Böen, sonst Wert
+    let gustHTML = `<span class="gust-val" style="color:#666; font-size:0.6em">Böen: --</span>`;
+    
     if(data.wind.gust) {
         let gust = Math.round(data.wind.gust * 3.6);
-        if(gust > (speed + 5)) {
-            windHTML += `<span class="gust-val">Böen ${gust}</span>`;
-        }
+        // Färbe rot wenn signifikant stärker als Wind
+        let color = (gust > speed + 5) ? "#ff3333" : "#aaa";
+        gustHTML = `<span class="gust-val" style="color:${color}">Böen ${gust}</span>`;
     }
-    document.getElementById('val-wind').innerHTML = windHTML;
+    document.getElementById('val-wind').innerHTML = windHTML + gustHTML;
     
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
-    // 4. Druck
+    // DRUCK
     let press = data.main.pressure;
     let pressTrend = "→";
     let pressColor = "#fff";
@@ -240,7 +258,7 @@ function renderCurrent(data) {
     }
     document.getElementById('val-press').innerHTML = `${press} <span class="info-unit">hPa</span> <span style="color:${pressColor}; font-size:0.8em; margin-left:5px;">${pressTrend}</span>`;
 
-    // Astro
+    // ASTRO
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
     document.getElementById('sunrise').innerText = formatTime(sr);
@@ -328,9 +346,8 @@ async function loadTicker(localForecast) {
         </span>`;
     }
 
-    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} DEEP DATA +++</span>`;
+    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} GENERALÜBERHOLUNG +++</span>`;
     
-    // CACHE BUSTER AUCH FÜR WELT-STÄDTE
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric&_t=${cb}`)
@@ -390,6 +407,7 @@ function toggleSleep() {
     else { ol.style.display = 'block'; closeMenu(); }
 }
 function checkUpdate() {
+    // Versions-Check ebenfalls mit Cache-Buster
     fetch("version.json?t=" + Date.now()).then(r=>r.json()).then(d=>{ if(d.version > CONFIG.version) location.reload(true); });
 }
 function formatTime(d) { return (d.getHours()<10?'0':'')+d.getHours() + ":" + (d.getMinutes()<10?'0':'')+d.getMinutes(); }
