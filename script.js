@@ -1,7 +1,7 @@
-/* --- AURA V66.0 (SPLIT SYSTEM & MONITOR ENGINE) --- */
+/* --- AURA V67.0 (SPLIT SYSTEM & MONITOR ENGINE) --- */
 
 const CONFIG = {
-    version: 66.0,
+    version: 67.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -56,17 +56,14 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- MENÜ NACHLADEN (NEU V66) --- */
+/* --- MENÜ NACHLADEN --- */
 function loadMenu() {
-    // Cache Buster auch für das Menü, damit Änderungen sofort greifen
     fetch('menu.html?v=' + CONFIG.version)
     .then(response => response.text())
     .then(html => {
-        // Menü in den Platzhalter einfügen
         let ph = document.getElementById('menu-placeholder');
         if(ph) {
             ph.innerHTML = html;
-            // JETZT erst die Werte in die Felder schreiben (vorher existierten sie nicht)
             let cityInp = document.getElementById('inp-city-val');
             if(cityInp) cityInp.value = CONFIG.city;
             
@@ -187,9 +184,8 @@ function updateMonitor(currentSlot, forecastData) {
     let txt = document.getElementById('dwd-text');
     let time = document.getElementById('dwd-valid');
     
-    // Reset
     if(monitor) monitor.className = '';
-    else return; // Falls Monitor noch nicht geladen (sollte nicht passieren)
+    else return; 
 
     let id = currentSlot.weather[0].id;
     let wind = currentSlot.wind.speed * 3.6; 
@@ -199,7 +195,6 @@ function updateMonitor(currentSlot, forecastData) {
     let level = 0; 
     let message = "KEINE WARNUNG";
     
-    // LOGIK-CHECK 
     if(maxWind >= 100) { level = 3; message = "ORKANBÖEN (Stufe 4)"; }
     else if(id === 212 || id === 221) { level = 3; message = "SCHWERES GEWITTER"; }
     else if(id >= 602 && id <= 622) { level = 3; message = "EXTREMER SCHNEEFALL"; }
@@ -216,13 +211,11 @@ function updateMonitor(currentSlot, forecastData) {
     else if(level < 1 && id === 741) { level = 1; message = "DICHTER NEBEL"; }
     else if(level < 1 && id >= 300 && id < 400) { level = 1; message = "SPRÜHREGEN"; }
 
-    // KLASSEN ZUWEISEN
     if(level === 3) monitor.classList.add('warn-red');
     else if(level === 2) monitor.classList.add('warn-orange');
     else if(level === 1) monitor.classList.add('warn-yellow');
     else monitor.classList.add('warn-cyan');
 
-    // GÜLTIGKEIT
     if(level > 0) {
         let validUntil = "";
         for(let i=1; i<forecastData.list.length; i++) {
@@ -346,7 +339,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} SPLIT SYSTEM ONLINE +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} SPLIT SYSTEM +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 

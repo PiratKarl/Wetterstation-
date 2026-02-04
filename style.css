@@ -1,63 +1,16 @@
-/* --- AURA V66.0 (SPLIT MENU & POSITION FIX) --- */
+/* --- AURA V67.0 (PERFECT POSITIONING) --- */
 
-/* BASIS & LAYOUT */
-html, body {
-    width: 100%; height: 100%; margin: 0; padding: 0;
-    background-color: #000; color: #fff;
-    font-family: 'Arial', sans-serif; overflow: hidden; user-select: none;
-}
-
+/* BASIS */
+html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
 #wake-video-layer { position: fixed; top: 0; left: 0; width: 2px; height: 2px; opacity: 0.01; z-index: 0; pointer-events: none; }
 #sleep-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; cursor: pointer; }
 
 /* LOADER */
-#loader {
-    display: none; position: fixed; top: 15px; right: 15px; 
-    width: 15px; height: 15px; background-color: #ffd700; border-radius: 50%; 
-    z-index: 9000; box-shadow: 0 0 10px #ffd700; animation: pulse 1s infinite;
-}
-
-/* DWD WARN MONITOR (NEUE POSITION) */
-#dwd-monitor {
-    width: 130px; /* Feste Breite für sauberen Look */
-    margin-bottom: 5px; 
-    padding: 5px;
-    box-sizing: border-box;
-    border-radius: 6px;
-    text-align: center;
-    border: 2px solid #333;
-    background: rgba(20, 20, 20, 0.9);
-    display: flex; flex-direction: column; justify-content: center;
-    min-height: 65px;
-    
-    /* POSITIONIERUNG "DAZWISCHEN" */
-    align-self: flex-start; /* Links im Container ausrichten */
-    margin-left: -30px;     /* Noch weiter nach links in die Lücke schieben */
-    margin-top: 5px;
-    position: relative;
-    z-index: 50;            /* Damit er über allem schwebt */
-}
-
-.dwd-head { font-size: 1.2vh; color: #888; letter-spacing: 1px; display:block; font-weight: normal; }
-.dwd-content { font-size: 1.6vh; font-weight: 900; line-height: 1.1; display:block; text-transform: uppercase; margin: 2px 0; }
-.dwd-time { font-size: 1.2vh; color: #bbb; display:block; }
-
-/* WARNSTUFEN */
-.warn-cyan { border-color: #00eaff; color: #00eaff; box-shadow: 0 0 5px rgba(0, 234, 255, 0.2); }
-.warn-yellow { border-color: #ffd700; color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); background: rgba(40, 30, 0, 0.8); }
-.warn-orange { border-color: #ff8c00; color: #ff8c00; box-shadow: 0 0 12px rgba(255, 140, 0, 0.4); background: rgba(50, 20, 0, 0.8); animation: pulse-warn 2s infinite; }
-.warn-red { border-color: #ff0000; color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.6); background: rgba(60, 0, 0, 0.9); animation: flash 1.5s infinite; }
+#loader { display: none; position: fixed; top: 15px; right: 15px; width: 15px; height: 15px; background-color: #ffd700; border-radius: 50%; z-index: 9000; box-shadow: 0 0 10px #ffd700; animation: pulse 1s infinite; }
 
 /* START SCREEN */
-#start-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; z-index: 5000;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-}
-.btn-start {
-    border: 2px solid #00eaff; color: #00eaff; background: transparent;
-    padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px;
-}
+#start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.btn-start { border: 2px solid #00eaff; color: #00eaff; background: transparent; padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
 
 /* DASHBOARD */
 .dashboard { display: flex; height: 33vh; width: 100%; padding: 10px 15px; box-sizing: border-box; position: relative; z-index: 10; }
@@ -65,9 +18,9 @@ html, body {
 /* SPALTEN */
 .col-left { width: 22%; display: flex; flex-direction: column; align-items: center; }
 .col-center { width: 56%; display: flex; flex-direction: column; align-items: center; position: relative; }
-.col-right { width: 22%; display: flex; flex-direction: column; align-items: flex-end; position: relative; } /* flex-end für Menü rechts */
+.col-right { width: 22%; display: flex; flex-direction: column; align-items: flex-end; position: relative; } 
 
-/* LINKS INHALT */
+/* LINKS */
 #clock { font-size: 8.5vw; font-weight: bold; line-height: 0.9; margin: 0; }
 #date { font-size: 2.2vh; color: #00eaff; margin-top: 5px; text-transform: uppercase; }
 .logo-container { width: 120px; height: 120px; margin-top: 5px; position: relative; }
@@ -75,24 +28,18 @@ html, body {
 #logo-bg { z-index: 1; }
 #logo-video { z-index: 2; }
 
-/* MITTE INHALT */
+/* MITTE */
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; width:100%; text-align:center; }
 .main-row-v61 { position: relative; width: 100%; height: 20vh; margin-top: 5px; }
 
-.centered-group {
-    position: absolute; left: 42%; top: 50%; transform: translate(-50%, -50%); 
-    display: flex; align-items: center; justify-content: center; white-space: nowrap;
-}
+.centered-group { position: absolute; left: 42%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; white-space: nowrap; }
 #main-icon { width: 14vh; height: 14vh; display: flex; justify-content: center; align-items: center; margin-right: 10px; filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); }
 #main-temp { font-size: 19vh; font-weight: bold; line-height: 0.85; margin: 0; text-shadow: 0 0 15px rgba(255,255,255,0.25); text-align: center; }
 .rain-box-small { text-align: center; margin-top: 2px; font-size: 3.5vh; color: #00eaff; font-weight: bold; display: flex; align-items: center; justify-content: center; }
 .rain-icon-inline { width: 3.5vh; height: 3.5vh; fill: #00eaff; margin-right: 8px; }
 
-/* COCKPIT RECHTS (Innerhalb Mitte) */
-.info-stack-absolute {
-    position: absolute; right: 0; top: 50%; transform: translateY(-50%); 
-    display: flex; flex-direction: column; gap: 6px; align-items: flex-start; width: auto; padding-right: 5px;
-}
+/* COCKPIT RECHTS (Innerhalb Mitte) - Etwas Platz machen für den Monitor */
+.info-stack-absolute { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; align-items: flex-start; width: auto; }
 .info-item { display: flex; align-items: center; font-size: 3.5vh; color: #ddd; font-weight: bold; text-shadow: 1px 1px 2px #000; white-space: nowrap; }
 .cockpit-icon { width: 3.5vh; height: 3.5vh; fill: #00eaff; margin-right: 10px; filter: drop-shadow(0 0 5px #00eaff); }
 .info-val { color: #fff; font-weight: 800; }
@@ -100,9 +47,34 @@ html, body {
 .gust-val { color: #ff3333; font-size: 0.7em; margin-left: 5px; }
 .mm-val { color: #00eaff; font-size: 0.8em; margin-left: 5px; }
 
+/* --- NEU V67: WARN MONITOR (SCHWEBT LINKS NEBEN RECHTER SPALTE) --- */
+#dwd-monitor {
+    position: absolute;
+    right: 105%; /* Schiebt ihn links aus der rechten Spalte raus -> genau in die Lücke */
+    top: 5px;
+    width: 150px; /* Breiter für bessere Lesbarkeit */
+    padding: 8px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    text-align: center;
+    border: 2px solid #333;
+    background: rgba(10, 10, 10, 0.95);
+    display: flex; flex-direction: column; justify-content: center;
+    z-index: 50;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+.dwd-head { font-size: 1.3vh; color: #aaa; letter-spacing: 1px; display:block; margin-bottom: 3px; }
+.dwd-content { font-size: 1.8vh; font-weight: 900; line-height: 1.2; display:block; text-transform: uppercase; margin-bottom: 3px; text-shadow: 0 0 2px rgba(0,0,0,0.5); }
+.dwd-time { font-size: 1.3vh; color: #fff; display:block; opacity: 0.8; }
+
+.warn-cyan { border-color: #00eaff; color: #00eaff; box-shadow: 0 0 8px rgba(0, 234, 255, 0.2); }
+.warn-yellow { border-color: #ffd700; color: #ffd700; background: rgba(40, 35, 0, 0.95); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+.warn-orange { border-color: #ff8c00; color: #ff8c00; background: rgba(50, 20, 0, 0.95); box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); animation: pulse-warn 2s infinite; }
+.warn-red { border-color: #ff0000; color: #ff0000; background: rgba(60, 0, 0, 0.95); box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); animation: flash 1.5s infinite; }
+
 /* RECHTS INHALT */
-#btn-menu { background: transparent; border: 2px solid #fff; color: #fff; font-size: 18px; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 5px; margin-top: 10px; }
-.astro-block { margin-bottom: 3px; text-align: right; }
+#btn-menu { background: transparent; border: 2px solid #fff; color: #fff; font-size: 18px; padding: 5px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 5px; margin-top: 5px; width: 100%; text-align: center; }
+.astro-block { margin-bottom: 3px; text-align: right; width: 100%; }
 .astro-label { color: #00eaff; font-size: 1.6vh; display: block; }
 .astro-val { font-size: 2.6vh; font-weight: bold; }
 .status-block { margin-top: 5px; border-top: 1px solid #333; padding-top: 5px; width: 100%; text-align: right; }
@@ -112,7 +84,7 @@ html, body {
 .bat-trend-down { color: #ff3333; margin-left: 5px; font-weight: bold; }
 .bat-trend-eq { color: #fff; margin-left: 5px; }
 
-/* TICKER */
+/* TICKER & FORECAST */
 .ticker-wrap { height: 10vh; background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222; overflow: hidden; white-space: nowrap; display: flex; align-items: center; margin-bottom: 0; }
 #ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 4.2vh; color: #fff; font-weight: bold; display: flex; align-items: center; }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
@@ -120,7 +92,6 @@ html, body {
 .t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-/* VORHERSAGE */
 .forecast-area { height: 53vh; display: flex; flex-direction: column; background: #000; }
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
