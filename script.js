@@ -1,7 +1,7 @@
-/* --- AURA V67.0 (SPLIT SYSTEM & MONITOR ENGINE) --- */
+/* --- AURA V68.0 (LAYOUT REVOLUTION ENGINE) --- */
 
 const CONFIG = {
-    version: 67.0,
+    version: 68.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -33,9 +33,7 @@ function startApp() {
     if(bgVid) { bgVid.play().catch(e=>{}); }
 
     initVideoFallback();
-
-    // WICHTIG: Erst das Menü laden, dann die Werte setzen
-    loadMenu();
+    loadMenu(); // Menü laden
 
     runClock(); 
     loadData(); 
@@ -66,20 +64,16 @@ function loadMenu() {
             ph.innerHTML = html;
             let cityInp = document.getElementById('inp-city-val');
             if(cityInp) cityInp.value = CONFIG.city;
-            
             let tFrom = document.getElementById('inp-time-from');
             if(tFrom) tFrom.value = CONFIG.sleepFrom;
-            
             let tTo = document.getElementById('inp-time-to');
             if(tTo) tTo.value = CONFIG.sleepTo;
         }
     })
-    .catch(err => {
-        console.error("Menü konnte nicht geladen werden:", err);
-    });
+    .catch(err => { console.error("Menü Fehler:", err); });
 }
 
-/* --- LOADER LOGIK --- */
+/* --- LOADER --- */
 function showLoader() { let l = document.getElementById('loader'); if(l) l.style.display = 'block'; }
 function hideLoader() { setTimeout(() => { let l = document.getElementById('loader'); if(l) l.style.display = 'none'; }, 1000); }
 
@@ -112,7 +106,7 @@ function checkAutoSleep() {
     else { if(ol.style.display === 'block') { ol.style.display = 'none'; } }
 }
 
-/* --- SMART BATTERY GUARD --- */
+/* --- BATTERY --- */
 function checkStatus() {
     let net = document.getElementById('net-status');
     if(navigator.onLine) { net.innerText = "WLAN: OK"; net.style.color = "#0f0"; }
@@ -178,14 +172,14 @@ function loadData() {
     document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
 }
 
-/* --- WARN-MONITOR LOGIK --- */
+/* --- MONITOR LOGIK --- */
 function updateMonitor(currentSlot, forecastData) {
     let monitor = document.getElementById('dwd-monitor');
     let txt = document.getElementById('dwd-text');
     let time = document.getElementById('dwd-valid');
     
-    if(monitor) monitor.className = '';
-    else return; 
+    if(!monitor) return;
+    monitor.className = ''; 
 
     let id = currentSlot.weather[0].id;
     let wind = currentSlot.wind.speed * 3.6; 
@@ -241,11 +235,13 @@ function updateMonitor(currentSlot, forecastData) {
     txt.innerText = message;
 }
 
+/* --- RENDER CURRENT (MIT NEUER SICHTWEITE) --- */
 function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
     document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
+    // Regen
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
@@ -254,32 +250,24 @@ function renderCurrent(data) {
     if(data.rain && data.rain['1h']) { rainMM = data.rain['1h'] + "mm"; }
     document.getElementById('rain-val').innerHTML = `${rainProb} <span class="mm-val">${rainMM}</span>`;
     
+    // Deep Data Row
+    document.getElementById('val-humidity').innerText = data.main.humidity;
     document.getElementById('val-feels').innerText = Math.round(data.main.feels_like) + "°";
-    document.getElementById('val-humidity').innerText = data.main.humidity + "%";
-
+    
+    // Wind
     let speed = Math.round(data.wind.speed * 3.6);
     let deg = data.wind.deg;
-    let dirs = ['N','NO','O','SO','S','SW','W','NW'];
-    let dirStr = dirs[Math.round(deg/45)%8];
-    let windHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.5em; color:#00eaff">${dirStr}</span>`;
-    let gustHTML = `<span class="gust-val" style="color:#666; font-size:0.6em">Böen: --</span>`;
-    if(data.wind.gust) {
-        let gust = Math.round(data.wind.gust * 3.6);
-        let color = (gust > speed + 5) ? "#ff3333" : "#aaa";
-        gustHTML = `<span class="gust-val" style="color:${color}">Böen ${gust}</span>`;
-    }
-    document.getElementById('val-wind').innerHTML = windHTML + gustHTML;
+    document.getElementById('val-wind').innerHTML = `${speed} <span class="cell-unit">km/h</span>`;
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
+    // Sichtweite (NEU) - Umrechnung Meter zu KM
+    let visKM = Math.round(data.visibility / 1000);
+    document.getElementById('val-vis').innerText = visKM;
+
+    // Druck
     let press = data.main.pressure;
-    let pressTrend = "→";
-    let pressColor = "#fff";
-    if(lastPressure > 0) {
-        if(press > lastPressure) { pressTrend = "↗"; pressColor = "#00eaff"; }
-        else if(press < lastPressure) { pressTrend = "↘"; pressColor = "#ff3333"; }
-    }
     if(press !== lastPressure) { localStorage.setItem('aura_last_press', press); lastPressure = press; }
-    document.getElementById('val-press').innerHTML = `${press} <span class="info-unit">hPa</span> <span style="color:${pressColor}; font-size:0.8em; margin-left:5px;">${pressTrend}</span>`;
+    document.getElementById('val-press').innerText = press;
 
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
@@ -339,7 +327,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} SPLIT SYSTEM +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} LAYOUT REVOLUTION +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 

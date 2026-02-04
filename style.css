@@ -1,4 +1,4 @@
-/* --- AURA V67.0 (PERFECT POSITIONING) --- */
+/* --- AURA V68.0 (LAYOUT REVOLUTION) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -12,8 +12,8 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 #start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 .btn-start { border: 2px solid #00eaff; color: #00eaff; background: transparent; padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
 
-/* DASHBOARD */
-.dashboard { display: flex; height: 33vh; width: 100%; padding: 10px 15px; box-sizing: border-box; position: relative; z-index: 10; }
+/* DASHBOARD GRID */
+.dashboard { display: flex; height: 33vh; width: 100%; padding: 10px 5px; box-sizing: border-box; position: relative; z-index: 10; }
 
 /* SPALTEN */
 .col-left { width: 22%; display: flex; flex-direction: column; align-items: center; }
@@ -28,31 +28,36 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 #logo-bg { z-index: 1; }
 #logo-video { z-index: 2; }
 
-/* MITTE */
-#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 2px; width:100%; text-align:center; }
-.main-row-v61 { position: relative; width: 100%; height: 20vh; margin-top: 5px; }
+/* MITTE - OBEN (Header & Temp) */
+#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 0px; width:100%; text-align:center; }
+.main-row-v61 { position: relative; width: 100%; height: 14vh; margin-top: 0px; display: flex; justify-content: center; align-items: center; }
 
-.centered-group { position: absolute; left: 42%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; white-space: nowrap; }
-#main-icon { width: 14vh; height: 14vh; display: flex; justify-content: center; align-items: center; margin-right: 10px; filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); }
-#main-temp { font-size: 19vh; font-weight: bold; line-height: 0.85; margin: 0; text-shadow: 0 0 15px rgba(255,255,255,0.25); text-align: center; }
-.rain-box-small { text-align: center; margin-top: 2px; font-size: 3.5vh; color: #00eaff; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-.rain-icon-inline { width: 3.5vh; height: 3.5vh; fill: #00eaff; margin-right: 8px; }
+#main-icon { width: 12vh; height: 12vh; margin-right: 15px; filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); }
+#main-temp { font-size: 14vh; font-weight: bold; line-height: 1; margin: 0; text-shadow: 0 0 15px rgba(255,255,255,0.25); }
+.rain-box-small { margin-left: 15px; text-align: center; font-size: 3vh; color: #00eaff; font-weight: bold; display: flex; flex-direction: column; justify-content: center; }
+.rain-icon-inline { width: 3vh; height: 3vh; fill: #00eaff; margin-bottom: 2px; margin: 0 auto; }
 
-/* COCKPIT RECHTS (Innerhalb Mitte) - Etwas Platz machen für den Monitor */
-.info-stack-absolute { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; align-items: flex-start; width: auto; }
-.info-item { display: flex; align-items: center; font-size: 3.5vh; color: #ddd; font-weight: bold; text-shadow: 1px 1px 2px #000; white-space: nowrap; }
-.cockpit-icon { width: 3.5vh; height: 3.5vh; fill: #00eaff; margin-right: 10px; filter: drop-shadow(0 0 5px #00eaff); }
-.info-val { color: #fff; font-weight: 800; }
-.info-unit { font-size: 0.6em; color: #aaa; margin-left: 3px; font-weight: normal; vertical-align: middle; }
-.gust-val { color: #ff3333; font-size: 0.7em; margin-left: 5px; }
-.mm-val { color: #00eaff; font-size: 0.8em; margin-left: 5px; }
+/* MITTE - UNTEN (NEU: DEEP DATA ROW) */
+.deep-data-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+    padding-top: 5px;
+    border-top: 1px solid #222;
+}
 
-/* --- NEU V67: WARN MONITOR (SCHWEBT LINKS NEBEN RECHTER SPALTE) --- */
+.data-cell { display: flex; align-items: center; }
+.cell-icon { width: 2.5vh; height: 2.5vh; fill: #00eaff; margin-right: 5px; }
+.cell-val { font-size: 2.5vh; font-weight: bold; color: #ddd; white-space: nowrap; }
+.cell-unit { font-size: 0.7em; color: #aaa; margin-left: 2px; font-weight: normal; }
+
+/* WARN MONITOR (JETZT FREI PLATZIERBAR RECHTS VOM CENTER) */
 #dwd-monitor {
-    position: absolute;
-    right: 105%; /* Schiebt ihn links aus der rechten Spalte raus -> genau in die Lücke */
-    top: 5px;
-    width: 150px; /* Breiter für bessere Lesbarkeit */
+    width: 100%; 
+    margin-bottom: 5px;
     padding: 8px;
     box-sizing: border-box;
     border-radius: 8px;
@@ -60,20 +65,22 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
     border: 2px solid #333;
     background: rgba(10, 10, 10, 0.95);
     display: flex; flex-direction: column; justify-content: center;
-    z-index: 50;
-    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    min-height: 80px; /* Schön groß jetzt */
+    position: relative;
+    /* Er sitzt jetzt normal in col-right oben, da die deep data weg ist */
 }
-.dwd-head { font-size: 1.3vh; color: #aaa; letter-spacing: 1px; display:block; margin-bottom: 3px; }
-.dwd-content { font-size: 1.8vh; font-weight: 900; line-height: 1.2; display:block; text-transform: uppercase; margin-bottom: 3px; text-shadow: 0 0 2px rgba(0,0,0,0.5); }
-.dwd-time { font-size: 1.3vh; color: #fff; display:block; opacity: 0.8; }
+
+.dwd-head { font-size: 1.4vh; color: #aaa; letter-spacing: 1px; display:block; margin-bottom: 3px; }
+.dwd-content { font-size: 2.0vh; font-weight: 900; line-height: 1.1; display:block; text-transform: uppercase; margin-bottom: 3px; text-shadow: 0 0 5px rgba(0,0,0,0.8); }
+.dwd-time { font-size: 1.4vh; color: #fff; display:block; opacity: 0.9; }
 
 .warn-cyan { border-color: #00eaff; color: #00eaff; box-shadow: 0 0 8px rgba(0, 234, 255, 0.2); }
 .warn-yellow { border-color: #ffd700; color: #ffd700; background: rgba(40, 35, 0, 0.95); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 .warn-orange { border-color: #ff8c00; color: #ff8c00; background: rgba(50, 20, 0, 0.95); box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); animation: pulse-warn 2s infinite; }
 .warn-red { border-color: #ff0000; color: #ff0000; background: rgba(60, 0, 0, 0.95); box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); animation: flash 1.5s infinite; }
 
-/* RECHTS INHALT */
-#btn-menu { background: transparent; border: 2px solid #fff; color: #fff; font-size: 18px; padding: 5px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 5px; margin-top: 5px; width: 100%; text-align: center; }
+/* RECHTS MENU AREA */
+#btn-menu { background: transparent; border: 2px solid #fff; color: #fff; font-size: 18px; padding: 5px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 5px; width: 100%; text-align: center; }
 .astro-block { margin-bottom: 3px; text-align: right; width: 100%; }
 .astro-label { color: #00eaff; font-size: 1.6vh; display: block; }
 .astro-val { font-size: 2.6vh; font-weight: bold; }
@@ -84,7 +91,7 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .bat-trend-down { color: #ff3333; margin-left: 5px; font-weight: bold; }
 .bat-trend-eq { color: #fff; margin-left: 5px; }
 
-/* TICKER & FORECAST */
+/* TICKER */
 .ticker-wrap { height: 10vh; background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222; overflow: hidden; white-space: nowrap; display: flex; align-items: center; margin-bottom: 0; }
 #ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 4.2vh; color: #fff; font-weight: bold; display: flex; align-items: center; }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
@@ -92,6 +99,7 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
+/* VORHERSAGE */
 .forecast-area { height: 53vh; display: flex; flex-direction: column; background: #000; }
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
@@ -107,7 +115,7 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .temp-sep { color: #fff; margin: 0 5px; }
 .footer-copyright { position: fixed; bottom: 5px; width: 100%; text-align: center; color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100; }
 
-/* STYLES FÜR EXTERNES MENÜ */
+/* MENÜ STYLES */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .menu-container { max-width: 850px; margin: 0 auto; padding-bottom: 100px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 25px; position: relative; }
