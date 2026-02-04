@@ -1,7 +1,7 @@
-/* --- AURA V74.0 (DETAILED MONITOR ENGINE) --- */
+/* --- AURA V75.0 (LAYOUT FIX ENGINE) --- */
 
 const CONFIG = {
-    version: 74.0,
+    version: 75.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -201,7 +201,6 @@ function loadRealDWD(lat, lon) {
             else if(level === 2) monitor.classList.add('warn-yellow');
             else monitor.classList.add('warn-cyan'); 
 
-            // V74 UPDATE: Kein Abschneiden mehr! Volle Länge zeigen.
             let msg = topAlert.event_de || topAlert.headline_de || "WETTERWARNUNG";
             txt.innerText = msg.toUpperCase();
 
@@ -307,7 +306,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} DETAILED MONITOR +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} LAYOUT FIX +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
