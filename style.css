@@ -1,4 +1,4 @@
-/* --- AURA V70.0 (FINAL BALANCE) --- */
+/* --- AURA V71.0 (BIGGER MONITOR) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -34,18 +34,17 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 #main-icon { width: 12vh; height: 12vh; margin-right: 10px; filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); }
 #main-temp { font-size: 15vh; font-weight: bold; line-height: 1; margin: 0; text-shadow: 0 0 15px rgba(255,255,255,0.25); }
 
-/* DER NEUE STAPEL RECHTS NEBEN DER TEMP */
+/* STAPEL RECHTS NEBEN DER TEMP (Gefühlt & Regen) */
 .temp-extra-stack {
     display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
     margin-left: 15px; 
 }
-/* UPDATE V70: GEFÜHLT JETZT IDENTISCH ZU REGEN */
 .feels-row { 
-    color: #00eaff; /* Cyan statt Grau */
-    font-size: 2.2vh; /* Gleiche Größe */
+    color: #00eaff; 
+    font-size: 2.2vh; 
     font-weight: bold; 
     display: flex; align-items: center;
-    margin-bottom: 5px; /* Kleiner Abstand zu Regen */
+    margin-bottom: 5px; 
 }
 .rain-row { 
     color: #00eaff; 
@@ -77,13 +76,13 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 }
 #btn-menu:hover { opacity: 1; color: #00eaff; }
 
-/* RECHTS: WARN MONITOR (UPDATE V70: MEHR NACH RECHTS) */
+/* RECHTS: WARN MONITOR (UPDATE V71: GRÖSSER & MEHR RECHTS) */
 #dwd-monitor {
     position: absolute;
-    right: 95%; /* WAR 120% -> Jetzt 95%, also weiter nach rechts Richtung Rand */
+    right: 80%; /* Weiter nach rechts verschoben (war 95%) */
     top: 5px;
-    width: 160px;
-    padding: 6px;
+    width: 210px; /* Breiter (war 160px) */
+    padding: 8px; /* Etwas mehr Polster */
     box-sizing: border-box;
     border-radius: 6px;
     text-align: center;
@@ -91,10 +90,11 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
     background: rgba(10, 10, 10, 0.9);
     display: flex; flex-direction: column; justify-content: center;
     z-index: 50;
+    min-height: 60px;
 }
 
-.dwd-head { font-size: 1.2vh; color: #888; letter-spacing: 1px; display:block; margin-bottom: 2px; }
-.dwd-content { font-size: 1.7vh; font-weight: 900; line-height: 1.1; display:block; text-transform: uppercase; margin-bottom: 2px; }
+.dwd-head { font-size: 1.3vh; color: #888; letter-spacing: 1px; display:block; margin-bottom: 2px; }
+.dwd-content { font-size: 2.0vh; font-weight: 900; line-height: 1.1; display:block; text-transform: uppercase; margin-bottom: 2px; }
 .dwd-time { font-size: 1.2vh; color: #ccc; display:block; }
 
 .warn-cyan { border-color: #00eaff; color: #00eaff; box-shadow: 0 0 5px rgba(0, 234, 255, 0.1); }
