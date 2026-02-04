@@ -1,7 +1,7 @@
-/* --- AURA V64.0 (GENERALÜBERHOLUNG ENGINE) --- */
+/* --- AURA V65.0 (WARN-MONITOR ENGINE) --- */
 
 const CONFIG = {
-    version: 64.0,
+    version: 65.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -39,7 +39,7 @@ function startApp() {
     document.getElementById('inp-time-to').value = CONFIG.sleepTo;
 
     runClock(); 
-    loadData(); // Hier startet der Lade-Vorgang
+    loadData(); 
     checkStatus(); 
     initBatteryGuard(); 
     checkAutoSleep(); 
@@ -57,57 +57,37 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- LOADER LOGIK (NEU V64) --- */
-function showLoader() {
-    document.getElementById('loader').style.display = 'block';
-}
-function hideLoader() {
-    // Kurze Verzögerung, damit man das Blinken auch sieht
-    setTimeout(() => {
-        document.getElementById('loader').style.display = 'none';
-    }, 1000);
-}
+/* --- LOADER LOGIK --- */
+function showLoader() { document.getElementById('loader').style.display = 'block'; }
+function hideLoader() { setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 1000); }
 
 /* --- TIME & SLEEP --- */
 function runClock() {
     let now = new Date();
     let h = (now.getHours()<10?'0':'')+now.getHours();
     let m = (now.getMinutes()<10?'0':'')+now.getMinutes();
-    let timeStr = h + ":" + m;
+    document.getElementById('clock').innerText = h + ":" + m;
     
-    document.getElementById('clock').innerText = timeStr;
     let days = ['SONNTAG','MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG'];
     let months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
-
     checkAutoSleep();
 }
 
 function checkAutoSleep() {
     if(!CONFIG.sleepFrom || !CONFIG.sleepTo) return;
-
     let now = new Date();
     let curMin = now.getHours() * 60 + now.getMinutes();
-    
     let fromParts = CONFIG.sleepFrom.split(':');
     let fromMin = parseInt(fromParts[0]) * 60 + parseInt(fromParts[1]);
-    
     let toParts = CONFIG.sleepTo.split(':');
     let toMin = parseInt(toParts[0]) * 60 + parseInt(toParts[1]);
-
     let shouldSleep = false;
-    if(fromMin < toMin) {
-        if(curMin >= fromMin && curMin < toMin) shouldSleep = true;
-    } else {
-        if(curMin >= fromMin || curMin < toMin) shouldSleep = true;
-    }
-
+    if(fromMin < toMin) { if(curMin >= fromMin && curMin < toMin) shouldSleep = true; } 
+    else { if(curMin >= fromMin || curMin < toMin) shouldSleep = true; }
     let ol = document.getElementById('sleep-overlay');
-    if(shouldSleep) {
-        if(ol.style.display !== 'block') { ol.style.display = 'block'; closeMenu(); }
-    } else {
-        if(ol.style.display === 'block') { ol.style.display = 'none'; }
-    }
+    if(shouldSleep) { if(ol.style.display !== 'block') { ol.style.display = 'block'; closeMenu(); } } 
+    else { if(ol.style.display === 'block') { ol.style.display = 'none'; } }
 }
 
 /* --- SMART BATTERY GUARD --- */
@@ -115,7 +95,6 @@ function checkStatus() {
     let net = document.getElementById('net-status');
     if(navigator.onLine) { net.innerText = "WLAN: OK"; net.style.color = "#0f0"; }
     else { net.innerText = "OFFLINE"; net.style.color = "#f00"; }
-    
     if(navigator.getBattery) {
         navigator.getBattery().then(bat => { 
             let levelText = "BAT: " + Math.round(bat.level*100) + "%";
@@ -131,27 +110,17 @@ function checkStatus() {
         });
     }
 }
-
 function initBatteryGuard() {
-    if(navigator.getBattery) {
-        navigator.getBattery().then(bat => { lastBatLevel = bat.level; });
-    }
+    if(navigator.getBattery) { navigator.getBattery().then(bat => { lastBatLevel = bat.level; }); }
     setInterval(() => {
         if(navigator.getBattery) {
             navigator.getBattery().then(bat => {
                 let current = bat.level;
                 if(lastBatLevel !== null) {
                     if(current < lastBatLevel) batDropCounter++;
-                    else if (current > lastBatLevel) {
-                        batDropCounter = 0;
-                        batteryCritical = false;
-                        loadTicker(globalForecastCache); 
-                    }
+                    else if (current > lastBatLevel) { batDropCounter = 0; batteryCritical = false; }
                 }
-                if(batDropCounter >= 2) {
-                    batteryCritical = true;
-                    if(globalForecastCache) loadTicker(globalForecastCache);
-                }
+                if(batDropCounter >= 2) { batteryCritical = true; }
                 lastBatLevel = current;
                 checkStatus();
             });
@@ -159,13 +128,10 @@ function initBatteryGuard() {
     }, 1800000); 
 }
 
-/* --- WETTER ENGINE (V64: MIT LADE-PUNKT) --- */
+/* --- WETTER ENGINE --- */
 function loadData() {
-    showLoader(); // Gelben Punkt einschalten
-
-    // CACHE BUSTER: Zeitstempel erzwingt neue Daten
+    showLoader();
     let cb = Date.now(); 
-    
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de&_t=${cb}`)
     .then(r => r.json())
     .then(current => {
@@ -176,12 +142,10 @@ function loadData() {
     .then(forecast => {
         globalForecastCache = forecast;
         renderForecast(forecast);
-        return loadTicker(forecast); // Ticker laden
+        updateMonitor(globalForecastCache.list[0], forecast); // NEU: Monitor Update
+        return loadTicker(forecast);
     })
-    .then(() => {
-        // Alles fertig? Lade-Punkt aus!
-        hideLoader();
-    })
+    .then(() => { hideLoader(); })
     .catch(e => {
         document.getElementById('ticker-text').innerHTML = '<span class="t-alert">+++ OFFLINE +++</span>';
         hideLoader();
@@ -192,59 +156,112 @@ function loadData() {
     document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
 }
 
+/* --- NEU V65: WARN-MONITOR LOGIK --- */
+function updateMonitor(currentSlot, forecastData) {
+    let monitor = document.getElementById('dwd-monitor');
+    let txt = document.getElementById('dwd-text');
+    let time = document.getElementById('dwd-valid');
+    
+    // Reset
+    monitor.className = '';
+    
+    let id = currentSlot.weather[0].id;
+    let wind = currentSlot.wind.speed * 3.6; // km/h
+    let gust = (currentSlot.wind.gust || 0) * 3.6;
+    let maxWind = Math.max(wind, gust);
+
+    // Default: Alles gut
+    let level = 0; // 0=Cyan, 1=Yellow, 2=Orange, 3=Red
+    let message = "KEINE WARNUNG";
+    
+    // LOGIK-CHECK (Priorität: Rot -> Orange -> Gelb)
+
+    // STUFE 4-5 (ROT) - UNWETTER
+    if(maxWind >= 100) { level = 3; message = "ORKANBÖEN (Stufe 4)"; }
+    else if(id === 212 || id === 221) { level = 3; message = "SCHWERES GEWITTER"; }
+    else if(id >= 602 && id <= 622) { level = 3; message = "EXTREMER SCHNEEFALL"; }
+    else if(id === 504) { level = 3; message = "EXTREMER STARKREGEN"; }
+    
+    // STUFE 3 (ORANGE) - MARKANT
+    else if(level < 2 && maxWind >= 75) { level = 2; message = "STURMBÖEN (Stufe 3)"; }
+    else if(level < 2 && id >= 200 && id < 300) { level = 2; message = "GEWITTER / STURM"; }
+    else if(level < 2 && (id === 502 || id === 503)) { level = 2; message = "STARKREGEN (Stufe 3)"; }
+    else if(level < 2 && id === 601) { level = 2; message = "SCHNEEFALL (Stufe 3)"; }
+
+    // STUFE 1-2 (GELB) - WETTERWARNUNG
+    else if(level < 1 && maxWind >= 50) { level = 1; message = "WINDBÖEN (Stufe 1)"; }
+    else if(level < 1 && id >= 500 && id < 600) { level = 1; message = "DAUERREGEN (Stufe 1)"; }
+    else if(level < 1 && id >= 600 && id < 700) { level = 1; message = "SCHNEE / GLÄTTE"; }
+    else if(level < 1 && id === 741) { level = 1; message = "DICHTER NEBEL"; }
+    else if(level < 1 && id >= 300 && id < 400) { level = 1; message = "SPRÜHREGEN"; }
+
+    // KLASSEN ZUWEISEN
+    if(level === 3) monitor.classList.add('warn-red');
+    else if(level === 2) monitor.classList.add('warn-orange');
+    else if(level === 1) monitor.classList.add('warn-yellow');
+    else monitor.classList.add('warn-cyan');
+
+    // GÜLTIGKEIT BERECHNEN (Wie lange bleibt das schlechte Wetter?)
+    if(level > 0) {
+        let validUntil = "";
+        // Suche im Forecast, wann sich das Wetter bessert
+        for(let i=1; i<forecastData.list.length; i++) {
+            let slot = forecastData.list[i];
+            let slotId = slot.weather[0].id;
+            let slotWind = Math.max(slot.wind.speed * 3.6, (slot.wind.gust||0)*3.6);
+            
+            // Wenn Wetter besser wird (Codes ändern sich oder Wind lässt nach)
+            let stillBad = false;
+            if(level === 3 && (slotWind >= 100 || (slotId>=200 && slotId<=232))) stillBad = true;
+            else if(level === 2 && (slotWind >= 75 || (slotId>=200 && slotId<=232) || slotId===502)) stillBad = true;
+            else if(level === 1 && (slotWind >= 50 || (slotId>=300 && slotId<=700))) stillBad = true;
+
+            if(!stillBad) {
+                let date = new Date(slot.dt * 1000);
+                validUntil = (date.getHours()<10?'0':'') + date.getHours() + ":00";
+                break;
+            }
+        }
+        if(validUntil === "") validUntil = "auf weiteres";
+        time.innerText = "Gültig bis: " + validUntil + " Uhr";
+        time.style.display = "block";
+    } else {
+        time.style.display = "none"; // Bei Cyan keine Zeit anzeigen
+    }
+
+    txt.innerText = message;
+}
+
 function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
-    
-    let temp = Math.round(data.main.temp);
-    document.getElementById('main-temp').innerText = temp + "°";
-    
+    document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
-    // REGEN & MENGE (Deep Data)
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
-    } else if (data.rain) {
-       rainProb = "Regen";
-    }
-    
-    // Menge in mm (Anzeige erzwingen)
+    } else if (data.rain) { rainProb = "Regen"; }
     let rainMM = "0mm";
-    if(data.rain && data.rain['1h']) {
-        rainMM = data.rain['1h'] + "mm";
-    }
-    // HTML mit Deep Data Klasse
+    if(data.rain && data.rain['1h']) { rainMM = data.rain['1h'] + "mm"; }
     document.getElementById('rain-val').innerHTML = `${rainProb} <span class="mm-val">${rainMM}</span>`;
     
-    // COCKPIT DATEN
-    let feels = Math.round(data.main.feels_like);
-    document.getElementById('val-feels').innerText = feels + "°";
-    
-    let hum = data.main.humidity;
-    document.getElementById('val-humidity').innerText = hum + "%";
+    document.getElementById('val-feels').innerText = Math.round(data.main.feels_like) + "°";
+    document.getElementById('val-humidity').innerText = data.main.humidity + "%";
 
-    // WIND & BÖEN (Deep Data: Immer sichtbar machen)
     let speed = Math.round(data.wind.speed * 3.6);
     let deg = data.wind.deg;
     let dirs = ['N','NO','O','SO','S','SW','W','NW'];
     let dirStr = dirs[Math.round(deg/45)%8];
-    
     let windHTML = `${speed} <span class="info-unit">km/h</span> <span style="font-size:0.5em; color:#00eaff">${dirStr}</span>`;
-    
-    // Böen Logik: Zeige "--" wenn keine Böen, sonst Wert
     let gustHTML = `<span class="gust-val" style="color:#666; font-size:0.6em">Böen: --</span>`;
-    
     if(data.wind.gust) {
         let gust = Math.round(data.wind.gust * 3.6);
-        // Färbe rot wenn signifikant stärker als Wind
         let color = (gust > speed + 5) ? "#ff3333" : "#aaa";
         gustHTML = `<span class="gust-val" style="color:${color}">Böen ${gust}</span>`;
     }
     document.getElementById('val-wind').innerHTML = windHTML + gustHTML;
-    
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
-    // DRUCK
     let press = data.main.pressure;
     let pressTrend = "→";
     let pressColor = "#fff";
@@ -252,13 +269,9 @@ function renderCurrent(data) {
         if(press > lastPressure) { pressTrend = "↗"; pressColor = "#00eaff"; }
         else if(press < lastPressure) { pressTrend = "↘"; pressColor = "#ff3333"; }
     }
-    if(press !== lastPressure) {
-        localStorage.setItem('aura_last_press', press);
-        lastPressure = press;
-    }
+    if(press !== lastPressure) { localStorage.setItem('aura_last_press', press); lastPressure = press; }
     document.getElementById('val-press').innerHTML = `${press} <span class="info-unit">hPa</span> <span style="color:${pressColor}; font-size:0.8em; margin-left:5px;">${pressTrend}</span>`;
 
-    // ASTRO
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
     document.getElementById('sunrise').innerText = formatTime(sr);
@@ -315,38 +328,11 @@ function renderForecast(data) {
 }
 
 async function loadTicker(localForecast) {
-    if(!localForecast) return;
+    let tickerContent = "";
+    // Warnungen sind jetzt oben im Monitor, Ticker zeigt System-Status
+    if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
     
-    let batteryAlert = "";
-    if(batteryCritical) {
-        batteryAlert = `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! NETZTEIL PRÜFEN +++</span>`;
-    }
-
-    let dwdAlert = "";
-    let now = new Date();
-    let validUntil = new Date(localForecast.list[1].dt * 1000); 
-    let validUntilStr = (validUntil.getHours()<10?'0':'')+validUntil.getHours() + ":" + (validUntil.getMinutes()<10?'0':'')+validUntil.getMinutes();
-    let validFromStr = (now.getHours()<10?'0':'')+now.getHours() + ":" + (now.getMinutes()<10?'0':'')+now.getMinutes();
-
-    let weatherId = localForecast.list[0].weather[0].id; 
-    let warningText = "";
-    let severityClass = "";
-
-    if(weatherId >= 200 && weatherId < 300) { warningText = "GEWITTER / STURMBÖEN"; severityClass = "dwd-warn-red"; }
-    else if(weatherId >= 600 && weatherId < 700) { warningText = "SCHNEEFALL / GLÄTTE"; severityClass = "dwd-warn-red"; }
-    else if(weatherId === 502 || weatherId === 503 || weatherId === 504) { warningText = "STARKREGEN"; severityClass = "dwd-warn-red"; }
-    else if(weatherId >= 500 && weatherId < 600) { warningText = "REGEN"; severityClass = "dwd-warn-yellow"; }
-    else if(weatherId >= 300 && weatherId < 400) { warningText = "SPRÜHREGEN"; severityClass = "dwd-warn-yellow"; }
-    else if(weatherId === 741) { warningText = "NEBEL (SICHT < 150M)"; severityClass = "dwd-warn-yellow"; }
-
-    if(warningText !== "") {
-        dwdAlert = `<span class="${severityClass}">
-            Der Deutsche Wetterdienst "DWD" gibt folgende Unwetterwarnung raus: ${warningText}. 
-            Gültig von ${validFromStr} Uhr bis voraussichtlich ${validUntilStr} Uhr.
-        </span>`;
-    }
-
-    let tickerContent = batteryAlert + dwdAlert + `<span class="t-item">+++ AURA V${CONFIG.version} GENERALÜBERHOLUNG +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} ONLINE +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
@@ -370,23 +356,17 @@ function getVectorIcon(code, isPremium) {
     let isNight = code.includes('n');
     let svgContent = "";
     let cssClass = isPremium ? "icon-premium" : "icon-simple";
-    
     let sunFill = isPremium ? "url(#gradSun)" : "#00eaff";
     let cloudFill = isPremium ? "url(#gradCloud)" : "#fff";
     let moonFill = isPremium ? "url(#gradMoon)" : "#00eaff";
-
     const cloudPath = `<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" fill="${cloudFill}" />`;
     const cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
-    
     const sunObj = `<circle class="svg-sun" cx="12" cy="12" r="5" style="fill:${sunFill}"/><g class="svg-sun" style="stroke:${isPremium ? '#ff9900':'#00eaff'}; stroke-width:2"><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/></g>`;
-    
     const moonObj = `<path class="svg-moon" d="M12,3 C10,3 8,4 7,6 C10,6 13,9 13,12 C13,15 10,18 7,18 C8,20 10,21 12,21 C17,21 21,17 21,12 C21,7 17,3 12,3 Z" fill="${moonFill}"/>`;
-    
     const rainObj = '<line class="svg-rain" x1="8" y1="18" x2="8" y2="22" /><line class="svg-rain" x1="12" y1="18" x2="12" y2="22" style="animation-delay:0.2s" /><line class="svg-rain" x1="16" y1="18" x2="16" y2="22" style="animation-delay:0.4s"/>';
     const snowObj = '<circle class="svg-snow" cx="8" cy="20" r="1.5"/><circle class="svg-snow" cx="16" cy="20" r="1.5" style="animation-delay:1s"/><circle class="svg-snow" cx="12" cy="22" r="1.5" style="animation-delay:0.5s"/>';
     const boltObj = '<polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9" fill="#ff3333"/>';
     const mistObj = '<line class="svg-mist" x1="4" y1="10" x2="20" y2="10" /><line class="svg-mist" x1="4" y1="14" x2="20" y2="14" style="animation-delay:1s"/><line class="svg-mist" x1="4" y1="18" x2="20" y2="18" style="animation-delay:2s"/>';
-
     if(code === '01d') svgContent = sunObj; 
     else if(code === '01n') svgContent = moonObj; 
     else if(code === '02d' || code === '02n') svgContent = (isNight ? moonObj : sunObj) + cloudPath; 
@@ -396,20 +376,12 @@ function getVectorIcon(code, isPremium) {
     else if(code === '13d' || code === '13n') svgContent = cloudPath + snowObj; 
     else if(code === '50d' || code === '50n') svgContent = mistObj; 
     else svgContent = sunObj; 
-
     return `<svg class="svg-icon ${cssClass}" viewBox="0 0 24 24">${svgContent}</svg>`;
 }
 
 /* --- HELFER --- */
-function toggleSleep() {
-    let ol = document.getElementById('sleep-overlay');
-    if(ol.style.display === 'block') ol.style.display = 'none';
-    else { ol.style.display = 'block'; closeMenu(); }
-}
-function checkUpdate() {
-    // Versions-Check ebenfalls mit Cache-Buster
-    fetch("version.json?t=" + Date.now()).then(r=>r.json()).then(d=>{ if(d.version > CONFIG.version) location.reload(true); });
-}
+function toggleSleep() { let ol = document.getElementById('sleep-overlay'); if(ol.style.display === 'block') ol.style.display = 'none'; else { ol.style.display = 'block'; closeMenu(); } }
+function checkUpdate() { fetch("version.json?t=" + Date.now()).then(r=>r.json()).then(d=>{ if(d.version > CONFIG.version) location.reload(true); }); }
 function formatTime(d) { return (d.getHours()<10?'0':'')+d.getHours() + ":" + (d.getMinutes()<10?'0':'')+d.getMinutes(); }
 function getMoonPhase(date) {
     let year = date.getFullYear(); let month = date.getMonth() + 1; let day = date.getDate();
@@ -420,12 +392,7 @@ function getMoonPhase(date) {
 }
 function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
 function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
-function toggleAccordion(id) {
-    let content = document.getElementById(id);
-    let isVisible = content.style.display === "block";
-    document.querySelectorAll('.acc-content').forEach(el => el.style.display = 'none');
-    if(!isVisible) content.style.display = "block";
-}
+function toggleAccordion(id) { let c = document.getElementById(id); let v = c.style.display==="block"; document.querySelectorAll('.acc-content').forEach(e=>e.style.display='none'); if(!v) c.style.display="block"; }
 function closeAccordion(id) { document.getElementById(id).style.display = 'none'; }
 function saveSettings() {
     let city = document.getElementById('inp-city-val').value;
