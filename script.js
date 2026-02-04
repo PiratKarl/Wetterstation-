@@ -1,7 +1,7 @@
-/* --- AURA V71.0 (BIGGER MONITOR ENGINE) --- */
+/* --- AURA V72.0 (POSITION FIX ENGINE) --- */
 
 const CONFIG = {
-    version: 71.0,
+    version: 72.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -326,7 +326,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} BIGGER MONITOR +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} POSITION FIX +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
