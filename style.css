@@ -1,4 +1,4 @@
-/* --- AURA V75.0 (LAYOUT FIX) --- */
+/* --- AURA V76.0 (POSITION & TEXT FIX) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -27,7 +27,7 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 #logo-bg { z-index: 1; }
 #logo-video { z-index: 2; }
 
-/* MITTE - OBERE REIHE (TEMP + STAPEL) */
+/* MITTE - OBERE REIHE */
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 0px; width:100%; text-align:center; }
 .main-row-v61 { position: relative; width: 100%; height: 14vh; margin-top: 0px; display: flex; justify-content: center; align-items: center; }
 
@@ -76,12 +76,14 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 }
 #btn-menu:hover { opacity: 1; color: #00eaff; }
 
-/* RECHTS: WARN MONITOR (FIX V75: SCHMALER & SICHERER PLATZIERT) */
+/* RECHTS: WARN MONITOR (FIX V76: WEITER NACH LINKS & BREITER) */
 #dwd-monitor {
     position: absolute;
-    right: 24%; /* V75: Exakt links neben der rechten Spalte */
+    /* V76: Wir schieben ihn massiv nach links (weg von der Sonne) */
+    right: 40%; 
     top: 5px;
-    width: 180px; /* V75: Deutlich schmaler (war 300px), damit er nicht überlappt */
+    /* V76: Wieder etwas breiter für den langen Text */
+    width: 220px; 
     padding: 6px;
     box-sizing: border-box;
     border-radius: 6px;
@@ -90,14 +92,14 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
     background: rgba(10, 10, 10, 0.9);
     display: flex; flex-direction: column; justify-content: center;
     z-index: 50;
-    min-height: 55px;
+    min-height: 60px;
 }
 
 .dwd-head { font-size: 1.1vh; color: #888; letter-spacing: 1px; display:block; margin-bottom: 2px; }
 
-/* V75: Schriftgröße etwas angepasst, damit es in den schmalen Kasten passt */
+/* V76: Schriftgröße angepasst für lange Texte */
 .dwd-content { 
-    font-size: 1.6vh; /* Kleiner als V74, damit es passt */
+    font-size: 1.5vh; 
     font-weight: 900; 
     line-height: 1.1; 
     display:block; 

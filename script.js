@@ -1,7 +1,7 @@
-/* --- AURA V75.0 (LAYOUT FIX ENGINE) --- */
+/* --- AURA V76.0 (POSITION & TEXT FIX ENGINE) --- */
 
 const CONFIG = {
-    version: 75.0,
+    version: 76.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -201,7 +201,13 @@ function loadRealDWD(lat, lon) {
             else if(level === 2) monitor.classList.add('warn-yellow');
             else monitor.classList.add('warn-cyan'); 
 
-            let msg = topAlert.event_de || topAlert.headline_de || "WETTERWARNUNG";
+            // V76 FIX: Wir nehmen "headline_de" (Lang) bevorzugt vor "event_de" (Kurz)
+            // headline_de ist z.B. "Amtliche Warnung vor leichtem Frost"
+            // event_de ist z.B. "Frost"
+            let msg = topAlert.headline_de || topAlert.event_de || "WETTERWARNUNG";
+            
+            // Text säubern: Manchmal steht "Amtliche..." doppelt drin, das ist ok, 
+            // aber wir machen es UpperCase für den Look
             txt.innerText = msg.toUpperCase();
 
             let end = new Date(topAlert.expires);
@@ -306,7 +312,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} LAYOUT FIX +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} POSITION & TEXT FIX +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
