@@ -1,7 +1,7 @@
-/* --- AURA V78.0 (FINAL POSITION ENGINE) --- */
+/* --- AURA V79.0 (AUTO-HIDE ENGINE) --- */
 
 const CONFIG = {
-    version: 78.0,
+    version: 79.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -172,7 +172,7 @@ function loadData() {
     document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
 }
 
-/* --- ECHTE DWD WARNUNGEN (BRIGHTSKY API) --- */
+/* --- ECHTE DWD WARNUNGEN (AUTO-HIDE) --- */
 function loadRealDWD(lat, lon) {
     let monitor = document.getElementById('dwd-monitor');
     let txt = document.getElementById('dwd-text');
@@ -180,14 +180,16 @@ function loadRealDWD(lat, lon) {
     
     if(!monitor) return;
 
+    // V79: Erstmal sicherheitshalber ausblenden
+    monitor.style.display = 'none';
+
     fetch(`https://api.brightsky.dev/alerts?lat=${lat}&lon=${lon}`)
     .then(r => r.json())
     .then(data => {
-        monitor.className = 'warn-cyan';
-        txt.innerText = "KEINE WARNUNG";
-        time.style.display = "none";
-
         if(data && data.alerts && data.alerts.length > 0) {
+            // WARNUNG GEFUNDEN -> ANZEIGEN!
+            monitor.style.display = 'flex';
+            
             let alerts = data.alerts;
             let severityMap = { 'minor': 1, 'moderate': 2, 'severe': 3, 'extreme': 4 };
             alerts.sort((a, b) => severityMap[b.severity] - severityMap[a.severity]);
@@ -201,7 +203,6 @@ function loadRealDWD(lat, lon) {
             else if(level === 2) monitor.classList.add('warn-yellow');
             else monitor.classList.add('warn-cyan'); 
 
-            // V78: Wir bleiben bei der ausführlichen Headline
             let msg = topAlert.headline_de || topAlert.event_de || "WETTERWARNUNG";
             txt.innerText = msg.toUpperCase();
 
@@ -209,9 +210,12 @@ function loadRealDWD(lat, lon) {
             let endStr = (end.getHours()<10?'0':'') + end.getHours() + ":" + (end.getMinutes()<10?'0':'') + end.getMinutes();
             time.innerText = "Bis: " + endStr + " Uhr";
             time.style.display = "block";
+        } else {
+            // Keine Warnung -> Bleibt unsichtbar (display: none)
         }
     })
     .catch(e => {
+        // Fehler (z.B. altes Tablet) -> Bleibt unsichtbar
         console.log("DWD Error", e);
     });
 }
@@ -307,7 +311,8 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} FINAL POSITION +++</span>`;
+    // V79: KEINE Versionsnummer mehr im Ticker, nur noch neutraler Titel
+    tickerContent += `<span class="t-item">+++ AURA WETTERSTATION +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
