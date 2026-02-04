@@ -1,7 +1,7 @@
-/* --- AURA V80.2 (CACHE FIX ENGINE) --- */
+/* --- AURA V81.0 (DIRECT MENU ENGINE) --- */
 
 const CONFIG = {
-    version: 80.2, // WICHTIG: Hier stand noch 80.0, deshalb kam das alte Menü!
+    version: 81.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -20,7 +20,7 @@ const WORLD_CITIES = [
     "Kairo", "Seoul", "Hong Kong", "Chicago", "Athen"
 ];
 
-// 2. SKIGEBIETE (Open-Meteo) - Lat/Lon notwendig
+// 2. SKIGEBIETE (Open-Meteo)
 const SNOW_LOCATIONS = [
     { name: "WINTERBERG", lat: 51.19, lon: 8.53 },
     { name: "FELDBERG", lat: 47.86, lon: 8.00 },
@@ -39,7 +39,7 @@ const SNOW_LOCATIONS = [
     { name: "CHAMONIX", lat: 45.92, lon: 6.87 }
 ];
 
-// 3. BADEORTE (Open-Meteo Marine) - Lat/Lon notwendig
+// 3. BADEORTE (Open-Meteo Marine)
 const SUMMER_LOCATIONS = [
     { name: "SYLT", lat: 54.91, lon: 8.31 },
     { name: "RÜGEN", lat: 54.40, lon: 13.62 },
@@ -75,7 +75,7 @@ function startApp() {
     if(bgVid) { bgVid.play().catch(e=>{}); }
 
     initVideoFallback();
-    loadMenu(); 
+    initMenuValues(); // NEU: Direkt Werte setzen statt Datei laden
 
     runClock(); 
     loadData(); 
@@ -84,9 +84,9 @@ function startApp() {
     checkAutoSleep(); 
 
     setInterval(runClock, 1000);       
-    setInterval(loadData, 600000);     // 10 Min Update
-    setInterval(checkUpdate, 300000);  // 5 Min Version Check
-    setInterval(checkStatus, 60000);   // 1 Min Akku Check
+    setInterval(loadData, 600000);     
+    setInterval(checkUpdate, 300000);  
+    setInterval(checkStatus, 60000);   
 }
 
 function initVideoFallback() {
@@ -96,31 +96,20 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- MENÜ NACHLADEN & HANDLING --- */
-function loadMenu() {
-    // CACHE BUSTER: Wir hängen die Version an, damit der Browser die neue Datei holt!
-    fetch('menu.html?v=' + CONFIG.version)
-    .then(response => response.text())
-    .then(html => {
-        let ph = document.getElementById('menu-placeholder');
-        if(ph) {
-            ph.innerHTML = html;
-            
-            // Werte setzen
-            let cityInp = document.getElementById('inp-city-val');
-            if(cityInp) cityInp.value = CONFIG.city;
-            
-            let tFrom = document.getElementById('inp-time-from');
-            if(tFrom) tFrom.value = CONFIG.sleepFrom;
-            
-            let tTo = document.getElementById('inp-time-to');
-            if(tTo) tTo.value = CONFIG.sleepTo;
-            
-            let tMode = document.getElementById('inp-ticker-mode');
-            if(tMode) tMode.value = CONFIG.tickerMode;
-        }
-    })
-    .catch(err => { console.error("Menü Fehler:", err); });
+/* --- MENÜ HANDLING (INTERN) --- */
+function initMenuValues() {
+    // Füllt die Eingabefelder direkt aus dem Speicher
+    let cityInp = document.getElementById('inp-city-val');
+    if(cityInp) cityInp.value = CONFIG.city;
+    
+    let tFrom = document.getElementById('inp-time-from');
+    if(tFrom) tFrom.value = CONFIG.sleepFrom;
+    
+    let tTo = document.getElementById('inp-time-to');
+    if(tTo) tTo.value = CONFIG.sleepTo;
+    
+    let tMode = document.getElementById('inp-ticker-mode');
+    if(tMode) tMode.value = CONFIG.tickerMode;
 }
 
 function saveSettings() {
@@ -138,7 +127,7 @@ function saveSettings() {
     CONFIG.tickerMode = tMode;
     
     closeMenu();
-    loadData();
+    loadData(); // Ticker aktualisieren
 }
 
 /* --- LOADER --- */
@@ -422,6 +411,7 @@ function getMoonPhase(date) {
     jd /= 29.5305882; let b = parseInt(jd); jd -= b; b = Math.round(jd * 8); if (b >= 8) b = 0;
     return ['🌑 Neumond', '🌒 Zunehmend', '🌓 Halbmond', '🌔 Zunehmend', '🌕 Vollmond', '🌖 Abnehmend', '🌗 Halbmond', '🌘 Abnehmend'][b];
 }
+// NEU: Menü anzeigen, da es jetzt im HTML existiert
 function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
 function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
 function toggleAccordion(id) { let c = document.getElementById(id); let v = c.style.display==="block"; document.querySelectorAll('.acc-content').forEach(e=>e.style.display='none'); if(!v) c.style.display="block"; }
