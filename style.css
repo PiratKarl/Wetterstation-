@@ -1,4 +1,4 @@
-/* --- AURA V77.0 (SLIM MONITOR) --- */
+/* --- AURA V78.0 (POSITION FINAL FIX) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -76,12 +76,12 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 }
 #btn-menu:hover { opacity: 1; color: #00eaff; }
 
-/* RECHTS: WARN MONITOR (FIX V77: SCHMALER 170px) */
+/* RECHTS: WARN MONITOR (FIX V78: WEITER NACH LINKS 48%) */
 #dwd-monitor {
     position: absolute;
-    right: 40%; /* Position bleibt, da sie gut war */
+    right: 48%; /* V78: Deutlich weiter links, weg vom Astro-Bereich */
     top: 5px;
-    width: 170px; /* V77: Deutlich schmaler (vorher 220px) */
+    width: 170px; /* Schön schmal lassen */
     padding: 6px;
     box-sizing: border-box;
     border-radius: 6px;

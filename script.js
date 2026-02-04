@@ -1,7 +1,7 @@
-/* --- AURA V77.0 (SLIM MONITOR ENGINE) --- */
+/* --- AURA V78.0 (FINAL POSITION ENGINE) --- */
 
 const CONFIG = {
-    version: 77.0,
+    version: 78.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -201,7 +201,7 @@ function loadRealDWD(lat, lon) {
             else if(level === 2) monitor.classList.add('warn-yellow');
             else monitor.classList.add('warn-cyan'); 
 
-            // V77 Logic: Immer noch bevorzugt die lange Headline
+            // V78: Wir bleiben bei der ausführlichen Headline
             let msg = topAlert.headline_de || topAlert.event_de || "WETTERWARNUNG";
             txt.innerText = msg.toUpperCase();
 
@@ -307,7 +307,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} SLIM MONITOR +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} FINAL POSITION +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
