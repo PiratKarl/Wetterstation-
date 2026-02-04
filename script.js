@@ -1,13 +1,17 @@
-/* --- AURA V79.0 (AUTO-HIDE ENGINE) --- */
+/* --- AURA V80.0 (MULTI-TICKER ENGINE) --- */
 
 const CONFIG = {
-    version: 79.0,
+    version: 80.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
-    sleepTo: localStorage.getItem('aura_sleep_to') || ''
+    sleepTo: localStorage.getItem('aura_sleep_to') || '',
+    tickerMode: localStorage.getItem('aura_ticker_mode') || 'world' // Neu: world, snow, summer
 };
 
+/* --- DATENBANKEN FÜR TICKER --- */
+
+// 1. WELT-STÄDTE (OpenWeatherMap)
 const WORLD_CITIES = [
     "Berlin", "London", "New York", "Tokyo", "Sydney", 
     "Paris", "Moskau", "Beijing", "Dubai", "Los Angeles",
@@ -16,7 +20,45 @@ const WORLD_CITIES = [
     "Kairo", "Seoul", "Hong Kong", "Chicago", "Athen"
 ];
 
-// VARIABLEN
+// 2. SKIGEBIETE (Open-Meteo) - Lat/Lon notwendig
+const SNOW_LOCATIONS = [
+    { name: "WINTERBERG", lat: 51.19, lon: 8.53 },
+    { name: "FELDBERG", lat: 47.86, lon: 8.00 },
+    { name: "OBERSTDORF", lat: 47.41, lon: 10.28 },
+    { name: "ZUGSPITZE", lat: 47.42, lon: 10.98 },
+    { name: "BROCKEN", lat: 51.80, lon: 10.61 },
+    { name: "KITZBÜHEL", lat: 47.44, lon: 12.39 },
+    { name: "ISCHGL", lat: 47.01, lon: 10.29 },
+    { name: "SÖLDEN", lat: 46.97, lon: 11.01 },
+    { name: "MAYRHOFEN", lat: 47.16, lon: 11.86 },
+    { name: "ST. ANTON", lat: 47.13, lon: 10.27 },
+    { name: "ZERMATT", lat: 46.02, lon: 7.75 },
+    { name: "ST. MORITZ", lat: 46.50, lon: 9.84 },
+    { name: "GRÖDEN", lat: 46.55, lon: 11.72 },
+    { name: "CORTINA", lat: 46.54, lon: 12.13 },
+    { name: "CHAMONIX", lat: 45.92, lon: 6.87 }
+];
+
+// 3. BADEORTE (Open-Meteo Marine) - Lat/Lon notwendig
+const SUMMER_LOCATIONS = [
+    { name: "SYLT", lat: 54.91, lon: 8.31 },
+    { name: "RÜGEN", lat: 54.40, lon: 13.62 },
+    { name: "NORDERNEY", lat: 53.70, lon: 7.15 },
+    { name: "TIMMENDORF", lat: 54.00, lon: 10.78 },
+    { name: "MALLORCA", lat: 39.57, lon: 2.65 },
+    { name: "IBIZA", lat: 38.91, lon: 1.43 },
+    { name: "ANTALYA", lat: 36.88, lon: 30.70 },
+    { name: "KRETA", lat: 35.33, lon: 25.14 },
+    { name: "RIMINI", lat: 44.06, lon: 12.56 },
+    { name: "NIZZA", lat: 43.70, lon: 7.26 },
+    { name: "BARCELONA", lat: 41.38, lon: 2.17 },
+    { name: "DUBROVNIK", lat: 42.65, lon: 18.09 },
+    { name: "GRAN CANARIA", lat: 27.92, lon: 15.55 },
+    { name: "TENERIFFA", lat: 28.29, lon: 16.63 },
+    { name: "ALGARVE", lat: 37.01, lon: -7.93 }
+];
+
+// SYSTEM VARIABLEN
 let lastBatLevel = null;
 let batDropCounter = 0;
 let batteryCritical = false;
@@ -54,7 +96,7 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- MENÜ NACHLADEN --- */
+/* --- MENÜ NACHLADEN & HANDLING --- */
 function loadMenu() {
     fetch('menu.html?v=' + CONFIG.version)
     .then(response => response.text())
@@ -62,15 +104,42 @@ function loadMenu() {
         let ph = document.getElementById('menu-placeholder');
         if(ph) {
             ph.innerHTML = html;
+            
+            // Werte setzen
             let cityInp = document.getElementById('inp-city-val');
             if(cityInp) cityInp.value = CONFIG.city;
+            
             let tFrom = document.getElementById('inp-time-from');
             if(tFrom) tFrom.value = CONFIG.sleepFrom;
+            
             let tTo = document.getElementById('inp-time-to');
             if(tTo) tTo.value = CONFIG.sleepTo;
+            
+            // NEU: Ticker Modus setzen
+            let tMode = document.getElementById('inp-ticker-mode');
+            if(tMode) tMode.value = CONFIG.tickerMode;
         }
     })
     .catch(err => { console.error("Menü Fehler:", err); });
+}
+
+function saveSettings() {
+    let city = document.getElementById('inp-city-val').value;
+    let tFrom = document.getElementById('inp-time-from').value;
+    let tTo = document.getElementById('inp-time-to').value;
+    let tMode = document.getElementById('inp-ticker-mode').value; // NEU
+    
+    if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; }
+    
+    localStorage.setItem('aura_sleep_from', tFrom); CONFIG.sleepFrom = tFrom;
+    localStorage.setItem('aura_sleep_to', tTo); CONFIG.sleepTo = tTo;
+    
+    // Ticker speichern
+    localStorage.setItem('aura_ticker_mode', tMode); 
+    CONFIG.tickerMode = tMode;
+    
+    closeMenu();
+    loadData(); // Sofort neu laden um Ticker zu ändern
 }
 
 /* --- LOADER --- */
@@ -144,7 +213,7 @@ function initBatteryGuard() {
     }, 1800000); 
 }
 
-/* --- WETTER ENGINE --- */
+/* --- WETTER ENGINE (HAUPTDATEN) --- */
 function loadData() {
     showLoader();
     let cb = Date.now(); 
@@ -159,7 +228,7 @@ function loadData() {
     .then(forecast => {
         globalForecastCache = forecast;
         renderForecast(forecast);
-        return loadTicker(forecast);
+        return loadTicker(); // Startet den Ticker je nach Modus
     })
     .then(() => { hideLoader(); })
     .catch(e => {
@@ -172,61 +241,42 @@ function loadData() {
     document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
 }
 
-/* --- ECHTE DWD WARNUNGEN (AUTO-HIDE) --- */
 function loadRealDWD(lat, lon) {
     let monitor = document.getElementById('dwd-monitor');
     let txt = document.getElementById('dwd-text');
     let time = document.getElementById('dwd-valid');
-    
     if(!monitor) return;
-
-    // V79: Erstmal sicherheitshalber ausblenden
-    monitor.style.display = 'none';
-
+    monitor.style.display = 'none'; // Auto-Hide
     fetch(`https://api.brightsky.dev/alerts?lat=${lat}&lon=${lon}`)
     .then(r => r.json())
     .then(data => {
         if(data && data.alerts && data.alerts.length > 0) {
-            // WARNUNG GEFUNDEN -> ANZEIGEN!
             monitor.style.display = 'flex';
-            
             let alerts = data.alerts;
             let severityMap = { 'minor': 1, 'moderate': 2, 'severe': 3, 'extreme': 4 };
             alerts.sort((a, b) => severityMap[b.severity] - severityMap[a.severity]);
-            
             let topAlert = alerts[0];
             let level = severityMap[topAlert.severity] || 1;
-            
             monitor.className = '';
             if(level === 4) monitor.classList.add('warn-red');
             else if(level === 3) monitor.classList.add('warn-orange');
             else if(level === 2) monitor.classList.add('warn-yellow');
             else monitor.classList.add('warn-cyan'); 
-
             let msg = topAlert.headline_de || topAlert.event_de || "WETTERWARNUNG";
             txt.innerText = msg.toUpperCase();
-
             let end = new Date(topAlert.expires);
             let endStr = (end.getHours()<10?'0':'') + end.getHours() + ":" + (end.getMinutes()<10?'0':'') + end.getMinutes();
             time.innerText = "Bis: " + endStr + " Uhr";
             time.style.display = "block";
-        } else {
-            // Keine Warnung -> Bleibt unsichtbar (display: none)
         }
     })
-    .catch(e => {
-        // Fehler (z.B. altes Tablet) -> Bleibt unsichtbar
-        console.log("DWD Error", e);
-    });
+    .catch(e => {});
 }
 
-/* --- RENDER CURRENT (DATA) --- */
 function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
     document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
-    
-    // Regen (Stapel)
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
@@ -234,25 +284,17 @@ function renderCurrent(data) {
     let rainMM = "0mm";
     if(data.rain && data.rain['1h']) { rainMM = data.rain['1h'] + "mm"; }
     document.getElementById('rain-val').innerHTML = `${rainProb} <span class="mm-val">${rainMM}</span>`;
-    
-    // Gefühlt (Stapel)
     document.getElementById('val-feels').innerText = Math.round(data.main.feels_like) + "°";
-    
-    // Deep Data Row
     document.getElementById('val-humidity').innerText = data.main.humidity;
-    
     let speed = Math.round(data.wind.speed * 3.6);
     let deg = data.wind.deg;
     document.getElementById('val-wind').innerHTML = `${speed} <span class="cell-unit">km/h</span>`;
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
-
     let visKM = Math.round(data.visibility / 1000);
     document.getElementById('val-vis').innerText = visKM;
-
     let press = data.main.pressure;
     if(press !== lastPressure) { localStorage.setItem('aura_last_press', press); lastPressure = press; }
     document.getElementById('val-press').innerText = press;
-
     let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
     document.getElementById('sunrise').innerText = formatTime(sr);
@@ -264,14 +306,9 @@ function renderForecast(data) {
     for(let i=0; i<5; i++) {
         let item = data.list[i];
         let h = new Date(item.dt*1000).getHours();
-        hHTML += `<div class="f-item">
-                    <span class="f-head">${h} Uhr</span>
-                    <div class="f-icon">${getVectorIcon(item.weather[0].icon, false)}</div>
-                    <span class="f-temp">${Math.round(item.main.temp)}°</span>
-                  </div>`;
+        hHTML += `<div class="f-item"><span class="f-head">${h} Uhr</span><div class="f-icon">${getVectorIcon(item.weather[0].icon, false)}</div><span class="f-temp">${Math.round(item.main.temp)}°</span></div>`;
     }
     document.getElementById('hourly-row').innerHTML = hHTML;
-
     let dailyMap = {};
     data.list.forEach(item => {
         let d = new Date(item.dt*1000);
@@ -283,51 +320,75 @@ function renderForecast(data) {
         if(item.pop > dayData.pop) dayData.pop = item.pop;
         if(d.getHours() >= 11 && d.getHours() <= 14) dayData.icon = item.weather[0].icon;
     });
-
     let dHTML = "";
     let keys = Object.keys(dailyMap).slice(0, 5);
     const dropSvg = '<svg class="f-drop-small" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>';
-
     keys.forEach(key => {
         let d = dailyMap[key];
-        dHTML += `<div class="f-item">
-                    <span class="f-head">${key}</span>
-                    <div class="f-icon">${getVectorIcon(d.icon, false)}</div>
-                    <div class="f-rain-row">
-                        ${dropSvg}
-                        <span class="f-rain-text">${Math.round(d.pop*100)}%</span>
-                    </div>
-                    <div class="temp-range">
-                        <span class="temp-low">${Math.round(d.min)}°</span>
-                        <span class="temp-sep">-</span>
-                        <span class="temp-high">${Math.round(d.max)}°</span>
-                    </div>
-                  </div>`;
+        dHTML += `<div class="f-item"><span class="f-head">${key}</span><div class="f-icon">${getVectorIcon(d.icon, false)}</div><div class="f-rain-row">${dropSvg}<span class="f-rain-text">${Math.round(d.pop*100)}%</span></div><div class="temp-range"><span class="temp-low">${Math.round(d.min)}°</span><span class="temp-sep">-</span><span class="temp-high">${Math.round(d.max)}°</span></div></div>`;
     });
     document.getElementById('daily-row').innerHTML = dHTML;
     document.getElementById('moon-phase').innerText = getMoonPhase(new Date());
 }
 
-async function loadTicker(localForecast) {
+/* --- DER NEUE MULTI-TICKER --- */
+async function loadTicker() {
     let tickerContent = "";
-    if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    // V79: KEINE Versionsnummer mehr im Ticker, nur noch neutraler Titel
-    tickerContent += `<span class="t-item">+++ AURA WETTERSTATION +++</span>`;
+    if(batteryCritical) tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `;
     
+    // Header je nach Modus
+    if(CONFIG.tickerMode === 'snow') tickerContent += `<span class="t-item">+++ SCHNEEHÖHEN (SKIGEBIETE) +++</span>`;
+    else if(CONFIG.tickerMode === 'summer') tickerContent += `<span class="t-item">+++ WASSERTEMPERATUREN (BADEORTE) +++</span>`;
+    else tickerContent += `<span class="t-item">+++ WELT-WETTER +++</span>`;
+
     let cb = Date.now();
-    let requests = WORLD_CITIES.map(city => 
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric&_t=${cb}`)
-        .then(r => r.json()).catch(e => null)
-    );
-    const results = await Promise.all(requests);
-    results.forEach(data => {
-        if(data && data.main) {
-            let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
-            let cityTime = new Date(utc + (1000 * data.timezone));
-            let timeStr = (cityTime.getHours()<10?'0':'')+cityTime.getHours() + ":" + (cityTime.getMinutes()<10?'0':'')+cityTime.getMinutes();
-            tickerContent += `<div class="t-item">${data.name.toUpperCase()} <div class="t-icon">${getVectorIcon(data.weather[0].icon, false)}</div> <span class="t-time">${timeStr}</span> ${Math.round(data.main.temp)}°</div>`;
-        }
-    });
+
+    /* FALL 1: SCHNEE */
+    if(CONFIG.tickerMode === 'snow') {
+        let requests = SNOW_LOCATIONS.map(loc => 
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=snow_depth&timezone=auto`)
+            .then(r => r.json()).then(d => ({ name: loc.name, data: d })).catch(e => null)
+        );
+        const results = await Promise.all(requests);
+        results.forEach(item => {
+            if(item && item.data && item.data.current) {
+                let cm = Math.round(item.data.current.snow_depth * 100); // Meter -> cm
+                let val = cm > 0 ? cm + "cm" : "0cm";
+                tickerContent += `<div class="t-item">${item.name} ❄️ ${val}</div>`;
+            }
+        });
+
+    /* FALL 2: SOMMER (MEER) */
+    } else if(CONFIG.tickerMode === 'summer') {
+        let requests = SUMMER_LOCATIONS.map(loc => 
+            fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${loc.lat}&longitude=${loc.lon}&current=sea_surface_temperature&timezone=auto`)
+            .then(r => r.json()).then(d => ({ name: loc.name, data: d })).catch(e => null)
+        );
+        const results = await Promise.all(requests);
+        results.forEach(item => {
+            if(item && item.data && item.data.current) {
+                let temp = Math.round(item.data.current.sea_surface_temperature);
+                tickerContent += `<div class="t-item">${item.name} 🌊 ${temp}°C</div>`;
+            }
+        });
+
+    /* FALL 3: WELT (STANDARD) */
+    } else {
+        let requests = WORLD_CITIES.map(city => 
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric&_t=${cb}`)
+            .then(r => r.json()).catch(e => null)
+        );
+        const results = await Promise.all(requests);
+        results.forEach(data => {
+            if(data && data.main) {
+                let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
+                let cityTime = new Date(utc + (1000 * data.timezone));
+                let timeStr = (cityTime.getHours()<10?'0':'')+cityTime.getHours() + ":" + (cityTime.getMinutes()<10?'0':'')+cityTime.getMinutes();
+                tickerContent += `<div class="t-item">${data.name.toUpperCase()} <div class="t-icon">${getVectorIcon(data.weather[0].icon, false)}</div> <span class="t-time">${timeStr}</span> ${Math.round(data.main.temp)}°</div>`;
+            }
+        });
+    }
+
     document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
@@ -374,12 +435,3 @@ function openMenu() { document.getElementById('menu-modal').style.display = 'blo
 function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
 function toggleAccordion(id) { let c = document.getElementById(id); let v = c.style.display==="block"; document.querySelectorAll('.acc-content').forEach(e=>e.style.display='none'); if(!v) c.style.display="block"; }
 function closeAccordion(id) { document.getElementById(id).style.display = 'none'; }
-function saveSettings() {
-    let city = document.getElementById('inp-city-val').value;
-    let tFrom = document.getElementById('inp-time-from').value;
-    let tTo = document.getElementById('inp-time-to').value;
-    if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; loadData(); }
-    localStorage.setItem('aura_sleep_from', tFrom); CONFIG.sleepFrom = tFrom;
-    localStorage.setItem('aura_sleep_to', tTo); CONFIG.sleepTo = tTo;
-    closeMenu();
-}
