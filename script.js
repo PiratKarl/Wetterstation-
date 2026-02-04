@@ -1,7 +1,7 @@
-/* --- AURA V68.0 (LAYOUT REVOLUTION ENGINE) --- */
+/* --- AURA V69.0 (FINAL POLISH ENGINE) --- */
 
 const CONFIG = {
-    version: 68.0,
+    version: 69.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -33,7 +33,7 @@ function startApp() {
     if(bgVid) { bgVid.play().catch(e=>{}); }
 
     initVideoFallback();
-    loadMenu(); // Menü laden
+    loadMenu(); 
 
     runClock(); 
     loadData(); 
@@ -235,13 +235,13 @@ function updateMonitor(currentSlot, forecastData) {
     txt.innerText = message;
 }
 
-/* --- RENDER CURRENT (MIT NEUER SICHTWEITE) --- */
+/* --- RENDER CURRENT (DATA) --- */
 function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
     document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     
-    // Regen
+    // Regen (Stapel)
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
@@ -250,21 +250,20 @@ function renderCurrent(data) {
     if(data.rain && data.rain['1h']) { rainMM = data.rain['1h'] + "mm"; }
     document.getElementById('rain-val').innerHTML = `${rainProb} <span class="mm-val">${rainMM}</span>`;
     
-    // Deep Data Row
-    document.getElementById('val-humidity').innerText = data.main.humidity;
+    // Gefühlt (Stapel)
     document.getElementById('val-feels').innerText = Math.round(data.main.feels_like) + "°";
     
-    // Wind
+    // Deep Data Row
+    document.getElementById('val-humidity').innerText = data.main.humidity;
+    
     let speed = Math.round(data.wind.speed * 3.6);
     let deg = data.wind.deg;
     document.getElementById('val-wind').innerHTML = `${speed} <span class="cell-unit">km/h</span>`;
     document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
 
-    // Sichtweite (NEU) - Umrechnung Meter zu KM
     let visKM = Math.round(data.visibility / 1000);
     document.getElementById('val-vis').innerText = visKM;
 
-    // Druck
     let press = data.main.pressure;
     if(press !== lastPressure) { localStorage.setItem('aura_last_press', press); lastPressure = press; }
     document.getElementById('val-press').innerText = press;
@@ -327,7 +326,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} LAYOUT REVOLUTION +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} FINAL POLISH +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 

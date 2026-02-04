@@ -1,4 +1,4 @@
-/* --- AURA V68.0 (LAYOUT REVOLUTION) --- */
+/* --- AURA V69.0 (FINAL POLISH & LOGIC) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -15,7 +15,6 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 /* DASHBOARD GRID */
 .dashboard { display: flex; height: 33vh; width: 100%; padding: 10px 5px; box-sizing: border-box; position: relative; z-index: 10; }
 
-/* SPALTEN */
 .col-left { width: 22%; display: flex; flex-direction: column; align-items: center; }
 .col-center { width: 56%; display: flex; flex-direction: column; align-items: center; position: relative; }
 .col-right { width: 22%; display: flex; flex-direction: column; align-items: flex-end; position: relative; } 
@@ -28,59 +27,70 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 #logo-bg { z-index: 1; }
 #logo-video { z-index: 2; }
 
-/* MITTE - OBEN (Header & Temp) */
+/* MITTE - OBERE REIHE (TEMP + STAPEL) */
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 0px; width:100%; text-align:center; }
 .main-row-v61 { position: relative; width: 100%; height: 14vh; margin-top: 0px; display: flex; justify-content: center; align-items: center; }
 
-#main-icon { width: 12vh; height: 12vh; margin-right: 15px; filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); }
-#main-temp { font-size: 14vh; font-weight: bold; line-height: 1; margin: 0; text-shadow: 0 0 15px rgba(255,255,255,0.25); }
-.rain-box-small { margin-left: 15px; text-align: center; font-size: 3vh; color: #00eaff; font-weight: bold; display: flex; flex-direction: column; justify-content: center; }
-.rain-icon-inline { width: 3vh; height: 3vh; fill: #00eaff; margin-bottom: 2px; margin: 0 auto; }
+#main-icon { width: 12vh; height: 12vh; margin-right: 10px; filter: drop-shadow(0 0 15px rgba(0,234,255,0.3)); }
+#main-temp { font-size: 15vh; font-weight: bold; line-height: 1; margin: 0; text-shadow: 0 0 15px rgba(255,255,255,0.25); }
 
-/* MITTE - UNTEN (NEU: DEEP DATA ROW) */
-.deep-data-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 100%;
-    margin-top: 10px;
-    padding-top: 5px;
-    border-top: 1px solid #222;
+/* DER NEUE STAPEL RECHTS NEBEN DER TEMP */
+.temp-extra-stack {
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    margin-left: 15px; 
 }
+.feels-row { color: #aaa; font-size: 1.8vh; font-weight: bold; margin-bottom: 2px; }
+.rain-row { color: #00eaff; font-size: 2.2vh; font-weight: bold; display: flex; align-items: center; }
+.rain-icon-inline { width: 2.2vh; height: 2.2vh; fill: #00eaff; margin-right: 5px; }
 
+/* MITTE - UNTERE REIHE (DEEP DATA 4 ITEMS) */
+.deep-data-row {
+    display: flex; flex-direction: row; justify-content: space-evenly; align-items: center;
+    width: 100%; margin-top: 10px; padding-top: 5px; border-top: 1px solid #222;
+}
 .data-cell { display: flex; align-items: center; }
 .cell-icon { width: 2.5vh; height: 2.5vh; fill: #00eaff; margin-right: 5px; }
 .cell-val { font-size: 2.5vh; font-weight: bold; color: #ddd; white-space: nowrap; }
 .cell-unit { font-size: 0.7em; color: #aaa; margin-left: 2px; font-weight: normal; }
 
-/* WARN MONITOR (JETZT FREI PLATZIERBAR RECHTS VOM CENTER) */
+/* RECHTS: MENÜ (KLEIN & OHNE RAHMEN) */
+#btn-menu {
+    background: transparent; border: none; /* RAHMEN WEG */
+    color: #fff; font-size: 2.0vh; font-weight: bold;
+    padding: 5px; cursor: pointer; 
+    margin-bottom: 0; margin-top: 0; 
+    text-align: right; 
+    display: flex; align-items: center; justify-content: flex-end;
+    opacity: 0.7; /* Etwas dezenter */
+}
+#btn-menu:hover { opacity: 1; color: #00eaff; }
+
+/* RECHTS: WARN MONITOR (PLATZIERT IN DER LÜCKE) */
 #dwd-monitor {
-    width: 100%; 
-    margin-bottom: 5px;
-    padding: 8px;
+    position: absolute;
+    right: 120%; /* Schiebt ihn weit nach links in die Lücke */
+    top: 5px;
+    width: 160px; /* Schön breit für Text */
+    padding: 6px;
     box-sizing: border-box;
-    border-radius: 8px;
+    border-radius: 6px;
     text-align: center;
-    border: 2px solid #333;
-    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid #333; /* Dezenterer Rand */
+    background: rgba(10, 10, 10, 0.9);
     display: flex; flex-direction: column; justify-content: center;
-    min-height: 80px; /* Schön groß jetzt */
-    position: relative;
-    /* Er sitzt jetzt normal in col-right oben, da die deep data weg ist */
+    z-index: 50;
 }
 
-.dwd-head { font-size: 1.4vh; color: #aaa; letter-spacing: 1px; display:block; margin-bottom: 3px; }
-.dwd-content { font-size: 2.0vh; font-weight: 900; line-height: 1.1; display:block; text-transform: uppercase; margin-bottom: 3px; text-shadow: 0 0 5px rgba(0,0,0,0.8); }
-.dwd-time { font-size: 1.4vh; color: #fff; display:block; opacity: 0.9; }
+.dwd-head { font-size: 1.2vh; color: #888; letter-spacing: 1px; display:block; margin-bottom: 2px; }
+.dwd-content { font-size: 1.7vh; font-weight: 900; line-height: 1.1; display:block; text-transform: uppercase; margin-bottom: 2px; }
+.dwd-time { font-size: 1.2vh; color: #ccc; display:block; }
 
-.warn-cyan { border-color: #00eaff; color: #00eaff; box-shadow: 0 0 8px rgba(0, 234, 255, 0.2); }
-.warn-yellow { border-color: #ffd700; color: #ffd700; background: rgba(40, 35, 0, 0.95); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-.warn-orange { border-color: #ff8c00; color: #ff8c00; background: rgba(50, 20, 0, 0.95); box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); animation: pulse-warn 2s infinite; }
-.warn-red { border-color: #ff0000; color: #ff0000; background: rgba(60, 0, 0, 0.95); box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); animation: flash 1.5s infinite; }
+.warn-cyan { border-color: #00eaff; color: #00eaff; box-shadow: 0 0 5px rgba(0, 234, 255, 0.1); }
+.warn-yellow { border-color: #ffd700; color: #ffd700; background: rgba(40, 35, 0, 0.9); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+.warn-orange { border-color: #ff8c00; color: #ff8c00; background: rgba(50, 20, 0, 0.9); box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); animation: pulse-warn 2s infinite; }
+.warn-red { border-color: #ff0000; color: #ff0000; background: rgba(60, 0, 0, 0.9); box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); animation: flash 1.5s infinite; }
 
-/* RECHTS MENU AREA */
-#btn-menu { background: transparent; border: 2px solid #fff; color: #fff; font-size: 18px; padding: 5px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 5px; width: 100%; text-align: center; }
+/* RECHTS UNTEN: STATUS */
 .astro-block { margin-bottom: 3px; text-align: right; width: 100%; }
 .astro-label { color: #00eaff; font-size: 1.6vh; display: block; }
 .astro-val { font-size: 2.6vh; font-weight: bold; }
@@ -91,7 +101,7 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .bat-trend-down { color: #ff3333; margin-left: 5px; font-weight: bold; }
 .bat-trend-eq { color: #fff; margin-left: 5px; }
 
-/* TICKER */
+/* TICKER & FORECAST */
 .ticker-wrap { height: 10vh; background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222; overflow: hidden; white-space: nowrap; display: flex; align-items: center; margin-bottom: 0; }
 #ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 4.2vh; color: #fff; font-weight: bold; display: flex; align-items: center; }
 .t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
@@ -99,7 +109,6 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-/* VORHERSAGE */
 .forecast-area { height: 53vh; display: flex; flex-direction: column; background: #000; }
 .f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
 .f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
@@ -115,7 +124,7 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .temp-sep { color: #fff; margin: 0 5px; }
 .footer-copyright { position: fixed; bottom: 5px; width: 100%; text-align: center; color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100; }
 
-/* MENÜ STYLES */
+/* MENÜ CONTAINER STYLES */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .menu-container { max-width: 850px; margin: 0 auto; padding-bottom: 100px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 25px; position: relative; }
