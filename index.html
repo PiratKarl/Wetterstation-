@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V64.0</title>
-    <link rel="stylesheet" href="style.css?v=64.0">
+    <title>Aura Wetterstation V65.0</title>
+    <link rel="stylesheet" href="style.css?v=65.0">
 </head>
 <body>
 
@@ -38,9 +38,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V64 STARTEN
+            AURA V65 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">GENERALÜBERHOLUNG</p>
+        <p style="color:#444; margin-top:20px;">WARN-MONITOR UPDATE</p>
     </div>
 
     <div class="dashboard">
@@ -60,7 +60,6 @@
             <div id="location-header">BRAUNSCHWEIG</div>
             
             <div class="main-row-v61">
-                
                 <div class="centered-group">
                     <div id="main-icon"></div> 
                     <div style="display:flex; flex-direction:column; align-items:center;">
@@ -77,27 +76,30 @@
                         <svg class="cockpit-icon" viewBox="0 0 24 24"><path d="M12 2c-2.2 0-4 1.8-4 4v7.2c-1.2 1.3-2 3-2 4.8 0 3.3 2.7 6 6 6s6-2.7 6-6c0-1.8-.8-3.5-2-4.8V6c0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2v7h-4V6c0-1.1.9-2 2-2z"/></svg>
                         <span id="val-feels" class="info-val">--°</span>
                     </div>
-                    
                     <div class="info-item" title="Feuchtigkeit">
                         <svg class="cockpit-icon" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16zM12 20c-2.76 0-5-2.24-5-5 0-2.6 3.52-7.55 5-9.74 1.48 2.19 5 7.14 5 9.74 0 2.76-2.24 5-5 5z" opacity="0.9"/></svg>
                         <span id="val-humidity" class="info-val">--%</span>
                     </div>
-
                     <div class="info-item" title="Wind">
                         <svg id="icon-wind" class="cockpit-icon" viewBox="0 0 24 24" style="transform-origin:center;"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
                         <span id="val-wind" class="info-val">-- <span class="info-unit">km/h</span></span>
                     </div>
-                    
                     <div class="info-item" title="Druck">
                         <svg class="cockpit-icon" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
                         <span id="val-press" class="info-val">-- <span class="info-unit">hPa</span></span>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <div class="col-right">
+            
+            <div id="dwd-monitor" class="warn-cyan">
+                <span class="dwd-head">DWD WARNT:</span>
+                <span class="dwd-content" id="dwd-text">KEINE WARNUNG</span>
+                <span class="dwd-time" id="dwd-valid">--:--</span>
+            </div>
+
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
             <div class="astro-block">
                 <span class="astro-label">SONNE</span>
@@ -110,14 +112,14 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 64.0</div>
+                <div class="status-row">VER: 65.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ AURA V64 GENERALÜBERHOLUNG GESTARTET +++</div>
+        <div id="ticker-text">+++ AURA V65 WARN-MONITOR AKTIV +++</div>
     </div>
 
     <div class="forecast-area">
@@ -135,66 +137,37 @@
                 <h2>EINSTELLUNGEN</h2>
                 <button class="menu-close-btn" onclick="closeMenu()">×</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-1')">
-                <span>📍 Standort & Daten</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-1')"><span>📍 Standort & Daten</span> <span>▼</span></button>
             <div id="acc-1" class="acc-content">
-                <p class="menu-text">Geben Sie Ihren Standort ein für lokale Daten & Warnungen.</p>
+                <p class="menu-text">Standort eingeben:</p>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
-                <span>🌙 Display & Ruhemodus</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')"><span>🌙 Display & Ruhemodus</span> <span>▼</span></button>
             <div id="acc-sleep" class="acc-content">
-                <p class="menu-text">Automatische Abschaltung des Displays (Zeitraum definieren).</p>
-                <div class="inp-time-row">
-                    <span class="inp-label">Abschalten um:</span>
-                    <input type="time" id="inp-time-from" class="inp-time">
-                </div>
-                <div class="inp-time-row">
-                    <span class="inp-label">Aufwecken um:</span>
-                    <input type="time" id="inp-time-to" class="inp-time">
-                </div>
-                <div class="menu-tip-box">
-                    <span class="menu-tip-title">Tipp: Darker App</span>
-                    <p class="menu-text">Nutzen Sie "Darker (Screen Filter)", um das graue Leuchten älterer Displays zu eliminieren.</p>
-                </div>
+                <div class="inp-time-row"><span class="inp-label">Abschalten um:</span><input type="time" id="inp-time-from" class="inp-time"></div>
+                <div class="inp-time-row"><span class="inp-label">Aufwecken um:</span><input type="time" id="inp-time-to" class="inp-time"></div>
                 <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
                 <button class="btn-action" onclick="toggleSleep()" style="margin-top:10px">JETZT TESTEN</button>
                 <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-contact')">
-                <span>☕ Kontakt & Support</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-contact')"><span>☕ Kontakt & Support</span> <span>▼</span></button>
             <div id="acc-contact" class="acc-content">
-                <p class="menu-text">Bei Fragen oder Wünschen:</p>
                 <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL</a>
                 <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WEBSEITE</a>
-                
-                <p class="menu-text" style="margin-top:25px; border-top:1px solid #333; padding-top:15px;">
-                    Gefällt Ihnen Aura? Ich freue mich über einen virtuellen Kaffee für die langen Nächte!
-                </p>
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT SPENDEN</a>
                 <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
             </div>
-            
-            <button class="acc-btn" onclick="toggleAccordion('acc-legal')">
-                <span>⚖️ Impressum</span> <span>▼</span>
-            </button>
+             <button class="acc-btn" onclick="toggleAccordion('acc-legal')"><span>⚖️ Impressum</span> <span>▼</span></button>
             <div id="acc-legal" class="acc-content">
                 <p class="menu-text">Code-Werft Projects<br>Karl Altmannshofer<br>Braunschweig</p>
-                <p class="menu-text">Version: 64.0 (Generalüberholung)</p>
+                <p class="menu-text">Version: 65.0 (Warn-Monitor)</p>
                 <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
             </div>
-
         </div>
     </div>
 
-    <script src="script.js?v=64.0"></script>
+    <script src="script.js?v=65.0"></script>
 </body>
-        </html>
+    </html>
