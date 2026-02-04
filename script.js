@@ -1,7 +1,7 @@
-/* --- AURA V76.0 (POSITION & TEXT FIX ENGINE) --- */
+/* --- AURA V77.0 (SLIM MONITOR ENGINE) --- */
 
 const CONFIG = {
-    version: 76.0,
+    version: 77.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -201,13 +201,8 @@ function loadRealDWD(lat, lon) {
             else if(level === 2) monitor.classList.add('warn-yellow');
             else monitor.classList.add('warn-cyan'); 
 
-            // V76 FIX: Wir nehmen "headline_de" (Lang) bevorzugt vor "event_de" (Kurz)
-            // headline_de ist z.B. "Amtliche Warnung vor leichtem Frost"
-            // event_de ist z.B. "Frost"
+            // V77 Logic: Immer noch bevorzugt die lange Headline
             let msg = topAlert.headline_de || topAlert.event_de || "WETTERWARNUNG";
-            
-            // Text säubern: Manchmal steht "Amtliche..." doppelt drin, das ist ok, 
-            // aber wir machen es UpperCase für den Look
             txt.innerText = msg.toUpperCase();
 
             let end = new Date(topAlert.expires);
@@ -312,7 +307,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} POSITION & TEXT FIX +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} SLIM MONITOR +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 

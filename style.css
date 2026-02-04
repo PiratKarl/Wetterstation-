@@ -1,4 +1,4 @@
-/* --- AURA V76.0 (POSITION & TEXT FIX) --- */
+/* --- AURA V77.0 (SLIM MONITOR) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -76,14 +76,12 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 }
 #btn-menu:hover { opacity: 1; color: #00eaff; }
 
-/* RECHTS: WARN MONITOR (FIX V76: WEITER NACH LINKS & BREITER) */
+/* RECHTS: WARN MONITOR (FIX V77: SCHMALER 170px) */
 #dwd-monitor {
     position: absolute;
-    /* V76: Wir schieben ihn massiv nach links (weg von der Sonne) */
-    right: 40%; 
+    right: 40%; /* Position bleibt, da sie gut war */
     top: 5px;
-    /* V76: Wieder etwas breiter für den langen Text */
-    width: 220px; 
+    width: 170px; /* V77: Deutlich schmaler (vorher 220px) */
     padding: 6px;
     box-sizing: border-box;
     border-radius: 6px;
@@ -97,7 +95,6 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 
 .dwd-head { font-size: 1.1vh; color: #888; letter-spacing: 1px; display:block; margin-bottom: 2px; }
 
-/* V76: Schriftgröße angepasst für lange Texte */
 .dwd-content { 
     font-size: 1.5vh; 
     font-weight: 900; 
