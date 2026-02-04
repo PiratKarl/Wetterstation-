@@ -1,7 +1,7 @@
-/* --- AURA V72.0 (POSITION FIX ENGINE) --- */
+/* --- AURA V73.0 (REAL DWD WARNINGS VIA BRIGHTSKY) --- */
 
 const CONFIG = {
-    version: 72.0,
+    version: 73.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -152,13 +152,15 @@ function loadData() {
     .then(r => r.json())
     .then(current => {
         renderCurrent(current);
+        // HIER STARTEN WIR JETZT AUCH DEN ECHTEN DWD CHECK
+        loadRealDWD(current.coord.lat, current.coord.lon);
+        
         return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${current.coord.lat}&lon=${current.coord.lon}&appid=${CONFIG.apiKey}&units=metric&lang=de&_t=${cb}`);
     })
     .then(r => r.json())
     .then(forecast => {
         globalForecastCache = forecast;
         renderForecast(forecast);
-        updateMonitor(globalForecastCache.list[0], forecast);
         return loadTicker(forecast);
     })
     .then(() => { hideLoader(); })
@@ -172,68 +174,60 @@ function loadData() {
     document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
 }
 
-/* --- MONITOR LOGIK --- */
-function updateMonitor(currentSlot, forecastData) {
+/* --- ECHTE DWD WARNUNGEN (BRIGHTSKY API) --- */
+function loadRealDWD(lat, lon) {
     let monitor = document.getElementById('dwd-monitor');
     let txt = document.getElementById('dwd-text');
     let time = document.getElementById('dwd-valid');
     
     if(!monitor) return;
-    monitor.className = ''; 
 
-    let id = currentSlot.weather[0].id;
-    let wind = currentSlot.wind.speed * 3.6; 
-    let gust = (currentSlot.wind.gust || 0) * 3.6;
-    let maxWind = Math.max(wind, gust);
+    fetch(`https://api.brightsky.dev/alerts?lat=${lat}&lon=${lon}`)
+    .then(r => r.json())
+    .then(data => {
+        // Reset
+        monitor.className = 'warn-cyan';
+        txt.innerText = "KEINE WARNUNG";
+        time.style.display = "none";
 
-    let level = 0; 
-    let message = "KEINE WARNUNG";
-    
-    if(maxWind >= 100) { level = 3; message = "ORKANBÖEN (Stufe 4)"; }
-    else if(id === 212 || id === 221) { level = 3; message = "SCHWERES GEWITTER"; }
-    else if(id >= 602 && id <= 622) { level = 3; message = "EXTREMER SCHNEEFALL"; }
-    else if(id === 504) { level = 3; message = "EXTREMER STARKREGEN"; }
-    
-    else if(level < 2 && maxWind >= 75) { level = 2; message = "STURMBÖEN (Stufe 3)"; }
-    else if(level < 2 && id >= 200 && id < 300) { level = 2; message = "GEWITTER / STURM"; }
-    else if(level < 2 && (id === 502 || id === 503)) { level = 2; message = "STARKREGEN (Stufe 3)"; }
-    else if(level < 2 && id === 601) { level = 2; message = "SCHNEEFALL (Stufe 3)"; }
+        if(data && data.alerts && data.alerts.length > 0) {
+            // Wir suchen die schlimmste Warnung
+            let alerts = data.alerts;
+            // Sortieren nach Schweregrad (severity: minor, moderate, severe, extreme)
+            let severityMap = { 'minor': 1, 'moderate': 2, 'severe': 3, 'extreme': 4 };
+            
+            alerts.sort((a, b) => severityMap[b.severity] - severityMap[a.severity]);
+            
+            let topAlert = alerts[0];
+            let level = severityMap[topAlert.severity] || 1;
+            
+            // Farben setzen
+            monitor.className = '';
+            if(level === 4) monitor.classList.add('warn-red');
+            else if(level === 3) monitor.classList.add('warn-orange');
+            else if(level === 2) monitor.classList.add('warn-yellow');
+            else monitor.classList.add('warn-cyan'); // Minor/Info
 
-    else if(level < 1 && maxWind >= 50) { level = 1; message = "WINDBÖEN (Stufe 1)"; }
-    else if(level < 1 && id >= 500 && id < 600) { level = 1; message = "DAUERREGEN (Stufe 1)"; }
-    else if(level < 1 && id >= 600 && id < 700) { level = 1; message = "SCHNEE / GLÄTTE"; }
-    else if(level < 1 && id === 741) { level = 1; message = "DICHTER NEBEL"; }
-    else if(level < 1 && id >= 300 && id < 400) { level = 1; message = "SPRÜHREGEN"; }
+            // Text übersetzen (BrightSky liefert oft Deutsch, aber sicher ist sicher)
+            // Titel ist oft lang, wir nehmen event_de oder headline_de
+            let msg = topAlert.event_de || topAlert.headline_de || "WETTERWARNUNG";
+            // Kürzen falls zu lang
+            if(msg.length > 25) msg = msg.substring(0, 22) + "...";
+            txt.innerText = msg.toUpperCase();
 
-    if(level === 3) monitor.classList.add('warn-red');
-    else if(level === 2) monitor.classList.add('warn-orange');
-    else if(level === 1) monitor.classList.add('warn-yellow');
-    else monitor.classList.add('warn-cyan');
-
-    if(level > 0) {
-        let validUntil = "";
-        for(let i=1; i<forecastData.list.length; i++) {
-            let slot = forecastData.list[i];
-            let slotId = slot.weather[0].id;
-            let slotWind = Math.max(slot.wind.speed * 3.6, (slot.wind.gust||0)*3.6);
-            let stillBad = false;
-            if(level === 3 && (slotWind >= 100 || (slotId>=200 && slotId<=232))) stillBad = true;
-            else if(level === 2 && (slotWind >= 75 || (slotId>=200 && slotId<=232) || slotId===502)) stillBad = true;
-            else if(level === 1 && (slotWind >= 50 || (slotId>=300 && slotId<=700))) stillBad = true;
-            if(!stillBad) {
-                let date = new Date(slot.dt * 1000);
-                validUntil = (date.getHours()<10?'0':'') + date.getHours() + ":00";
-                break;
-            }
+            // Zeit
+            let end = new Date(topAlert.expires);
+            let endStr = (end.getHours()<10?'0':'') + end.getHours() + ":" + (end.getMinutes()<10?'0':'') + end.getMinutes();
+            time.innerText = "Bis: " + endStr + " Uhr";
+            time.style.display = "block";
         }
-        if(validUntil === "") validUntil = "auf weiteres";
-        time.innerText = "Gültig bis: " + validUntil + " Uhr";
-        time.style.display = "block";
-    } else {
-        time.style.display = "none"; 
-    }
-    txt.innerText = message;
+    })
+    .catch(e => {
+        console.log("DWD Error", e);
+        // Fallback: Bleibt auf "Keine Warnung" oder behält alten Status
+    });
 }
+
 
 /* --- RENDER CURRENT (DATA) --- */
 function renderCurrent(data) {
@@ -326,7 +320,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} POSITION FIX +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} REAL DWD WARNINGS +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
