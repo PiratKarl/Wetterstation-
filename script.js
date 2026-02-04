@@ -1,7 +1,7 @@
-/* --- AURA V73.0 (REAL DWD WARNINGS VIA BRIGHTSKY) --- */
+/* --- AURA V74.0 (DETAILED MONITOR ENGINE) --- */
 
 const CONFIG = {
-    version: 73.0,
+    version: 74.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -152,9 +152,7 @@ function loadData() {
     .then(r => r.json())
     .then(current => {
         renderCurrent(current);
-        // HIER STARTEN WIR JETZT AUCH DEN ECHTEN DWD CHECK
         loadRealDWD(current.coord.lat, current.coord.lon);
-        
         return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${current.coord.lat}&lon=${current.coord.lon}&appid=${CONFIG.apiKey}&units=metric&lang=de&_t=${cb}`);
     })
     .then(r => r.json())
@@ -185,37 +183,28 @@ function loadRealDWD(lat, lon) {
     fetch(`https://api.brightsky.dev/alerts?lat=${lat}&lon=${lon}`)
     .then(r => r.json())
     .then(data => {
-        // Reset
         monitor.className = 'warn-cyan';
         txt.innerText = "KEINE WARNUNG";
         time.style.display = "none";
 
         if(data && data.alerts && data.alerts.length > 0) {
-            // Wir suchen die schlimmste Warnung
             let alerts = data.alerts;
-            // Sortieren nach Schweregrad (severity: minor, moderate, severe, extreme)
             let severityMap = { 'minor': 1, 'moderate': 2, 'severe': 3, 'extreme': 4 };
-            
             alerts.sort((a, b) => severityMap[b.severity] - severityMap[a.severity]);
             
             let topAlert = alerts[0];
             let level = severityMap[topAlert.severity] || 1;
             
-            // Farben setzen
             monitor.className = '';
             if(level === 4) monitor.classList.add('warn-red');
             else if(level === 3) monitor.classList.add('warn-orange');
             else if(level === 2) monitor.classList.add('warn-yellow');
-            else monitor.classList.add('warn-cyan'); // Minor/Info
+            else monitor.classList.add('warn-cyan'); 
 
-            // Text übersetzen (BrightSky liefert oft Deutsch, aber sicher ist sicher)
-            // Titel ist oft lang, wir nehmen event_de oder headline_de
+            // V74 UPDATE: Kein Abschneiden mehr! Volle Länge zeigen.
             let msg = topAlert.event_de || topAlert.headline_de || "WETTERWARNUNG";
-            // Kürzen falls zu lang
-            if(msg.length > 25) msg = msg.substring(0, 22) + "...";
             txt.innerText = msg.toUpperCase();
 
-            // Zeit
             let end = new Date(topAlert.expires);
             let endStr = (end.getHours()<10?'0':'') + end.getHours() + ":" + (end.getMinutes()<10?'0':'') + end.getMinutes();
             time.innerText = "Bis: " + endStr + " Uhr";
@@ -224,10 +213,8 @@ function loadRealDWD(lat, lon) {
     })
     .catch(e => {
         console.log("DWD Error", e);
-        // Fallback: Bleibt auf "Keine Warnung" oder behält alten Status
     });
 }
-
 
 /* --- RENDER CURRENT (DATA) --- */
 function renderCurrent(data) {
@@ -320,7 +307,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} REAL DWD WARNINGS +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} DETAILED MONITOR +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
