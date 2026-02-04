@@ -1,7 +1,7 @@
-/* --- AURA V65.0 (WARN-MONITOR ENGINE) --- */
+/* --- AURA V66.0 (SPLIT SYSTEM & MONITOR ENGINE) --- */
 
 const CONFIG = {
-    version: 65.0,
+    version: 66.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -34,9 +34,8 @@ function startApp() {
 
     initVideoFallback();
 
-    document.getElementById('inp-city-val').value = CONFIG.city;
-    document.getElementById('inp-time-from').value = CONFIG.sleepFrom;
-    document.getElementById('inp-time-to').value = CONFIG.sleepTo;
+    // WICHTIG: Erst das Menü laden, dann die Werte setzen
+    loadMenu();
 
     runClock(); 
     loadData(); 
@@ -57,9 +56,35 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
+/* --- MENÜ NACHLADEN (NEU V66) --- */
+function loadMenu() {
+    // Cache Buster auch für das Menü, damit Änderungen sofort greifen
+    fetch('menu.html?v=' + CONFIG.version)
+    .then(response => response.text())
+    .then(html => {
+        // Menü in den Platzhalter einfügen
+        let ph = document.getElementById('menu-placeholder');
+        if(ph) {
+            ph.innerHTML = html;
+            // JETZT erst die Werte in die Felder schreiben (vorher existierten sie nicht)
+            let cityInp = document.getElementById('inp-city-val');
+            if(cityInp) cityInp.value = CONFIG.city;
+            
+            let tFrom = document.getElementById('inp-time-from');
+            if(tFrom) tFrom.value = CONFIG.sleepFrom;
+            
+            let tTo = document.getElementById('inp-time-to');
+            if(tTo) tTo.value = CONFIG.sleepTo;
+        }
+    })
+    .catch(err => {
+        console.error("Menü konnte nicht geladen werden:", err);
+    });
+}
+
 /* --- LOADER LOGIK --- */
-function showLoader() { document.getElementById('loader').style.display = 'block'; }
-function hideLoader() { setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 1000); }
+function showLoader() { let l = document.getElementById('loader'); if(l) l.style.display = 'block'; }
+function hideLoader() { setTimeout(() => { let l = document.getElementById('loader'); if(l) l.style.display = 'none'; }, 1000); }
 
 /* --- TIME & SLEEP --- */
 function runClock() {
@@ -142,7 +167,7 @@ function loadData() {
     .then(forecast => {
         globalForecastCache = forecast;
         renderForecast(forecast);
-        updateMonitor(globalForecastCache.list[0], forecast); // NEU: Monitor Update
+        updateMonitor(globalForecastCache.list[0], forecast);
         return loadTicker(forecast);
     })
     .then(() => { hideLoader(); })
@@ -156,39 +181,35 @@ function loadData() {
     document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
 }
 
-/* --- NEU V65: WARN-MONITOR LOGIK --- */
+/* --- WARN-MONITOR LOGIK --- */
 function updateMonitor(currentSlot, forecastData) {
     let monitor = document.getElementById('dwd-monitor');
     let txt = document.getElementById('dwd-text');
     let time = document.getElementById('dwd-valid');
     
     // Reset
-    monitor.className = '';
-    
+    if(monitor) monitor.className = '';
+    else return; // Falls Monitor noch nicht geladen (sollte nicht passieren)
+
     let id = currentSlot.weather[0].id;
-    let wind = currentSlot.wind.speed * 3.6; // km/h
+    let wind = currentSlot.wind.speed * 3.6; 
     let gust = (currentSlot.wind.gust || 0) * 3.6;
     let maxWind = Math.max(wind, gust);
 
-    // Default: Alles gut
-    let level = 0; // 0=Cyan, 1=Yellow, 2=Orange, 3=Red
+    let level = 0; 
     let message = "KEINE WARNUNG";
     
-    // LOGIK-CHECK (Priorität: Rot -> Orange -> Gelb)
-
-    // STUFE 4-5 (ROT) - UNWETTER
+    // LOGIK-CHECK 
     if(maxWind >= 100) { level = 3; message = "ORKANBÖEN (Stufe 4)"; }
     else if(id === 212 || id === 221) { level = 3; message = "SCHWERES GEWITTER"; }
     else if(id >= 602 && id <= 622) { level = 3; message = "EXTREMER SCHNEEFALL"; }
     else if(id === 504) { level = 3; message = "EXTREMER STARKREGEN"; }
     
-    // STUFE 3 (ORANGE) - MARKANT
     else if(level < 2 && maxWind >= 75) { level = 2; message = "STURMBÖEN (Stufe 3)"; }
     else if(level < 2 && id >= 200 && id < 300) { level = 2; message = "GEWITTER / STURM"; }
     else if(level < 2 && (id === 502 || id === 503)) { level = 2; message = "STARKREGEN (Stufe 3)"; }
     else if(level < 2 && id === 601) { level = 2; message = "SCHNEEFALL (Stufe 3)"; }
 
-    // STUFE 1-2 (GELB) - WETTERWARNUNG
     else if(level < 1 && maxWind >= 50) { level = 1; message = "WINDBÖEN (Stufe 1)"; }
     else if(level < 1 && id >= 500 && id < 600) { level = 1; message = "DAUERREGEN (Stufe 1)"; }
     else if(level < 1 && id >= 600 && id < 700) { level = 1; message = "SCHNEE / GLÄTTE"; }
@@ -201,21 +222,17 @@ function updateMonitor(currentSlot, forecastData) {
     else if(level === 1) monitor.classList.add('warn-yellow');
     else monitor.classList.add('warn-cyan');
 
-    // GÜLTIGKEIT BERECHNEN (Wie lange bleibt das schlechte Wetter?)
+    // GÜLTIGKEIT
     if(level > 0) {
         let validUntil = "";
-        // Suche im Forecast, wann sich das Wetter bessert
         for(let i=1; i<forecastData.list.length; i++) {
             let slot = forecastData.list[i];
             let slotId = slot.weather[0].id;
             let slotWind = Math.max(slot.wind.speed * 3.6, (slot.wind.gust||0)*3.6);
-            
-            // Wenn Wetter besser wird (Codes ändern sich oder Wind lässt nach)
             let stillBad = false;
             if(level === 3 && (slotWind >= 100 || (slotId>=200 && slotId<=232))) stillBad = true;
             else if(level === 2 && (slotWind >= 75 || (slotId>=200 && slotId<=232) || slotId===502)) stillBad = true;
             else if(level === 1 && (slotWind >= 50 || (slotId>=300 && slotId<=700))) stillBad = true;
-
             if(!stillBad) {
                 let date = new Date(slot.dt * 1000);
                 validUntil = (date.getHours()<10?'0':'') + date.getHours() + ":00";
@@ -226,9 +243,8 @@ function updateMonitor(currentSlot, forecastData) {
         time.innerText = "Gültig bis: " + validUntil + " Uhr";
         time.style.display = "block";
     } else {
-        time.style.display = "none"; // Bei Cyan keine Zeit anzeigen
+        time.style.display = "none"; 
     }
-
     txt.innerText = message;
 }
 
@@ -329,10 +345,8 @@ function renderForecast(data) {
 
 async function loadTicker(localForecast) {
     let tickerContent = "";
-    // Warnungen sind jetzt oben im Monitor, Ticker zeigt System-Status
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} ONLINE +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} SPLIT SYSTEM ONLINE +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 

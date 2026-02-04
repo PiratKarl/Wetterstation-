@@ -1,0 +1,74 @@
+<div id="menu-modal">
+    <div class="menu-container">
+        
+        <div class="menu-header">
+            <h2>EINSTELLUNGEN</h2>
+            <button class="menu-close-btn" onclick="closeMenu()">×</button>
+        </div>
+
+        <button class="acc-btn" onclick="toggleAccordion('acc-1')">
+            <span>📍 Standort & Daten</span> <span>▼</span>
+        </button>
+        <div id="acc-1" class="acc-content">
+            <p class="menu-text">Geben Sie Ihren Standort ein, um lokale Wetterdaten und DWD-Warnungen zu erhalten.</p>
+            <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben (z.B. Braunschweig)">
+            <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
+            <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
+        </div>
+
+        <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
+            <span>🌙 Display & Ruhemodus</span> <span>▼</span>
+        </button>
+        <div id="acc-sleep" class="acc-content">
+            <p class="menu-text">Hier definieren Sie, wann das Display dunkel werden soll (Nachtruhe).</p>
+            <div class="inp-time-row">
+                <span class="inp-label">Abschalten um:</span>
+                <input type="time" id="inp-time-from" class="inp-time">
+            </div>
+            <div class="inp-time-row">
+                <span class="inp-label">Aufwecken um:</span>
+                <input type="time" id="inp-time-to" class="inp-time">
+            </div>
+            
+            <div class="menu-tip-box">
+                <span class="menu-tip-title">Tipp für OLED/LCD</span>
+                <p class="menu-text">Der Ruhemodus schaltet das Dashboard schwarz. Tippen Sie jederzeit auf den Bildschirm, um ihn kurz aufzuwecken.</p>
+            </div>
+
+            <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
+            <button class="btn-action" onclick="toggleSleep()" style="margin-top:10px">JETZT TESTEN</button>
+            <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
+        </div>
+
+        <button class="acc-btn" onclick="toggleAccordion('acc-contact')">
+            <span>☕ Kontakt & Support</span> <span>▼</span>
+        </button>
+        <div id="acc-contact" class="acc-content">
+            <p class="menu-text">Haben Sie Fragen oder Verbesserungsvorschläge?</p>
+            <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL SENDEN</a>
+            <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WEBSEITE BESUCHEN</a>
+            
+            <p class="menu-text" style="margin-top:25px; border-top:1px solid #333; padding-top:15px;">
+                Gefällt Ihnen Aura? Ich programmiere diese Projekte in meiner Freizeit und freue mich sehr über einen virtuellen Kaffee!
+            </p>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT SPENDEN</a>
+            
+            <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
+        </div>
+        
+        <button class="acc-btn" onclick="toggleAccordion('acc-legal')">
+            <span>⚖️ Impressum</span> <span>▼</span>
+        </button>
+        <div id="acc-legal" class="acc-content">
+            <p class="menu-text">
+                <strong>Code-Werft Projects</strong><br>
+                Karl Altmannshofer<br>
+                Braunschweig<br>
+                Deutschland
+            </p>
+            <p class="menu-text">Version: 66.0 (Split System)</p>
+            <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
+        </div>
+
+    </div>
+</div>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V65.0</title>
-    <link rel="stylesheet" href="style.css?v=65.0">
+    <title>Aura Wetterstation V66.0</title>
+    <link rel="stylesheet" href="style.css?v=66.0">
 </head>
 <body>
 
@@ -38,9 +38,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V65 STARTEN
+            AURA V66 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">WARN-MONITOR UPDATE</p>
+        <p style="color:#444; margin-top:20px;">SPLIT SYSTEM & MONITOR FIX</p>
     </div>
 
     <div class="dashboard">
@@ -112,14 +112,14 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 65.0</div>
+                <div class="status-row">VER: 66.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
-        <div id="ticker-text">+++ AURA V65 WARN-MONITOR AKTIV +++</div>
+        <div id="ticker-text">+++ AURA V66 SYSTEM START +++</div>
     </div>
 
     <div class="forecast-area">
@@ -131,43 +131,8 @@
         &copy; Code-Werft 2026 Karl Altmannshofer (Piratkarl) alle Rechte vorbehalten!
     </div>
 
-    <div id="menu-modal">
-        <div class="menu-container">
-            <div class="menu-header">
-                <h2>EINSTELLUNGEN</h2>
-                <button class="menu-close-btn" onclick="closeMenu()">×</button>
-            </div>
-            <button class="acc-btn" onclick="toggleAccordion('acc-1')"><span>📍 Standort & Daten</span> <span>▼</span></button>
-            <div id="acc-1" class="acc-content">
-                <p class="menu-text">Standort eingeben:</p>
-                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
-                <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
-                <button class="btn-back" onclick="closeAccordion('acc-1')">ZURÜCK</button>
-            </div>
-            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')"><span>🌙 Display & Ruhemodus</span> <span>▼</span></button>
-            <div id="acc-sleep" class="acc-content">
-                <div class="inp-time-row"><span class="inp-label">Abschalten um:</span><input type="time" id="inp-time-from" class="inp-time"></div>
-                <div class="inp-time-row"><span class="inp-label">Aufwecken um:</span><input type="time" id="inp-time-to" class="inp-time"></div>
-                <button class="btn-save" onclick="saveSettings()">SPEICHERN</button>
-                <button class="btn-action" onclick="toggleSleep()" style="margin-top:10px">JETZT TESTEN</button>
-                <button class="btn-back" onclick="closeAccordion('acc-sleep')">ZURÜCK</button>
-            </div>
-            <button class="acc-btn" onclick="toggleAccordion('acc-contact')"><span>☕ Kontakt & Support</span> <span>▼</span></button>
-            <div id="acc-contact" class="acc-content">
-                <a href="mailto:webmaster@code-werft.de" class="btn-action">📧 E-MAIL</a>
-                <a href="https://code-werft.de" target="_blank" class="btn-link">🌐 WEBSEITE</a>
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=piratkarl@web.de&item_name=Aura+Projekt&currency_code=EUR" target="_blank" class="btn-paypal">☕ JETZT SPENDEN</a>
-                <button class="btn-back" onclick="closeAccordion('acc-contact')">ZURÜCK</button>
-            </div>
-             <button class="acc-btn" onclick="toggleAccordion('acc-legal')"><span>⚖️ Impressum</span> <span>▼</span></button>
-            <div id="acc-legal" class="acc-content">
-                <p class="menu-text">Code-Werft Projects<br>Karl Altmannshofer<br>Braunschweig</p>
-                <p class="menu-text">Version: 65.0 (Warn-Monitor)</p>
-                <button class="btn-back" onclick="closeAccordion('acc-legal')">ZURÜCK</button>
-            </div>
-        </div>
-    </div>
+    <div id="menu-placeholder"></div>
 
-    <script src="script.js?v=65.0"></script>
+    <script src="script.js?v=66.0"></script>
 </body>
-    </html>
+</html>
