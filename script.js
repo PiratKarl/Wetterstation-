@@ -1,12 +1,12 @@
-/* --- AURA V80.0 (MULTI-TICKER ENGINE) --- */
+/* --- AURA V80.2 (CACHE FIX ENGINE) --- */
 
 const CONFIG = {
-    version: 80.0,
+    version: 80.2, // WICHTIG: Hier stand noch 80.0, deshalb kam das alte Menü!
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
     sleepTo: localStorage.getItem('aura_sleep_to') || '',
-    tickerMode: localStorage.getItem('aura_ticker_mode') || 'world' // Neu: world, snow, summer
+    tickerMode: localStorage.getItem('aura_ticker_mode') || 'world'
 };
 
 /* --- DATENBANKEN FÜR TICKER --- */
@@ -98,6 +98,7 @@ function initVideoFallback() {
 
 /* --- MENÜ NACHLADEN & HANDLING --- */
 function loadMenu() {
+    // CACHE BUSTER: Wir hängen die Version an, damit der Browser die neue Datei holt!
     fetch('menu.html?v=' + CONFIG.version)
     .then(response => response.text())
     .then(html => {
@@ -115,7 +116,6 @@ function loadMenu() {
             let tTo = document.getElementById('inp-time-to');
             if(tTo) tTo.value = CONFIG.sleepTo;
             
-            // NEU: Ticker Modus setzen
             let tMode = document.getElementById('inp-ticker-mode');
             if(tMode) tMode.value = CONFIG.tickerMode;
         }
@@ -127,19 +127,18 @@ function saveSettings() {
     let city = document.getElementById('inp-city-val').value;
     let tFrom = document.getElementById('inp-time-from').value;
     let tTo = document.getElementById('inp-time-to').value;
-    let tMode = document.getElementById('inp-ticker-mode').value; // NEU
+    let tMode = document.getElementById('inp-ticker-mode').value;
     
     if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; }
     
     localStorage.setItem('aura_sleep_from', tFrom); CONFIG.sleepFrom = tFrom;
     localStorage.setItem('aura_sleep_to', tTo); CONFIG.sleepTo = tTo;
     
-    // Ticker speichern
     localStorage.setItem('aura_ticker_mode', tMode); 
     CONFIG.tickerMode = tMode;
     
     closeMenu();
-    loadData(); // Sofort neu laden um Ticker zu ändern
+    loadData();
 }
 
 /* --- LOADER --- */
@@ -228,7 +227,7 @@ function loadData() {
     .then(forecast => {
         globalForecastCache = forecast;
         renderForecast(forecast);
-        return loadTicker(); // Startet den Ticker je nach Modus
+        return loadTicker();
     })
     .then(() => { hideLoader(); })
     .catch(e => {
@@ -331,19 +330,16 @@ function renderForecast(data) {
     document.getElementById('moon-phase').innerText = getMoonPhase(new Date());
 }
 
-/* --- DER NEUE MULTI-TICKER --- */
 async function loadTicker() {
     let tickerContent = "";
     if(batteryCritical) tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `;
     
-    // Header je nach Modus
     if(CONFIG.tickerMode === 'snow') tickerContent += `<span class="t-item">+++ SCHNEEHÖHEN (SKIGEBIETE) +++</span>`;
     else if(CONFIG.tickerMode === 'summer') tickerContent += `<span class="t-item">+++ WASSERTEMPERATUREN (BADEORTE) +++</span>`;
     else tickerContent += `<span class="t-item">+++ WELT-WETTER +++</span>`;
 
     let cb = Date.now();
 
-    /* FALL 1: SCHNEE */
     if(CONFIG.tickerMode === 'snow') {
         let requests = SNOW_LOCATIONS.map(loc => 
             fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=snow_depth&timezone=auto`)
@@ -352,13 +348,11 @@ async function loadTicker() {
         const results = await Promise.all(requests);
         results.forEach(item => {
             if(item && item.data && item.data.current) {
-                let cm = Math.round(item.data.current.snow_depth * 100); // Meter -> cm
+                let cm = Math.round(item.data.current.snow_depth * 100);
                 let val = cm > 0 ? cm + "cm" : "0cm";
                 tickerContent += `<div class="t-item">${item.name} ❄️ ${val}</div>`;
             }
         });
-
-    /* FALL 2: SOMMER (MEER) */
     } else if(CONFIG.tickerMode === 'summer') {
         let requests = SUMMER_LOCATIONS.map(loc => 
             fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${loc.lat}&longitude=${loc.lon}&current=sea_surface_temperature&timezone=auto`)
@@ -371,8 +365,6 @@ async function loadTicker() {
                 tickerContent += `<div class="t-item">${item.name} 🌊 ${temp}°C</div>`;
             }
         });
-
-    /* FALL 3: WELT (STANDARD) */
     } else {
         let requests = WORLD_CITIES.map(city => 
             fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${CONFIG.apiKey}&units=metric&_t=${cb}`)
@@ -388,7 +380,6 @@ async function loadTicker() {
             }
         });
     }
-
     document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
