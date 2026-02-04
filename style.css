@@ -1,4 +1,4 @@
-/* --- AURA V69.0 (FINAL POLISH & LOGIC) --- */
+/* --- AURA V70.0 (FINAL BALANCE) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -39,9 +39,21 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
     display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
     margin-left: 15px; 
 }
-.feels-row { color: #aaa; font-size: 1.8vh; font-weight: bold; margin-bottom: 2px; }
-.rain-row { color: #00eaff; font-size: 2.2vh; font-weight: bold; display: flex; align-items: center; }
-.rain-icon-inline { width: 2.2vh; height: 2.2vh; fill: #00eaff; margin-right: 5px; }
+/* UPDATE V70: GEFÜHLT JETZT IDENTISCH ZU REGEN */
+.feels-row { 
+    color: #00eaff; /* Cyan statt Grau */
+    font-size: 2.2vh; /* Gleiche Größe */
+    font-weight: bold; 
+    display: flex; align-items: center;
+    margin-bottom: 5px; /* Kleiner Abstand zu Regen */
+}
+.rain-row { 
+    color: #00eaff; 
+    font-size: 2.2vh; 
+    font-weight: bold; 
+    display: flex; align-items: center; 
+}
+.stack-icon { width: 2.2vh; height: 2.2vh; fill: #00eaff; margin-right: 5px; }
 
 /* MITTE - UNTERE REIHE (DEEP DATA 4 ITEMS) */
 .deep-data-row {
@@ -53,29 +65,29 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .cell-val { font-size: 2.5vh; font-weight: bold; color: #ddd; white-space: nowrap; }
 .cell-unit { font-size: 0.7em; color: #aaa; margin-left: 2px; font-weight: normal; }
 
-/* RECHTS: MENÜ (KLEIN & OHNE RAHMEN) */
+/* RECHTS: MENÜ */
 #btn-menu {
-    background: transparent; border: none; /* RAHMEN WEG */
+    background: transparent; border: none;
     color: #fff; font-size: 2.0vh; font-weight: bold;
     padding: 5px; cursor: pointer; 
     margin-bottom: 0; margin-top: 0; 
     text-align: right; 
     display: flex; align-items: center; justify-content: flex-end;
-    opacity: 0.7; /* Etwas dezenter */
+    opacity: 0.7; 
 }
 #btn-menu:hover { opacity: 1; color: #00eaff; }
 
-/* RECHTS: WARN MONITOR (PLATZIERT IN DER LÜCKE) */
+/* RECHTS: WARN MONITOR (UPDATE V70: MEHR NACH RECHTS) */
 #dwd-monitor {
     position: absolute;
-    right: 120%; /* Schiebt ihn weit nach links in die Lücke */
+    right: 95%; /* WAR 120% -> Jetzt 95%, also weiter nach rechts Richtung Rand */
     top: 5px;
-    width: 160px; /* Schön breit für Text */
+    width: 160px;
     padding: 6px;
     box-sizing: border-box;
     border-radius: 6px;
     text-align: center;
-    border: 1px solid #333; /* Dezenterer Rand */
+    border: 1px solid #333;
     background: rgba(10, 10, 10, 0.9);
     display: flex; flex-direction: column; justify-content: center;
     z-index: 50;

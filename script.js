@@ -1,7 +1,7 @@
-/* --- AURA V69.0 (FINAL POLISH ENGINE) --- */
+/* --- AURA V70.0 (FINAL BALANCE ENGINE) --- */
 
 const CONFIG = {
-    version: 69.0,
+    version: 70.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -326,7 +326,7 @@ function renderForecast(data) {
 async function loadTicker(localForecast) {
     let tickerContent = "";
     if(batteryCritical) { tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `; }
-    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} FINAL POLISH +++</span>`;
+    tickerContent += `<span class="t-item">+++ AURA V${CONFIG.version} FINAL BALANCE +++</span>`;
     
     let cb = Date.now();
     let requests = WORLD_CITIES.map(city => 
