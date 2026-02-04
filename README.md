@@ -2,63 +2,86 @@
   <img src="logo.png" width="500">
 </p>
 
-Aura Weather OS – Legacy Edition (de) 
+# ⚓ Code-Werft Wetterstation (Aura)
 
-​Gib deinem alten Tablet oder Handy ein zweites Leben als professionelle Wetterstation.
+![Version](https://img.shields.io/badge/Version-73.0-00eaff?style=for-the-badge) ![Status](https://img.shields.io/badge/Status-Stable-success?style=for-the-badge) ![Tech](https://img.shields.io/badge/Tech-HTML5%20%7C%20CSS3%20%7C%20JS-yellow?style=for-the-badge)
 
-​Dieses Projekt wurde speziell entwickelt, um auf älterer Hardware (z. B. Samsung Galaxy Tabs der frühen Generationen) stabil, flüssig und vor allem lesbar zu laufen. Während moderne Wetter-Apps oft zu viel Rechenleistung fressen, setzt Aura Weather OS auf hocheffizientes HTML5, CSS-Tabellen-Logik und ein Design, das man auch aus 5 Metern Entfernung noch erkennt.
-​
+Eine hochoptimierte, webbasierte Wetterstation, speziell entwickelt für das **Upcycling älterer Android-Tablets** zur Wandmontage. Das Design ist ein futuristischer "Dark Mode" mit hohem Kontrast (Cyan/Schwarz), optimiert für dauerhafte Lesbarkeit und minimale Hardware-Belastung.
 
-✨ Hauptfunktionen
+---
 
-​Massive Anzeige: Uhrzeit und Temperatur sind für maximale Sichtbarkeit optimiert (7rem+).
-​Dynamische Gefühlte Temperatur: Erscheint nur bei Abweichungen (Rot bei Hitze, Blau bei Kälte).
-​** Beaufort-Wind-Ticker:** Echtzeit-Winddaten inkl. Himmelsrichtung und textueller Bezeichnung (z. B. „Steifer Wind“).
-​Astro-Widget: Übergroße Sonnenauf- und -untergangszeiten sowie Mondphasen-Berechnung.
-​Legacy Forecast: 5-Stunden-Vorschau und 5-Tages-Vorschau inklusive echter Höchst- und Tiefstwerte.
-​Auto-Update: Aktualisiert alle 5 Minuten völlig selbstständig.
+## ✨ Features (V73.0)
 
-​🛠️ Tricks für alte Handys & Tablets (Legacy Hacks)
+### 🌤 Wetter & Klima
+* **Echtzeit-Wetterdaten:** Abruf via **OpenWeatherMap API** (Temperatur, Feuchtigkeit, Luftdruck, Sichtweite).
+* **Amtliche Unwetterwarnungen (DWD):** **NEU in V73!** Direkte Integration der **BrightSky API** für offizielle Warnungen des Deutschen Wetterdienstes (keine Simulation mehr!).
+* **Präzise Vorhersage:**
+    * 5-Stunden-Trend (stündlich).
+    * 5-Tage-Trend (inkl. Min/Max & Regenwahrscheinlichkeit).
+* **Deep Data:** Detaillierte Anzeige von Wind (Richtung/Speed), gefühlter Temperatur, Regenmenge (mm) und Mondphasen.
 
-​Alte Geräte haben oft "zickige" Browser oder schwache Akkus. Hier sind die besten Kniffe, die in diesem Code integriert sind oder am Gerät eingestellt werden sollten:
+### 🎨 Design & UI
+* **Layout V73:** Perfekte Symmetrie zwischen Standort, Sensordaten und dem Warn-Monitor.
+* **Smart Icons:** Animierte SVG-Wettericons (Sonne pulsiert, Wolken ziehen, Regen fällt).
+* **Welt-Ticker:** Laufschrift mit Live-Wetter aus 25 Metropolen weltweit.
+* **Video-Background:** Dezent animiertes Logo im Herzschlag-Rhythmus.
 
-​1. Der "Standort-Force-Reload"
+### ⚙️ System & Hardware
+* **Battery Guard:** Überwacht den Ladestand des Tablets und warnt optisch bei kritischer Entladung (z.B. bei Stromausfall).
+* **Smart Sleep:** Konfigurierbarer Ruhemodus (Display dimmt automatisch zu eingestellten Uhrzeiten schwarz, um das Panel zu schonen).
+* **Resilient:** Automatische Fehlerbehandlung bei Netzwerkverlust (Offline-Modus) und Video-Fallback.
+* **No Frameworks:** Reines Vanilla JS und CSS für maximale Performance auf alter Hardware (kein React/Vue/Angular Overhead).
 
-​Alte Browser hängen oft im Cache fest. Unsere App nutzt einen "Harten Reload":
-​Wenn du den Standort änderst, erzwingt das Skript einen kompletten Neuaufruf der URL. Das löscht den alten Cache und zwingt das Tablet, die neuen Daten sofort anzuzeigen.
+---
 
-​2. "Stay Awake" – Das Display niemals ausschalten
+## 🚀 Installation
 
-​Damit deine Wetterstation permanent leuchtet:
-​Android Entwickleroptionen: Gehe zu Einstellungen > Telefoninfo und tippe 7x auf Buildnummer. In den neuen Entwickleroptionen aktiviere "Wach bleiben" (Display geht beim Laden nie aus).
-​WakeLock API: Der Code enthält eine integrierte wakeLock-Funktion, die versucht, den Browser daran zu hindern, das Display abzuschalten.
+Das Projekt benötigt keinen Build-Prozess (kein NPM, kein Webpack). Es ist "Ready-to-Run".
 
-​3. Web-App statt Browser
-​Nutze Chrome auf dem Tablet:
-​Öffne die URL deiner GitHub Page.
-​Tippe auf die drei Punkte (Menü) oben rechts.
-​Wähle "Zum Startbildschirm hinzufügen".
-Vorteil: Die App startet nun im Vollbild ohne störende Adressleiste oder Tabs.
+1.  Repository klonen:
+    ```bash
+    git clone [https://github.com/DEIN-USERNAME/aura-wetterstation.git](https://github.com/DEIN-USERNAME/aura-wetterstation.git)
+    ```
+2.  Anpassungen in der `script.js` vornehmen (optional):
+    * `apiKey`: Deinen eigenen OpenWeatherMap Key eintragen.
+    * `city`: Standard-Stadt (Fallback, falls LocalStorage leer ist).
+3.  Die Datei `index.html` in einem modernen Browser (Chrome/Firefox/WebView) öffnen.
+4.  Für den **Kiosk-Modus** auf Tablets:
+    * App wie "Fully Kiosk Browser" nutzen.
+    * Oder "Zum Startbildschirm hinzufügen" (iOS/Android).
 
-​4. CSS Legacy Mode
-​Anstelle von modernem "CSS Grid" nutzt diese App klassische Table-Layouts und Floats. Warum? Weil alte Android-Webviews (vor 2016) modernes Grid-Design oft völlig zerschießen.
-​
-📊 Technische Daten (Wind-Logik)
-​Die App nutzt die Beaufort-Skala, um Windstärken verständlich zu machen:
+---
 
-Windgeschwindigkeit Bezeichnung
-< 1 km/h Windstille
-1 - 11 km/h Leichte Brise
-12 - 28 km/h Mäßiger Wind
-29 - 49 km/h Frischer bis steifer Wind
-50 - 74 km/h Stürmischer Wind / Sturm 75 km/h Orkanartiger Sturm / Orkan
+## 🛠 Konfiguration
 
-🚀 Installation
+Die Einstellungen können direkt über das Zahnrad-Menü (**⚙ MENÜ**) in der App vorgenommen werden. Die Daten werden lokal im Browser (`localStorage`) gespeichert:
 
-​Erstelle ein GitHub-Repository.
-​Lade index.html, style.css und script.js hoch.
-​Trage deinen eigenen API-Key von OpenWeatherMap in der script.js ein.
-​Aktiviere GitHub Pages in den Einstellungen deines Repositories.
-​Link auf dem Tablet aufrufen – fertig!
+* **Standort:** Stadtname für Wetterdaten.
+* **Schlafmodus:** Start- und Endzeit (z.B. 22:00 bis 06:00 Uhr).
 
-​Entwickelt für: Nachhaltigkeit und die Liebe zu alter Hardware. 🌍♻️
+---
+
+## 📜 Changelog
+
+### V73.0 (Aktuell)
+* **CORE:** Umstellung des Warn-Monitors auf **BrightSky API**. Es werden nun echte, amtliche Warnungen des DWD basierend auf Geokoordinaten angezeigt.
+* **UI:** Warn-Monitor Layout angepasst (Breite erhöht, Position zentriert zwischen Header und Menü).
+
+### V72.0
+* **UI:** Layout-Symmetrie fixiert.
+* **UI:** "Gefühlte Temperatur" in neuen Daten-Stapel integriert (mit Thermometer-Icon).
+
+### V68.0 - V71.0
+* **Engine:** Umbau auf "Layout Revolution Engine".
+* **Feature:** Sichtweite (Visibility) hinzugefügt.
+* **Feature:** Batterie-Trendanzeige (steigend/fallend).
+
+---
+
+## 👨‍💻 Autor & Copyright
+
+**Code-Werft**
+Entwickelt von **Karl Altmannshofer (Piratkarl)**.
+© 2026 Alle Rechte vorbehalten.
+
+*Projektstatus: Aktiv in Entwicklung*
