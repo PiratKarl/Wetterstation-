@@ -1,120 +1,414 @@
-/* --- AURA V82.1 (FOG FIX) --- */
+/* --- AURA V83.0 (GLOBAL FLAG EDITION) --- */
 
-/* BASIS */
-html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
-#wake-video-layer { position: fixed; top: 0; left: 0; width: 2px; height: 2px; opacity: 0.01; z-index: 0; pointer-events: none; }
-#sleep-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; cursor: pointer; }
-#loader { display: none; position: fixed; top: 15px; right: 15px; width: 15px; height: 15px; background-color: #ffd700; border-radius: 50%; z-index: 9000; box-shadow: 0 0 10px #ffd700; animation: pulse 1s infinite; }
+const CONFIG = {
+    version: 83.0,
+    apiKey: '518e81d874739701f08842c1a55f6588', 
+    city: localStorage.getItem('aura_city') || 'Braunschweig',
+    sleepFrom: localStorage.getItem('aura_sleep_from') || '',
+    sleepTo: localStorage.getItem('aura_sleep_to') || '',
+    tickerMode: localStorage.getItem('aura_ticker_mode') || 'world'
+};
 
-/* START SCREEN */
-#start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.btn-start { border: 2px solid #00eaff; color: #00eaff; background: transparent; padding: 15px 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+/* --- DATENBANKEN (35 ORTE + FAHNEN) --- */
 
-/* DASHBOARD GRID */
-.dashboard { display: flex; height: 33vh; width: 100%; padding: 10px 5px; box-sizing: border-box; position: relative; z-index: 10; }
-.col-left { width: 22%; display: flex; flex-direction: column; align-items: center; }
-.col-center { width: 56%; display: flex; flex-direction: column; align-items: center; position: relative; }
-.col-right { width: 22%; display: flex; flex-direction: column; align-items: flex-end; position: relative; } 
+const WORLD_CITIES = [
+    {n:"Berlin",f:"🇩🇪"}, {n:"London",f:"🇬🇧"}, {n:"New York",f:"🇺🇸"}, {n:"Tokyo",f:"🇯🇵"}, {n:"Sydney",f:"🇦🇺"},
+    {n:"Paris",f:"🇫🇷"}, {n:"Moskau",f:"🇷🇺"}, {n:"Beijing",f:"🇨🇳"}, {n:"Dubai",f:"🇦🇪"}, {n:"Los Angeles",f:"🇺🇸"},
+    {n:"Rio",f:"🇧🇷"}, {n:"Kapstadt",f:"🇿🇦"}, {n:"Singapur",f:"🇸🇬"}, {n:"Bangkok",f:"🇹🇭"}, {n:"Mumbai",f:"🇮🇳"},
+    {n:"Istanbul",f:"🇹🇷"}, {n:"Rom",f:"🇮🇹"}, {n:"Madrid",f:"🇪🇸"}, {n:"Toronto",f:"🇨🇦"}, {n:"Mexiko-Stadt",f:"🇲🇽"},
+    {n:"Kairo",f:"🇪🇬"}, {n:"Seoul",f:"🇰🇷"}, {n:"Hong Kong",f:"🇭🇰"}, {n:"Chicago",f:"🇺🇸"}, {n:"Athen",f:"🇬🇷"}
+];
 
-/* LINKS */
-#clock { font-size: 8.5vw; font-weight: bold; line-height: 0.9; margin: 0; }
-#date { font-size: 2.2vh; color: #00eaff; margin-top: 5px; text-transform: uppercase; }
-.logo-container { width: 120px; height: 120px; margin-top: 5px; position: relative; }
-#logo-bg, #logo-video { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; }
+const SNOW_LOCATIONS = [
+    // DE
+    { name: "WINTERBERG", flag: "🇩🇪", lat: 51.19, lon: 8.53 }, { name: "FELDBERG", flag: "🇩🇪", lat: 47.86, lon: 8.00 },
+    { name: "ZUGSPITZE", flag: "🇩🇪", lat: 47.42, lon: 10.98 }, { name: "OBERSTDORF", flag: "🇩🇪", lat: 47.41, lon: 10.28 },
+    { name: "BROCKEN", flag: "🇩🇪", lat: 51.80, lon: 10.61 }, { name: "GARMISCH", flag: "🇩🇪", lat: 47.49, lon: 11.09 },
+    { name: "WILLINGEN", flag: "🇩🇪", lat: 51.29, lon: 8.61 }, { name: "FICHTELBERG", flag: "🇩🇪", lat: 50.42, lon: 12.95 },
+    // AT
+    { name: "KITZBÜHEL", flag: "🇦🇹", lat: 47.44, lon: 12.39 }, { name: "ISCHGL", flag: "🇦🇹", lat: 47.01, lon: 10.29 },
+    { name: "SÖLDEN", flag: "🇦🇹", lat: 46.97, lon: 11.01 }, { name: "MAYRHOFEN", flag: "🇦🇹", lat: 47.16, lon: 11.86 },
+    { name: "ST. ANTON", flag: "🇦🇹", lat: 47.13, lon: 10.27 }, { name: "SAALBACH", flag: "🇦🇹", lat: 47.39, lon: 12.64 },
+    { name: "OBERTAUERN", flag: "🇦🇹", lat: 47.24, lon: 13.55 }, { name: "SCHLADMING", flag: "🇦🇹", lat: 47.39, lon: 13.68 },
+    // CH
+    { name: "ZERMATT", flag: "🇨🇭", lat: 46.02, lon: 7.75 }, { name: "ST. MORITZ", flag: "🇨🇭", lat: 46.50, lon: 9.84 },
+    { name: "DAVOS", flag: "🇨🇭", lat: 46.80, lon: 9.83 }, { name: "LAAX", flag: "🇨🇭", lat: 46.82, lon: 9.26 },
+    { name: "SAAS-FEE", flag: "🇨🇭", lat: 46.10, lon: 7.92 }, { name: "GRINDELWALD", flag: "🇨🇭", lat: 46.62, lon: 8.04 },
+    // IT/FR
+    { name: "GRÖDEN", flag: "🇮🇹", lat: 46.55, lon: 11.72 }, { name: "CORTINA", flag: "🇮🇹", lat: 46.54, lon: 12.13 },
+    { name: "LIVIGNO", flag: "🇮🇹", lat: 46.53, lon: 10.13 }, { name: "CHAMONIX", flag: "🇫🇷", lat: 45.92, lon: 6.87 },
+    { name: "VAL THORENS", flag: "🇫🇷", lat: 45.29, lon: 6.58 },
+    // WORLD
+    { name: "ASPEN", flag: "🇺🇸", lat: 39.19, lon: -106.81 }, { name: "VAIL", flag: "🇺🇸", lat: 39.64, lon: -106.37 },
+    { name: "WHISTLER", flag: "🇨🇦", lat: 50.11, lon: -122.95 }, { name: "BANFF", flag: "🇨🇦", lat: 51.17, lon: -115.57 },
+    { name: "NISEKO", flag: "🇯🇵", lat: 42.80, lon: 140.68 }, { name: "TRYSIL", flag: "🇳🇴", lat: 61.31, lon: 12.26 },
+    { name: "ÅRE", flag: "🇸🇪", lat: 63.39, lon: 13.07 }
+];
 
-/* MITTE - OBERE REIHE (BIG ICONS) */
-#location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 0px; width:100%; text-align:center; text-shadow: 0 0 10px rgba(0,234,255,0.4); }
-.main-row-v61 { position: relative; width: 100%; height: 16vh; margin-top: 0px; display: flex; justify-content: center; align-items: center; }
+const SUMMER_LOCATIONS = [
+    // AFRIKA & TÜRKEI
+    { name: "DJERBA", flag: "🇹🇳", lat: 33.80, lon: 10.88 }, { name: "HAMMAMET", flag: "🇹🇳", lat: 36.40, lon: 10.61 },
+    { name: "HURGHADA", flag: "🇪🇬", lat: 27.25, lon: 33.81 }, { name: "AGADIR", flag: "🇲🇦", lat: 30.42, lon: -9.59 },
+    { name: "ANTALYA", flag: "🇹🇷", lat: 36.88, lon: 30.70 },
+    // ASIEN
+    { name: "BORACAY", flag: "🇵🇭", lat: 11.96, lon: 121.92 }, { name: "PALAWAN", flag: "🇵🇭", lat: 9.83, lon: 118.73 },
+    { name: "PHUKET", flag: "🇹🇭", lat: 7.88, lon: 98.39 }, { name: "KOH SAMUI", flag: "🇹🇭", lat: 9.51, lon: 100.05 },
+    { name: "BALI", flag: "🇮🇩", lat: -8.40, lon: 115.18 }, { name: "MALEDIVEN", flag: "🇲🇻", lat: 3.20, lon: 73.22 },
+    { name: "DUBAI", flag: "🇦🇪", lat: 25.20, lon: 55.27 }, { name: "BENTOTA", flag: "🇱🇰", lat: 6.42, lon: 79.99 },
+    // KARIBIK & US
+    { name: "PUNTA CANA", flag: "🇩🇴", lat: 18.58, lon: -68.40 }, { name: "VARADERO", flag: "🇨🇺", lat: 23.15, lon: -81.24 },
+    { name: "CANCUN", flag: "🇲🇽", lat: 21.16, lon: -86.85 }, { name: "MIAMI", flag: "🇺🇸", lat: 25.76, lon: -80.19 },
+    { name: "WAIKIKI", flag: "🇺🇸", lat: 21.27, lon: -157.82 },
+    // EUROPA MITTELMEER
+    { name: "MALLORCA", flag: "🇪🇸", lat: 39.57, lon: 2.65 }, { name: "IBIZA", flag: "🇪🇸", lat: 38.91, lon: 1.43 },
+    { name: "FUERTEVENTURA", flag: "🇪🇸", lat: 28.35, lon: -14.05 }, { name: "GRAN CANARIA", flag: "🇪🇸", lat: 27.92, lon: 15.55 },
+    { name: "ALGARVE", flag: "🇵🇹", lat: 37.01, lon: -7.93 }, { name: "NIZZA", flag: "🇫🇷", lat: 43.70, lon: 7.26 },
+    { name: "RIMINI", flag: "🇮🇹", lat: 44.06, lon: 12.56 }, { name: "DUBROVNIK", flag: "🇭🇷", lat: 42.65, lon: 18.09 },
+    { name: "KRETA", flag: "🇬🇷", lat: 35.33, lon: 25.14 }, { name: "RHODOS", flag: "🇬🇷", lat: 36.43, lon: 28.22 },
+    // NORD/OSTSEE
+    { name: "SYLT", flag: "🇩🇪", lat: 54.91, lon: 8.31 }, { name: "RÜGEN", flag: "🇩🇪", lat: 54.40, lon: 13.62 },
+    { name: "NORDERNEY", flag: "🇩🇪", lat: 53.70, lon: 7.15 }, { name: "TIMMENDORF", flag: "🇩🇪", lat: 54.00, lon: 10.78 },
+    { name: "ST. PETER", flag: "🇩🇪", lat: 54.30, lon: 8.63 }, { name: "USEDOM", flag: "🇩🇪", lat: 53.96, lon: 14.05 },
+    { name: "SCHEVENINGEN", flag: "🇳🇱", lat: 52.11, lon: 4.28 }
+];
 
-#main-icon { width: 15vh; height: 15vh; margin-right: 15px; filter: drop-shadow(0 0 25px rgba(0,234,255,0.4)); }
-#main-temp { font-size: 16vh; font-weight: bold; line-height: 1; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+let lastBatLevel = null;
+let batDropCounter = 0;
+let batteryCritical = false;
+let lastPressure = parseFloat(localStorage.getItem('aura_last_press')) || 0;
+let globalForecastCache = null; 
 
-/* STAPEL RECHTS (BIG) */
-.temp-extra-stack { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; margin-left: 20px; }
-.feels-row { color: #00eaff; font-size: 3.2vh; font-weight: bold; display: flex; align-items: center; margin-bottom: 8px; }
-.rain-row { color: #00eaff; font-size: 3.2vh; font-weight: bold; display: flex; align-items: center; }
-.stack-icon { width: 3.2vh; height: 3.2vh; fill: #00eaff; margin-right: 8px; filter: drop-shadow(0 0 4px #00eaff); }
-.mm-val { font-size: 0.7em; color: #aaa; margin-left: 5px; }
+/* --- START --- */
+function startApp() {
+    document.getElementById('start-overlay').style.display = 'none';
+    let el = document.documentElement;
+    if(el.requestFullscreen) { el.requestFullscreen().catch(e=>{}); }
+    
+    let bgVid = document.getElementById('wake-video-layer');
+    if(bgVid) { bgVid.play().catch(e=>{}); }
 
-/* MITTE - UNTERE REIHE (BIG DATA) */
-.deep-data-row { display: flex; flex-direction: row; justify-content: space-around; align-items: center; width: 100%; margin-top: 10px; padding-top: 5px; border-top: 2px solid #222; height: 8vh; }
-.data-cell { display: flex; align-items: center; }
-.cell-icon { width: 4.5vh; height: 4.5vh; fill: #00eaff; margin-right: 8px; filter: drop-shadow(0 0 3px rgba(0,234,255,0.5)); }
-.cell-val { font-size: 3.5vh; font-weight: bold; color: #ddd; white-space: nowrap; }
-.cell-unit { font-size: 0.6em; color: #aaa; margin-left: 3px; font-weight: normal; }
+    initVideoFallback();
+    initMenuValues(); 
 
-/* RECHTS & MENÜ */
-#btn-menu { background: transparent; border: none; color: #fff; font-size: 2.0vh; font-weight: bold; padding: 5px; cursor: pointer; margin-bottom: 0; margin-top: 0; text-align: right; display: flex; align-items: center; justify-content: flex-end; opacity: 0.7; }
-#dwd-monitor { position: absolute; right: 48%; top: 5px; width: 170px; padding: 6px; box-sizing: border-box; border-radius: 6px; text-align: center; border: 1px solid #333; background: rgba(10, 10, 10, 0.9); display: none; flex-direction: column; justify-content: center; z-index: 50; min-height: 60px; }
-.warn-red { border-color: #ff0000; color: #ff0000; background: rgba(60, 0, 0, 0.9); box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); animation: flash 1.5s infinite; }
-.warn-orange { border-color: #ff8c00; color: #ff8c00; background: rgba(50, 20, 0, 0.9); box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); animation: pulse-warn 2s infinite; }
-.warn-yellow { border-color: #ffd700; color: #ffd700; background: rgba(40, 35, 0, 0.9); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-.warn-cyan { border-color: #00eaff; color: #00eaff; box-shadow: 0 0 5px rgba(0, 234, 255, 0.1); }
-.dwd-content { font-size: 1.5vh; font-weight: 900; text-transform: uppercase; margin-bottom: 2px; }
-.dwd-time { font-size: 1.1vh; color: #ccc; }
+    runClock(); loadData(); checkStatus(); initBatteryGuard(); checkAutoSleep(); 
 
-.astro-block { margin-bottom: 3px; text-align: right; width: 100%; }
-.astro-label { color: #00eaff; font-size: 1.6vh; display: block; }
-.astro-val { font-size: 2.6vh; font-weight: bold; }
-.status-block { margin-top: 5px; border-top: 1px solid #333; padding-top: 5px; width: 100%; text-align: right; }
-.status-row { font-size: 2.2vh; margin-bottom: 4px; font-weight: bold; color: #bbb; display: flex; justify-content: flex-end; align-items: center; }
-.bat-trend-up { color: #00eaff; margin-left: 5px; } .bat-trend-down { color: #ff3333; margin-left: 5px; }
+    setInterval(runClock, 1000);       
+    setInterval(loadData, 600000);     
+    setInterval(checkUpdate, 300000);  
+    setInterval(checkStatus, 60000);   
+}
 
-/* TICKER & FORECAST */
-.ticker-wrap { height: 10vh; background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222; overflow: hidden; white-space: nowrap; display: flex; align-items: center; }
-#ticker-text { display: inline-block; padding-left: 100%; animation: tick 120s linear infinite; font-size: 4.2vh; color: #fff; font-weight: bold; display: flex; align-items: center; }
-.t-item { margin-right: 50px; color: #00eaff; display: flex; align-items: center; }
-.t-icon { width: 45px; height: 45px; margin: 0 10px; vertical-align: middle; display: inline-block; } 
-.t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
-@keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+function initVideoFallback() {
+    let vid = document.getElementById('logo-video');
+    let playPromise = vid.play();
+    if (playPromise !== undefined) { playPromise.catch(error => { vid.style.display = 'none'; }); }
+    setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
+}
 
-.forecast-area { height: 53vh; display: flex; flex-direction: column; background: #000; }
-.f-row { flex: 1; display: flex; justify-content: space-around; align-items: center; border-bottom: 1px solid #111; }
-.f-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; }
-.f-head { font-size: 2.8vh; font-weight: bold; color: #ddd; margin-bottom: 5px; }
-.f-icon { width: 9.5vh; height: 9.5vh; margin: 3px 0; display: flex; justify-content: center; align-items: center; }
-.f-temp { font-size: 3.8vh; font-weight: bold; }
-.f-rain-row { display: flex; align-items: center; justify-content: center; }
-.f-drop-small { width: 2.0vh; height: 2.0vh; fill: #00eaff; margin-right: 4px; }
-.temp-range { display: flex; gap: 8px; font-size: 3.0vh; font-weight: bold; align-items: center; }
-.temp-low { color: #00eaff; } .temp-high { color: #ff3333; } .temp-sep { color: #fff; margin: 0 5px; }
-.footer-copyright { position: fixed; bottom: 5px; width: 100%; text-align: center; color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100; }
+function initMenuValues() {
+    let cityInp = document.getElementById('inp-city-val'); if(cityInp) cityInp.value = CONFIG.city;
+    let tFrom = document.getElementById('inp-time-from'); if(tFrom) tFrom.value = CONFIG.sleepFrom;
+    let tTo = document.getElementById('inp-time-to'); if(tTo) tTo.value = CONFIG.sleepTo;
+    let tMode = document.getElementById('inp-ticker-mode'); if(tMode) tMode.value = CONFIG.tickerMode;
+}
 
-/* MENÜ STYLES */
-#menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-.menu-container { max-width: 850px; margin: 0 auto; padding-bottom: 100px; }
-.menu-header { text-align: center; color: #00eaff; margin-bottom: 25px; position: relative; }
-.menu-close-btn { position: absolute; right: 0; top: -10px; background: none; border: none; color: #fff; font-size: 45px; cursor: pointer; }
-.acc-btn { background: #1a1a1a; color: #fff; cursor: pointer; padding: 22px; width: 100%; text-align: left; border: none; font-size: 24px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-weight: bold; margin-top: 8px; }
-.acc-content { padding: 25px 20px; background-color: #111; display: none; border-bottom: 2px solid #00eaff; }
-.inp-city, .inp-select, .inp-time { width: 100%; padding: 15px; background: #222; border: 1px solid #00eaff; color: #fff; font-size: 24px; margin-bottom: 15px; }
-.btn-save, .btn-action, .btn-paypal { background: #00eaff; color: #000; border: none; padding: 18px; font-size: 24px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; display: block; text-align: center; margin-top: 15px; text-decoration: none; }
-.btn-paypal { background: #ffc439; } .btn-action { background: #333; color: #fff; border: 1px solid #fff; }
+function saveSettings() {
+    let city = document.getElementById('inp-city-val').value;
+    let tFrom = document.getElementById('inp-time-from').value;
+    let tTo = document.getElementById('inp-time-to').value;
+    let tMode = document.getElementById('inp-ticker-mode').value;
+    if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; }
+    localStorage.setItem('aura_sleep_from', tFrom); CONFIG.sleepFrom = tFrom;
+    localStorage.setItem('aura_sleep_to', tTo); CONFIG.sleepTo = tTo;
+    localStorage.setItem('aura_ticker_mode', tMode); CONFIG.tickerMode = tMode;
+    closeMenu(); loadData(); 
+}
 
-/* ANIMATIONEN */
-.svg-icon { width: 100%; height: 100%; overflow: visible; }
-.icon-real { filter: drop-shadow(0 0 15px rgba(255,200,0,0.6)); } 
+function showLoader() { let l = document.getElementById('loader'); if(l) l.style.display = 'block'; }
+function hideLoader() { setTimeout(() => { let l = document.getElementById('loader'); if(l) l.style.display = 'none'; }, 1000); }
 
-@keyframes drift { 0% { transform: translateX(5px); opacity: 0.8; } 50% { transform: translateX(-5px); opacity: 1; } 100% { transform: translateX(5px); opacity: 0.8; } }
-@keyframes sun-pulse { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.3); } 100% { transform: scale(1); filter: brightness(1); } }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-@keyframes rain { 0% { transform: translateY(-5px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(5px); opacity:0; } }
-@keyframes snow { 0% { transform: translateY(-3px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(3px); opacity:0; } }
-/* NEU V82.1: NEBEL ANIMATION */
-@keyframes fog { 0% { opacity: 0.4; transform: translateX(-3px); } 50% { opacity: 0.9; transform: translateX(3px); } 100% { opacity: 0.4; transform: translateX(-3px); } }
+/* --- ENGINE --- */
+function runClock() {
+    let now = new Date();
+    let h = (now.getHours()<10?'0':'')+now.getHours();
+    let m = (now.getMinutes()<10?'0':'')+now.getMinutes();
+    document.getElementById('clock').innerText = h + ":" + m;
+    let days = ['SONNTAG','MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG'];
+    let months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
+    document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
+    checkAutoSleep();
+}
 
-.icon-real .svg-sun { animation: spin 60s linear infinite, sun-pulse 5s ease-in-out infinite; transform-origin: center; }
-.icon-real .svg-cloud { animation: drift 10s ease-in-out infinite; }
-.icon-real .svg-rain { animation: rain 0.8s linear infinite; }
-.icon-real .svg-snow { animation: snow 2.0s linear infinite; }
-/* HIER WAR DER FEHLER: */
-.svg-mist { stroke: #ccc; stroke-width: 3; opacity: 0.5; animation: fog 5s ease-in-out infinite; } 
+function checkAutoSleep() {
+    if(!CONFIG.sleepFrom || !CONFIG.sleepTo) return;
+    let now = new Date();
+    let curMin = now.getHours() * 60 + now.getMinutes();
+    let fromParts = CONFIG.sleepFrom.split(':');
+    let fromMin = parseInt(fromParts[0]) * 60 + parseInt(fromParts[1]);
+    let toParts = CONFIG.sleepTo.split(':');
+    let toMin = parseInt(toParts[0]) * 60 + parseInt(toParts[1]);
+    let shouldSleep = false;
+    if(fromMin < toMin) { if(curMin >= fromMin && curMin < toMin) shouldSleep = true; } 
+    else { if(curMin >= fromMin || curMin < toMin) shouldSleep = true; }
+    let ol = document.getElementById('sleep-overlay');
+    if(shouldSleep) { if(ol.style.display !== 'block') { ol.style.display = 'block'; closeMenu(); } } 
+    else { if(ol.style.display === 'block') { ol.style.display = 'none'; } }
+}
 
-.svg-sun { fill: url(#gradSunReal); } 
-.svg-moon { fill: url(#gradMoonReal); }
-.svg-cloud { fill: url(#gradCloudReal); } 
-.svg-cloud-dark { fill: #555; filter: drop-shadow(0 2px 5px #000); }
-.svg-rain { stroke: #00eaff; stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 5px #00eaff); }
-.svg-snow { fill: #fff; filter: drop-shadow(0 0 5px #fff); }
-.svg-bolt { fill: #ffcc00; filter: drop-shadow(0 0 10px #ff0000); }
+function checkStatus() {
+    let net = document.getElementById('net-status');
+    if(navigator.onLine) { net.innerText = "WLAN: OK"; net.style.color = "#0f0"; }
+    else { net.innerText = "OFFLINE"; net.style.color = "#f00"; }
+    if(navigator.getBattery) {
+        navigator.getBattery().then(bat => { 
+            let levelText = "BAT: " + Math.round(bat.level*100) + "%";
+            let trendHTML = "";
+            let diff = 0;
+            if(lastBatLevel !== null) {
+                diff = bat.level - lastBatLevel;
+                if(diff > 0.005) trendHTML = '<span class="bat-trend-up">↑</span>';
+                else if(diff < -0.005) trendHTML = '<span class="bat-trend-down">↓</span>';
+                else trendHTML = '<span class="bat-trend-eq">=</span>';
+            }
+            document.getElementById('bat-level').innerHTML = levelText + trendHTML;
+        });
+    }
+}
+function initBatteryGuard() {
+    if(navigator.getBattery) { navigator.getBattery().then(bat => { lastBatLevel = bat.level; }); }
+    setInterval(() => {
+        if(navigator.getBattery) {
+            navigator.getBattery().then(bat => {
+                let current = bat.level;
+                if(lastBatLevel !== null) {
+                    if(current < lastBatLevel) batDropCounter++;
+                    else if (current > lastBatLevel) { batDropCounter = 0; batteryCritical = false; }
+                }
+                if(batDropCounter >= 2) { batteryCritical = true; }
+                lastBatLevel = current;
+                checkStatus();
+            });
+        }
+    }, 1800000); 
+}
+
+function loadData() {
+    showLoader();
+    let cb = Date.now(); 
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${CONFIG.apiKey}&units=metric&lang=de&_t=${cb}`)
+    .then(r => r.json())
+    .then(current => {
+        renderCurrent(current);
+        loadRealDWD(current.coord.lat, current.coord.lon);
+        return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${current.coord.lat}&lon=${current.coord.lon}&appid=${CONFIG.apiKey}&units=metric&lang=de&_t=${cb}`);
+    })
+    .then(r => r.json())
+    .then(forecast => {
+        globalForecastCache = forecast;
+        renderForecast(forecast);
+        return loadTicker();
+    })
+    .then(() => { hideLoader(); })
+    .catch(e => {
+        document.getElementById('ticker-text').innerHTML = '<span class="t-alert">+++ OFFLINE +++</span>';
+        hideLoader();
+    });
+    
+    let now = new Date();
+    let ts = (now.getHours()<10?'0':'')+now.getHours() + ":" + (now.getMinutes()<10?'0':'')+now.getMinutes();
+    document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
+}
+
+function loadRealDWD(lat, lon) {
+    let monitor = document.getElementById('dwd-monitor');
+    let txt = document.getElementById('dwd-text');
+    let time = document.getElementById('dwd-valid');
+    if(!monitor) return;
+    monitor.style.display = 'none'; 
+    fetch(`https://api.brightsky.dev/alerts?lat=${lat}&lon=${lon}`)
+    .then(r => r.json())
+    .then(data => {
+        if(data && data.alerts && data.alerts.length > 0) {
+            monitor.style.display = 'flex';
+            let alerts = data.alerts;
+            let severityMap = { 'minor': 1, 'moderate': 2, 'severe': 3, 'extreme': 4 };
+            alerts.sort((a, b) => severityMap[b.severity] - severityMap[a.severity]);
+            let topAlert = alerts[0];
+            let level = severityMap[topAlert.severity] || 1;
+            monitor.className = '';
+            if(level === 4) monitor.classList.add('warn-red');
+            else if(level === 3) monitor.classList.add('warn-orange');
+            else if(level === 2) monitor.classList.add('warn-yellow');
+            else monitor.classList.add('warn-cyan'); 
+            let msg = topAlert.headline_de || topAlert.event_de || "WETTERWARNUNG";
+            txt.innerText = msg.toUpperCase();
+            let end = new Date(topAlert.expires);
+            let endStr = (end.getHours()<10?'0':'') + end.getHours() + ":" + (end.getMinutes()<10?'0':'') + end.getMinutes();
+            time.innerText = "Bis: " + endStr + " Uhr";
+            time.style.display = "block";
+        }
+    })
+    .catch(e => {});
+}
+
+function renderCurrent(data) {
+    document.getElementById('location-header').innerText = data.name.toUpperCase();
+    document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
+    document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
+    let rainProb = "0%";
+    if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
+       rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
+    } else if (data.rain) { rainProb = "Regen"; }
+    let rainMM = "0mm";
+    if(data.rain && data.rain['1h']) { rainMM = data.rain['1h'] + "mm"; }
+    document.getElementById('rain-val').innerHTML = `${rainProb} <span class="mm-val">${rainMM}</span>`;
+    document.getElementById('val-feels').innerText = Math.round(data.main.feels_like) + "°";
+    document.getElementById('val-humidity').innerText = data.main.humidity;
+    let speed = Math.round(data.wind.speed * 3.6);
+    let deg = data.wind.deg;
+    document.getElementById('val-wind').innerHTML = `${speed} <span class="cell-unit">km/h</span>`;
+    document.getElementById('icon-wind').style.transform = `rotate(${deg}deg)`;
+    let visKM = Math.round(data.visibility / 1000);
+    document.getElementById('val-vis').innerText = visKM;
+    let press = data.main.pressure;
+    if(press !== lastPressure) { localStorage.setItem('aura_last_press', press); lastPressure = press; }
+    document.getElementById('val-press').innerText = press;
+    let sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
+    let ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
+    document.getElementById('sunrise').innerText = formatTime(sr);
+    document.getElementById('sunset').innerText = formatTime(ss);
+}
+
+function renderForecast(data) {
+    let hHTML = "";
+    for(let i=0; i<5; i++) {
+        let item = data.list[i];
+        let h = new Date(item.dt*1000).getHours();
+        hHTML += `<div class="f-item"><span class="f-head">${h} Uhr</span><div class="f-icon">${getVectorIcon(item.weather[0].icon, false)}</div><span class="f-temp">${Math.round(item.main.temp)}°</span></div>`;
+    }
+    document.getElementById('hourly-row').innerHTML = hHTML;
+    let dailyMap = {};
+    data.list.forEach(item => {
+        let d = new Date(item.dt*1000);
+        let dayKey = d.toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
+        if(!dailyMap[dayKey]) dailyMap[dayKey] = { min: 100, max: -100, icon: item.weather[0].icon, pop: 0 };
+        let dayData = dailyMap[dayKey];
+        if(item.main.temp_min < dayData.min) dayData.min = item.main.temp_min;
+        if(item.main.temp_max > dayData.max) dayData.max = item.main.temp_max;
+        if(item.pop > dayData.pop) dayData.pop = item.pop;
+        if(d.getHours() >= 11 && d.getHours() <= 14) dayData.icon = item.weather[0].icon;
+    });
+    let dHTML = "";
+    let keys = Object.keys(dailyMap).slice(0, 5);
+    const dropSvg = '<svg class="f-drop-small" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>';
+    keys.forEach(key => {
+        let d = dailyMap[key];
+        dHTML += `<div class="f-item"><span class="f-head">${key}</span><div class="f-icon">${getVectorIcon(d.icon, false)}</div><div class="f-rain-row">${dropSvg}<span class="f-rain-text">${Math.round(d.pop*100)}%</span></div><div class="temp-range"><span class="temp-low">${Math.round(d.min)}°</span><span class="temp-sep">-</span><span class="temp-high">${Math.round(d.max)}°</span></div></div>`;
+    });
+    document.getElementById('daily-row').innerHTML = dHTML;
+    document.getElementById('moon-phase').innerText = getMoonPhase(new Date());
+}
+
+async function loadTicker() {
+    let tickerContent = "";
+    if(batteryCritical) tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `;
+    
+    if(CONFIG.tickerMode === 'snow') tickerContent += `<span class="t-item">+++ SCHNEEHÖHEN (35 ZIELE) +++</span>`;
+    else if(CONFIG.tickerMode === 'summer') tickerContent += `<span class="t-item">+++ WASSERTEMPERATUREN (35 ZIELE) +++</span>`;
+    else tickerContent += `<span class="t-item">+++ WELT-WETTER +++</span>`;
+
+    let cb = Date.now();
+
+    if(CONFIG.tickerMode === 'snow') {
+        let requests = SNOW_LOCATIONS.map(loc => 
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=snow_depth&timezone=auto`)
+            .then(r => r.json()).then(d => ({ name: loc.name, flag: loc.flag, data: d })).catch(e => null)
+        );
+        const results = await Promise.all(requests);
+        results.forEach(item => {
+            if(item && item.data && item.data.current) {
+                let cm = Math.round(item.data.current.snow_depth * 100);
+                let val = cm > 0 ? cm + "cm" : "0cm";
+                let icon = "❄️";
+                if(cm > 50) icon = "⛷️"; 
+                else if(cm > 20) icon = "🗻"; 
+                tickerContent += `<div class="t-item">${item.flag} ${item.name} ${icon} ${val}</div>`;
+            }
+        });
+    } else if(CONFIG.tickerMode === 'summer') {
+        let requests = SUMMER_LOCATIONS.map(loc => 
+            fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${loc.lat}&longitude=${loc.lon}&current=sea_surface_temperature&timezone=auto`)
+            .then(r => r.json()).then(d => ({ name: loc.name, flag: loc.flag, data: d })).catch(e => null)
+        );
+        const results = await Promise.all(requests);
+        results.forEach(item => {
+            if(item && item.data && item.data.current) {
+                let temp = Math.round(item.data.current.sea_surface_temperature);
+                let icon = "🌊";
+                if(temp > 22) icon = "🌴"; 
+                else if(temp >= 17) icon = "🏊"; 
+                tickerContent += `<div class="t-item">${item.flag} ${item.name} ${icon} ${temp}°C</div>`;
+            }
+        });
+    } else {
+        // WORLD TICKER (JETZT AUCH MIT FAHNEN)
+        let requests = WORLD_CITIES.map(city => 
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city.n}&appid=${CONFIG.apiKey}&units=metric&_t=${cb}`)
+            .then(r => r.json()).then(d => ({ ...d, flag: city.f })).catch(e => null)
+        );
+        const results = await Promise.all(requests);
+        results.forEach(data => {
+            if(data && data.main) {
+                let utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
+                let cityTime = new Date(utc + (1000 * data.timezone));
+                let timeStr = (cityTime.getHours()<10?'0':'')+cityTime.getHours() + ":" + (cityTime.getMinutes()<10?'0':'')+cityTime.getMinutes();
+                tickerContent += `<div class="t-item">${data.flag} ${data.name.toUpperCase()} <div class="t-icon">${getVectorIcon(data.weather[0].icon, false)}</div> <span class="t-time">${timeStr}</span> ${Math.round(data.main.temp)}°</div>`;
+            }
+        });
+    }
+    document.getElementById('ticker-text').innerHTML = tickerContent;
+}
+
+function getVectorIcon(code, isReal) {
+    let icon = code.replace('n','d'); 
+    let isNight = code.includes('n');
+    let svgContent = "";
+    let cssClass = isReal ? "icon-real" : "icon-simple";
+    
+    const cloudPath = `<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />`;
+    const cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
+    const sunObj = `<circle class="svg-sun" cx="12" cy="12" r="5"/><g class="svg-sun" style="stroke:${isReal ? 'url(#gradSunReal)':'#00eaff'}; stroke-width:2"><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/></g>`;
+    const moonObj = `<path class="svg-moon" d="M12,3 C10,3 8,4 7,6 C10,6 13,9 13,12 C13,15 10,18 7,18 C8,20 10,21 12,21 C17,21 21,17 21,12 C21,7 17,3 12,3 Z" />`;
+    const rainObj = '<line class="svg-rain" x1="8" y1="18" x2="8" y2="22" /><line class="svg-rain" x1="12" y1="18" x2="12" y2="22" style="animation-delay:0.2s" /><line class="svg-rain" x1="16" y1="18" x2="16" y2="22" style="animation-delay:0.4s"/>';
+    const snowObj = '<circle class="svg-snow" cx="8" cy="20" r="1.5"/><circle class="svg-snow" cx="16" cy="20" r="1.5" style="animation-delay:1s"/><circle class="svg-snow" cx="12" cy="22" r="1.5" style="animation-delay:0.5s"/>';
+    const boltObj = '<polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9"/>';
+    const mistObj = '<line class="svg-mist" x1="4" y1="10" x2="20" y2="10" /><line class="svg-mist" x1="4" y1="14" x2="20" y2="14" style="animation-delay:1s"/><line class="svg-mist" x1="4" y1="18" x2="20" y2="18" style="animation-delay:2s"/>';
+    
+    if(code === '01d') svgContent = sunObj; 
+    else if(code === '01n') svgContent = moonObj; 
+    else if(code === '02d' || code === '02n') svgContent = (isNight ? moonObj : sunObj) + cloudPath; 
+    else if(code === '03d' || code === '03n' || code === '04d' || code === '04n') svgContent = cloudPath + cloudDark; 
+    else if(code === '09d' || code === '09n' || code === '10d' || code === '10n') svgContent = cloudPath + rainObj; 
+    else if(code === '11d' || code === '11n') svgContent = cloudDark + boltObj; 
+    else if(code === '13d' || code === '13n') svgContent = cloudPath + snowObj; 
+    else if(code === '50d' || code === '50n') svgContent = mistObj; 
+    else svgContent = sunObj; 
+    
+    return `<svg class="svg-icon ${cssClass}" viewBox="0 0 24 24">${svgContent}</svg>`;
+}
+
+/* --- HELFER --- */
+function toggleSleep() { let ol = document.getElementById('sleep-overlay'); if(ol.style.display === 'block') ol.style.display = 'none'; else { ol.style.display = 'block'; closeMenu(); } }
+function checkUpdate() { fetch("version.json?t=" + Date.now()).then(r=>r.json()).then(d=>{ if(d.version > CONFIG.version) location.reload(true); }); }
+function formatTime(d) { return (d.getHours()<10?'0':'')+d.getHours() + ":" + (d.getMinutes()<10?'0':'')+d.getMinutes(); }
+function getMoonPhase(date) {
+    let year = date.getFullYear(); let month = date.getMonth() + 1; let day = date.getDate();
+    if (month < 3) { year--; month += 12; }
+    let c = 365.25 * year; let e = 30.6 * month; let jd = c + e + day - 694039.09;
+    jd /= 29.5305882; let b = parseInt(jd); jd -= b; b = Math.round(jd * 8); if (b >= 8) b = 0;
+    return ['🌑 Neumond', '🌒 Zunehmend', '🌓 Halbmond', '🌔 Zunehmend', '🌕 Vollmond', '🌖 Abnehmend', '🌗 Halbmond', '🌘 Abnehmend'][b];
+}
+function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
+function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
+function toggleAccordion(id) { let c = document.getElementById(id); let v = c.style.display==="block"; document.querySelectorAll('.acc-content').forEach(e=>e.style.display='none'); if(!v) c.style.display="block"; }
+function closeAccordion(id) { document.getElementById(id).style.display = 'none'; }
