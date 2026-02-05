@@ -1,4 +1,4 @@
-/* --- AURA V82.0 (BIG DATA & NEON GLOW) --- */
+/* --- AURA V82.1 (FOG FIX) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -26,11 +26,10 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 #location-header { color: #00eaff; font-size: 4vh; font-weight: bold; margin-bottom: 0px; width:100%; text-align:center; text-shadow: 0 0 10px rgba(0,234,255,0.4); }
 .main-row-v61 { position: relative; width: 100%; height: 16vh; margin-top: 0px; display: flex; justify-content: center; align-items: center; }
 
-/* Das neue Haupt-Icon: Größer und mehr Glow */
 #main-icon { width: 15vh; height: 15vh; margin-right: 15px; filter: drop-shadow(0 0 25px rgba(0,234,255,0.4)); }
 #main-temp { font-size: 16vh; font-weight: bold; line-height: 1; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
 
-/* STAPEL RECHTS (JETZT VIEL GRÖSSER) */
+/* STAPEL RECHTS (BIG) */
 .temp-extra-stack { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; margin-left: 20px; }
 .feels-row { color: #00eaff; font-size: 3.2vh; font-weight: bold; display: flex; align-items: center; margin-bottom: 8px; }
 .rain-row { color: #00eaff; font-size: 3.2vh; font-weight: bold; display: flex; align-items: center; }
@@ -81,7 +80,7 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .temp-low { color: #00eaff; } .temp-high { color: #ff3333; } .temp-sep { color: #fff; margin: 0 5px; }
 .footer-copyright { position: fixed; bottom: 5px; width: 100%; text-align: center; color: #ffffff; font-size: 1.5vh; opacity: 0.7; pointer-events: none; z-index: 100; }
 
-/* MENÜ & MODAL STYLES */
+/* MENÜ STYLES */
 #menu-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .menu-container { max-width: 850px; margin: 0 auto; padding-bottom: 100px; }
 .menu-header { text-align: center; color: #00eaff; margin-bottom: 25px; position: relative; }
@@ -92,9 +91,9 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .btn-save, .btn-action, .btn-paypal { background: #00eaff; color: #000; border: none; padding: 18px; font-size: 24px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; display: block; text-align: center; margin-top: 15px; text-decoration: none; }
 .btn-paypal { background: #ffc439; } .btn-action { background: #333; color: #fff; border: 1px solid #fff; }
 
-/* ANIMATIONEN & REAL LOOK */
+/* ANIMATIONEN */
 .svg-icon { width: 100%; height: 100%; overflow: visible; }
-.icon-real { filter: drop-shadow(0 0 15px rgba(255,200,0,0.6)); } /* Globaler Glow für Haupticon */
+.icon-real { filter: drop-shadow(0 0 15px rgba(255,200,0,0.6)); } 
 
 @keyframes drift { 0% { transform: translateX(5px); opacity: 0.8; } 50% { transform: translateX(-5px); opacity: 1; } 100% { transform: translateX(5px); opacity: 0.8; } }
 @keyframes sun-pulse { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.3); } 100% { transform: scale(1); filter: brightness(1); } }
@@ -102,16 +101,20 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 @keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
 @keyframes rain { 0% { transform: translateY(-5px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(5px); opacity:0; } }
 @keyframes snow { 0% { transform: translateY(-3px); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(3px); opacity:0; } }
+/* NEU V82.1: NEBEL ANIMATION */
+@keyframes fog { 0% { opacity: 0.4; transform: translateX(-3px); } 50% { opacity: 0.9; transform: translateX(3px); } 100% { opacity: 0.4; transform: translateX(-3px); } }
 
 .icon-real .svg-sun { animation: spin 60s linear infinite, sun-pulse 5s ease-in-out infinite; transform-origin: center; }
 .icon-real .svg-cloud { animation: drift 10s ease-in-out infinite; }
 .icon-real .svg-rain { animation: rain 0.8s linear infinite; }
 .icon-real .svg-snow { animation: snow 2.0s linear infinite; }
-.svg-sun { fill: url(#gradSunReal); } /* V82: Neue Füllung */
-.svg-moon { fill: url(#gradMoonReal); } /* V82: Neue Füllung */
-.svg-cloud { fill: url(#gradCloudReal); } /* V82: Neue Füllung */
+/* HIER WAR DER FEHLER: */
+.svg-mist { stroke: #ccc; stroke-width: 3; opacity: 0.5; animation: fog 5s ease-in-out infinite; } 
+
+.svg-sun { fill: url(#gradSunReal); } 
+.svg-moon { fill: url(#gradMoonReal); }
+.svg-cloud { fill: url(#gradCloudReal); } 
 .svg-cloud-dark { fill: #555; filter: drop-shadow(0 2px 5px #000); }
 .svg-rain { stroke: #00eaff; stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 5px #00eaff); }
 .svg-snow { fill: #fff; filter: drop-shadow(0 0 5px #fff); }
 .svg-bolt { fill: #ffcc00; filter: drop-shadow(0 0 10px #ff0000); }
-.svg-mist { stroke: #ccc; stroke-width: 3; opacity: 0.5; }
