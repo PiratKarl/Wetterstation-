@@ -1,67 +1,62 @@
 # 🌦️ Aura Wetterstation (Web-App)
 
-**Version:** 81.0 (Direct-Menu Edition)  
+**Version:** 83.1 (Global Flag & Legacy Edition)  
 **Status:** Stable (Production Ready)  
 **Autor:** Code-Werft / Piratkarl  
 
 Eine hochmoderne, webbasierte Wetterstation, optimiert für den **24/7-Betrieb auf Tablets**.  
-Entwickelt, um sowohl auf **neuesten High-End-Geräten** als auch auf **älteren Android-Tablets** (Legacy-Support) stabil zu laufen.
+Das Besondere: Der Code wurde speziell "gehärtet" (ES5 Standard), um sowohl auf **neuesten High-End-Geräten** als auch auf **alter Hardware (Android 4.4 / KitKat)** stabil und ohne Abstürze zu laufen.
 
 ---
 
-## ✨ Features
+## ✨ Neue Features in V83.1
 
-### 🌍 1. Live-Wetter Dashboard
-- **Anzeige:** Großes Temperatur-Display, Gefühlte Temp, Wind, Feuchtigkeit, Sichtweite, Luftdruck.
-- **Design:** Dark Mode (OLED-freundlich) mit Neon-Cyan Akzenten (#00eaff).
-- **Icons:** Vektorgrafiken (SVG) mit sanften Animationen (Regen, Schnee, Sonne).
+### 🌍 1. Globaler Multi-Ticker (35 Orte)
+Das Laufband am unteren Rand wurde massiv erweitert und verlangsamt (für bessere Lesbarkeit):
+- **35 Ziele pro Kategorie:** Von der Karibik bis Japan, von den Alpen bis zur Nordsee.
+- **Nationalflaggen 🇩🇪🇺🇸🇯🇵:** Jeder Ort zeigt nun stolz seine Flagge zur schnellen Orientierung.
+- **3 Modi:**
+    1.  **Welt-Metropolen:** (Berlin, New York, Tokio...) - *Läuft auf ALLEN Geräten.*
+    2.  **Schnee-Bericht:** (Ischgl, Aspen, Niseko...) - *Skifahrer-Icon ⛷️ bei viel Schnee.*
+    3.  **Bade-Wetter:** (Malediven, Sylt, Mallorca...) - *Palmen-Icon 🌴 bei warmem Wasser.*
 
-### 🚀 2. Multi-Ticker System (NEU in V80+)
-Ein intelligentes Laufband am unteren Bildschirmrand mit drei wählbaren Modi:
-1.  **🌍 Welt-Metropolen (Standard):** Zeigt Wetter & Zeit von New York, Tokio, Sydney etc.
-    * *Kompatibel mit ALLEN Geräten (auch Android < 7).*
-2.  **❄️ Schnee-Bericht (Winter-Modus):** Zeigt aktuelle Schneehöhen der Top 15 Skigebiete (z.B. Winterberg, Zugspitze, Ischgl).
-    * *Benötigt Android 7.1+ (SSL Let's Encrypt Support).*
-3.  **🌊 Bade-Wetter (Sommer-Modus):** Zeigt Wassertemperaturen der Top 15 Urlaubsziele (z.B. Sylt, Mallorca, Adria).
-    * *Benötigt Android 7.1+ (SSL Let's Encrypt Support).*
+### 🎨 2. "Big Data" & High-End Visuals
+- **Layout:** Temperatur und Messwerte wurden massiv vergrößert, um auch aus der Entfernung lesbar zu sein.
+- **Neon-Optik:** Icons (Sonne, Wolken) nutzen jetzt komplexe Farbverläufe und Glow-Effekte (3D-Look).
+- **Animationen:** Sanft wabernder Nebel, drehende Sonnen, fallender Schnee.
+- **Menu:** "Direct-Menu"-Architektur (kein Nachladen externer Dateien mehr).
 
-### ⚠️ 3. DWD-Unwetterwarnungen
-- **Quelle:** Deutscher Wetterdienst (via BrightSky API).
-- **Funktion:** Auto-Hide Monitor (blendet sich nur ein, wenn wirklich eine Warnung vorliegt).
-- **Farb-Code:** Cyan (Info) -> Gelb -> Orange -> Rot (Extremwetter).
-* *Benötigt Android 7.1+.*
+### 🛡️ 3. Legacy "Safe Mode" (Der Retter für alte Tablets)
+Um Abstürze auf alten Android 4.4 Geräten (z.B. altes Samsung Tab) zu verhindern:
+- **Kein `async/await`:** Kompletter Umbau auf Promises.
+- **Keine Arrow-Functions:** Rückbau auf klassische `function()`.
+- **CSS-Kompatibilität:** Nutzung von `-webkit-` Präfixen für Flexbox-Layouts.
 
-### ⚙️ 4. Intelligente Steuerung
-- **Direct-Menu Architektur (V81.0):** Menü ist direkt im Code integriert – keine Ladeverzögerung, keine Cache-Fehler mehr.
-- **Ruhemodus:** Zeitgesteuerte Abdunklung des Displays (Sleep-Mode) für die Nacht.
-- **Akku-Wächter:** Überwacht den Ladestand und warnt bei kritischer Entladung (Lauftext rot).
+---
+
+## 📱 Kompatibilität & Hardware
+
+| Feature | Android 4.4 - 7.0 (Legacy) | Android 7.1 - 14+ (Modern) |
+| :--- | :---: | :---: |
+| **Basis-Wetter** | ✅ JA | ✅ JA |
+| **Welt-Ticker (35 Orte)** | ✅ JA | ✅ JA |
+| **Ticker Flaggen** | ✅ JA | ✅ JA |
+| **Uhr & Video** | ✅ JA | ✅ JA |
+| **Schneehöhen** | ⚠️ Lädt (oft SSL Fehler*) | ✅ JA |
+| **Wassertemp.** | ⚠️ Lädt (oft SSL Fehler*) | ✅ JA |
+| **DWD Warnung** | ⚠️ Lädt (oft SSL Fehler*) | ✅ JA |
+
+*\*Hinweis: Alte Android-Versionen kennen die modernen SSL-Zertifikate von Open-Meteo und BrightSky nicht mehr. Der Code stürzt nicht ab (dank V83.1 Fix), aber die Daten werden eventuell nicht empfangen. Der Welt-Ticker (OpenWeatherMap) funktioniert jedoch meistens.*
 
 ---
 
 ## 🛠️ Technik & APIs
 
-Das Projekt basiert auf reinem **Vanilla JavaScript, HTML5 und CSS3**. Es werden keine Frameworks (React, Vue, etc.) benötigt, um maximale Performance auf alter Hardware zu garantieren.
+Das Projekt basiert auf **Vanilla JavaScript (ES5), HTML5 und CSS3**. Es werden keine Frameworks benötigt.
 
-- **Wetter-Daten:** [OpenWeatherMap API](https://openweathermap.org/) (Kostenlos)
-- **Schnee & Marine:** [Open-Meteo API](https://open-meteo.com/) (Kostenlos, keine Key-Pflicht)
+- **Wetter-Daten:** [OpenWeatherMap API](https://openweathermap.org/)
+- **Schnee & Marine:** [Open-Meteo API](https://open-meteo.com/)
 - **Warnungen:** [BrightSky API](https://brightsky.dev/) (DWD-Daten)
-
----
-
-## 📱 Kompatibilität & Legacy Support
-
-Dieses Projekt wurde speziell gehärtet, um auch auf "Elektroschrott" noch nützlich zu sein.
-
-| Feature | Android 4.4 - 7.0 | Android 7.1 - 14+ |
-| :--- | :---: | :---: |
-| **Basis-Wetter** | ✅ JA | ✅ JA |
-| **Welt-Ticker** | ✅ JA | ✅ JA |
-| **Uhr & Video** | ✅ JA | ✅ JA |
-| **Schneehöhen** | ❌ NEIN (SSL Fehler) | ✅ JA |
-| **Wassertemp.** | ❌ NEIN (SSL Fehler) | ✅ JA |
-| **DWD Warnung** | ❌ NEIN (SSL Fehler) | ✅ JA |
-
-*Hinweis: Im Menü werden Nutzer auf alten Geräten durch weiße Warnhinweise informiert, warum bestimmte Spezial-Daten nicht laden.*
 
 ---
 
@@ -69,7 +64,7 @@ Dieses Projekt wurde speziell gehärtet, um auch auf "Elektroschrott" noch nütz
 
 1.  Repository klonen oder als ZIP herunterladen.
 2.  Dateien (`index.html`, `style.css`, `script.js`, `logo.mp4`, `logo.png`, `version.json`) in einen Webordner legen.
-3.  **Wichtig:** Das Tablet muss die Seite über einen Webserver aufrufen (nicht als lokale Datei), damit die Sicherheitsrichtlinien der Browser greifen.
+3.  **Wichtig:** Das Tablet muss die Seite über einen Webserver aufrufen (nicht als lokale Datei `file://`), damit Sicherheitsrichtlinien greifen.
 4.  Im Menü den eigenen Standort (Stadt) eingeben.
 5.  Fertig!
 
@@ -79,4 +74,4 @@ Dieses Projekt wurde speziell gehärtet, um auch auf "Elektroschrott" noch nütz
 
 **Code & Design:** Code-Werft / Piratkarl (2026)  
 **Lizenz:** MIT License (Open Source)  
-**Support:** Wenn dir das Projekt gefällt, spendier mir einen Kaffee! ☕ 
+**Support:** Wenn dir das Projekt gefällt, spendier mir einen Kaffee! ☕
