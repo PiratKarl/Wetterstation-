@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V82.0</title>
-    <link rel="stylesheet" href="style.css?v=82.0">
+    <title>Aura Wetterstation V83.1</title>
+    <link rel="stylesheet" href="style.css?v=83.1">
 </head>
 <body>
 
@@ -40,9 +40,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V82 STARTEN
+            AURA V83 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">BIG DATA UPDATE</p>
+        <p style="color:#444; margin-top:20px;">LEGACY EDITION</p>
     </div>
 
     <div class="dashboard">
@@ -116,7 +116,7 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 82.0</div>
+                <div class="status-row">VER: 83.1</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
@@ -166,7 +166,7 @@
             </div>
             <button class="acc-btn" onclick="toggleAccordion('acc-sys')"><span>ℹ️ System & Info</span> <span>▼</span></button>
             <div id="acc-sys" class="acc-content">
-                <div class="menu-text">Version: <strong>82.0 (Big Data Edition)</strong><br>Engine: OpenWeatherMap & BrightSky</div>
+                <div class="menu-text">Version: <strong>83.1 (Legacy Fix)</strong><br>Engine: OpenWeatherMap & BrightSky</div>
                 <button class="btn-action" onclick="location.reload(true)">♻️ NEUSTART ERZWINGEN</button>
             </div>
             <button class="acc-btn" onclick="toggleAccordion('acc-supp')"><span>☕ Support</span> <span>▼</span></button>
@@ -179,6 +179,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=82.0"></script>
+    <script src="script.js?v=83.1"></script>
 </body>
 </html>
