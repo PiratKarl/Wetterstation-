@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V81.0</title>
-    <link rel="stylesheet" href="style.css?v=81.0">
+    <title>Aura Wetterstation V82.0</title>
+    <link rel="stylesheet" href="style.css?v=82.0">
 </head>
 <body>
 
@@ -12,19 +12,21 @@
 
     <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
         <defs>
-            <radialGradient id="gradSun" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                <stop offset="0%" style="stop-color:#fff700;stop-opacity:1" />
-                <stop offset="60%" style="stop-color:#ff9900;stop-opacity:1" />
+            <radialGradient id="gradSunReal" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="25%" style="stop-color:#ffd700;stop-opacity:1" />
                 <stop offset="100%" style="stop-color:#ff4500;stop-opacity:1" />
             </radialGradient>
-            <radialGradient id="gradMoon" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#00eaff;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#005577;stop-opacity:1" />
+
+            <radialGradient id="gradMoonReal" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="15%" style="stop-color:#f0faff;stop-opacity:1" />
+                <stop offset="60%" style="stop-color:#00eaff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#002244;stop-opacity:1" />
             </radialGradient>
-            <linearGradient id="gradCloud" x1="0%" y1="0%" x2="0%" y2="100%">
+
+            <linearGradient id="gradCloudReal" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#bbbbbb;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#778899;stop-opacity:1" />
             </linearGradient>
         </defs>
     </svg>
@@ -38,9 +40,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V81 STARTEN
+            AURA V82 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">DIRECT MENU FIX</p>
+        <p style="color:#444; margin-top:20px;">BIG DATA UPDATE</p>
     </div>
 
     <div class="dashboard">
@@ -114,7 +116,7 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 81.0</div>
+                <div class="status-row">VER: 82.0</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
@@ -139,24 +141,13 @@
                 <h2>AURA EINSTELLUNGEN</h2>
                 <button class="menu-close-btn" onclick="closeMenu()">×</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-loc')">
-                <span>📍 Ort & Ticker</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-loc')"><span>📍 Ort & Ticker</span> <span>▼</span></button>
             <div id="acc-loc" class="acc-content" style="display:block;">
                 <span class="inp-label">Dein Standort:</span>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="z.B. Braunschweig">
-                
-                <div style="color: #fff; font-size: 16px; margin-top: 5px; margin-bottom: 20px; font-weight: bold;">
-                    ℹ️ Hinweis: Die DWD-Warnungen (rechts oben) funktionieren erst ab Android 7.1!
-                </div>
-                
+                <div style="color: #fff; font-size: 16px; margin-top: 5px; margin-bottom: 20px; font-weight: bold;">ℹ️ Hinweis: Die DWD-Warnungen (rechts oben) funktionieren erst ab Android 7.1!</div>
                 <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-                
-                <div style="color: #fff; font-size: 16px; margin-bottom: 10px; font-weight: bold;">
-                    ℹ️ Hinweis: Schnee- & Sommerdaten benötigen Android 7.1+. Auf älteren Geräten bitte "Welt-Metropolen" nutzen.
-                </div>
-                
+                <div style="color: #fff; font-size: 16px; margin-bottom: 10px; font-weight: bold;">ℹ️ Hinweis: Schnee- & Sommerdaten benötigen Android 7.1+. Auf älteren Geräten bitte "Welt-Metropolen" nutzen.</div>
                 <span class="inp-label">Ticker Modus:</span>
                 <select id="inp-ticker-mode" class="inp-select">
                     <option value="world">🌍 Welt-Metropolen (Standard)</option>
@@ -164,48 +155,30 @@
                     <option value="summer">🌊 Bade-Wetter (Strände)</option>
                 </select>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">
-                <span>🌙 Ruhemodus</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')"><span>🌙 Ruhemodus</span> <span>▼</span></button>
             <div id="acc-sleep" class="acc-content">
-                <div class="menu-text">
-                    Das Display schaltet sich in dieser Zeit dunkel.
-                </div>
+                <div class="menu-text">Das Display schaltet sich in dieser Zeit dunkel.</div>
                 <div class="inp-time-row">
                     <input type="time" id="inp-time-from" class="inp-time">
                     <span style="font-size:30px; color:#00eaff;">➜</span>
                     <input type="time" id="inp-time-to" class="inp-time">
                 </div>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-sys')">
-                <span>ℹ️ System & Info</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-sys')"><span>ℹ️ System & Info</span> <span>▼</span></button>
             <div id="acc-sys" class="acc-content">
-                <div class="menu-text">
-                    Version: <strong>81.0 (Direct-Menu Fix)</strong><br>
-                    Engine: OpenWeatherMap & BrightSky
-                </div>
+                <div class="menu-text">Version: <strong>82.0 (Big Data Edition)</strong><br>Engine: OpenWeatherMap & BrightSky</div>
                 <button class="btn-action" onclick="location.reload(true)">♻️ NEUSTART ERZWINGEN</button>
             </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-supp')">
-                <span>☕ Support</span> <span>▼</span>
-            </button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-supp')"><span>☕ Support</span> <span>▼</span></button>
             <div id="acc-supp" class="acc-content">
                 <div class="menu-text">Gefällt dir Aura?</div>
-                <a href="https://www.paypal.com/donate?hosted_button_id=YOUR_PAYPAL_ID" target="_blank" class="btn-paypal">
-                    ☕ Kaffeekasse (PayPal)
-                </a>
+                <a href="https://www.paypal.com/donate?hosted_button_id=YOUR_PAYPAL_ID" target="_blank" class="btn-paypal">☕ Kaffeekasse (PayPal)</a>
             </div>
-
             <button class="btn-save" onclick="saveSettings()">💾 SPEICHERN & SCHLIESSEN</button>
-
             <div class="menu-copyright">&copy; 2026 Code-Werft</div>
         </div>
     </div>
 
-    <script src="script.js?v=81.0"></script>
+    <script src="script.js?v=82.0"></script>
 </body>
 </html>

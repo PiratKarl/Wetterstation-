@@ -1,7 +1,7 @@
-/* --- AURA V81.0 (DIRECT MENU ENGINE) --- */
+/* --- AURA V82.0 (BIG DATA & EXPERIENCE ENGINE) --- */
 
 const CONFIG = {
-    version: 81.0,
+    version: 82.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -9,63 +9,42 @@ const CONFIG = {
     tickerMode: localStorage.getItem('aura_ticker_mode') || 'world'
 };
 
-/* --- DATENBANKEN FÜR TICKER --- */
-
-// 1. WELT-STÄDTE (OpenWeatherMap)
+/* --- DATENBANKEN --- */
 const WORLD_CITIES = [
-    "Berlin", "London", "New York", "Tokyo", "Sydney", 
-    "Paris", "Moskau", "Beijing", "Dubai", "Los Angeles",
-    "Rio de Janeiro", "Kapstadt", "Singapur", "Bangkok", "Mumbai",
-    "Istanbul", "Rom", "Madrid", "Toronto", "Mexiko-Stadt",
+    "Berlin", "London", "New York", "Tokyo", "Sydney", "Paris", "Moskau", "Beijing", "Dubai", "Los Angeles",
+    "Rio de Janeiro", "Kapstadt", "Singapur", "Bangkok", "Mumbai", "Istanbul", "Rom", "Madrid", "Toronto", "Mexiko-Stadt",
     "Kairo", "Seoul", "Hong Kong", "Chicago", "Athen"
 ];
 
-// 2. SKIGEBIETE (Open-Meteo)
 const SNOW_LOCATIONS = [
-    { name: "WINTERBERG", lat: 51.19, lon: 8.53 },
-    { name: "FELDBERG", lat: 47.86, lon: 8.00 },
-    { name: "OBERSTDORF", lat: 47.41, lon: 10.28 },
-    { name: "ZUGSPITZE", lat: 47.42, lon: 10.98 },
-    { name: "BROCKEN", lat: 51.80, lon: 10.61 },
-    { name: "KITZBÜHEL", lat: 47.44, lon: 12.39 },
-    { name: "ISCHGL", lat: 47.01, lon: 10.29 },
-    { name: "SÖLDEN", lat: 46.97, lon: 11.01 },
-    { name: "MAYRHOFEN", lat: 47.16, lon: 11.86 },
-    { name: "ST. ANTON", lat: 47.13, lon: 10.27 },
-    { name: "ZERMATT", lat: 46.02, lon: 7.75 },
-    { name: "ST. MORITZ", lat: 46.50, lon: 9.84 },
-    { name: "GRÖDEN", lat: 46.55, lon: 11.72 },
-    { name: "CORTINA", lat: 46.54, lon: 12.13 },
+    { name: "WINTERBERG", lat: 51.19, lon: 8.53 }, { name: "FELDBERG", lat: 47.86, lon: 8.00 },
+    { name: "OBERSTDORF", lat: 47.41, lon: 10.28 }, { name: "ZUGSPITZE", lat: 47.42, lon: 10.98 },
+    { name: "BROCKEN", lat: 51.80, lon: 10.61 }, { name: "KITZBÜHEL", lat: 47.44, lon: 12.39 },
+    { name: "ISCHGL", lat: 47.01, lon: 10.29 }, { name: "SÖLDEN", lat: 46.97, lon: 11.01 },
+    { name: "MAYRHOFEN", lat: 47.16, lon: 11.86 }, { name: "ST. ANTON", lat: 47.13, lon: 10.27 },
+    { name: "ZERMATT", lat: 46.02, lon: 7.75 }, { name: "ST. MORITZ", lat: 46.50, lon: 9.84 },
+    { name: "GRÖDEN", lat: 46.55, lon: 11.72 }, { name: "CORTINA", lat: 46.54, lon: 12.13 },
     { name: "CHAMONIX", lat: 45.92, lon: 6.87 }
 ];
 
-// 3. BADEORTE (Open-Meteo Marine)
 const SUMMER_LOCATIONS = [
-    { name: "SYLT", lat: 54.91, lon: 8.31 },
-    { name: "RÜGEN", lat: 54.40, lon: 13.62 },
-    { name: "NORDERNEY", lat: 53.70, lon: 7.15 },
-    { name: "TIMMENDORF", lat: 54.00, lon: 10.78 },
-    { name: "MALLORCA", lat: 39.57, lon: 2.65 },
-    { name: "IBIZA", lat: 38.91, lon: 1.43 },
-    { name: "ANTALYA", lat: 36.88, lon: 30.70 },
-    { name: "KRETA", lat: 35.33, lon: 25.14 },
-    { name: "RIMINI", lat: 44.06, lon: 12.56 },
-    { name: "NIZZA", lat: 43.70, lon: 7.26 },
-    { name: "BARCELONA", lat: 41.38, lon: 2.17 },
-    { name: "DUBROVNIK", lat: 42.65, lon: 18.09 },
-    { name: "GRAN CANARIA", lat: 27.92, lon: 15.55 },
-    { name: "TENERIFFA", lat: 28.29, lon: 16.63 },
+    { name: "SYLT", lat: 54.91, lon: 8.31 }, { name: "RÜGEN", lat: 54.40, lon: 13.62 },
+    { name: "NORDERNEY", lat: 53.70, lon: 7.15 }, { name: "TIMMENDORF", lat: 54.00, lon: 10.78 },
+    { name: "MALLORCA", lat: 39.57, lon: 2.65 }, { name: "IBIZA", lat: 38.91, lon: 1.43 },
+    { name: "ANTALYA", lat: 36.88, lon: 30.70 }, { name: "KRETA", lat: 35.33, lon: 25.14 },
+    { name: "RIMINI", lat: 44.06, lon: 12.56 }, { name: "NIZZA", lat: 43.70, lon: 7.26 },
+    { name: "BARCELONA", lat: 41.38, lon: 2.17 }, { name: "DUBROVNIK", lat: 42.65, lon: 18.09 },
+    { name: "GRAN CANARIA", lat: 27.92, lon: 15.55 }, { name: "TENERIFFA", lat: 28.29, lon: 16.63 },
     { name: "ALGARVE", lat: 37.01, lon: -7.93 }
 ];
 
-// SYSTEM VARIABLEN
 let lastBatLevel = null;
 let batDropCounter = 0;
 let batteryCritical = false;
 let lastPressure = parseFloat(localStorage.getItem('aura_last_press')) || 0;
 let globalForecastCache = null; 
 
-/* --- SYSTEM START --- */
+/* --- START --- */
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
     let el = document.documentElement;
@@ -75,13 +54,9 @@ function startApp() {
     if(bgVid) { bgVid.play().catch(e=>{}); }
 
     initVideoFallback();
-    initMenuValues(); // NEU: Direkt Werte setzen statt Datei laden
+    initMenuValues(); 
 
-    runClock(); 
-    loadData(); 
-    checkStatus(); 
-    initBatteryGuard(); 
-    checkAutoSleep(); 
+    runClock(); loadData(); checkStatus(); initBatteryGuard(); checkAutoSleep(); 
 
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     
@@ -96,20 +71,11 @@ function initVideoFallback() {
     setTimeout(() => { if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; }, 1500);
 }
 
-/* --- MENÜ HANDLING (INTERN) --- */
 function initMenuValues() {
-    // Füllt die Eingabefelder direkt aus dem Speicher
-    let cityInp = document.getElementById('inp-city-val');
-    if(cityInp) cityInp.value = CONFIG.city;
-    
-    let tFrom = document.getElementById('inp-time-from');
-    if(tFrom) tFrom.value = CONFIG.sleepFrom;
-    
-    let tTo = document.getElementById('inp-time-to');
-    if(tTo) tTo.value = CONFIG.sleepTo;
-    
-    let tMode = document.getElementById('inp-ticker-mode');
-    if(tMode) tMode.value = CONFIG.tickerMode;
+    let cityInp = document.getElementById('inp-city-val'); if(cityInp) cityInp.value = CONFIG.city;
+    let tFrom = document.getElementById('inp-time-from'); if(tFrom) tFrom.value = CONFIG.sleepFrom;
+    let tTo = document.getElementById('inp-time-to'); if(tTo) tTo.value = CONFIG.sleepTo;
+    let tMode = document.getElementById('inp-ticker-mode'); if(tMode) tMode.value = CONFIG.tickerMode;
 }
 
 function saveSettings() {
@@ -117,30 +83,22 @@ function saveSettings() {
     let tFrom = document.getElementById('inp-time-from').value;
     let tTo = document.getElementById('inp-time-to').value;
     let tMode = document.getElementById('inp-ticker-mode').value;
-    
     if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; }
-    
     localStorage.setItem('aura_sleep_from', tFrom); CONFIG.sleepFrom = tFrom;
     localStorage.setItem('aura_sleep_to', tTo); CONFIG.sleepTo = tTo;
-    
-    localStorage.setItem('aura_ticker_mode', tMode); 
-    CONFIG.tickerMode = tMode;
-    
-    closeMenu();
-    loadData(); // Ticker aktualisieren
+    localStorage.setItem('aura_ticker_mode', tMode); CONFIG.tickerMode = tMode;
+    closeMenu(); loadData(); 
 }
 
-/* --- LOADER --- */
 function showLoader() { let l = document.getElementById('loader'); if(l) l.style.display = 'block'; }
 function hideLoader() { setTimeout(() => { let l = document.getElementById('loader'); if(l) l.style.display = 'none'; }, 1000); }
 
-/* --- TIME & SLEEP --- */
+/* --- ENGINE --- */
 function runClock() {
     let now = new Date();
     let h = (now.getHours()<10?'0':'')+now.getHours();
     let m = (now.getMinutes()<10?'0':'')+now.getMinutes();
     document.getElementById('clock').innerText = h + ":" + m;
-    
     let days = ['SONNTAG','MONTAG','DIENSTAG','MITTWOCH','DONNERSTAG','FREITAG','SAMSTAG'];
     let months = ['JAN','FEB','MÄR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DEZ'];
     document.getElementById('date').innerText = days[now.getDay()] + ", " + now.getDate() + ". " + months[now.getMonth()];
@@ -163,7 +121,6 @@ function checkAutoSleep() {
     else { if(ol.style.display === 'block') { ol.style.display = 'none'; } }
 }
 
-/* --- BATTERY --- */
 function checkStatus() {
     let net = document.getElementById('net-status');
     if(navigator.onLine) { net.innerText = "WLAN: OK"; net.style.color = "#0f0"; }
@@ -201,7 +158,6 @@ function initBatteryGuard() {
     }, 1800000); 
 }
 
-/* --- WETTER ENGINE (HAUPTDATEN) --- */
 function loadData() {
     showLoader();
     let cb = Date.now(); 
@@ -234,7 +190,7 @@ function loadRealDWD(lat, lon) {
     let txt = document.getElementById('dwd-text');
     let time = document.getElementById('dwd-valid');
     if(!monitor) return;
-    monitor.style.display = 'none'; // Auto-Hide
+    monitor.style.display = 'none'; 
     fetch(`https://api.brightsky.dev/alerts?lat=${lat}&lon=${lon}`)
     .then(r => r.json())
     .then(data => {
@@ -264,6 +220,7 @@ function loadRealDWD(lat, lon) {
 function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
     document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
+    // HIER V82: Nutzung der High-End Icons (isReal = true)
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
     let rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
@@ -319,6 +276,7 @@ function renderForecast(data) {
     document.getElementById('moon-phase').innerText = getMoonPhase(new Date());
 }
 
+/* --- V82: INTELLIGENTER TICKER (ERLEBNIS-ICONS) --- */
 async function loadTicker() {
     let tickerContent = "";
     if(batteryCritical) tickerContent += `<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> `;
@@ -339,7 +297,11 @@ async function loadTicker() {
             if(item && item.data && item.data.current) {
                 let cm = Math.round(item.data.current.snow_depth * 100);
                 let val = cm > 0 ? cm + "cm" : "0cm";
-                tickerContent += `<div class="t-item">${item.name} ❄️ ${val}</div>`;
+                // V82: Logik für Schnee-Icons
+                let icon = "❄️";
+                if(cm > 50) icon = "⛷️"; // Viel Schnee -> Skifahrer
+                else if(cm > 20) icon = "🗻"; // Guter Schnee -> Berg
+                tickerContent += `<div class="t-item">${item.name} ${icon} ${val}</div>`;
             }
         });
     } else if(CONFIG.tickerMode === 'summer') {
@@ -351,7 +313,11 @@ async function loadTicker() {
         results.forEach(item => {
             if(item && item.data && item.data.current) {
                 let temp = Math.round(item.data.current.sea_surface_temperature);
-                tickerContent += `<div class="t-item">${item.name} 🌊 ${temp}°C</div>`;
+                // V82: Logik für Sommer-Icons
+                let icon = "🌊";
+                if(temp > 22) icon = "🌴"; // Warm -> Palme
+                else if(temp >= 17) icon = "🏊"; // Okay -> Schwimmer
+                tickerContent += `<div class="t-item">${item.name} ${icon} ${temp}°C</div>`;
             }
         });
     } else {
@@ -372,22 +338,23 @@ async function loadTicker() {
     document.getElementById('ticker-text').innerHTML = tickerContent;
 }
 
-function getVectorIcon(code, isPremium) {
+function getVectorIcon(code, isReal) {
     let icon = code.replace('n','d'); 
     let isNight = code.includes('n');
     let svgContent = "";
-    let cssClass = isPremium ? "icon-premium" : "icon-simple";
-    let sunFill = isPremium ? "url(#gradSun)" : "#00eaff";
-    let cloudFill = isPremium ? "url(#gradCloud)" : "#fff";
-    let moonFill = isPremium ? "url(#gradMoon)" : "#00eaff";
-    const cloudPath = `<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" fill="${cloudFill}" />`;
+    // V82: "icon-real" für High-End Gradients, sonst "icon-simple"
+    let cssClass = isReal ? "icon-real" : "icon-simple";
+    
+    // Die Pfade bleiben gleich, aber in CSS (style.css) sind die Füllungen (Gradients) definiert
+    const cloudPath = `<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />`;
     const cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
-    const sunObj = `<circle class="svg-sun" cx="12" cy="12" r="5" style="fill:${sunFill}"/><g class="svg-sun" style="stroke:${isPremium ? '#ff9900':'#00eaff'}; stroke-width:2"><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/></g>`;
-    const moonObj = `<path class="svg-moon" d="M12,3 C10,3 8,4 7,6 C10,6 13,9 13,12 C13,15 10,18 7,18 C8,20 10,21 12,21 C17,21 21,17 21,12 C21,7 17,3 12,3 Z" fill="${moonFill}"/>`;
+    const sunObj = `<circle class="svg-sun" cx="12" cy="12" r="5"/><g class="svg-sun" style="stroke:${isReal ? 'url(#gradSunReal)':'#00eaff'}; stroke-width:2"><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/></g>`;
+    const moonObj = `<path class="svg-moon" d="M12,3 C10,3 8,4 7,6 C10,6 13,9 13,12 C13,15 10,18 7,18 C8,20 10,21 12,21 C17,21 21,17 21,12 C21,7 17,3 12,3 Z" />`;
     const rainObj = '<line class="svg-rain" x1="8" y1="18" x2="8" y2="22" /><line class="svg-rain" x1="12" y1="18" x2="12" y2="22" style="animation-delay:0.2s" /><line class="svg-rain" x1="16" y1="18" x2="16" y2="22" style="animation-delay:0.4s"/>';
     const snowObj = '<circle class="svg-snow" cx="8" cy="20" r="1.5"/><circle class="svg-snow" cx="16" cy="20" r="1.5" style="animation-delay:1s"/><circle class="svg-snow" cx="12" cy="22" r="1.5" style="animation-delay:0.5s"/>';
-    const boltObj = '<polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9" fill="#ff3333"/>';
+    const boltObj = '<polygon class="svg-bolt" points="10,15 13,15 12,19 16,13 13,13 14,9"/>';
     const mistObj = '<line class="svg-mist" x1="4" y1="10" x2="20" y2="10" /><line class="svg-mist" x1="4" y1="14" x2="20" y2="14" style="animation-delay:1s"/><line class="svg-mist" x1="4" y1="18" x2="20" y2="18" style="animation-delay:2s"/>';
+    
     if(code === '01d') svgContent = sunObj; 
     else if(code === '01n') svgContent = moonObj; 
     else if(code === '02d' || code === '02n') svgContent = (isNight ? moonObj : sunObj) + cloudPath; 
@@ -397,6 +364,7 @@ function getVectorIcon(code, isPremium) {
     else if(code === '13d' || code === '13n') svgContent = cloudPath + snowObj; 
     else if(code === '50d' || code === '50n') svgContent = mistObj; 
     else svgContent = sunObj; 
+    
     return `<svg class="svg-icon ${cssClass}" viewBox="0 0 24 24">${svgContent}</svg>`;
 }
 
@@ -411,7 +379,6 @@ function getMoonPhase(date) {
     jd /= 29.5305882; let b = parseInt(jd); jd -= b; b = Math.round(jd * 8); if (b >= 8) b = 0;
     return ['🌑 Neumond', '🌒 Zunehmend', '🌓 Halbmond', '🌔 Zunehmend', '🌕 Vollmond', '🌖 Abnehmend', '🌗 Halbmond', '🌘 Abnehmend'][b];
 }
-// NEU: Menü anzeigen, da es jetzt im HTML existiert
 function openMenu() { document.getElementById('menu-modal').style.display = 'block'; }
 function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
 function toggleAccordion(id) { let c = document.getElementById(id); let v = c.style.display==="block"; document.querySelectorAll('.acc-content').forEach(e=>e.style.display='none'); if(!v) c.style.display="block"; }
