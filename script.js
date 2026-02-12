@@ -1,7 +1,7 @@
-/* --- AURA V83.3 (STABLE RELEASE - SHELLY & TICKER FIX) --- */
+/* --- AURA V83.6 (FULL INTEGRITY) --- */
 
 var CONFIG = {
-    version: 83.3,
+    version: 83.6,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -11,9 +11,56 @@ var CONFIG = {
 };
 
 /* --- DATENBANKEN --- */
-var WORLD_CITIES = [{n:"Berlin",f:"🇩🇪"}, {n:"London",f:"🇬🇧"}, {n:"New York",f:"🇺🇸"}, {n:"Tokyo",f:"🇯🇵"}, {n:"Sydney",f:"🇦🇺"}, {n:"Paris",f:"🇫🇷"}, {n:"Moskau",f:"🇷🇺"}, {n:"Beijing",f:"🇨🇳"}, {n:"Dubai",f:"🇦🇪"}, {n:"Los Angeles",f:"🇺🇸"}, {n:"Rio",f:"🇧🇷"}, {n:"Kapstadt",f:"🇿🇦"}, {n:"Singapur",f:"🇸🇬"}, {n:"Bangkok",f:"🇹🇭"}, {n:"Mumbai",f:"🇮🇳"}, {n:"Istanbul",f:"🇹🇷"}, {n:"Rom",f:"🇮🇹"}, {n:"Madrid",f:"🇪🇸"}, {n:"Toronto",f:"🇨🇦"}, {n:"Mexiko-Stadt",f:"🇲🇽"}, {n:"Kairo",f:"🇪🇬"}, {n:"Seoul",f:"🇰🇷"}, {n:"Hong Kong",f:"🇭🇰"}, {n:"Chicago",f:"🇺🇸"}, {n:"Athen",f:"🇬🇷"}];
-var SNOW_LOCATIONS = [{ name: "WINTERBERG", flag: "🇩🇪", lat: 51.19, lon: 8.53 }, { name: "FELDBERG", flag: "🇩🇪", lat: 47.86, lon: 8.00 }, { name: "ZUGSPITZE", flag: "🇩🇪", lat: 47.42, lon: 10.98 }, { name: "OBERSTDORF", flag: "🇩🇪", lat: 47.41, lon: 10.28 }, { name: "BROCKEN", flag: "🇩🇪", lat: 51.80, lon: 10.61 }, { name: "GARMISCH", flag: "🇩🇪", lat: 47.49, lon: 11.09 }, { name: "WILLINGEN", flag: "🇩🇪", lat: 51.29, lon: 8.61 }, { name: "FICHTELBERG", flag: "🇩🇪", lat: 50.42, lon: 12.95 }, { name: "KITZBÜHEL", flag: "🇦🇹", lat: 47.44, lon: 12.39 }, { name: "ISCHGL", flag: "🇦🇹", lat: 47.01, lon: 10.29 }, { name: "SÖLDEN", flag: "🇦🇹", lat: 46.97, lon: 11.01 }, { name: "MAYRHOFEN", flag: "🇦🇹", lat: 47.16, lon: 11.86 }, { name: "ST. ANTON", flag: "🇦🇹", lat: 47.13, lon: 10.27 }, { name: "SAALBACH", flag: "🇦🇹", lat: 47.39, lon: 12.64 }, { name: "OBERTAUERN", flag: "🇦🇹", lat: 47.24, lon: 13.55 }, { name: "SCHLADMING", flag: "🇦🇹", lat: 47.39, lon: 13.68 }, { name: "ZERMATT", flag: "🇨🇭", lat: 46.02, lon: 7.75 }, { name: "ST. MORITZ", flag: "🇨🇭", lat: 46.50, lon: 9.84 }, { name: "DAVOS", flag: "🇨🇭", lat: 46.80, lon: 9.83 }, { name: "LAAX", flag: "🇨🇭", lat: 46.82, lon: 9.26 }, { name: "SAAS-FEE", flag: "🇨🇭", lat: 46.10, lon: 7.92 }, { name: "GRINDELWALD", flag: "🇨🇭", lat: 46.62, lon: 8.04 }, { name: "GRÖDEN", flag: "🇮🇹", lat: 46.55, lon: 11.72 }, { name: "CORTINA", flag: "🇮🇹", lat: 46.54, lon: 12.13 }, { name: "LIVIGNO", flag: "🇮🇹", lat: 46.53, lon: 10.13 }, { name: "CHAMONIX", flag: "🇫🇷", lat: 45.92, lon: 6.87 }, { name: "VAL THORENS", flag: "🇫🇷", lat: 45.29, lon: 6.58 }, { name: "ASPEN", flag: "🇺🇸", lat: 39.19, lon: -106.81 }, { name: "VAIL", flag: "🇺🇸", lat: 39.64, lon: -106.37 }, { name: "WHISTLER", flag: "🇨🇦", lat: 50.11, lon: -122.95 }, { name: "BANFF", flag: "🇨🇦", lat: 51.17, lon: -115.57 }, { name: "NISEKO", flag: "🇯🇵", lat: 42.80, lon: 140.68 }, { name: "TRYSIL", flag: "🇳🇴", lat: 61.31, lon: 12.26 }, { name: "ÅRE", flag: "🇸🇪", lat: 63.39, lon: 13.07 }];
-var SUMMER_LOCATIONS = [{ name: "DJERBA", flag: "🇹🇳", lat: 33.80, lon: 10.88 }, { name: "HAMMAMET", flag: "🇹🇳", lat: 36.40, lon: 10.61 }, { name: "HURGHADA", flag: "🇪🇬", lat: 27.25, lon: 33.81 }, { name: "AGADIR", flag: "🇲🇦", lat: 30.42, lon: -9.59 }, { name: "ANTALYA", flag: "🇹🇷", lat: 36.88, lon: 30.70 }, { name: "BORACAY", flag: "🇵🇭", lat: 11.96, lon: 121.92 }, { name: "PALAWAN", flag: "🇵🇭", lat: 9.83, lon: 118.73 }, { name: "PHUKET", flag: "🇹🇭", lat: 7.88, lon: 98.39 }, { name: "KOH SAMUI", flag: "🇹🇭", lat: 9.51, lon: 100.05 }, { name: "BALI", flag: "🇮🇩", lat: -8.40, lon: 115.18 }, { name: "MALEDIVEN", flag: "🇲🇻", lat: 3.20, lon: 73.22 }, { name: "DUBAI", flag: "🇦🇪", lat: 25.20, lon: 55.27 }, { name: "BENTOTA", flag: "🇱🇰", lat: 6.42, lon: 79.99 }, { name: "PUNTA CANA", flag: "🇩🇴", lat: 18.58, lon: -68.40 }, { name: "VARADERO", flag: "🇨🇺", lat: 23.15, lon: -81.24 }, { name: "CANCUN", flag: "🇲🇽", lat: 21.16, lon: -86.85 }, { name: "MIAMI", flag: "🇺🇸", lat: 25.76, lon: -80.19 }, { name: "WAIKIKI", flag: "🇺🇸", lat: 21.27, lon: -157.82 }, { name: "MALLORCA", flag: "🇪🇸", lat: 39.57, lon: 2.65 }, { name: "IBIZA", flag: "🇪🇸", lat: 38.91, lon: 1.43 }, { name: "FUERTEVENTURA", flag: "🇪🇸", lat: 28.35, lon: -14.05 }, { name: "GRAN CANARIA", flag: "🇪🇸", lat: 27.92, lon: 15.55 }, { name: "ALGARVE", flag: "🇵🇹", lat: 37.01, lon: -7.93 }, { name: "NIZZA", flag: "🇫🇷", lat: 43.70, lon: 7.26 }, { name: "RIMINI", flag: "🇮🇹", lat: 44.06, lon: 12.56 }, { name: "DUBROVNIK", flag: "🇭🇷", lat: 42.65, lon: 18.09 }, { name: "KRETA", flag: "🇬🇷", lat: 35.33, lon: 25.14 }, { name: "RHODOS", flag: "🇬🇷", lat: 36.43, lon: 28.22 }, { name: "SYLT", flag: "🇩🇪", lat: 54.91, lon: 8.31 }, { name: "RÜGEN", flag: "🇩🇪", lat: 54.40, lon: 13.62 }, { name: "NORDERNEY", flag: "🇩🇪", lat: 53.70, lon: 7.15 }, { name: "TIMMENDORF", flag: "🇩🇪", lat: 54.00, lon: 10.78 }, { name: "ST. PETER", flag: "🇩🇪", lat: 54.30, lon: 8.63 }, { name: "USEDOM", flag: "🇩🇪", lat: 53.96, lon: 14.05 }, { name: "SCHEVENINGEN", flag: "🇳🇱", lat: 52.11, lon: 4.28 }];
+var WORLD_CITIES = [
+    {n:"Berlin",f:"🇩🇪"}, {n:"London",f:"🇬🇧"}, {n:"New York",f:"🇺🇸"}, {n:"Tokyo",f:"🇯🇵"}, {n:"Sydney",f:"🇦🇺"},
+    {n:"Paris",f:"🇫🇷"}, {n:"Moskau",f:"🇷🇺"}, {n:"Beijing",f:"🇨🇳"}, {n:"Dubai",f:"🇦🇪"}, {n:"Los Angeles",f:"🇺🇸"},
+    {n:"Rio",f:"🇧🇷"}, {n:"Kapstadt",f:"🇿🇦"}, {n:"Singapur",f:"🇸🇬"}, {n:"Bangkok",f:"🇹🇭"}, {n:"Mumbai",f:"🇮🇳"},
+    {n:"Istanbul",f:"🇹🇷"}, {n:"Rom",f:"🇮🇹"}, {n:"Madrid",f:"🇪🇸"}, {n:"Toronto",f:"🇨🇦"}, {n:"Mexiko-Stadt",f:"🇲🇽"},
+    {n:"Kairo",f:"🇪🇬"}, {n:"Seoul",f:"🇰🇷"}, {n:"Hong Kong",f:"🇭🇰"}, {n:"Chicago",f:"🇺🇸"}, {n:"Athen",f:"🇬🇷"}
+];
+
+var SNOW_LOCATIONS = [
+    { name: "WINTERBERG", flag: "🇩🇪", lat: 51.19, lon: 8.53 }, { name: "FELDBERG", flag: "🇩🇪", lat: 47.86, lon: 8.00 },
+    { name: "ZUGSPITZE", flag: "🇩🇪", lat: 47.42, lon: 10.98 }, { name: "OBERSTDORF", flag: "🇩🇪", lat: 47.41, lon: 10.28 },
+    { name: "BROCKEN", flag: "🇩🇪", lat: 51.80, lon: 10.61 }, { name: "GARMISCH", flag: "🇩🇪", lat: 47.49, lon: 11.09 },
+    { name: "WILLINGEN", flag: "🇩🇪", lat: 51.29, lon: 8.61 }, { name: "FICHTELBERG", flag: "🇩🇪", lat: 50.42, lon: 12.95 },
+    { name: "KITZBÜHEL", flag: "🇦🇹", lat: 47.44, lon: 12.39 }, { name: "ISCHGL", flag: "🇦🇹", lat: 47.01, lon: 10.29 },
+    { name: "SÖLDEN", flag: "🇦🇹", lat: 46.97, lon: 11.01 }, { name: "MAYRHOFEN", flag: "🇦🇹", lat: 47.16, lon: 11.86 },
+    { name: "ST. ANTON", flag: "🇦🇹", lat: 47.13, lon: 10.27 }, { name: "SAALBACH", flag: "🇦🇹", lat: 47.39, lon: 12.64 },
+    { name: "OBERTAUERN", flag: "🇦🇹", lat: 47.24, lon: 13.55 }, { name: "SCHLADMING", flag: "🇦🇹", lat: 47.39, lon: 13.68 },
+    { name: "ZERMATT", flag: "🇨🇭", lat: 46.02, lon: 7.75 }, { name: "ST. MORITZ", flag: "🇨🇭", lat: 46.50, lon: 9.84 },
+    { name: "DAVOS", flag: "🇨🇭", lat: 46.80, lon: 9.83 }, { name: "LAAX", flag: "🇨🇭", lat: 46.82, lon: 9.26 },
+    { name: "SAAS-FEE", flag: "🇨🇭", lat: 46.10, lon: 7.92 }, { name: "GRINDELWALD", flag: "🇨🇭", lat: 46.62, lon: 8.04 },
+    { name: "GRÖDEN", flag: "🇮🇹", lat: 46.55, lon: 11.72 }, { name: "CORTINA", flag: "🇮🇹", lat: 46.54, lon: 12.13 },
+    { name: "LIVIGNO", flag: "🇮🇹", lat: 46.53, lon: 10.13 }, { name: "CHAMONIX", flag: "🇫🇷", lat: 45.92, lon: 6.87 },
+    { name: "VAL THORENS", flag: "🇫🇷", lat: 45.29, lon: 6.58 },
+    { name: "ASPEN", flag: "🇺🇸", lat: 39.19, lon: -106.81 }, { name: "VAIL", flag: "🇺🇸", lat: 39.64, lon: -106.37 },
+    { name: "WHISTLER", flag: "🇨🇦", lat: 50.11, lon: -122.95 }, { name: "BANFF", flag: "🇨🇦", lat: 51.17, lon: -115.57 },
+    { name: "NISEKO", flag: "🇯🇵", lat: 42.80, lon: 140.68 }, { name: "TRYSIL", flag: "🇳🇴", lat: 61.31, lon: 12.26 },
+    { name: "ÅRE", flag: "🇸🇪", lat: 63.39, lon: 13.07 }
+];
+
+var SUMMER_LOCATIONS = [
+    { name: "DJERBA", flag: "🇹🇳", lat: 33.80, lon: 10.88 }, { name: "HAMMAMET", flag: "🇹🇳", lat: 36.40, lon: 10.61 },
+    { name: "HURGHADA", flag: "🇪🇬", lat: 27.25, lon: 33.81 }, { name: "AGADIR", flag: "🇲🇦", lat: 30.42, lon: -9.59 },
+    { name: "ANTALYA", flag: "🇹🇷", lat: 36.88, lon: 30.70 },
+    { name: "BORACAY", flag: "🇵🇭", lat: 11.96, lon: 121.92 }, { name: "PALAWAN", flag: "🇵🇭", lat: 9.83, lon: 118.73 },
+    { name: "PHUKET", flag: "🇹🇭", lat: 7.88, lon: 98.39 }, { name: "KOH SAMUI", flag: "🇹🇭", lat: 9.51, lon: 100.05 },
+    { name: "BALI", flag: "🇮🇩", lat: -8.40, lon: 115.18 }, { name: "MALEDIVEN", flag: "🇲🇻", lat: 3.20, lon: 73.22 },
+    { name: "DUBAI", flag: "🇦🇪", lat: 25.20, lon: 55.27 }, { name: "BENTOTA", flag: "🇱🇰", lat: 6.42, lon: 79.99 },
+    { name: "PUNTA CANA", flag: "🇩🇴", lat: 18.58, lon: -68.40 }, { name: "VARADERO", flag: "🇨🇺", lat: 23.15, lon: -81.24 },
+    { name: "CANCUN", flag: "🇲🇽", lat: 21.16, lon: -86.85 }, { name: "MIAMI", flag: "🇺🇸", lat: 25.76, lon: -80.19 },
+    { name: "WAIKIKI", flag: "🇺🇸", lat: 21.27, lon: -157.82 },
+    { name: "MALLORCA", flag: "🇪🇸", lat: 39.57, lon: 2.65 }, { name: "IBIZA", flag: "🇪🇸", lat: 38.91, lon: 1.43 },
+    { name: "FUERTEVENTURA", flag: "🇪🇸", lat: 28.35, lon: -14.05 }, { name: "GRAN CANARIA", flag: "🇪🇸", lat: 27.92, lon: 15.55 },
+    { name: "ALGARVE", flag: "🇵🇹", lat: 37.01, lon: -7.93 }, { name: "NIZZA", flag: "🇫🇷", lat: 43.70, lon: 7.26 },
+    { name: "RIMINI", flag: "🇮🇹", lat: 44.06, lon: 12.56 }, { name: "DUBROVNIK", flag: "🇭🇷", lat: 42.65, lon: 18.09 },
+    { name: "KRETA", flag: "🇬🇷", lat: 35.33, lon: 25.14 }, { name: "RHODOS", flag: "🇬🇷", lat: 36.43, lon: 28.22 },
+    { name: "SYLT", flag: "🇩🇪", lat: 54.91, lon: 8.31 }, { name: "RÜGEN", flag: "🇩🇪", lat: 54.40, lon: 13.62 },
+    { name: "NORDERNEY", flag: "🇩🇪", lat: 53.70, lon: 7.15 }, { name: "TIMMENDORF", flag: "🇩🇪", lat: 54.00, lon: 10.78 },
+    { name: "ST. PETER", flag: "🇩🇪", lat: 54.30, lon: 8.63 }, { name: "USEDOM", flag: "🇩🇪", lat: 53.96, lon: 14.05 },
+    { name: "SCHEVENINGEN", flag: "🇳🇱", lat: 52.11, lon: 4.28 }
+];
 
 var lastBatLevel = null;
 var batDropCounter = 0;
@@ -80,7 +127,7 @@ function saveSettings() {
     updateShelly(); 
 }
 
-/* --- SHELLY ENGINE V2 (ROBUST) --- */
+/* --- SHELLY ENGINE (FAIL-SAFE) --- */
 function updateShelly() {
     var ip = CONFIG.shellyIP;
     var display = document.getElementById('shelly-display');
@@ -93,7 +140,7 @@ function updateShelly() {
     if(display) display.style.display = 'block';
     
     var xhr = new XMLHttpRequest();
-    // Nutze einfachen GET Request
+    // RPC Endpoint für Gen3 Shelly Geräte
     xhr.open('GET', 'http://' + ip + '/rpc/HT.GetStatus', true);
     xhr.timeout = 5000; 
 
@@ -110,17 +157,13 @@ function updateShelly() {
         }
     };
     
-    // Fehlerbehandlung: Zeige ERR nur an, wenn wir wirklich etwas erwarten
-    xhr.onerror = function() {
-        console.log("Shelly Error (CORS or Offline)");
-        // Auf Webseiten (HTTPS) wird dies oft blockiert. 
-        // Auf dem Tablet (App/File) sollte es gehen.
-    };
+    // Fehler ignorieren, damit die App weiterläuft
+    xhr.onerror = function() { console.log("Shelly unreachable (CORS/Offline)"); };
     
     xhr.send();
 }
 
-/* --- WETTER ENGINE (FIXED OFFLINE BUG) --- */
+/* --- WETTER ENGINE (ROBUST) --- */
 function loadData() {
     showLoader();
     var cb = Date.now(); 
@@ -139,13 +182,13 @@ function loadData() {
     .then(function(forecast) {
         globalForecastCache = forecast;
         renderForecast(forecast);
-        // Ticker laden, aber Fehler ignorieren, damit OFFLINE nicht erscheint
+        // Ticker laden, Fehler abfangen
         loadTicker().catch(function(e){ console.log("Ticker Skip"); }); 
     })
     .then(function() { hideLoader(); })
     .catch(function(e) {
         console.error("Main Weather Error:", e);
-        // NUR wenn das Hauptwetter fehlt, zeigen wir OFFLINE
+        // Nur wenn das Hauptwetter fehlt, zeigen wir OFFLINE
         document.getElementById('ticker-text').innerHTML = '<span class="t-alert">+++ OFFLINE +++</span>';
         hideLoader();
     });
@@ -156,12 +199,11 @@ function loadData() {
 }
 
 function loadTicker() {
-    var tickerContent = "+++ AURA WETTERSTATION V83.3 +++ ";
+    var tickerContent = "+++ AURA WETTERSTATION V83.6 +++ ";
     
-    // Wir nehmen nur die ersten 10 Städte um die API zu schonen
+    // Begrenzung um API-Fehler zu vermeiden
     var SAFE_CITIES = WORLD_CITIES.slice(0, 10); 
     
-    // Einzelne Requests abfangen
     var requests = SAFE_CITIES.map(function(city) { 
         return fetch('https://api.openweathermap.org/data/2.5/weather?q=' + city.n + '&appid=' + CONFIG.apiKey + '&units=metric')
         .then(function(r){ return r.json(); })
@@ -177,12 +219,11 @@ function loadTicker() {
                 valid++;
             }
         });
-        // Nur updaten wenn wir Daten haben
         if(valid > 0) document.getElementById('ticker-text').innerHTML = tickerContent;
     });
 }
 
-/* --- HELPER & RENDER (UNVERÄNDERT) --- */
+/* --- RENDER & HELPER --- */
 function loadRealDWD(lat, lon) {
     var monitor = document.getElementById('dwd-monitor');
     var txt = document.getElementById('dwd-text');
@@ -310,7 +351,6 @@ function checkStatus() {
 }
 
 function initBatteryGuard() { if(navigator.getBattery) { navigator.getBattery().then(function(bat) { lastBatLevel = bat.level; }); } }
-
 function getVectorIcon(code, isReal) {
     var sunObj = '<circle class="svg-sun" cx="12" cy="12" r="5"/><g class="svg-sun" style="stroke:#00eaff; stroke-width:2"><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></g>';
     var cloudPath = '<path class="svg-cloud" d="M7,19 L17,19 C21,19 21,15 21,15 C21,11 17,11 17,11 C17,7 13,4 11,4 C7,4 5,7 5,10 C2,10 1,12 1,14 C1,16 3,19 5,19 Z" />';
