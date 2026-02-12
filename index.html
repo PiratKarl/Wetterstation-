@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V83.1</title>
-    <link rel="stylesheet" href="style.css?v=83.1">
+    <title>Aura Wetterstation V84.3</title>
+    <link rel="stylesheet" href="style.css?v=84.3">
 </head>
 <body>
 
@@ -38,9 +38,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V83.1 STARTEN
+            AURA V84.3 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">LEGACY RESTORE</p>
+        <p style="color:#444; margin-top:20px;">LEGACY + MOND FIX</p>
     </div>
 
     <div class="dashboard">
@@ -91,26 +91,31 @@
             </div>
 
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
+            
             <div class="astro-block">
                 <span class="astro-label">SONNE</span>
                 <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
+            </div>
+
+            <div class="astro-block" style="margin-top: 5px;">
+                <span class="astro-label">MOND</span>
+                <span class="astro-val" id="moon-phase">--</span>
             </div>
             
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 83.1</div>
+                <div class="status-row">VER: 84.3</div>
                 <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V83.1 +++</div></div>
+    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V84.3 +++</div></div>
     
     <div class="forecast-area">
         <div class="f-row" id="hourly-row"></div>
         <div class="f-row" id="daily-row"></div>
-        <div style="text-align:center; padding:5px; color:#555;" id="moon-phase">--</div>
     </div>
 
     <div class="footer-copyright">&copy; Code-Werft 2026 - Piratkarl</div>
@@ -127,6 +132,9 @@
                     <option value="snow">❄️ Schnee-Bericht</option>
                     <option value="summer">🌊 Bade-Wetter</option>
                 </select>
+                <div style="color:#888; font-size:12px; margin-top:5px; font-style:italic;">
+                    * Schnee & Meer Ticker erfordern Android 7.1 oder höher.
+                </div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 Ruhemodus</button>
@@ -152,6 +160,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=83.1_legacy"></script>
+    <script src="script.js?v=84.3"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
-/* --- AURA V83.1 (LEGACY SAFE MODE - ES5) --- */
+/* --- AURA V84.3 (LEGACY STABLE - NO SHELLY) --- */
 
 var CONFIG = {
-    version: 83.1,
+    version: 84.3,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -9,8 +9,7 @@ var CONFIG = {
     tickerMode: localStorage.getItem('aura_ticker_mode') || 'world'
 };
 
-/* --- DATENBANKEN (35 ORTE + FAHNEN) --- */
-
+/* --- DATENBANKEN --- */
 var WORLD_CITIES = [
     {n:"Berlin",f:"🇩🇪"}, {n:"London",f:"🇬🇧"}, {n:"New York",f:"🇺🇸"}, {n:"Tokyo",f:"🇯🇵"}, {n:"Sydney",f:"🇦🇺"},
     {n:"Paris",f:"🇫🇷"}, {n:"Moskau",f:"🇷🇺"}, {n:"Beijing",f:"🇨🇳"}, {n:"Dubai",f:"🇦🇪"}, {n:"Los Angeles",f:"🇺🇸"},
@@ -74,11 +73,8 @@ function startApp() {
     if(overlay) overlay.style.display = 'none';
     
     var el = document.documentElement;
-    if(el.requestFullscreen) { 
-        el.requestFullscreen().catch(function(e){ console.log(e); }); 
-    } else if(el.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen();
-    }
+    if(el.requestFullscreen) { el.requestFullscreen().catch(function(e){}); } 
+    else if(el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }
     
     var bgVid = document.getElementById('wake-video-layer');
     if(bgVid) { bgVid.play().catch(function(e){}); }
@@ -90,11 +86,9 @@ function startApp() {
     loadData(); 
     checkStatus(); 
     initBatteryGuard(); 
-    checkAutoSleep(); 
 
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     
-    setInterval(checkUpdate, 300000);  
     setInterval(checkStatus, 60000);   
 }
 
@@ -105,9 +99,6 @@ function initVideoFallback() {
     if (playPromise !== undefined) { 
         playPromise.catch(function(error) { vid.style.display = 'none'; }); 
     }
-    setTimeout(function() { 
-        if(vid.paused || vid.readyState < 3) vid.style.display = 'none'; 
-    }, 1500);
 }
 
 function initMenuValues() {
@@ -193,7 +184,6 @@ function checkStatus() {
             }
             document.getElementById('bat-level').innerHTML = levelText + trendHTML;
             
-            // Critical Check
             var current = bat.level;
             if(lastBatLevel !== null) {
                 if(current < lastBatLevel) batDropCounter++;
@@ -228,7 +218,7 @@ function loadData() {
     .then(function(forecast) {
         globalForecastCache = forecast;
         renderForecast(forecast);
-        return loadTicker(); // Jetzt ohne await
+        return loadTicker(); 
     })
     .then(function() { hideLoader(); })
     .catch(function(e) {
@@ -239,7 +229,7 @@ function loadData() {
     
     var now = new Date();
     var ts = (now.getHours()<10?'0':'')+now.getHours() + ":" + (now.getMinutes()<10?'0':'')+now.getMinutes();
-    document.getElementById('last-update').innerText = "Aktualisiert: " + ts;
+    document.getElementById('last-update').innerText = "Sync: " + ts;
 }
 
 function loadRealDWD(lat, lon) {
@@ -253,10 +243,9 @@ function loadRealDWD(lat, lon) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
         if(data && data.alerts && data.alerts.length > 0) {
-            monitor.style.display = '-webkit-flex'; // Legacy Fix
+            monitor.style.display = '-webkit-flex'; 
             monitor.style.display = 'flex';
             var alerts = data.alerts;
-            // Einfache Sortierung für ES5
             alerts.sort(function(a, b) { 
                 var sev = { 'minor': 1, 'moderate': 2, 'severe': 3, 'extreme': 4 };
                 return sev[b.severity] - sev[a.severity];
@@ -293,12 +282,9 @@ function renderCurrent(data) {
     var rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) {
        rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
-    } else if (data.rain) { rainProb = "Regen"; }
+    }
     
-    var rainMM = "0mm";
-    if(data.rain && data.rain['1h']) { rainMM = data.rain['1h'] + "mm"; }
-    
-    document.getElementById('rain-val').innerHTML = rainProb + ' <span class="mm-val">' + rainMM + '</span>';
+    document.getElementById('rain-val').innerHTML = rainProb;
     document.getElementById('val-feels').innerText = Math.round(data.main.feels_like) + "°";
     document.getElementById('val-humidity').innerText = data.main.humidity;
     
@@ -354,7 +340,6 @@ function renderForecast(data) {
     document.getElementById('moon-phase').innerText = getMoonPhase(new Date());
 }
 
-/* --- TICKER OHNE ASYNC (OLD SCHOOL) --- */
 function loadTicker() {
     var tickerContent = "";
     if(batteryCritical) tickerContent += '<span class="t-warn-crit">+++ ACHTUNG: KRITISCHE ENTLADUNG! +++</span> ';
@@ -364,8 +349,6 @@ function loadTicker() {
     else tickerContent += '<span class="t-item">+++ WELT-WETTER +++</span>';
 
     var cb = Date.now();
-    
-    // Hilfsfunktion für Promises in ES5 Map
     var requests = [];
     
     if(CONFIG.tickerMode === 'snow') {
@@ -391,8 +374,6 @@ function loadTicker() {
         });
     }
 
-    // Promise.all funktioniert meistens, ansonsten könnte man hier Polyfill nutzen.
-    // Aber Fetch ist meist neuer als Promise, also wenn Fetch da ist, ist auch Promise da.
     return Promise.all(requests).then(function(results) {
         results.forEach(function(item) {
             if(!item) return;
@@ -401,7 +382,6 @@ function loadTicker() {
                 if(item.data && item.data.current) {
                     var val = "";
                     var icon = "";
-                    
                     if(CONFIG.tickerMode === 'snow') {
                         var cm = Math.round(item.data.current.snow_depth * 100);
                         val = cm > 0 ? cm + "cm" : "0cm";
@@ -418,7 +398,6 @@ function loadTicker() {
                     }
                 }
             } else {
-                // World
                 if(item.main) {
                     var utc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
                     var cityTime = new Date(utc + (1000 * item.timezone));
@@ -436,10 +415,8 @@ function getVectorIcon(code, isReal) {
     var isNight = code.indexOf('n') !== -1;
     var svgContent = "";
     var cssClass = isReal ? "icon-real" : "icon-simple";
-    
     var cloudPath = '<path class="svg-cloud" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
     var cloudDark = '<path class="svg-cloud-dark" d="M7,19 L17,19 C19.2,19 21,17.2 21,15 C21,12.8 19.2,11 17,11 L17,10 C17,6.7 14.3,4 11,4 C7.7,4 5,6.7 5,10 C2.8,10 1,11.8 1,14 C1,16.2 2.8,19 5,19 Z" />';
-    
     var fillSun = isReal ? 'url(#gradSunReal)' : '#00eaff';
     var sunObj = '<circle class="svg-sun" cx="12" cy="12" r="5"/><g class="svg-sun" style="stroke:'+fillSun+'; stroke-width:2"><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/></g>';
     var moonObj = '<path class="svg-moon" d="M12,3 C10,3 8,4 7,6 C10,6 13,9 13,12 C13,15 10,18 7,18 C8,20 10,21 12,21 C17,21 21,17 21,12 C21,7 17,3 12,3 Z" />';
@@ -482,9 +459,7 @@ function openMenu() { document.getElementById('menu-modal').style.display = 'blo
 function closeMenu() { document.getElementById('menu-modal').style.display = 'none'; }
 function toggleAccordion(id) { 
     var c = document.getElementById(id); 
-    var v = c.style.display==="block"; 
     var contents = document.querySelectorAll('.acc-content');
     for(var i=0; i<contents.length; i++) contents[i].style.display='none';
-    if(!v) c.style.display="block"; 
+    c.style.display="block"; 
 }
-function closeAccordion(id) { document.getElementById(id).style.display = 'none'; }
