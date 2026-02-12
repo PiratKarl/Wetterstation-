@@ -131,3 +131,54 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .svg-rain { stroke: #00eaff; stroke-width: 3; stroke-linecap: round; -webkit-filter: drop-shadow(0 0 5px #00eaff); filter: drop-shadow(0 0 5px #00eaff); }
 .svg-snow { fill: #fff; -webkit-filter: drop-shadow(0 0 5px #fff); filter: drop-shadow(0 0 5px #fff); }
 .svg-bolt { fill: #ffcc00; -webkit-filter: drop-shadow(0 0 10px #ff0000); filter: drop-shadow(0 0 10px #ff0000); }
+/* --- AURA V83.2 EXTENSION (SHELLY & UI) --- */
+
+/* Shelly Daten-Block im Dashboard */
+#shelly-display {
+    background: rgba(0, 234, 255, 0.05);
+    border-radius: 4px;
+    padding: 10px;
+    border-left: 3px solid #00eaff;
+    margin-bottom: 12px;
+    -webkit-transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease;
+}
+
+#shelly-display .astro-label {
+    letter-spacing: 1px;
+    font-size: 1.4vh;
+    margin-bottom: 5px;
+}
+
+#shelly-temp, #shelly-hum {
+    font-family: 'Arial Black', sans-serif;
+    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+}
+
+/* Link zur Anleitung im Menü */
+.info-link {
+    display: block;
+    margin-top: 15px;
+    color: #00eaff;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px;
+    border: 1px dashed #00eaff;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.info-link:active {
+    background: rgba(0, 234, 255, 0.2);
+}
+
+/* Optimierung für sehr kleine Tablet-Bildschirme */
+@media (max-height: 500px) {
+    #shelly-display {
+        padding: 5px;
+        margin-bottom: 5px;
+    }
+    .status-row {
+        font-size: 1.8vh;
+    }
+}

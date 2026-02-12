@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura - Sensor Anleitung</title>
+    <style>
+        body { background: #000; color: #fff; font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        h1, h2 { color: #00eaff; text-transform: uppercase; border-bottom: 2px solid #00eaff; padding-bottom: 5px; }
+        .box { border: 1px solid #333; padding: 15px; margin-bottom: 20px; border-left: 5px solid #00eaff; }
+        .highlight { color: #00eaff; font-weight: bold; }
+        .btn-back { display: inline-block; padding: 10px 20px; background: #00eaff; color: #000; text-decoration: none; font-weight: bold; border-radius: 5px; margin-top: 20px; }
+        .disclaimer { font-size: 0.8em; color: #777; margin-top: 40px; border-top: 1px solid #333; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🌡️ WLAN-Sensor Integration</h1>
+    
+    <div class="box">
+        <h2>1. Hardware vorbereiten</h2>
+        <p>Nutze einen <span class="highlight">Shelly Plus H&T (Gen3)</span>. Schließe ihn per USB-C an dauerhaften Strom an, damit er immer erreichbar bleibt.</p>
+    </div>
+
+    <div class="box">
+        <h2>2. Netzwerk-Setup</h2>
+        <p>Binde den Shelly über die Shelly-App in dein WLAN ein. Aktiviere in den Shelly-Einstellungen (Web-Interface) unter <strong>Network -> Wi-Fi</strong> die Option <strong>"Static IP"</strong>. Notiere dir die IP (z.B. 192.168.178.111).</p>
+    </div>
+
+    <div class="box">
+        <h2>3. In Aura aktivieren</h2>
+        <p>Trage die IP-Adresse in den Aura-Einstellungen unter "WLAN-Sensor" ein und speichere. Die Daten erscheinen automatisch im Hauptbildschirm.</p>
+    </div>
+
+    <div class="disclaimer">
+        <strong>Transparenz-Hinweis:</strong> Die Code-Werft empfiehlt Shelly aufgrund der offenen lokalen Schnittstelle. Wir erhalten <strong>keinerlei finanzielle Vorteile</strong> oder Provisionen für diese Empfehlung.
+    </div>
+
+    <a href="index.html" class="btn-back">ZURÜCK ZUR AURA</a>
+</body>
+</html>
