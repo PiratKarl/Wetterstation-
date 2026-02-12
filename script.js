@@ -1,7 +1,7 @@
-/* --- AURA V83.6 (FULL INTEGRITY) --- */
+/* --- AURA V84.1 (STABLE PROTOCOL) --- */
 
 var CONFIG = {
-    version: 83.6,
+    version: 84.1,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -74,8 +74,11 @@ function startApp() {
     if(overlay) overlay.style.display = 'none';
     
     var el = document.documentElement;
-    if(el.requestFullscreen) { el.requestFullscreen().catch(function(e){}); } 
-    else if(el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }
+    if(el.requestFullscreen) { 
+        el.requestFullscreen().catch(function(e){ console.log(e); }); 
+    } else if(el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+    }
     
     var bgVid = document.getElementById('wake-video-layer');
     if(bgVid) { bgVid.play().catch(function(e){}); }
@@ -84,8 +87,8 @@ function startApp() {
     initMenuValues(); 
 
     runClock(); 
-    loadData(); 
-    updateShelly(); 
+    loadData(); // Wetter laden
+    updateShelly(); // Shelly laden
     checkStatus(); 
     initBatteryGuard(); 
 
@@ -98,7 +101,10 @@ function startApp() {
 function initVideoFallback() {
     var vid = document.getElementById('logo-video');
     if(!vid) return;
-    vid.play().catch(function(error) { vid.style.display = 'none'; }); 
+    var playPromise = vid.play();
+    if (playPromise !== undefined) { 
+        playPromise.catch(function(error) { vid.style.display = 'none'; }); 
+    }
 }
 
 function initMenuValues() {
@@ -139,8 +145,14 @@ function updateShelly() {
 
     if(display) display.style.display = 'block';
     
+    // Sicherheit: Wenn wir auf einer HTTPS Seite sind und eine lokale IP aufrufen wollen
+    if(location.protocol === 'https:' && !ip.startsWith('https')) {
+        console.log("Shelly blocked by Browser Security (Mixed Content)");
+        return; // Abbruch, um Fehler zu vermeiden
+    }
+
     var xhr = new XMLHttpRequest();
-    // RPC Endpoint für Gen3 Shelly Geräte
+    // Nutze einfachen GET Request
     xhr.open('GET', 'http://' + ip + '/rpc/HT.GetStatus', true);
     xhr.timeout = 5000; 
 
@@ -157,8 +169,10 @@ function updateShelly() {
         }
     };
     
-    // Fehler ignorieren, damit die App weiterläuft
-    xhr.onerror = function() { console.log("Shelly unreachable (CORS/Offline)"); };
+    // Fehler stillschweigend ignorieren, damit die App weiterläuft
+    xhr.onerror = function() {
+        console.log("Shelly unreachable");
+    };
     
     xhr.send();
 }
@@ -169,41 +183,47 @@ function loadData() {
     var cb = Date.now(); 
     var urlCurrent = 'https://api.openweathermap.org/data/2.5/weather?q=' + CONFIG.city + '&appid=' + CONFIG.apiKey + '&units=metric&lang=de&_t=' + cb;
     
-    // Schritt 1: Hauptwetter laden
+    // 1. HAUPTWETTER LADEN
     fetch(urlCurrent)
     .then(function(r) { return r.json(); })
     .then(function(current) {
-        renderCurrent(current);
+        renderCurrent(current); // Hier wird 4°C angezeigt
         loadRealDWD(current.coord.lat, current.coord.lon);
+        
+        // 2. VORHERSAGE LADEN (Getrennt!)
         var urlForecast = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + current.coord.lat + '&lon=' + current.coord.lon + '&appid=' + CONFIG.apiKey + '&units=metric&lang=de&_t=' + cb;
-        return fetch(urlForecast);
+        fetch(urlForecast)
+        .then(function(r) { return r.json(); })
+        .then(function(forecast) {
+            globalForecastCache = forecast;
+            renderForecast(forecast);
+            loadTicker(); // Ticker nur laden wenn Vorhersage geht
+        })
+        .catch(function(e) {
+            console.log("Vorhersage Fehler: " + e);
+            // Wenn Vorhersage fehlt, lassen wir den Rest leben!
+            document.getElementById('ticker-text').innerHTML = "+++ VORHERSAGE NICHT VERFÜGBAR +++";
+        });
     })
-    .then(function(r) { return r.json(); })
-    .then(function(forecast) {
-        globalForecastCache = forecast;
-        renderForecast(forecast);
-        // Ticker laden, Fehler abfangen
-        loadTicker().catch(function(e){ console.log("Ticker Skip"); }); 
-    })
-    .then(function() { hideLoader(); })
     .catch(function(e) {
-        console.error("Main Weather Error:", e);
-        // Nur wenn das Hauptwetter fehlt, zeigen wir OFFLINE
+        console.error("Totalabsturz:", e);
         document.getElementById('ticker-text').innerHTML = '<span class="t-alert">+++ OFFLINE +++</span>';
+    })
+    .finally(function() {
         hideLoader();
+        var now = new Date();
+        var ts = (now.getHours()<10?'0':'')+now.getHours() + ":" + (now.getMinutes()<10?'0':'')+now.getMinutes();
+        document.getElementById('last-update').innerText = "Sync: " + ts;
     });
-    
-    var now = new Date();
-    var ts = (now.getHours()<10?'0':'')+now.getHours() + ":" + (now.getMinutes()<10?'0':'')+now.getMinutes();
-    document.getElementById('last-update').innerText = "Sync: " + ts;
 }
 
 function loadTicker() {
-    var tickerContent = "+++ AURA WETTERSTATION V83.6 +++ ";
+    var tickerContent = "+++ AURA WETTERSTATION V84.1 +++ ";
     
-    // Begrenzung um API-Fehler zu vermeiden
+    // Wir nehmen nur die ersten 10 Städte um die API zu schonen
     var SAFE_CITIES = WORLD_CITIES.slice(0, 10); 
     
+    // Einzelne Requests abfangen
     var requests = SAFE_CITIES.map(function(city) { 
         return fetch('https://api.openweathermap.org/data/2.5/weather?q=' + city.n + '&appid=' + CONFIG.apiKey + '&units=metric')
         .then(function(r){ return r.json(); })
@@ -211,7 +231,7 @@ function loadTicker() {
         .catch(function(){ return null; });
     });
 
-    return Promise.all(requests).then(function(results) {
+    Promise.all(requests).then(function(results) {
         var valid = 0;
         results.forEach(function(item) {
             if(item && item.main) {
@@ -219,11 +239,11 @@ function loadTicker() {
                 valid++;
             }
         });
+        // Nur updaten wenn wir Daten haben
         if(valid > 0) document.getElementById('ticker-text').innerHTML = tickerContent;
     });
 }
 
-/* --- RENDER & HELPER --- */
 function loadRealDWD(lat, lon) {
     var monitor = document.getElementById('dwd-monitor');
     var txt = document.getElementById('dwd-text');
@@ -253,8 +273,10 @@ function renderCurrent(data) {
     document.getElementById('location-header').innerText = data.name.toUpperCase();
     document.getElementById('main-temp').innerText = Math.round(data.main.temp) + "°";
     document.getElementById('main-icon').innerHTML = getVectorIcon(data.weather[0].icon, true);
+    
     var rainProb = "0%";
     if(globalForecastCache && globalForecastCache.list && globalForecastCache.list[0]) rainProb = Math.round(globalForecastCache.list[0].pop * 100) + "%";
+    
     document.getElementById('rain-val').innerHTML = rainProb;
     document.getElementById('val-feels').innerText = Math.round(data.main.feels_like) + "°";
     document.getElementById('val-humidity').innerText = data.main.humidity;
@@ -263,6 +285,7 @@ function renderCurrent(data) {
     document.getElementById('icon-wind').style.transform = 'rotate(' + data.wind.deg + 'deg)';
     document.getElementById('val-vis').innerText = Math.round(data.visibility / 1000);
     document.getElementById('val-press').innerText = data.main.pressure;
+    
     var sr = new Date((data.sys.sunrise + data.timezone - 3600) * 1000);
     var ss = new Date((data.sys.sunset + data.timezone - 3600) * 1000);
     document.getElementById('sunrise').innerText = formatTime(sr);
@@ -277,6 +300,7 @@ function renderForecast(data) {
         hHTML += '<div class="f-item"><span class="f-head">' + h + ' Uhr</span><div class="f-icon">' + getVectorIcon(item.weather[0].icon, false) + '</div><span class="f-temp">' + Math.round(item.main.temp) + '°</span></div>';
     }
     document.getElementById('hourly-row').innerHTML = hHTML;
+    
     var dailyMap = {};
     for(var j=0; j<data.list.length; j++) {
         var item = data.list[j];
@@ -288,6 +312,7 @@ function renderForecast(data) {
         if(item.pop > dailyMap[dayKey].pop) dailyMap[dayKey].pop = item.pop;
         if(d.getHours() >= 11 && d.getHours() <= 14) dailyMap[dayKey].icon = item.weather[0].icon;
     }
+    
     var dHTML = "";
     var keys = Object.keys(dailyMap).slice(0, 5);
     for(var k=0; k<keys.length; k++) {
@@ -351,6 +376,7 @@ function checkStatus() {
 }
 
 function initBatteryGuard() { if(navigator.getBattery) { navigator.getBattery().then(function(bat) { lastBatLevel = bat.level; }); } }
+
 function getVectorIcon(code, isReal) {
     var sunObj = '<circle class="svg-sun" cx="12" cy="12" r="5"/><g class="svg-sun" style="stroke:#00eaff; stroke-width:2"><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></g>';
     var cloudPath = '<path class="svg-cloud" d="M7,19 L17,19 C21,19 21,15 21,15 C21,11 17,11 17,11 C17,7 13,4 11,4 C7,4 5,7 5,10 C2,10 1,12 1,14 C1,16 3,19 5,19 Z" />';

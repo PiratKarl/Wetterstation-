@@ -1,4 +1,4 @@
-/* --- AURA V83.6 (FINAL FULL STYLE) --- */
+/* --- AURA V84.1 (FINAL FULL STYLE) --- */
 
 /* BASIS STYLES */
 html, body {
@@ -435,17 +435,8 @@ html, body {
     -webkit-transition: opacity 0.5s ease;
     transition: opacity 0.5s ease;
 }
-
-#shelly-display .astro-label {
-    letter-spacing: 1px;
-    font-size: 1.4vh;
-    margin-bottom: 5px;
-}
-
-#shelly-temp, #shelly-hum {
-    font-family: 'Arial Black', sans-serif;
-    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
-}
+#shelly-display .astro-label { letter-spacing: 1px; font-size: 1.4vh; margin-bottom: 5px; }
+#shelly-temp, #shelly-hum { font-family: 'Arial Black', sans-serif; text-shadow: 0 0 10px rgba(0, 234, 255, 0.5); }
 
 /* TICKER */
 .ticker-wrap {
