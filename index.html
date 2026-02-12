@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V83.2</title>
-    <link rel="stylesheet" href="style.css?v=83.2">
+    <title>Aura Wetterstation V83.3</title>
+    <link rel="stylesheet" href="style.css?v=83.3">
 </head>
 <body>
 
@@ -22,6 +22,10 @@
                 <stop offset="60%" style="stop-color:#00eaff;stop-opacity:1" />
                 <stop offset="100%" style="stop-color:#002244;stop-opacity:1" />
             </radialGradient>
+            <linearGradient id="gradCloudReal" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#778899;stop-opacity:1" />
+            </linearGradient>
         </defs>
     </svg>
 
@@ -34,9 +38,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V83.2 STARTEN
+            AURA V83.3 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">LEGACY EDITION + SHELLY SYNC</p>
+        <p style="color:#444; margin-top:20px;">LEGACY EDITION + SHELLY FIX</p>
     </div>
 
     <div class="dashboard">
@@ -98,14 +102,15 @@
             
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
-                <div class="status-row">VER: 83.2</div>
+                <div class="status-row">VER: 83.3</div>
                 <div class="ver-label" id="last-update">Sync: --:--</div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V83.2 +++</div></div>
+    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V83.3 +++</div></div>
     <div class="forecast-area"><div class="f-row" id="hourly-row"></div></div>
+    <div class="footer-copyright">&copy; Code-Werft 2026 - Piratkarl</div>
 
     <div id="menu-modal">
         <div class="menu-container">
@@ -114,13 +119,36 @@
             <button class="acc-btn" onclick="toggleAccordion('acc-loc')">📍 Ort & Ticker</button>
             <div id="acc-loc" class="acc-content" style="display:block;">
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt">
+                <span class="inp-label">Ticker Modus:</span>
+                <select id="inp-ticker-mode" class="inp-select">
+                    <option value="world">🌍 Welt-Metropolen</option>
+                    <option value="snow">❄️ Schnee-Bericht</option>
+                    <option value="summer">🌊 Bade-Wetter</option>
+                </select>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-shelly')">🌡️ WLAN-Sensor (Shelly)</button>
             <div id="acc-shelly" class="acc-content">
                 <span class="inp-label">Shelly IP-Adresse:</span>
                 <input type="text" id="inp-shelly-ip" class="inp-city" placeholder="z.B. 192.168.178.111">
+                <div style="color:#777; font-size:12px; margin-top:5px;">Trage hier die lokale IP deines Shelly H&T ein.</div>
                 <a href="anleitung.html" target="_blank" style="color:#00eaff; display:block; margin-top:10px; font-size: 14px; text-decoration:none;">➔ Öffne Installations-Anleitung</a>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 Ruhemodus</button>
+            <div id="acc-sleep" class="acc-content">
+                <div class="inp-time-row">
+                    <input type="time" id="inp-time-from" class="inp-time">
+                    <span style="font-size:30px; color:#00eaff;">➜</span>
+                    <input type="time" id="inp-time-to" class="inp-time">
+                </div>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-supp')">☕ Support & Kaffeekasse</button>
+            <div id="acc-supp" class="acc-content">
+                <div class="menu-text">Gefällt dir die Aura Wetterstation?</div>
+                <div class="menu-text" style="font-size: 14px; color: #aaa; margin-bottom: 15px;">Die Entwicklung ist kostenlos und werbefrei.</div>
+                <a href="https://www.paypal.com/donate?hosted_button_id=DEINE_ID_HIER" target="_blank" class="btn-paypal">☕ Einen Kaffee spenden</a>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-sys')">ℹ️ System</button>
@@ -132,6 +160,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=83.2"></script>
+    <script src="script.js?v=83.3"></script>
 </body>
 </html>

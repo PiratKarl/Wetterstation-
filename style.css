@@ -1,4 +1,4 @@
-/* --- AURA V83.1 (LEGACY REPAIR) --- */
+/* --- AURA V83.3 (FINAL COMPLETE) --- */
 
 /* BASIS */
 html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; overflow: hidden; user-select: none; }
@@ -60,12 +60,35 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .status-row { font-size: 2.2vh; margin-bottom: 4px; font-weight: bold; color: #bbb; display: -webkit-flex; display: flex; -webkit-justify-content: flex-end; justify-content: flex-end; -webkit-align-items: center; align-items: center; }
 .bat-trend-up { color: #00eaff; margin-left: 5px; } .bat-trend-down { color: #ff3333; margin-left: 5px; }
 
+/* SHELLY DATEN BLOCK (V83.3) */
+#shelly-display {
+    background: rgba(0, 234, 255, 0.05);
+    border-radius: 4px;
+    padding: 10px;
+    border-left: 3px solid #00eaff;
+    margin-bottom: 12px;
+    -webkit-transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease;
+}
+
+#shelly-display .astro-label {
+    letter-spacing: 1px;
+    font-size: 1.4vh;
+    margin-bottom: 5px;
+}
+
+#shelly-temp, #shelly-hum {
+    font-family: 'Arial Black', sans-serif;
+    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+}
+
 /* TICKER */
 .ticker-wrap { height: 10vh; background: #080808; border-top: 2px solid #222; border-bottom: 2px solid #222; overflow: hidden; white-space: nowrap; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; }
 #ticker-text { display: inline-block; padding-left: 100%; -webkit-animation: tick 240s linear infinite; animation: tick 240s linear infinite; font-size: 4.2vh; color: #fff; font-weight: bold; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; }
 .t-item { margin-right: 50px; color: #00eaff; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; }
 .t-icon { width: 45px; height: 45px; margin: 0 10px; vertical-align: middle; display: inline-block; } 
 .t-time { color: #aaa; font-size: 0.7em; margin-right: 15px; }
+.t-alert { color: #ff3333; font-weight: bold; }
 @-webkit-keyframes tick { 0% { -webkit-transform: translate3d(0, 0, 0); } 100% { -webkit-transform: translate3d(-100%, 0, 0); } }
 @keyframes tick { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
@@ -131,48 +154,8 @@ html, body { width: 100%; height: 100%; margin: 0; padding: 0; background-color:
 .svg-rain { stroke: #00eaff; stroke-width: 3; stroke-linecap: round; -webkit-filter: drop-shadow(0 0 5px #00eaff); filter: drop-shadow(0 0 5px #00eaff); }
 .svg-snow { fill: #fff; -webkit-filter: drop-shadow(0 0 5px #fff); filter: drop-shadow(0 0 5px #fff); }
 .svg-bolt { fill: #ffcc00; -webkit-filter: drop-shadow(0 0 10px #ff0000); filter: drop-shadow(0 0 10px #ff0000); }
-/* --- AURA V83.2 EXTENSION (SHELLY & UI) --- */
 
-/* Shelly Daten-Block im Dashboard */
-#shelly-display {
-    background: rgba(0, 234, 255, 0.05);
-    border-radius: 4px;
-    padding: 10px;
-    border-left: 3px solid #00eaff;
-    margin-bottom: 12px;
-    -webkit-transition: opacity 0.5s ease;
-    transition: opacity 0.5s ease;
-}
-
-#shelly-display .astro-label {
-    letter-spacing: 1px;
-    font-size: 1.4vh;
-    margin-bottom: 5px;
-}
-
-#shelly-temp, #shelly-hum {
-    font-family: 'Arial Black', sans-serif;
-    text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
-}
-
-/* Link zur Anleitung im Menü */
-.info-link {
-    display: block;
-    margin-top: 15px;
-    color: #00eaff;
-    text-decoration: none;
-    font-size: 18px;
-    padding: 10px;
-    border: 1px dashed #00eaff;
-    text-align: center;
-    border-radius: 4px;
-}
-
-.info-link:active {
-    background: rgba(0, 234, 255, 0.2);
-}
-
-/* Optimierung für sehr kleine Tablet-Bildschirme */
+/* Optimierung für sehr kleine Tablet-Bildschirme (Shelly Fix) */
 @media (max-height: 500px) {
     #shelly-display {
         padding: 5px;
