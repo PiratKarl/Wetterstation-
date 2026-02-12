@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V84.1</title>
-    <link rel="stylesheet" href="style.css?v=84.1">
+    <title>Aura Wetterstation V83.1</title>
+    <link rel="stylesheet" href="style.css?v=83.1">
 </head>
 <body>
 
@@ -38,9 +38,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V84.1 STARTEN
+            AURA V83.1 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">STABLE PROTOCOL</p>
+        <p style="color:#444; margin-top:20px;">LEGACY RESTORE</p>
     </div>
 
     <div class="dashboard">
@@ -75,7 +75,9 @@
 
             <div class="deep-data-row">
                 <div class="data-cell"><span id="val-humidity" class="cell-val">--</span><span class="cell-unit">%</span></div>
-                <div class="data-cell"><span id="val-wind" class="cell-val">--</span></div>
+                <div class="data-cell"><span id="val-wind" class="cell-val">--</span>
+                    <div id="icon-wind" style="display:inline-block; margin-left:5px;">➤</div>
+                </div>
                 <div class="data-cell"><span id="val-vis" class="cell-val">--</span><span class="cell-unit">km</span></div>
                 <div class="data-cell"><span id="val-press" class="cell-val">--</span><span class="cell-unit">hPa</span></div>
             </div>
@@ -88,12 +90,6 @@
                 <span class="dwd-time" id="dwd-valid">--:--</span>
             </div>
 
-            <div id="shelly-display" class="status-block" style="display:none; border-left: 3px solid #00eaff; margin-bottom: 5px; padding-left: 10px; text-align: right;">
-                <div class="astro-label" style="color:#00eaff; font-size: 10px;">KOMBÜSE (SHELLY)</div>
-                <div class="status-row" style="font-size: 18px; justify-content: flex-end;">TEMP: <span id="shelly-temp" style="color:#00eaff; margin-left:5px;">--</span></div>
-                <div class="status-row" style="font-size: 18px; justify-content: flex-end;">HUM: <span id="shelly-hum" style="color:#00eaff; margin-left:5px;">--</span></div>
-            </div>
-
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
             <div class="astro-block">
                 <span class="astro-label">SONNE</span>
@@ -102,17 +98,20 @@
             
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
-                <div class="status-row">VER: 84.1</div>
-                <div class="ver-label" id="last-update">Sync: --:--</div>
+                <div class="status-row" id="net-status">WLAN: OK</div>
+                <div class="status-row">VER: 83.1</div>
+                <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V84.1 +++</div></div>
+    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V83.1 +++</div></div>
     
     <div class="forecast-area">
         <div class="f-row" id="hourly-row"></div>
-        <div class="f-row" id="daily-row"></div> </div>
+        <div class="f-row" id="daily-row"></div>
+        <div style="text-align:center; padding:5px; color:#555;" id="moon-phase">--</div>
+    </div>
 
     <div class="footer-copyright">&copy; Code-Werft 2026 - Piratkarl</div>
 
@@ -128,13 +127,6 @@
                     <option value="snow">❄️ Schnee-Bericht</option>
                     <option value="summer">🌊 Bade-Wetter</option>
                 </select>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-shelly')">🌡️ WLAN-Sensor</button>
-            <div id="acc-shelly" class="acc-content">
-                <span class="inp-label">IP-Adresse (Shelly):</span>
-                <input type="text" id="inp-shelly-ip" class="inp-city" placeholder="z.B. 192.168.178.111">
-                <a href="anleitung.html" target="_blank" style="color:#00eaff; display:block; margin-top:10px; font-size: 14px; text-decoration:none;">➔ Anleitung</a>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 Ruhemodus</button>
@@ -160,6 +152,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=84.1"></script>
+    <script src="script.js?v=83.1_legacy"></script>
 </body>
 </html>
