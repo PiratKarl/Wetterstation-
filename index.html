@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V84.3</title>
-    <link rel="stylesheet" href="style.css?v=84.3">
+    <title>Aura V86.0 4-Col</title>
+    <link rel="stylesheet" href="style.css?v=86.0">
 </head>
 <body>
 
@@ -38,9 +38,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V84.3 STARTEN
+            AURA V86.0 STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">LEGACY + MOND FIX</p>
+        <p style="color:#444; margin-top:20px;">4-COLUMN LAYOUT</p>
     </div>
 
     <div class="dashboard">
@@ -56,47 +56,45 @@
             </div>
         </div>
 
-        <div class="col-center">
+        <div class="col-weather">
             <div id="location-header">BRAUNSCHWEIG</div>
             <div class="main-row-v61">
                 <div id="main-icon"></div> 
                 <div id="main-temp">--°</div>
                 <div class="temp-extra-stack">
-                    <div class="feels-row" title="Gefühlte Temperatur">
-                        <svg class="stack-icon" viewBox="0 0 24 24"><path d="M12 2c-2.2 0-4 1.8-4 4v7.2c-1.2 1.3-2 3-2 4.8 0 3.3 2.7 6 6 6s6-2.7 6-6c0-1.8-.8-3.5-2-4.8V6c0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2v7h-4V6c0-1.1.9-2 2-2z"/></svg>
-                        <span id="val-feels">--°</span>
-                    </div>
-                    <div class="rain-row">
-                        <svg class="stack-icon" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>
-                        <span id="rain-val">--%</span>
-                    </div>
+                    <div class="feels-row"><svg class="stack-icon" viewBox="0 0 24 24"><path d="M12 2c-2.2 0-4 1.8-4 4v7.2c-1.2 1.3-2 3-2 4.8 0 3.3 2.7 6 6 6s6-2.7 6-6c0-1.8-.8-3.5-2-4.8V6c0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2v7h-4V6c0-1.1.9-2 2-2z"/></svg><span id="val-feels">--°</span></div>
+                    <div class="rain-row"><svg class="stack-icon" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg><span id="rain-val">--%</span></div>
                 </div>
             </div>
-
             <div class="deep-data-row">
                 <div class="data-cell"><span id="val-humidity" class="cell-val">--</span><span class="cell-unit">%</span></div>
-                <div class="data-cell"><span id="val-wind" class="cell-val">--</span>
-                    <div id="icon-wind" style="display:inline-block; margin-left:5px;">➤</div>
-                </div>
+                <div class="data-cell"><span id="val-wind" class="cell-val">--</span><div id="icon-wind" style="display:inline-block; margin-left:5px;">➤</div></div>
                 <div class="data-cell"><span id="val-vis" class="cell-val">--</span><span class="cell-unit">km</span></div>
                 <div class="data-cell"><span id="val-press" class="cell-val">--</span><span class="cell-unit">hPa</span></div>
             </div>
         </div>
 
-        <div class="col-right">
+        <div class="col-info">
             <div id="dwd-monitor" class="warn-cyan">
                 <span class="dwd-head">DWD WARNT:</span>
                 <span class="dwd-content" id="dwd-text">KEINE WARNUNG</span>
                 <span class="dwd-time" id="dwd-valid">--:--</span>
             </div>
 
+            <div id="shelly-display" style="display:none;">
+                <div class="astro-label" style="color:#00eaff; font-size: 10px; margin-bottom:5px;">KOMBÜSE (SHELLY)</div>
+                <div class="status-row" style="font-size: 18px; justify-content: flex-end;">TEMP: <span id="shelly-temp" style="color:#00eaff; margin-left:5px;">--</span></div>
+                <div class="status-row" style="font-size: 18px; justify-content: flex-end;">HUM: <span id="shelly-hum" style="color:#00eaff; margin-left:5px;">--</span></div>
+            </div>
+        </div>
+
+        <div class="col-system">
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
             
             <div class="astro-block">
                 <span class="astro-label">SONNE</span>
                 <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
             </div>
-
             <div class="astro-block" style="margin-top: 5px;">
                 <span class="astro-label">MOND</span>
                 <span class="astro-val" id="moon-phase">--</span>
@@ -105,13 +103,13 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 84.3</div>
-                <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
+                <div class="status-row">VER: 86.0</div>
+                <div class="ver-label" id="last-update">Sync: --:--</div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V84.3 +++</div></div>
+    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V86.0 +++</div></div>
     
     <div class="forecast-area">
         <div class="f-row" id="hourly-row"></div>
@@ -132,8 +130,25 @@
                     <option value="snow">❄️ Schnee-Bericht</option>
                     <option value="summer">🌊 Bade-Wetter</option>
                 </select>
-                <div style="color:#888; font-size:12px; margin-top:5px; font-style:italic;">
-                    * Schnee & Meer Ticker erfordern Android 7.1 oder höher.
+                <div style="color:#888; font-size:12px; margin-top:5px; font-style:italic;">* Schnee & Meer Ticker erfordern Android 7.1+</div>
+            </div>
+
+            <button class="acc-btn" onclick="toggleAccordion('acc-shelly')">🏠 Smart Home (Shelly)</button>
+            <div id="acc-shelly" class="acc-content">
+                <div style="color:#ccc; font-size:14px; margin-bottom:15px; line-height:1.4;">
+                    <strong>Anleitung:</strong> Öffne die Shelly-App, gehe auf dein Gerät → Einstellungen → Geräteinformationen. Kopiere dort die IP-Adresse.
+                </div>
+
+                <label style="display:flex; align-items:center; font-size:20px; margin-bottom:15px; cursor:pointer;">
+                    <input type="checkbox" id="chk-shelly-active" style="width:25px; height:25px; margin-right:15px;">
+                    Anzeige aktivieren
+                </label>
+
+                <span class="inp-label">IP-Adresse:</span>
+                <input type="text" id="inp-shelly-ip" class="inp-city" placeholder="z.B. 192.168.178.111">
+                
+                <div id="shelly-error" style="display:none; color:#fff; font-weight:bold; font-size:16px; margin-top:10px; border: 2px solid #ff3333; padding: 10px; background: rgba(180,0,0,0.9); border-radius: 4px; text-align: center;">
+                    ⚠ FEHLER: Haken gesetzt, aber keine IP eingegeben!
                 </div>
             </div>
 
@@ -160,6 +175,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=84.3"></script>
+    <script src="script.js?v=86.0"></script>
 </body>
 </html>

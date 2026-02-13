@@ -1,4 +1,4 @@
-/* --- AURA V84.3 (FINAL LEGACY STYLE) --- */
+/* --- AURA V86.0 (QUAD LAYOUT) --- */
 
 /* BASIS STYLES */
 html, body {
@@ -82,7 +82,7 @@ html, body {
     margin-top: 20px;
 }
 
-/* DASHBOARD GRID */
+/* DASHBOARD GRID - JETZT 4 SPALTEN */
 .dashboard {
     display: -webkit-flex;
     display: flex;
@@ -94,8 +94,9 @@ html, body {
     z-index: 10;
 }
 
+/* SPALTE 1: 20% (Uhr & Logo) */
 .col-left {
-    width: 22%;
+    width: 20%;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -104,8 +105,9 @@ html, body {
     align-items: center;
 }
 
-.col-center {
-    width: 56%;
+/* SPALTE 2: 40% (Wetter & Temp) */
+.col-weather {
+    width: 40%;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -113,10 +115,26 @@ html, body {
     -webkit-align-items: center;
     align-items: center;
     position: relative;
+    border-right: 1px solid #111; /* Leichte Trennlinie */
 }
 
-.col-right {
+/* SPALTE 3: 22% (Info Center - Warnung & Shelly) */
+.col-info {
     width: 22%;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-align-items: center;
+    align-items: center; /* Alles mittig in dieser Spalte */
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
+    padding-top: 5px;
+}
+
+/* SPALTE 4: 18% (System & Menü) */
+.col-system {
+    width: 18%;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -124,26 +142,27 @@ html, body {
     -webkit-align-items: flex-end;
     align-items: flex-end;
     position: relative;
+    padding-right: 10px;
 }
 
 /* LINKS: UHR & LOGO */
 #clock {
-    font-size: 8.5vw;
+    font-size: 8.0vw;
     font-weight: bold;
     line-height: 0.9;
     margin: 0;
 }
 
 #date {
-    font-size: 2.2vh;
+    font-size: 2.0vh;
     color: #00eaff;
     margin-top: 5px;
     text-transform: uppercase;
 }
 
 .logo-container {
-    width: 120px;
-    height: 120px;
+    width: 110px;
+    height: 110px;
     margin-top: 5px;
     position: relative;
 }
@@ -157,7 +176,7 @@ html, body {
     left: 0;
 }
 
-/* MITTE - OBERE REIHE */
+/* SPALTE 2: WETTER */
 #location-header {
     color: #00eaff;
     font-size: 4vh;
@@ -182,15 +201,15 @@ html, body {
 }
 
 #main-icon {
-    width: 15vh;
-    height: 15vh;
-    margin-right: 15px;
+    width: 14vh;
+    height: 14vh;
+    margin-right: 10px;
     -webkit-filter: drop-shadow(0 0 25px rgba(0,234,255,0.4));
     filter: drop-shadow(0 0 25px rgba(0,234,255,0.4));
 }
 
 #main-temp {
-    font-size: 16vh;
+    font-size: 15vh;
     font-weight: bold;
     line-height: 1;
     margin: 0;
@@ -207,46 +226,30 @@ html, body {
     justify-content: center;
     -webkit-align-items: flex-start;
     align-items: flex-start;
-    margin-left: 20px;
+    margin-left: 15px;
 }
 
-.feels-row {
+.feels-row, .rain-row {
     color: #00eaff;
-    font-size: 3.2vh;
+    font-size: 3.0vh;
     font-weight: bold;
     display: -webkit-flex;
     display: flex;
     -webkit-align-items: center;
     align-items: center;
-    margin-bottom: 8px;
-}
-
-.rain-row {
-    color: #00eaff;
-    font-size: 3.2vh;
-    font-weight: bold;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-align-items: center;
-    align-items: center;
+    margin-bottom: 6px;
 }
 
 .stack-icon {
-    width: 3.2vh;
-    height: 3.2vh;
+    width: 3.0vh;
+    height: 3.0vh;
     fill: #00eaff;
     margin-right: 8px;
     -webkit-filter: drop-shadow(0 0 4px #00eaff);
     filter: drop-shadow(0 0 4px #00eaff);
 }
 
-.mm-val {
-    font-size: 0.7em;
-    color: #aaa;
-    margin-left: 5px;
-}
-
-/* MITTE - UNTERE REIHE */
+/* UNTERE REIHE WETTER */
 .deep-data-row {
     display: -webkit-flex;
     display: flex;
@@ -270,17 +273,8 @@ html, body {
     align-items: center;
 }
 
-.cell-icon {
-    width: 4.5vh;
-    height: 4.5vh;
-    fill: #00eaff;
-    margin-right: 8px;
-    -webkit-filter: drop-shadow(0 0 3px rgba(0,234,255,0.5));
-    filter: drop-shadow(0 0 3px rgba(0,234,255,0.5));
-}
-
 .cell-val {
-    font-size: 3.5vh;
+    font-size: 3.2vh;
     font-weight: bold;
     color: #ddd;
     white-space: nowrap;
@@ -293,33 +287,12 @@ html, body {
     font-weight: normal;
 }
 
-/* RECHTS & MONITOR */
-#btn-menu {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 2.0vh;
-    font-weight: bold;
-    padding: 5px;
-    cursor: pointer;
-    margin-bottom: 0;
-    margin-top: 0;
-    text-align: right;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-align-items: center;
-    align-items: center;
-    -webkit-justify-content: flex-end;
-    justify-content: flex-end;
-    opacity: 0.7;
-}
-
+/* SPALTE 3: INFO CENTER (WARNUNG & SHELLY) */
 #dwd-monitor {
-    position: absolute;
-    right: 48%;
-    top: 5px;
-    width: 170px;
-    padding: 6px;
+    position: relative; /* Nicht mehr absolut */
+    width: 90%; /* Füllt fast die ganze Spalte */
+    max-width: 200px;
+    padding: 8px;
     box-sizing: border-box;
     border-radius: 6px;
     text-align: center;
@@ -330,8 +303,34 @@ html, body {
     flex-direction: column;
     -webkit-justify-content: center;
     justify-content: center;
-    z-index: 50;
     min-height: 60px;
+    margin-bottom: 15px; /* Abstand zum Shelly */
+}
+
+/* SHELLY DISPLAY - NEU GESTYLT */
+#shelly-display {
+    width: 90%;
+    max-width: 200px;
+    -webkit-transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease;
+}
+
+.shelly-inner {
+    background: rgba(0, 234, 255, 0.08);
+    border-left: 3px solid #00eaff;
+    padding: 10px;
+    border-radius: 0 6px 6px 0;
+}
+
+.shelly-row {
+    font-size: 2.2vh; 
+    font-weight: bold; 
+    color: #ccc; 
+    display: -webkit-flex; 
+    display: flex; 
+    -webkit-justify-content: space-between; 
+    justify-content: space-between;
+    margin-bottom: 2px;
 }
 
 .warn-red {
@@ -366,7 +365,7 @@ html, body {
 }
 
 .dwd-content {
-    font-size: 1.5vh;
+    font-size: 1.4vh;
     font-weight: 900;
     text-transform: uppercase;
     margin-bottom: 2px;
@@ -377,25 +376,47 @@ html, body {
     color: #ccc;
 }
 
+/* SPALTE 4: SYSTEM & MENÜ */
+#btn-menu {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 2.0vh;
+    font-weight: bold;
+    padding: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    margin-top: 0;
+    text-align: right;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: flex-end;
+    justify-content: flex-end;
+    opacity: 0.8;
+}
+
 .astro-block {
-    margin-bottom: 3px;
+    margin-bottom: 5px;
     text-align: right;
     width: 100%;
 }
 
 .astro-label {
     color: #00eaff;
-    font-size: 1.6vh;
+    font-size: 1.4vh;
     display: block;
+    margin-bottom: 2px;
 }
 
 .astro-val {
-    font-size: 2.6vh;
+    font-size: 2.4vh;
     font-weight: bold;
 }
 
 .status-block {
-    margin-top: 5px;
+    margin-top: auto; /* Schiebt Status nach ganz unten */
     border-top: 1px solid #333;
     padding-top: 5px;
     width: 100%;
@@ -403,8 +424,8 @@ html, body {
 }
 
 .status-row {
-    font-size: 2.2vh;
-    margin-bottom: 4px;
+    font-size: 2.0vh;
+    margin-bottom: 3px;
     font-weight: bold;
     color: #bbb;
     display: -webkit-flex;

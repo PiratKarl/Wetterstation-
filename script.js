@@ -1,12 +1,15 @@
-/* --- AURA V84.3 (LEGACY STABLE - NO SHELLY) --- */
+/* --- AURA V86.0 (4-COLUMN LAYOUT) --- */
 
 var CONFIG = {
-    version: 84.3,
+    version: 86.0,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
     sleepTo: localStorage.getItem('aura_sleep_to') || '',
-    tickerMode: localStorage.getItem('aura_ticker_mode') || 'world'
+    tickerMode: localStorage.getItem('aura_ticker_mode') || 'world',
+    // Shelly Einstellungen
+    shellyIP: localStorage.getItem('aura_shelly_ip') || '',
+    shellyActive: (localStorage.getItem('aura_shelly_active') === 'true')
 };
 
 /* --- DATENBANKEN --- */
@@ -86,10 +89,12 @@ function startApp() {
     loadData(); 
     checkStatus(); 
     initBatteryGuard(); 
+    updateShelly(); 
 
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     
     setInterval(checkStatus, 60000);   
+    setInterval(updateShelly, 60000); 
 }
 
 function initVideoFallback() {
@@ -106,6 +111,9 @@ function initMenuValues() {
     var tFrom = document.getElementById('inp-time-from'); if(tFrom) tFrom.value = CONFIG.sleepFrom;
     var tTo = document.getElementById('inp-time-to'); if(tTo) tTo.value = CONFIG.sleepTo;
     var tMode = document.getElementById('inp-ticker-mode'); if(tMode) tMode.value = CONFIG.tickerMode;
+    
+    var sIP = document.getElementById('inp-shelly-ip'); if(sIP) sIP.value = CONFIG.shellyIP;
+    var sChk = document.getElementById('chk-shelly-active'); if(sChk) sChk.checked = CONFIG.shellyActive;
 }
 
 function saveSettings() {
@@ -114,13 +122,54 @@ function saveSettings() {
     var tTo = document.getElementById('inp-time-to').value;
     var tMode = document.getElementById('inp-ticker-mode').value;
     
+    var sIP = document.getElementById('inp-shelly-ip').value;
+    var sActive = document.getElementById('chk-shelly-active').checked;
+    var sError = document.getElementById('shelly-error');
+
+    if(sActive && (!sIP || sIP.trim() === "")) {
+        sError.style.display = 'block'; 
+        return; 
+    } else {
+        sError.style.display = 'none'; 
+    }
+    
     if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; }
     localStorage.setItem('aura_sleep_from', tFrom); CONFIG.sleepFrom = tFrom;
     localStorage.setItem('aura_sleep_to', tTo); CONFIG.sleepTo = tTo;
     localStorage.setItem('aura_ticker_mode', tMode); CONFIG.tickerMode = tMode;
     
+    localStorage.setItem('aura_shelly_ip', sIP); CONFIG.shellyIP = sIP;
+    localStorage.setItem('aura_shelly_active', sActive); CONFIG.shellyActive = sActive;
+    
     closeMenu(); 
     loadData(); 
+    updateShelly(); 
+}
+
+function updateShelly() {
+    var display = document.getElementById('shelly-display');
+    if(!CONFIG.shellyActive || !CONFIG.shellyIP) {
+        if(display) display.style.display = 'none';
+        return;
+    }
+    if(display) display.style.display = 'block';
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://' + CONFIG.shellyIP + '/rpc/HT.GetStatus', true);
+    xhr.timeout = 5000; 
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            try {
+                var data = JSON.parse(xhr.responseText);
+                var temp = data['temperature:0'].tC.toFixed(1);
+                var hum = data['humidity:0'].rh.toFixed(0);
+                document.getElementById('shelly-temp').innerText = temp + "°C";
+                document.getElementById('shelly-hum').innerText = hum + "%";
+            } catch(e) { console.log("Shelly Daten Fehler"); }
+        }
+    };
+    xhr.onerror = function() { console.log("Shelly nicht erreichbar"); };
+    xhr.send();
 }
 
 function showLoader() { var l = document.getElementById('loader'); if(l) l.style.display = 'block'; }
