@@ -1,13 +1,12 @@
-/* --- AURA V86.0 (4-COLUMN LAYOUT) --- */
+/* --- AURA V86.1 (GEN3 FIX) --- */
 
 var CONFIG = {
-    version: 86.0,
+    version: 86.1,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
     sleepTo: localStorage.getItem('aura_sleep_to') || '',
     tickerMode: localStorage.getItem('aura_ticker_mode') || 'world',
-    // Shelly Einstellungen
     shellyIP: localStorage.getItem('aura_shelly_ip') || '',
     shellyActive: (localStorage.getItem('aura_shelly_active') === 'true')
 };
@@ -155,17 +154,20 @@ function updateShelly() {
     if(display) display.style.display = 'block';
 
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://' + CONFIG.shellyIP + '/rpc/HT.GetStatus', true);
+    // ÄNDERUNG: Wir nehmen jetzt Shelly.GetStatus statt HT.GetStatus
+    xhr.open('GET', 'http://' + CONFIG.shellyIP + '/rpc/Shelly.GetStatus', true);
     xhr.timeout = 5000; 
     xhr.onload = function () {
         if (xhr.status === 200) {
             try {
                 var data = JSON.parse(xhr.responseText);
+                // GEN3 PARSING
                 var temp = data['temperature:0'].tC.toFixed(1);
                 var hum = data['humidity:0'].rh.toFixed(0);
+                
                 document.getElementById('shelly-temp').innerText = temp + "°C";
                 document.getElementById('shelly-hum').innerText = hum + "%";
-            } catch(e) { console.log("Shelly Daten Fehler"); }
+            } catch(e) { console.log("Shelly Daten Fehler: " + e); }
         }
     };
     xhr.onerror = function() { console.log("Shelly nicht erreichbar"); };
