@@ -1,7 +1,7 @@
-/* --- AURA V86.1 (GEN3 FIX) --- */
+/* --- AURA V86.2 (GEN3 FINAL & DEBUG) --- */
 
 var CONFIG = {
-    version: 86.1,
+    version: 86.2,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
@@ -147,6 +147,9 @@ function saveSettings() {
 
 function updateShelly() {
     var display = document.getElementById('shelly-display');
+    var txtTemp = document.getElementById('shelly-temp');
+    var txtHum = document.getElementById('shelly-hum');
+    
     if(!CONFIG.shellyActive || !CONFIG.shellyIP) {
         if(display) display.style.display = 'none';
         return;
@@ -154,23 +157,49 @@ function updateShelly() {
     if(display) display.style.display = 'block';
 
     var xhr = new XMLHttpRequest();
-    // ÄNDERUNG: Wir nehmen jetzt Shelly.GetStatus statt HT.GetStatus
+    // GEN3: Wir nutzen Shelly.GetStatus
     xhr.open('GET', 'http://' + CONFIG.shellyIP + '/rpc/Shelly.GetStatus', true);
     xhr.timeout = 5000; 
+    
     xhr.onload = function () {
         if (xhr.status === 200) {
             try {
                 var data = JSON.parse(xhr.responseText);
-                // GEN3 PARSING
-                var temp = data['temperature:0'].tC.toFixed(1);
-                var hum = data['humidity:0'].rh.toFixed(0);
                 
-                document.getElementById('shelly-temp').innerText = temp + "°C";
-                document.getElementById('shelly-hum').innerText = hum + "%";
-            } catch(e) { console.log("Shelly Daten Fehler: " + e); }
+                // GEN3 PARSING: Wir greifen exakt auf die Struktur zu, die du geschickt hast
+                // "temperature:0": { "tC": 21.2 ... }
+                // "humidity:0": { "rh": 36.0 ... }
+                
+                var tempRaw = data['temperature:0'] ? data['temperature:0'].tC : null;
+                var humRaw = data['humidity:0'] ? data['humidity:0'].rh : null;
+
+                if(tempRaw !== null) {
+                    txtTemp.innerText = tempRaw.toFixed(1) + "°C";
+                    txtTemp.style.color = "#00eaff";
+                }
+                if(humRaw !== null) {
+                    txtHum.innerText = humRaw.toFixed(0) + "%";
+                }
+                
+            } catch(e) { 
+                console.log("JSON Parse Error: " + e);
+                txtTemp.innerText = "JSON?";
+                txtTemp.style.color = "orange";
+            }
+        } else {
+            txtTemp.innerText = "ERR:" + xhr.status;
+            txtTemp.style.color = "red";
         }
     };
-    xhr.onerror = function() { console.log("Shelly nicht erreichbar"); };
+    
+    // HIER WIRD DER FEHLER ANGEZEIGT, WENN DER BROWSER BLOCKIERT
+    xhr.onerror = function() { 
+        console.log("Netzwerkfehler / Blockiert"); 
+        txtTemp.innerText = "BLOCK"; 
+        txtTemp.style.color = "red";
+        txtHum.innerText = "NET";
+    };
+    
     xhr.send();
 }
 
