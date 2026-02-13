@@ -1,4 +1,4 @@
-/* --- AURA V86.0 (QUAD LAYOUT) --- */
+/* --- AURA V83.2 (LAYOUT FIX) --- */
 
 /* BASIS STYLES */
 html, body {
@@ -82,7 +82,7 @@ html, body {
     margin-top: 20px;
 }
 
-/* DASHBOARD GRID - JETZT 4 SPALTEN */
+/* DASHBOARD GRID - 3 SPALTEN */
 .dashboard {
     display: -webkit-flex;
     display: flex;
@@ -94,9 +94,9 @@ html, body {
     z-index: 10;
 }
 
-/* SPALTE 1: 20% (Uhr & Logo) */
+/* SPALTE 1: 25% */
 .col-left {
-    width: 20%;
+    width: 25%;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -105,9 +105,9 @@ html, body {
     align-items: center;
 }
 
-/* SPALTE 2: 40% (Wetter & Temp) */
+/* SPALTE 2: 50% */
 .col-weather {
-    width: 40%;
+    width: 50%;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -115,26 +115,11 @@ html, body {
     -webkit-align-items: center;
     align-items: center;
     position: relative;
-    border-right: 1px solid #111; /* Leichte Trennlinie */
 }
 
-/* SPALTE 3: 22% (Info Center - Warnung & Shelly) */
-.col-info {
-    width: 22%;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    -webkit-align-items: center;
-    align-items: center; /* Alles mittig in dieser Spalte */
-    -webkit-justify-content: flex-start;
-    justify-content: flex-start;
-    padding-top: 5px;
-}
-
-/* SPALTE 4: 18% (System & Menü) */
+/* SPALTE 3: 25% */
 .col-system {
-    width: 18%;
+    width: 25%;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -142,27 +127,27 @@ html, body {
     -webkit-align-items: flex-end;
     align-items: flex-end;
     position: relative;
-    padding-right: 10px;
+    padding-right: 15px;
 }
 
 /* LINKS: UHR & LOGO */
 #clock {
-    font-size: 8.0vw;
+    font-size: 8.5vw;
     font-weight: bold;
     line-height: 0.9;
     margin: 0;
 }
 
 #date {
-    font-size: 2.0vh;
+    font-size: 2.2vh;
     color: #00eaff;
     margin-top: 5px;
     text-transform: uppercase;
 }
 
 .logo-container {
-    width: 110px;
-    height: 110px;
+    width: 120px;
+    height: 120px;
     margin-top: 5px;
     position: relative;
 }
@@ -190,7 +175,7 @@ html, body {
 .main-row-v61 {
     position: relative;
     width: 100%;
-    height: 16vh;
+    height: 18vh;
     margin-top: 0px;
     display: -webkit-flex;
     display: flex;
@@ -201,22 +186,21 @@ html, body {
 }
 
 #main-icon {
-    width: 14vh;
-    height: 14vh;
-    margin-right: 10px;
+    width: 16vh;
+    height: 16vh;
+    margin-right: 20px;
     -webkit-filter: drop-shadow(0 0 25px rgba(0,234,255,0.4));
     filter: drop-shadow(0 0 25px rgba(0,234,255,0.4));
 }
 
 #main-temp {
-    font-size: 15vh;
+    font-size: 16vh;
     font-weight: bold;
     line-height: 1;
     margin: 0;
     text-shadow: 0 0 20px rgba(255,255,255,0.3);
 }
 
-/* STAPEL RECHTS VOM WETTER */
 .temp-extra-stack {
     display: -webkit-flex;
     display: flex;
@@ -226,30 +210,29 @@ html, body {
     justify-content: center;
     -webkit-align-items: flex-start;
     align-items: flex-start;
-    margin-left: 15px;
+    margin-left: 20px;
 }
 
 .feels-row, .rain-row {
     color: #00eaff;
-    font-size: 3.0vh;
+    font-size: 3.5vh;
     font-weight: bold;
     display: -webkit-flex;
     display: flex;
     -webkit-align-items: center;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .stack-icon {
-    width: 3.0vh;
-    height: 3.0vh;
+    width: 3.5vh;
+    height: 3.5vh;
     fill: #00eaff;
-    margin-right: 8px;
+    margin-right: 10px;
     -webkit-filter: drop-shadow(0 0 4px #00eaff);
     filter: drop-shadow(0 0 4px #00eaff);
 }
 
-/* UNTERE REIHE WETTER */
 .deep-data-row {
     display: -webkit-flex;
     display: flex;
@@ -274,7 +257,7 @@ html, body {
 }
 
 .cell-val {
-    font-size: 3.2vh;
+    font-size: 3.5vh;
     font-weight: bold;
     color: #ddd;
     white-space: nowrap;
@@ -287,106 +270,33 @@ html, body {
     font-weight: normal;
 }
 
-/* SPALTE 3: INFO CENTER (WARNUNG & SHELLY) */
+/* WARNUNG (DWD) */
 #dwd-monitor {
-    position: relative; /* Nicht mehr absolut */
-    width: 90%; /* Füllt fast die ganze Spalte */
-    max-width: 200px;
-    padding: 8px;
-    box-sizing: border-box;
-    border-radius: 6px;
+    width: 80%;
+    margin: 0 auto;
     text-align: center;
+    padding: 2px 8px;
+    border-radius: 4px;
     border: 1px solid #333;
-    background: rgba(10, 10, 10, 0.9);
-    display: none;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    -webkit-justify-content: center;
-    justify-content: center;
-    min-height: 60px;
-    margin-bottom: 15px; /* Abstand zum Shelly */
+    background: rgba(10,10,10,0.8);
+    margin-bottom: 5px;
 }
+.warn-red { border-color:#ff0000; color:#ff0000; background:rgba(60,0,0,0.8); -webkit-animation: flash 2s infinite; animation: flash 2s infinite; }
+.warn-orange { border-color:#ff8c00; color:#ff8c00; background:rgba(50,20,0,0.8); }
+.warn-yellow { border-color:#ffd700; color:#ffd700; background:rgba(40,35,0,0.8); }
+.warn-cyan { border-color:#00eaff; color:#00eaff; }
+#dwd-text { font-size:1.8vh; font-weight:bold; }
 
-/* SHELLY DISPLAY - NEU GESTYLT */
-#shelly-display {
-    width: 90%;
-    max-width: 200px;
-    -webkit-transition: opacity 0.5s ease;
-    transition: opacity 0.5s ease;
-}
-
-.shelly-inner {
-    background: rgba(0, 234, 255, 0.08);
-    border-left: 3px solid #00eaff;
-    padding: 10px;
-    border-radius: 0 6px 6px 0;
-}
-
-.shelly-row {
-    font-size: 2.2vh; 
-    font-weight: bold; 
-    color: #ccc; 
-    display: -webkit-flex; 
-    display: flex; 
-    -webkit-justify-content: space-between; 
-    justify-content: space-between;
-    margin-bottom: 2px;
-}
-
-.warn-red {
-    border-color: #ff0000;
-    color: #ff0000;
-    background: rgba(60, 0, 0, 0.9);
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
-    -webkit-animation: flash 1.5s infinite;
-    animation: flash 1.5s infinite;
-}
-
-.warn-orange {
-    border-color: #ff8c00;
-    color: #ff8c00;
-    background: rgba(50, 20, 0, 0.9);
-    box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
-    -webkit-animation: pulse-warn 2s infinite;
-    animation: pulse-warn 2s infinite;
-}
-
-.warn-yellow {
-    border-color: #ffd700;
-    color: #ffd700;
-    background: rgba(40, 35, 0, 0.9);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
-
-.warn-cyan {
-    border-color: #00eaff;
-    color: #00eaff;
-    box-shadow: 0 0 5px rgba(0, 234, 255, 0.1);
-}
-
-.dwd-content {
-    font-size: 1.4vh;
-    font-weight: 900;
-    text-transform: uppercase;
-    margin-bottom: 2px;
-}
-
-.dwd-time {
-    font-size: 1.1vh;
-    color: #ccc;
-}
-
-/* SPALTE 4: SYSTEM & MENÜ */
+/* RECHTS: SYSTEM & MENÜ - ANGEPASST */
 #btn-menu {
     background: transparent;
     border: none;
     color: #fff;
-    font-size: 2.0vh;
+    font-size: 2.0vh; /* Kleiner */
     font-weight: bold;
-    padding: 5px;
+    padding: 5px; /* Kleiner */
     cursor: pointer;
-    margin-bottom: 10px;
-    margin-top: 0;
+    margin-bottom: 5px; /* Viel kleinerer Abstand */
     text-align: right;
     display: -webkit-flex;
     display: flex;
@@ -398,25 +308,25 @@ html, body {
 }
 
 .astro-block {
-    margin-bottom: 5px;
+    margin-bottom: 5px; /* Kleinerer Abstand */
     text-align: right;
     width: 100%;
 }
 
 .astro-label {
     color: #00eaff;
-    font-size: 1.4vh;
+    font-size: 1.5vh; /* Etwas kleiner */
     display: block;
     margin-bottom: 2px;
 }
 
 .astro-val {
-    font-size: 2.4vh;
+    font-size: 2.4vh; /* Etwas kleiner */
     font-weight: bold;
 }
 
 .status-block {
-    margin-top: auto; /* Schiebt Status nach ganz unten */
+    margin-top: auto; 
     border-top: 1px solid #333;
     padding-top: 5px;
     width: 100%;
@@ -424,8 +334,8 @@ html, body {
 }
 
 .status-row {
-    font-size: 2.0vh;
-    margin-bottom: 3px;
+    font-size: 1.8vh; /* Kleiner, damit es passt */
+    margin-bottom: 2px;
     font-weight: bold;
     color: #bbb;
     display: -webkit-flex;
@@ -436,15 +346,8 @@ html, body {
     align-items: center;
 }
 
-.bat-trend-up {
-    color: #00eaff;
-    margin-left: 5px;
-}
-
-.bat-trend-down {
-    color: #ff3333;
-    margin-left: 5px;
-}
+.bat-trend-up { color: #00eaff; margin-left: 5px; }
+.bat-trend-down { color: #ff3333; margin-left: 5px; }
 
 /* TICKER */
 .ticker-wrap {
@@ -465,7 +368,7 @@ html, body {
     padding-left: 100%;
     -webkit-animation: tick 240s linear infinite;
     animation: tick 240s linear infinite;
-    font-size: 4.2vh;
+    font-size: 4.5vh;
     color: #fff;
     font-weight: bold;
     display: -webkit-flex;
@@ -484,8 +387,8 @@ html, body {
 }
 
 .t-icon {
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
     margin: 0 10px;
     vertical-align: middle;
     display: inline-block;
@@ -552,9 +455,9 @@ html, body {
 }
 
 .f-icon {
-    width: 9.5vh;
-    height: 9.5vh;
-    margin: 3px 0;
+    width: 10vh;
+    height: 10vh;
+    margin: 5px 0;
     display: -webkit-flex;
     display: flex;
     -webkit-justify-content: center;
@@ -564,7 +467,7 @@ html, body {
 }
 
 .f-temp {
-    font-size: 3.8vh;
+    font-size: 4.0vh;
     font-weight: bold;
 }
 
@@ -578,17 +481,17 @@ html, body {
 }
 
 .f-drop-small {
-    width: 2.0vh;
-    height: 2.0vh;
+    width: 2.2vh;
+    height: 2.2vh;
     fill: #00eaff;
-    margin-right: 4px;
+    margin-right: 5px;
 }
 
 .temp-range {
     display: -webkit-flex;
     display: flex;
-    gap: 8px;
-    font-size: 3.0vh;
+    gap: 10px;
+    font-size: 3.2vh;
     font-weight: bold;
     -webkit-align-items: center;
     align-items: center;

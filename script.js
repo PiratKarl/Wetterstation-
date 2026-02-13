@@ -1,14 +1,12 @@
-/* --- AURA V86.2 (GEN3 FINAL & DEBUG) --- */
+/* --- AURA V83.1 (RESTORED STABLE) --- */
 
 var CONFIG = {
-    version: 86.2,
+    version: 83.1,
     apiKey: '518e81d874739701f08842c1a55f6588', 
     city: localStorage.getItem('aura_city') || 'Braunschweig',
     sleepFrom: localStorage.getItem('aura_sleep_from') || '',
     sleepTo: localStorage.getItem('aura_sleep_to') || '',
-    tickerMode: localStorage.getItem('aura_ticker_mode') || 'world',
-    shellyIP: localStorage.getItem('aura_shelly_ip') || '',
-    shellyActive: (localStorage.getItem('aura_shelly_active') === 'true')
+    tickerMode: localStorage.getItem('aura_ticker_mode') || 'world'
 };
 
 /* --- DATENBANKEN --- */
@@ -88,12 +86,10 @@ function startApp() {
     loadData(); 
     checkStatus(); 
     initBatteryGuard(); 
-    updateShelly(); 
 
     setInterval(runClock, 1000);       
     setInterval(loadData, 600000);     
     setInterval(checkStatus, 60000);   
-    setInterval(updateShelly, 60000); 
 }
 
 function initVideoFallback() {
@@ -110,9 +106,6 @@ function initMenuValues() {
     var tFrom = document.getElementById('inp-time-from'); if(tFrom) tFrom.value = CONFIG.sleepFrom;
     var tTo = document.getElementById('inp-time-to'); if(tTo) tTo.value = CONFIG.sleepTo;
     var tMode = document.getElementById('inp-ticker-mode'); if(tMode) tMode.value = CONFIG.tickerMode;
-    
-    var sIP = document.getElementById('inp-shelly-ip'); if(sIP) sIP.value = CONFIG.shellyIP;
-    var sChk = document.getElementById('chk-shelly-active'); if(sChk) sChk.checked = CONFIG.shellyActive;
 }
 
 function saveSettings() {
@@ -121,86 +114,13 @@ function saveSettings() {
     var tTo = document.getElementById('inp-time-to').value;
     var tMode = document.getElementById('inp-ticker-mode').value;
     
-    var sIP = document.getElementById('inp-shelly-ip').value;
-    var sActive = document.getElementById('chk-shelly-active').checked;
-    var sError = document.getElementById('shelly-error');
-
-    if(sActive && (!sIP || sIP.trim() === "")) {
-        sError.style.display = 'block'; 
-        return; 
-    } else {
-        sError.style.display = 'none'; 
-    }
-    
     if(city) { localStorage.setItem('aura_city', city); CONFIG.city = city; }
     localStorage.setItem('aura_sleep_from', tFrom); CONFIG.sleepFrom = tFrom;
     localStorage.setItem('aura_sleep_to', tTo); CONFIG.sleepTo = tTo;
     localStorage.setItem('aura_ticker_mode', tMode); CONFIG.tickerMode = tMode;
     
-    localStorage.setItem('aura_shelly_ip', sIP); CONFIG.shellyIP = sIP;
-    localStorage.setItem('aura_shelly_active', sActive); CONFIG.shellyActive = sActive;
-    
     closeMenu(); 
     loadData(); 
-    updateShelly(); 
-}
-
-function updateShelly() {
-    var display = document.getElementById('shelly-display');
-    var txtTemp = document.getElementById('shelly-temp');
-    var txtHum = document.getElementById('shelly-hum');
-    
-    if(!CONFIG.shellyActive || !CONFIG.shellyIP) {
-        if(display) display.style.display = 'none';
-        return;
-    }
-    if(display) display.style.display = 'block';
-
-    var xhr = new XMLHttpRequest();
-    // GEN3: Wir nutzen Shelly.GetStatus
-    xhr.open('GET', 'http://' + CONFIG.shellyIP + '/rpc/Shelly.GetStatus', true);
-    xhr.timeout = 5000; 
-    
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            try {
-                var data = JSON.parse(xhr.responseText);
-                
-                // GEN3 PARSING: Wir greifen exakt auf die Struktur zu, die du geschickt hast
-                // "temperature:0": { "tC": 21.2 ... }
-                // "humidity:0": { "rh": 36.0 ... }
-                
-                var tempRaw = data['temperature:0'] ? data['temperature:0'].tC : null;
-                var humRaw = data['humidity:0'] ? data['humidity:0'].rh : null;
-
-                if(tempRaw !== null) {
-                    txtTemp.innerText = tempRaw.toFixed(1) + "°C";
-                    txtTemp.style.color = "#00eaff";
-                }
-                if(humRaw !== null) {
-                    txtHum.innerText = humRaw.toFixed(0) + "%";
-                }
-                
-            } catch(e) { 
-                console.log("JSON Parse Error: " + e);
-                txtTemp.innerText = "JSON?";
-                txtTemp.style.color = "orange";
-            }
-        } else {
-            txtTemp.innerText = "ERR:" + xhr.status;
-            txtTemp.style.color = "red";
-        }
-    };
-    
-    // HIER WIRD DER FEHLER ANGEZEIGT, WENN DER BROWSER BLOCKIERT
-    xhr.onerror = function() { 
-        console.log("Netzwerkfehler / Blockiert"); 
-        txtTemp.innerText = "BLOCK"; 
-        txtTemp.style.color = "red";
-        txtHum.innerText = "NET";
-    };
-    
-    xhr.send();
 }
 
 function showLoader() { var l = document.getElementById('loader'); if(l) l.style.display = 'block'; }
@@ -315,7 +235,6 @@ function loadData() {
 function loadRealDWD(lat, lon) {
     var monitor = document.getElementById('dwd-monitor');
     var txt = document.getElementById('dwd-text');
-    var time = document.getElementById('dwd-valid');
     if(!monitor) return;
     monitor.style.display = 'none'; 
     
@@ -323,8 +242,7 @@ function loadRealDWD(lat, lon) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
         if(data && data.alerts && data.alerts.length > 0) {
-            monitor.style.display = '-webkit-flex'; 
-            monitor.style.display = 'flex';
+            monitor.style.display = 'block';
             var alerts = data.alerts;
             alerts.sort(function(a, b) { 
                 var sev = { 'minor': 1, 'moderate': 2, 'severe': 3, 'extreme': 4 };
@@ -344,11 +262,6 @@ function loadRealDWD(lat, lon) {
             
             var msg = topAlert.headline_de || topAlert.event_de || "WETTERWARNUNG";
             txt.innerText = msg.toUpperCase();
-            
-            var end = new Date(topAlert.expires);
-            var endStr = (end.getHours()<10?'0':'') + end.getHours() + ":" + (end.getMinutes()<10?'0':'') + end.getMinutes();
-            time.innerText = "Bis: " + endStr + " Uhr";
-            time.style.display = "block";
         }
     })
     .catch(function(e) {});

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V86.0 4-Col</title>
-    <link rel="stylesheet" href="style.css?v=86.0">
+    <title>Aura V83.2 Fix</title>
+    <link rel="stylesheet" href="style.css?v=83.2">
 </head>
 <body>
 
@@ -38,9 +38,9 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">
-            AURA V86.0 STARTEN
+            AURA STARTEN
         </button>
-        <p style="color:#444; margin-top:20px;">4-COLUMN LAYOUT</p>
+        <p style="color:#444; margin-top:20px;">LAYOUT FIX (83.2)</p>
     </div>
 
     <div class="dashboard">
@@ -58,6 +58,11 @@
 
         <div class="col-weather">
             <div id="location-header">BRAUNSCHWEIG</div>
+            
+            <div id="dwd-monitor" style="display:none;">
+                <span id="dwd-text">KEINE WARNUNG</span>
+            </div>
+
             <div class="main-row-v61">
                 <div id="main-icon"></div> 
                 <div id="main-temp">--°</div>
@@ -74,20 +79,6 @@
             </div>
         </div>
 
-        <div class="col-info">
-            <div id="dwd-monitor" class="warn-cyan">
-                <span class="dwd-head">DWD WARNT:</span>
-                <span class="dwd-content" id="dwd-text">KEINE WARNUNG</span>
-                <span class="dwd-time" id="dwd-valid">--:--</span>
-            </div>
-
-            <div id="shelly-display" style="display:none;">
-                <div class="astro-label" style="color:#00eaff; font-size: 10px; margin-bottom:5px;">KOMBÜSE (SHELLY)</div>
-                <div class="status-row" style="font-size: 18px; justify-content: flex-end;">TEMP: <span id="shelly-temp" style="color:#00eaff; margin-left:5px;">--</span></div>
-                <div class="status-row" style="font-size: 18px; justify-content: flex-end;">HUM: <span id="shelly-hum" style="color:#00eaff; margin-left:5px;">--</span></div>
-            </div>
-        </div>
-
         <div class="col-system">
             <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
             
@@ -95,7 +86,7 @@
                 <span class="astro-label">SONNE</span>
                 <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
             </div>
-            <div class="astro-block" style="margin-top: 5px;">
+            <div class="astro-block">
                 <span class="astro-label">MOND</span>
                 <span class="astro-val" id="moon-phase">--</span>
             </div>
@@ -103,13 +94,13 @@
             <div class="status-block">
                 <div class="status-row" id="bat-level">BAT: --%</div>
                 <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row">VER: 86.0</div>
+                <div class="status-row">VER: 83.2</div>
                 <div class="ver-label" id="last-update">Sync: --:--</div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V86.0 +++</div></div>
+    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V83.2 +++</div></div>
     
     <div class="forecast-area">
         <div class="f-row" id="hourly-row"></div>
@@ -130,26 +121,6 @@
                     <option value="snow">❄️ Schnee-Bericht</option>
                     <option value="summer">🌊 Bade-Wetter</option>
                 </select>
-                <div style="color:#888; font-size:12px; margin-top:5px; font-style:italic;">* Schnee & Meer Ticker erfordern Android 7.1+</div>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-shelly')">🏠 Smart Home (Shelly)</button>
-            <div id="acc-shelly" class="acc-content">
-                <div style="color:#ccc; font-size:14px; margin-bottom:15px; line-height:1.4;">
-                    <strong>Anleitung:</strong> Öffne die Shelly-App, gehe auf dein Gerät → Einstellungen → Geräteinformationen. Kopiere dort die IP-Adresse.
-                </div>
-
-                <label style="display:flex; align-items:center; font-size:20px; margin-bottom:15px; cursor:pointer;">
-                    <input type="checkbox" id="chk-shelly-active" style="width:25px; height:25px; margin-right:15px;">
-                    Anzeige aktivieren
-                </label>
-
-                <span class="inp-label">IP-Adresse:</span>
-                <input type="text" id="inp-shelly-ip" class="inp-city" placeholder="z.B. 192.168.178.111">
-                
-                <div id="shelly-error" style="display:none; color:#fff; font-weight:bold; font-size:16px; margin-top:10px; border: 2px solid #ff3333; padding: 10px; background: rgba(180,0,0,0.9); border-radius: 4px; text-align: center;">
-                    ⚠ FEHLER: Haken gesetzt, aber keine IP eingegeben!
-                </div>
             </div>
 
             <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 Ruhemodus</button>
@@ -175,6 +146,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=86.0"></script>
+    <script src="script.js?v=83.2"></script>
 </body>
 </html>
