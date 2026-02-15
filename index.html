@@ -1,171 +1,201 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Wetterstation V83.2</title>
-    <link rel="stylesheet" href="style.css?v=83.2">
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <title>Aura Wetterstation V83.1</title>
+   <link rel="stylesheet" href="style.css?v=83.1">
 </head>
 <body>
 
-    <div id="loader"></div>
 
-    <svg style="width:0;height:0;position:absolute;" aria-hidden="true">
-        <defs>
-            <radialGradient id="gradSun" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
-            </radialGradient>
-            <linearGradient id="gradCloud" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#888888;stop-opacity:1" />
-            </linearGradient>
-        </defs>
-    </svg>
+   <div id="loader"></div>
 
-    <video id="wake-video-layer" loop playsinline muted>
-        <source src="logo.mp4" type="video/mp4">
-    </video>
 
-    <div id="sleep-overlay" onclick="toggleSleep()"></div>
+   <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+       <defs>
+           <radialGradient id="gradSunReal" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+               <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+               <stop offset="25%" style="stop-color:#ffd700;stop-opacity:1" />
+               <stop offset="100%" style="stop-color:#ff4500;stop-opacity:1" />
+           </radialGradient>
 
-    <div class="dashboard">
-        
-        <div class="col-left">
-            <div id="clock">00:00</div>
-            <div id="date">LADE DATEN...</div>
-            <div class="logo-container">
-                <img id="logo-bg" src="logo.png" alt="Logo">
-                <video id="logo-video" loop playsinline muted>
-                    <source src="logo.mp4" type="video/mp4">
-                </video>
-            </div>
-        </div>
 
-        <div class="col-weather">
-            <div id="greet-text">MOIN MOIN,</div>
-            <div id="city-sub">BRAUNSCHWEIG</div>
-            
-            <div id="dwd-monitor" style="display:none;">
-                <span id="dwd-text">KEINE WARNUNG</span>
-            </div>
+           <radialGradient id="gradMoonReal" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+               <stop offset="15%" style="stop-color:#f0faff;stop-opacity:1" />
+               <stop offset="60%" style="stop-color:#00eaff;stop-opacity:1" />
+               <stop offset="100%" style="stop-color:#002244;stop-opacity:1" />
+           </radialGradient>
 
-            <div class="main-row-v61">
-                <div id="main-icon"></div> 
-                <div id="main-temp">--°</div>
-                
-                <div class="temp-extra-stack">
-                    <div class="feels-row">
-                        <span style="color:#00eaff;">FEELS:</span> <span id="val-feels">--°</span>
-                    </div>
-                    <div class="rain-row">
-                        <span style="color:#00eaff;">RAIN:</span> <span id="rain-val">--%</span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="deep-data-row">
-                <div class="data-cell">
-                    <span id="val-humidity" class="cell-val">--</span><span class="cell-unit">%</span>
-                </div>
-                <div class="data-cell">
-                    <span id="val-wind" class="cell-val">--</span><span class="cell-unit">km/h</span>
-                </div>
-                <div class="data-cell">
-                    <span id="val-press" class="cell-val">--</span><span class="cell-unit">hPa</span>
-                </div>
-            </div>
+           <linearGradient id="gradCloudReal" x1="0%" y1="0%" x2="0%" y2="100%">
+               <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+               <stop offset="100%" style="stop-color:#778899;stop-opacity:1" />
+           </linearGradient>
+       </defs>
+   </svg>
 
-            <img src="https://code-werft.de/code-werftgross.png" class="ghost-logo">
-        </div>
 
-        <div class="col-system">
-            <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
-            
-            <div class="astro-block">
-                <span class="astro-label">SONNE</span>
-                <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
-            </div>
-            
-            <div class="status-block">
-                <div class="status-row" id="bat-level">BAT: --%</div>
-                <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row" style="color:#00eaff;">VER: 83.2</div>
-            </div>
-        </div>
-    </div>
+   <video id="wake-video-layer" loop playsinline muted>
+       <source src="logo.mp4" type="video/mp4">
+   </video>
 
-    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V83.2 STABLE ENGINE +++ SYSTEM BEREIT +++</div></div>
-    
-    <div class="forecast-area">
-        <div class="f-row" id="daily-row">
-            </div>
-    </div>
 
-    <div class="footer-copyright">&copy; Code-Werft 2026 - Piratkarl</div>
+   <div id="sleep-overlay" onclick="toggleSleep()"></div>
 
-    <div id="menu-modal">
-        <div class="menu-container">
-            <div class="menu-header">
-                <h2>EINSTELLUNGEN</h2>
-                <button class="menu-close-btn" onclick="closeMenu()">×</button>
-            </div>
-            
-            <button class="acc-btn" onclick="toggleAccordion('acc-loc')">📍 Ort & Ticker</button>
-            <div id="acc-loc" class="acc-content" style="display:block;">
-                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt">
-                <select id="inp-ticker-mode" class="inp-select">
-                    <option value="world">🌍 Welt-Metropolen</option>
-                    <option value="snow">❄️ Schnee-Bericht</option>
-                    <option value="summer">🌊 Bade-Wetter</option>
-                </select>
-            </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 Ruhemodus</button>
-            <div id="acc-sleep" class="acc-content">
-                <div class="inp-time-row">
-                    <input type="time" id="inp-time-from" class="inp-time">
-                    <span style="font-size:30px; color:#00eaff;">➜</span>
-                    <input type="time" id="inp-time-to" class="inp-time">
-                </div>
-            </div>
+   <div id="start-overlay">
+       <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
+       <button class="btn-start" onclick="startApp()">
+           AURA V83 STARTEN
+       </button>
+       <p style="color:#444; margin-top:20px;">LEGACY EDITION</p>
+   </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-legend')">ℹ️ Symbole</button>
-            <div id="acc-legend" class="acc-content">
-                <div class="legend-grid">
-                    <div class="l-item">☀️ <span class="l-desc">Sonne</span></div>
-                    <div class="l-item">☁️ <span class="l-desc">Bewölkt</span></div>
-                    <div class="l-item">🌧️ <span class="l-desc">Regen</span></div>
-                    <div class="l-item">⛈️ <span class="l-desc">Gewitter</span></div>
-                </div>
-            </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-contact')">⚓ Kontakt</button>
-            <div id="acc-contact" class="acc-content">
-                <form id="aura-contact-form" action="https://formsubmit.co/piratkarl@web.de" method="POST" target="hiddenFrame">
-                    <input type="text" name="name" class="inp-city" placeholder="Name" required>
-                    <textarea name="message" class="inp-city" placeholder="Nachricht..." required></textarea>
-                    <button type="submit" class="btn-save">ABSENDEN</button>
-                </form>
-                <iframe name="hiddenFrame" style="display:none;"></iframe>
-            </div>
+   <div class="dashboard">
+      
+       <div class="col-left">
+           <div id="clock">00:00</div>
+           <div id="date">LADE...</div>
+           <div class="logo-container">
+               <img id="logo-bg" src="logo.png" alt="Aura Logo">
+               <video id="logo-video" loop playsinline muted>
+                   <source src="logo.mp4" type="video/mp4">
+               </video>
+           </div>
+       </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-supp')">☕ Kaffeekasse</button>
-            <div id="acc-supp" class="acc-content">
-                <p>Support für die Code-Werft:</p>
-                <button class="btn-save">PAYPAL SPENDE</button>
-            </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-sys')">💾 System</button>
-            <div id="acc-sys" class="acc-content">
-                <button class="btn-action" onclick="location.reload(true)">NEUSTART</button>
-                <p style="font-size:12px; color:#555; margin-top:10px;">Build: 83.2.stable.final</p>
-            </div>
+       <div class="col-center">
+           <div id="location-header">BRAUNSCHWEIG</div>
+          
+           <div class="main-row-v61">
+               <div id="main-icon"></div>
+               <div id="main-temp">--°</div>
+              
+               <div class="temp-extra-stack">
+                   <div class="feels-row" title="Gefühlte Temperatur">
+                       <svg class="stack-icon" viewBox="0 0 24 24"><path d="M12 2c-2.2 0-4 1.8-4 4v7.2c-1.2 1.3-2 3-2 4.8 0 3.3 2.7 6 6 6s6-2.7 6-6c0-1.8-.8-3.5-2-4.8V6c0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2v7h-4V6c0-1.1.9-2 2-2z"/></svg>
+                       <span id="val-feels">--°</span>
+                   </div>
+                   <div class="rain-row">
+                       <svg class="stack-icon" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>
+                       <span id="rain-val">--%</span>
+                   </div>
+               </div>
+           </div>
 
-            <button class="btn-save" style="margin-top:20px; width:100%;" onclick="saveSettings()">💾 SPEICHERN</button>
-        </div>
-    </div>
 
-    <script src="script.js?v=83.2"></script>
+           <div class="deep-data-row">
+               <div class="data-cell" title="Luftfeuchtigkeit">
+                   <svg class="cell-icon" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16zM12 20c-2.76 0-5-2.24-5-5 0-2.6 3.52-7.55 5-9.74 1.48 2.19 5 7.14 5 9.74 0 2.76-2.24 5-5 5z" opacity="0.9"/></svg>
+                   <span id="val-humidity" class="cell-val">--</span><span class="cell-unit">%</span>
+               </div>
+               <div class="data-cell" title="Wind">
+                   <svg id="icon-wind" class="cell-icon" viewBox="0 0 24 24" style="transform-origin:center;"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                   <span id="val-wind" class="cell-val">--</span>
+               </div>
+               <div class="data-cell" title="Sichtweite">
+                   <svg class="cell-icon" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                   <span id="val-vis" class="cell-val">--</span><span class="cell-unit">km</span>
+               </div>
+               <div class="data-cell" title="Luftdruck">
+                   <svg class="cell-icon" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
+                   <span id="val-press" class="cell-val">--</span><span class="cell-unit">hPa</span>
+               </div>
+           </div>
+       </div>
+
+
+       <div class="col-right">
+           <div id="dwd-monitor" class="warn-cyan">
+               <span class="dwd-head">DWD WARNT:</span>
+               <span class="dwd-content" id="dwd-text">KEINE WARNUNG</span>
+               <span class="dwd-time" id="dwd-valid">--:--</span>
+           </div>
+
+
+           <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
+           <div class="astro-block">
+               <span class="astro-label">SONNE</span>
+               <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
+           </div>
+           <div class="astro-block">
+               <span class="astro-label">MOND</span>
+               <span id="moon-phase" class="astro-val">--</span>
+           </div>
+           <div class="status-block">
+               <div class="status-row" id="bat-level">BAT: --%</div>
+               <div class="status-row" id="net-status">WLAN: OK</div>
+               <div class="status-row">VER: 83.1</div>
+               <div class="ver-label" id="last-update">Aktualisiert: --:--</div>
+           </div>
+       </div>
+   </div>
+
+
+   <div class="ticker-wrap">
+       <div id="ticker-text">+++ AURA WETTERSTATION +++</div>
+   </div>
+
+
+   <div class="forecast-area">
+       <div class="f-row" id="hourly-row"></div>
+       <div class="f-row" id="daily-row"></div>
+   </div>
+
+
+   <div class="footer-copyright">
+       &copy; Code-Werft 2026 Karl Altmannshofer (Piratkarl) alle Rechte vorbehalten!
+   </div>
+
+
+   <div id="menu-modal">
+       <div class="menu-container">
+           <div class="menu-header">
+               <h2>AURA EINSTELLUNGEN</h2>
+               <button class="menu-close-btn" onclick="closeMenu()">×</button>
+           </div>
+           <button class="acc-btn" onclick="toggleAccordion('acc-loc')"><span>📍 Ort & Ticker</span> <span>▼</span></button>
+           <div id="acc-loc" class="acc-content" style="display:block;">
+               <span class="inp-label">Dein Standort:</span>
+               <input type="text" id="inp-city-val" class="inp-city" placeholder="z.B. Braunschweig">
+               <div style="color: #fff; font-size: 16px; margin-top: 5px; margin-bottom: 20px; font-weight: bold;">ℹ️ Hinweis: Die DWD-Warnungen (rechts oben) funktionieren erst ab Android 7.1!</div>
+               <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+               <div style="color: #fff; font-size: 16px; margin-bottom: 10px; font-weight: bold;">ℹ️ Hinweis: Schnee- & Sommerdaten benötigen Android 7.1+. Auf älteren Geräten bitte "Welt-Metropolen" nutzen.</div>
+               <span class="inp-label">Ticker Modus:</span>
+               <select id="inp-ticker-mode" class="inp-select">
+                   <option value="world">🌍 Welt-Metropolen (Standard)</option>
+                   <option value="snow">❄️ Schnee-Bericht (Skigebiete)</option>
+                   <option value="summer">🌊 Bade-Wetter (Strände)</option>
+               </select>
+           </div>
+           <button class="acc-btn" onclick="toggleAccordion('acc-sleep')"><span>🌙 Ruhemodus</span> <span>▼</span></button>
+           <div id="acc-sleep" class="acc-content">
+               <div class="menu-text">Das Display schaltet sich in dieser Zeit dunkel.</div>
+               <div class="inp-time-row">
+                   <input type="time" id="inp-time-from" class="inp-time">
+                   <span style="font-size:30px; color:#00eaff;">➜</span>
+                   <input type="time" id="inp-time-to" class="inp-time">
+               </div>
+           </div>
+           <button class="acc-btn" onclick="toggleAccordion('acc-sys')"><span>ℹ️ System & Info</span> <span>▼</span></button>
+           <div id="acc-sys" class="acc-content">
+               <div class="menu-text">Version: <strong>83.1 (Legacy Fix)</strong><br>Engine: OpenWeatherMap & BrightSky</div>
+               <button class="btn-action" onclick="location.reload(true)">♻️ NEUSTART ERZWINGEN</button>
+           </div>
+           <button class="acc-btn" onclick="toggleAccordion('acc-supp')"><span>☕ Support</span> <span>▼</span></button>
+           <div id="acc-supp" class="acc-content">
+               <div class="menu-text">Gefällt dir Aura?</div>
+               <a href="https://www.paypal.com/donate?hosted_button_id=YOUR_PAYPAL_ID" target="_blank" class="btn-paypal">☕ Kaffeekasse (PayPal)</a>
+           </div>
+           <button class="btn-save" onclick="saveSettings()">💾 SPEICHERN & SCHLIESSEN</button>
+           <div class="menu-copyright">&copy; 2026 Code-Werft</div>
+       </div>
+   </div>
+
+
+   <script src="script.js?v=83.1"></script>
 </body>
-</html> 
+</html>
