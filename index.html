@@ -3,12 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AURA V1.0 STABLE</title>
-    <link rel="stylesheet" href="style.css?v=1.0">
+    <title>Aura Wetterstation V83.2</title>
+    <link rel="stylesheet" href="style.css?v=83.2">
 </head>
 <body>
 
     <div id="loader"></div>
+
+    <svg style="width:0;height:0;position:absolute;" aria-hidden="true">
+        <defs>
+            <radialGradient id="gradSun" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+            </radialGradient>
+            <linearGradient id="gradCloud" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#888888;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
 
     <video id="wake-video-layer" loop playsinline muted>
         <source src="logo.mp4" type="video/mp4">
@@ -16,23 +29,13 @@
 
     <div id="sleep-overlay" onclick="toggleSleep()"></div>
 
-    <div id="start-overlay">
-        <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
-        <button class="btn-start" onclick="startApp()">AURA STARTEN</button>
-        <div id="update-msg" style="color:#00eaff; margin-top:20px; font-weight:bold; display:none; text-align:center;">
-            ✨ SYSTEM-UPDATE ERFOLGREICH ✨<br>
-            <span style="font-size:0.8em; color:#888;">VERSION 1.0 STABLE AKTIV</span>
-        </div>
-        <p style="color:#444; margin-top:10px; font-size:12px;">CODE-WERFT SYSTEM-CHECK: OK</p>
-    </div>
-
     <div class="dashboard">
         
         <div class="col-left">
             <div id="clock">00:00</div>
-            <div id="date">LADE...</div>
+            <div id="date">LADE DATEN...</div>
             <div class="logo-container">
-                <img id="logo-bg" src="logo.png" alt="Aura Logo">
+                <img id="logo-bg" src="logo.png" alt="Logo">
                 <video id="logo-video" loop playsinline muted>
                     <source src="logo.mp4" type="video/mp4">
                 </video>
@@ -40,8 +43,8 @@
         </div>
 
         <div class="col-weather">
-            <div id="greet-text">LADE...</div>
-            <div id="city-sub">---</div>
+            <div id="greet-text">MOIN MOIN,</div>
+            <div id="city-sub">BRAUNSCHWEIG</div>
             
             <div id="dwd-monitor" style="display:none;">
                 <span id="dwd-text">KEINE WARNUNG</span>
@@ -53,160 +56,116 @@
                 
                 <div class="temp-extra-stack">
                     <div class="feels-row">
-                        <span style="color:#00eaff; font-size:1.4vh;">GEFÜHLT:</span><br>
-                        <span id="val-feels" style="font-size:2.8vh;">--°</span>
+                        <span style="color:#00eaff;">FEELS:</span> <span id="val-feels">--°</span>
                     </div>
                     <div class="rain-row">
-                        <span style="color:#00eaff; font-size:1.4vh;">REGEN:</span><br>
-                        <span id="rain-val" style="font-size:2.8vh;">--%</span>
+                        <span style="color:#00eaff;">RAIN:</span> <span id="rain-val">--%</span>
                     </div>
                 </div>
             </div>
 
             <div class="deep-data-row">
                 <div class="data-cell">
-                    <span class="cell-label">FEUCHTE</span>
                     <span id="val-humidity" class="cell-val">--</span><span class="cell-unit">%</span>
                 </div>
                 <div class="data-cell">
-                    <span class="cell-label">WIND</span>
                     <span id="val-wind" class="cell-val">--</span><span class="cell-unit">km/h</span>
                 </div>
                 <div class="data-cell">
-                    <span class="cell-label">UV-INDEX</span>
-                    <span id="val-uv" class="cell-val">--</span>
-                </div>
-                <div class="data-cell">
-                    <span class="cell-label">LUFT (AQI)</span>
-                    <span id="val-aqi" class="cell-val">--</span>
+                    <span id="val-press" class="cell-val">--</span><span class="cell-unit">hPa</span>
                 </div>
             </div>
 
-            <img src="https://code-werft.de/code-werftgross.png" class="ghost-logo" alt="CW">
+            <img src="https://code-werft.de/code-werftgross.png" class="ghost-logo">
         </div>
 
         <div class="col-system">
-            <button id="btn-menu" onclick="openMenu()">⚙ KONFIGURATION</button>
+            <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
             
             <div class="astro-block">
-                <span class="astro-label">SONNENLAUF</span>
-                <span class="astro-val">▲ <span id="sunrise">--:--</span> / ▼ <span id="sunset">--:--</span></span>
-            </div>
-            
-            <div class="astro-block">
-                <span class="astro-label">MONDPHASE</span>
-                <span class="astro-val"><span id="moon-phase">---</span> <span id="moon-percent" style="color:#888;"></span></span>
+                <span class="astro-label">SONNE</span>
+                <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
             </div>
             
             <div class="status-block">
-                <div class="status-row" id="bat-level">ENERGIE: --%</div>
-                <div class="status-row" id="net-status">NETZ: ONLINE</div>
-                <div class="status-row" style="color:#00eaff;">KNOTEN: V1.0 STABLE</div>
-                <div class="ver-label" id="last-update">LETZTER SYNC: --:--</div>
+                <div class="status-row" id="bat-level">BAT: --%</div>
+                <div class="status-row" id="net-status">WLAN: OK</div>
+                <div class="status-row" style="color:#00eaff;">VER: 83.2</div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V1.0 STABLE +++ SYSTEM BEREIT +++</div></div>
+    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V83.2 STABLE ENGINE +++ SYSTEM BEREIT +++</div></div>
     
     <div class="forecast-area">
-        <div class="f-row" id="hourly-row"></div>
-        <div class="f-row" id="daily-row"></div>
+        <div class="f-row" id="daily-row">
+            </div>
     </div>
 
-    <div class="footer-copyright">&copy; 2026 CODE-WERFT // PIRATKARL</div>
+    <div class="footer-copyright">&copy; Code-Werft 2026 - Piratkarl</div>
 
     <div id="menu-modal">
         <div class="menu-container">
             <div class="menu-header">
-                <h2>KONFIGURATION</h2>
+                <h2>EINSTELLUNGEN</h2>
                 <button class="menu-close-btn" onclick="closeMenu()">×</button>
             </div>
             
-            <button class="acc-btn" onclick="toggleAccordion('acc-loc')">📍 STANDORT & TICKER</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-loc')">📍 Ort & Ticker</button>
             <div id="acc-loc" class="acc-content" style="display:block;">
-                <label class="inp-label">STADTIDENTIFIKATION</label>
-                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
-                
-                <div class="android-warn">
-                    ⚠️ HINWEIS: Erweiterte DWD-Warnungen und Ticker-Spezialeffekte benötigen Android 7.1+.
-                </div>
-
-                <label class="inp-label">TICKER-MODUS</label>
+                <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt">
                 <select id="inp-ticker-mode" class="inp-select">
-                    <option value="world">🌍 WELT-METROPOLEN</option>
-                    <option value="snow">❄️ SCHNEE-TICKER (ALPIN)</option>
-                    <option value="summer">🌊 MEER-WETTER (MARITIM)</option>
+                    <option value="world">🌍 Welt-Metropolen</option>
+                    <option value="snow">❄️ Schnee-Bericht</option>
+                    <option value="summer">🌊 Bade-Wetter</option>
                 </select>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 RUHEMODUS-INTERVALLE</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 Ruhemodus</button>
             <div id="acc-sleep" class="acc-content">
                 <div class="inp-time-row">
-                    <div>
-                        <label class="inp-label">START</label>
-                        <input type="time" id="inp-time-from" class="inp-time">
-                    </div>
-                    <div style="font-size:30px; color:#00eaff; padding-top:20px; text-align:center;">➜</div>
-                    <div>
-                        <label class="inp-label">ENDE</label>
-                        <input type="time" id="inp-time-to" class="inp-time">
-                    </div>
+                    <input type="time" id="inp-time-from" class="inp-time">
+                    <span style="font-size:30px; color:#00eaff;">➜</span>
+                    <input type="time" id="inp-time-to" class="inp-time">
                 </div>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-legend')">ℹ️ SYMBOL-LEGENDE</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-legend')">ℹ️ Symbole</button>
             <div id="acc-legend" class="acc-content">
                 <div class="legend-grid">
-                    <div class="l-item">☀️ <span class="l-desc">KLAR / SONNE</span></div>
-                    <div class="l-item">🌙 <span class="l-desc">NACHT / KLAR</span></div>
-                    <div class="l-item">⛅ <span class="l-desc">LEICHT BEWÖLKT</span></div>
-                    <div class="l-item">☁️ <span class="l-desc">BEDECKT</span></div>
-                    <div class="l-item">🌧️ <span class="l-desc">REGENSCHAUER</span></div>
-                    <div class="l-item">⛈️ <span class="l-desc">GEWITTER-FRONT</span></div>
-                    <div class="l-item">🌨️ <span class="l-desc">SCHNEEFALL</span></div>
-                    <div class="l-item">🌫️ <span class="l-desc">NEBEL / DUNST</span></div>
+                    <div class="l-item">☀️ <span class="l-desc">Sonne</span></div>
+                    <div class="l-item">☁️ <span class="l-desc">Bewölkt</span></div>
+                    <div class="l-item">🌧️ <span class="l-desc">Regen</span></div>
+                    <div class="l-item">⛈️ <span class="l-desc">Gewitter</span></div>
                 </div>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-contact')">⚓ KONTAKT ZUR WERFT</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-contact')">⚓ Kontakt</button>
             <div id="acc-contact" class="acc-content">
-                <div style="text-align:center; margin-bottom:20px;">
-                    <a href="https://code-werft.de" target="_blank">
-                        <img src="https://code-werft.de/code-werftgross.png" style="max-width:250px; opacity:0.9;">
-                    </a>
-                </div>
                 <form id="aura-contact-form" action="https://formsubmit.co/piratkarl@web.de" method="POST" target="hiddenFrame">
-                    <input type="hidden" name="_captcha" value="false">
-                    <input type="text" name="name" class="inp-city" placeholder="IDENTIFIKATION (NAME)" required>
-                    <input type="email" name="email" class="inp-city" placeholder="RÜCKKANAL (E-MAIL)" required>
-                    <textarea name="message" class="inp-city" style="height:100px;" placeholder="NACHRICHT AN PIRATKARL..." required></textarea>
-                    <button type="submit" class="btn-save">NACHRICHT ABSENDEN</button>
+                    <input type="text" name="name" class="inp-city" placeholder="Name" required>
+                    <textarea name="message" class="inp-city" placeholder="Nachricht..." required></textarea>
+                    <button type="submit" class="btn-save">ABSENDEN</button>
                 </form>
-                <div id="form-success-msg" style="display:none; color:#0f0; text-align:center; margin-top:10px; font-weight:bold;">✅ SIGNAL ÜBERMITTELT!</div>
                 <iframe name="hiddenFrame" style="display:none;"></iframe>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-sys')">💾 SYSTEM-HISTORIE</button>
-            <div id="acc-sys" class="acc-content">
-                <button class="btn-action" onclick="location.reload(true)">♻️ SYSTEM-NEUSTART</button>
-                <div class="version-list">
-                    <div class="v-entry">
-                        <span class="v-num">V1.0 STABLE (2026)</span>
-                        <ul style="color:#888; font-size:13px;">
-                            <li>Finaler Master-Release</li>
-                            <li>Atomzeit-Korrektur (Sync-Engine)</li>
-                            <li>4x4 Vorhersage-Matrix</li>
-                            <li>UV-Index & Luftqualitäts-Monitor</li>
-                        </ul>
-                    </div>
-                </div>
+            <button class="acc-btn" onclick="toggleAccordion('acc-supp')">☕ Kaffeekasse</button>
+            <div id="acc-supp" class="acc-content">
+                <p>Support für die Code-Werft:</p>
+                <button class="btn-save">PAYPAL SPENDE</button>
             </div>
 
-            <button class="btn-save" style="margin-top:20px; width:100%;" onclick="saveSettings()">💾 EINSTELLUNGEN ÜBERNEHMEN</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-sys')">💾 System</button>
+            <div id="acc-sys" class="acc-content">
+                <button class="btn-action" onclick="location.reload(true)">NEUSTART</button>
+                <p style="font-size:12px; color:#555; margin-top:10px;">Build: 83.2.stable.final</p>
+            </div>
+
+            <button class="btn-save" style="margin-top:20px; width:100%;" onclick="saveSettings()">💾 SPEICHERN</button>
         </div>
     </div>
 
-    <script src="script.js?v=1.0"></script>
+    <script src="script.js?v=83.2"></script>
 </body>
 </html>
