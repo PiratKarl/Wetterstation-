@@ -1,4 +1,4 @@
-/* --- AURA V83.2 (LAYOUT FIX) --- */
+/* --- AURA V1.0 (STABLE RELEASE) --- */
 
 /* BASIS STYLES */
 html, body {
@@ -114,8 +114,21 @@ html, body {
     flex-direction: column;
     -webkit-align-items: center;
     align-items: center;
-    position: relative;
+    position: relative; /* Wichtig für Ghost-Logo */
 }
+
+/* GHOST LOGO (V1.0 NEU) */
+.ghost-logo {
+    position: absolute;
+    top: 5px;
+    right: -25px; /* Schiebt es in die Lücke rechts */
+    width: 70px;
+    opacity: 0.6;
+    pointer-events: auto; /* Klickbar */
+    z-index: 50;
+    transition: opacity 0.3s;
+}
+.ghost-logo:active { opacity: 1; }
 
 /* SPALTE 3: 25% */
 .col-system {
@@ -161,15 +174,22 @@ html, body {
     left: 0;
 }
 
-/* SPALTE 2: WETTER */
-#location-header {
+/* SPALTE 2: WETTER (BEGRÜSSUNG V1.0) */
+#greet-text {
     color: #00eaff;
-    font-size: 4vh;
+    font-size: 3.5vh;
     font-weight: bold;
     margin-bottom: 0px;
     width: 100%;
     text-align: center;
     text-shadow: 0 0 10px rgba(0,234,255,0.4);
+}
+#city-sub {
+    color: #666;
+    font-size: 1.5vh;
+    margin-top: -2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .main-row-v61 {
@@ -270,7 +290,12 @@ html, body {
     font-weight: normal;
 }
 
-/* WARNUNG (DWD) */
+/* AMPEL-FARBEN (V1.0) */
+.val-green { color: #0f0; text-shadow: 0 0 5px #0f0; }
+.val-yellow { color: #ffd700; }
+.val-red { color: #ff3333; font-weight: 900; animation: pulse 2s infinite; }
+
+/* WARNUNG (DWD) - PULSIEREND (V1.0) */
 #dwd-monitor {
     width: 80%;
     margin: 0 auto;
@@ -281,22 +306,22 @@ html, body {
     background: rgba(10,10,10,0.8);
     margin-bottom: 5px;
 }
-.warn-red { border-color:#ff0000; color:#ff0000; background:rgba(60,0,0,0.8); -webkit-animation: flash 2s infinite; animation: flash 2s infinite; }
+.warn-red { border: 2px solid #ff0000; color:#ff0000; background:rgba(60,0,0,0.8); -webkit-animation: flash 1s infinite; animation: flash 1s infinite; }
 .warn-orange { border-color:#ff8c00; color:#ff8c00; background:rgba(50,20,0,0.8); }
 .warn-yellow { border-color:#ffd700; color:#ffd700; background:rgba(40,35,0,0.8); }
 .warn-cyan { border-color:#00eaff; color:#00eaff; }
 #dwd-text { font-size:1.8vh; font-weight:bold; }
 
-/* RECHTS: SYSTEM & MENÜ - ANGEPASST */
+/* RECHTS: SYSTEM & MENÜ */
 #btn-menu {
     background: transparent;
     border: none;
     color: #fff;
-    font-size: 2.0vh; /* Kleiner */
+    font-size: 2.0vh; 
     font-weight: bold;
-    padding: 5px; /* Kleiner */
+    padding: 5px; 
     cursor: pointer;
-    margin-bottom: 5px; /* Viel kleinerer Abstand */
+    margin-bottom: 5px; 
     text-align: right;
     display: -webkit-flex;
     display: flex;
@@ -308,20 +333,20 @@ html, body {
 }
 
 .astro-block {
-    margin-bottom: 5px; /* Kleinerer Abstand */
+    margin-bottom: 5px; 
     text-align: right;
     width: 100%;
 }
 
 .astro-label {
     color: #00eaff;
-    font-size: 1.5vh; /* Etwas kleiner */
+    font-size: 1.5vh; 
     display: block;
     margin-bottom: 2px;
 }
 
 .astro-val {
-    font-size: 2.4vh; /* Etwas kleiner */
+    font-size: 2.4vh; 
     font-weight: bold;
 }
 
@@ -334,7 +359,7 @@ html, body {
 }
 
 .status-row {
-    font-size: 1.8vh; /* Kleiner, damit es passt */
+    font-size: 1.8vh; 
     margin-bottom: 2px;
     font-weight: bold;
     color: #bbb;
@@ -596,6 +621,28 @@ html, body {
     margin-bottom: 15px;
 }
 
+/* LEGENDE GRID (V1.0) */
+.legend-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.l-item { font-size: 20px; }
+.l-desc { font-size: 16px; color: #aaa; margin-left: 10px; }
+
+/* VERSIONS LISTE (V1.0) */
+.version-list { margin-top: 20px; text-align: left; }
+.v-entry { border-left: 2px solid #00eaff; padding-left: 15px; margin-bottom: 20px; }
+.v-date { color: #888; font-size: 14px; }
+.v-num { color: #00eaff; font-weight: bold; font-size: 18px; margin-left: 10px; }
+.v-entry ul { margin-top: 5px; padding-left: 20px; color: #ddd; }
+
+/* PULSIERENDE BUTTONS (V1.0) */
+.pulse-btn {
+    -webkit-animation: pulse-gold 2s infinite;
+    animation: pulse-gold 2s infinite;
+}
+
 .btn-save, .btn-action, .btn-paypal {
     background: #00eaff;
     color: #000;
@@ -612,15 +659,8 @@ html, body {
     text-decoration: none;
 }
 
-.btn-paypal {
-    background: #ffc439;
-}
-
-.btn-action {
-    background: #333;
-    color: #fff;
-    border: 1px solid #fff;
-}
+.btn-paypal { background: #ffc439; }
+.btn-action { background: #333; color: #fff; border: 1px solid #fff; }
 
 /* ANIMATIONEN */
 .svg-icon {
@@ -676,6 +716,17 @@ html, body {
 @keyframes flash {
     0%, 100% { opacity: 0; }
     50% { opacity: 1; }
+}
+
+@-webkit-keyframes pulse-gold {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 196, 57, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255, 196, 57, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 196, 57, 0); }
+}
+@keyframes pulse-gold {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 196, 57, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255, 196, 57, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 196, 57, 0); }
 }
 
 @-webkit-keyframes rain {
