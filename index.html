@@ -3,31 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura V1.0 Stable</title>
+    <title>AURA V1.0 STABLE</title>
     <link rel="stylesheet" href="style.css?v=1.0">
 </head>
 <body>
 
     <div id="loader"></div>
-
-    <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
-        <defs>
-            <radialGradient id="gradSunReal" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                <stop offset="25%" style="stop-color:#ffd700;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#ff4500;stop-opacity:1" />
-            </radialGradient>
-            <radialGradient id="gradMoonReal" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                <stop offset="15%" style="stop-color:#f0faff;stop-opacity:1" />
-                <stop offset="60%" style="stop-color:#00eaff;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#002244;stop-opacity:1" />
-            </radialGradient>
-            <linearGradient id="gradCloudReal" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#778899;stop-opacity:1" />
-            </linearGradient>
-        </defs>
-    </svg>
 
     <video id="wake-video-layer" loop playsinline muted>
         <source src="logo.mp4" type="video/mp4">
@@ -38,10 +19,11 @@
     <div id="start-overlay">
         <img src="logo.png" style="width:120px; opacity:0.8; margin-bottom: 20px; display:block;" onerror="this.style.display='none'">
         <button class="btn-start" onclick="startApp()">AURA STARTEN</button>
-        <div id="update-msg" style="color:#00eaff; margin-top:20px; font-weight:bold; display:none;">
-            ✨ NEU IN VERSION 1.0 ✨
+        <div id="update-msg" style="color:#00eaff; margin-top:20px; font-weight:bold; display:none; text-align:center;">
+            ✨ SYSTEM-UPDATE ERFOLGREICH ✨<br>
+            <span style="font-size:0.8em; color:#888;">VERSION 1.0 STABLE AKTIV</span>
         </div>
-        <p style="color:#444; margin-top:5px;">System bereit.</p>
+        <p style="color:#444; margin-top:10px; font-size:12px;">CODE-WERFT SYSTEM-CHECK: OK</p>
     </div>
 
     <div class="dashboard">
@@ -58,7 +40,7 @@
         </div>
 
         <div class="col-weather">
-            <div id="greet-text">LADE DATEN...</div>
+            <div id="greet-text">LADE...</div>
             <div id="city-sub">---</div>
             
             <div id="dwd-monitor" style="display:none;">
@@ -71,29 +53,31 @@
                 
                 <div class="temp-extra-stack">
                     <div class="feels-row">
-                        <svg class="stack-icon" viewBox="0 0 24 24"><path d="M12 2c-2.2 0-4 1.8-4 4v7.2c-1.2 1.3-2 3-2 4.8 0 3.3 2.7 6 6 6s6-2.7 6-6c0-1.8-.8-3.5-2-4.8V6c0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2v7h-4V6c0-1.1.9-2 2-2z"/></svg>
-                        <span id="val-feels">--°</span>
+                        <span style="color:#00eaff; font-size:1.4vh;">GEFÜHLT:</span><br>
+                        <span id="val-feels" style="font-size:2.8vh;">--°</span>
                     </div>
                     <div class="rain-row">
-                        <svg class="stack-icon" viewBox="0 0 24 24"><path d="M12 2.6c-3.4 5.8-8.5 11.5-8.5 16 0 4.6 3.8 8.4 8.5 8.4s8.5-3.8 8.5-8.4c0-4.5-5.1-10.2-8.5-16z"/></svg>
-                        <span id="rain-val">--%</span>
+                        <span style="color:#00eaff; font-size:1.4vh;">REGEN:</span><br>
+                        <span id="rain-val" style="font-size:2.8vh;">--%</span>
                     </div>
                 </div>
             </div>
 
             <div class="deep-data-row">
                 <div class="data-cell">
+                    <span class="cell-label">FEUCHTE</span>
                     <span id="val-humidity" class="cell-val">--</span><span class="cell-unit">%</span>
                 </div>
                 <div class="data-cell">
-                    <span id="val-wind" class="cell-val">--</span><div id="icon-wind" style="display:inline-block; margin-left:5px;">➤</div>
+                    <span class="cell-label">WIND</span>
+                    <span id="val-wind" class="cell-val">--</span><span class="cell-unit">km/h</span>
                 </div>
                 <div class="data-cell">
-                    <span style="color:#aaa; font-size:0.6em; margin-right:3px;">UV</span>
+                    <span class="cell-label">UV-INDEX</span>
                     <span id="val-uv" class="cell-val">--</span>
                 </div>
                 <div class="data-cell">
-                    <span style="color:#aaa; font-size:0.6em; margin-right:3px;">AQI</span>
+                    <span class="cell-label">LUFT (AQI)</span>
                     <span id="val-aqi" class="cell-val">--</span>
                 </div>
             </div>
@@ -102,140 +86,124 @@
         </div>
 
         <div class="col-system">
-            <button id="btn-menu" onclick="openMenu()">⚙ MENÜ</button>
+            <button id="btn-menu" onclick="openMenu()">⚙ KONFIGURATION</button>
             
             <div class="astro-block">
-                <span class="astro-label">SONNE</span>
-                <span class="astro-val"><span id="sunrise">--:--</span> / <span id="sunset">--:--</span></span>
+                <span class="astro-label">SONNENLAUF</span>
+                <span class="astro-val">▲ <span id="sunrise">--:--</span> / ▼ <span id="sunset">--:--</span></span>
             </div>
+            
             <div class="astro-block">
-                <span class="astro-label">MOND</span>
-                <span class="astro-val"><span id="moon-phase">--</span> <span id="moon-percent" style="font-size:0.6em; color:#aaa;"></span></span>
+                <span class="astro-label">MONDPHASE</span>
+                <span class="astro-val"><span id="moon-phase">---</span> <span id="moon-percent" style="color:#888;"></span></span>
             </div>
             
             <div class="status-block">
-                <div class="status-row" id="bat-level">BAT: --%</div>
-                <div class="status-row" id="net-status">WLAN: OK</div>
-                <div class="status-row" style="color:#00eaff;">VER: 1.0</div>
-                <div class="ver-label" id="last-update">Sync: --:--</div>
+                <div class="status-row" id="bat-level">ENERGIE: --%</div>
+                <div class="status-row" id="net-status">NETZ: ONLINE</div>
+                <div class="status-row" style="color:#00eaff;">KNOTEN: V1.0 STABLE</div>
+                <div class="ver-label" id="last-update">LETZTER SYNC: --:--</div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V1.0 INITIALISIERUNG +++</div></div>
+    <div class="ticker-wrap"><div id="ticker-text">+++ AURA V1.0 STABLE +++ SYSTEM BEREIT +++</div></div>
     
     <div class="forecast-area">
-        <div class="f-row" id="hourly-row">
-            </div>
-        <div class="f-row" id="daily-row">
-            </div>
+        <div class="f-row" id="hourly-row"></div>
+        <div class="f-row" id="daily-row"></div>
     </div>
 
-    <div class="footer-copyright">&copy; Code-Werft 2026 - Piratkarl</div>
+    <div class="footer-copyright">&copy; 2026 CODE-WERFT // PIRATKARL</div>
 
     <div id="menu-modal">
         <div class="menu-container">
             <div class="menu-header">
-                <h2>EINSTELLUNGEN</h2>
+                <h2>KONFIGURATION</h2>
                 <button class="menu-close-btn" onclick="closeMenu()">×</button>
             </div>
             
-            <button class="acc-btn" onclick="toggleAccordion('acc-loc')">📍 Ort & Ticker</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-loc')">📍 STANDORT & TICKER</button>
             <div id="acc-loc" class="acc-content" style="display:block;">
+                <label class="inp-label">STADTIDENTIFIKATION</label>
                 <input type="text" id="inp-city-val" class="inp-city" placeholder="Stadt eingeben">
-                <div style="background:#332200; border-left:4px solid #ffd700; color:#ffd700; padding:10px; margin-bottom:15px; font-size:14px;">
-                    ⚠️ Hinweis: DWD-Warnungen und Spezial-Ticker benötigen Android 7.1+
+                
+                <div class="android-warn">
+                    ⚠️ HINWEIS: Erweiterte DWD-Warnungen und Ticker-Spezialeffekte benötigen Android 7.1+.
                 </div>
+
+                <label class="inp-label">TICKER-MODUS</label>
                 <select id="inp-ticker-mode" class="inp-select">
-                    <option value="world">🌍 Welt-Metropolen</option>
-                    <option value="snow">❄️ Schnee-Bericht (Saison)</option>
-                    <option value="summer">🌊 Bade-Wetter (Saison)</option>
+                    <option value="world">🌍 WELT-METROPOLEN</option>
+                    <option value="snow">❄️ SCHNEE-TICKER (ALPIN)</option>
+                    <option value="summer">🌊 MEER-WETTER (MARITIM)</option>
                 </select>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 Ruhemodus</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-sleep')">🌙 RUHEMODUS-INTERVALLE</button>
             <div id="acc-sleep" class="acc-content">
                 <div class="inp-time-row">
-                    <input type="time" id="inp-time-from" class="inp-time">
-                    <span style="font-size:30px; color:#00eaff;">➜</span>
-                    <input type="time" id="inp-time-to" class="inp-time">
-                </div>
-            </div>
-
-            <button class="acc-btn" onclick="toggleAccordion('acc-contact')">⚓ Kontakt / Werft</button>
-            <div id="acc-contact" class="acc-content">
-                <div style="text-align:center; margin-bottom:20px;">
-                    <a href="https://code-werft.de" target="_blank">
-                        <img src="https://code-werft.de/code-werftgross.png" style="max-width:80%; height:auto; opacity:0.9;">
-                    </a>
-                    <p style="color:#888; font-size:14px; margin-top:5px;">Entwicklung: Piratkarl</p>
-                </div>
-                <div class="contact-form-wrapper">
-                    <div class="blueprint-card" style="border: 1px solid #333; padding:15px; background:#000;">
-                        <h3 style="color:#00eaff; margin-top:0;">Nachricht senden</h3>
-                        <form id="aura-contact-form" action="https://formsubmit.co/piratkarl@web.de" method="POST" target="hiddenFrame">
-                            <input type="hidden" name="_subject" value="AURA V1.0 Feedback">
-                            <input type="hidden" name="_captcha" value="false">
-                            <div class="form-group" style="margin-bottom:10px;">
-                                <label style="color:#aaa; display:block; font-size:12px;">Identifikation</label>
-                                <input type="text" name="name" class="inp-city" placeholder="Name / Callsign" required>
-                            </div>
-                            <div class="form-group" style="margin-bottom:10px;">
-                                <label style="color:#aaa; display:block; font-size:12px;">Rückkanal</label>
-                                <input type="email" name="email" class="inp-city" placeholder="E-Mail" required>
-                            </div>
-                            <div class="form-group" style="margin-bottom:10px;">
-                                <label style="color:#aaa; display:block; font-size:12px;">Nachricht</label>
-                                <textarea name="message" class="inp-city" style="height:100px;" placeholder="Nachricht an die Werft..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn-save">NACHRICHT ABSENDEN</button>
-                        </form>
-                        <div id="form-success-msg" style="display:none; color:#0f0; text-align:center; margin-top:10px; font-weight:bold;">
-                            ✅ Nachricht gesendet!
-                        </div>
-                        <iframe name="hiddenFrame" style="display:none;"></iframe>
+                    <div>
+                        <label class="inp-label">START</label>
+                        <input type="time" id="inp-time-from" class="inp-time">
+                    </div>
+                    <div style="font-size:30px; color:#00eaff; padding-top:20px; text-align:center;">➜</div>
+                    <div>
+                        <label class="inp-label">ENDE</label>
+                        <input type="time" id="inp-time-to" class="inp-time">
                     </div>
                 </div>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-legend')">ℹ️ Symbole & Hilfe</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-legend')">ℹ️ SYMBOL-LEGENDE</button>
             <div id="acc-legend" class="acc-content">
                 <div class="legend-grid">
-                    <div class="l-item">☀️ <span class="l-desc">Sonne / Klar</span></div>
-                    <div class="l-item">🌙 <span class="l-desc">Mond / Nacht</span></div>
-                    <div class="l-item">⛅ <span class="l-desc">Leicht bewölkt</span></div>
-                    <div class="l-item">☁️ <span class="l-desc">Bedeckt</span></div>
-                    <div class="l-item">🌧️ <span class="l-desc">Regen</span></div>
-                    <div class="l-item">⛈️ <span class="l-desc">Gewitter</span></div>
-                    <div class="l-item">🌨️ <span class="l-desc">Schnee</span></div>
-                    <div class="l-item">🌫️ <span class="l-desc">Nebel</span></div>
+                    <div class="l-item">☀️ <span class="l-desc">KLAR / SONNE</span></div>
+                    <div class="l-item">🌙 <span class="l-desc">NACHT / KLAR</span></div>
+                    <div class="l-item">⛅ <span class="l-desc">LEICHT BEWÖLKT</span></div>
+                    <div class="l-item">☁️ <span class="l-desc">BEDECKT</span></div>
+                    <div class="l-item">🌧️ <span class="l-desc">REGENSCHAUER</span></div>
+                    <div class="l-item">⛈️ <span class="l-desc">GEWITTER-FRONT</span></div>
+                    <div class="l-item">🌨️ <span class="l-desc">SCHNEEFALL</span></div>
+                    <div class="l-item">🌫️ <span class="l-desc">NEBEL / DUNST</span></div>
                 </div>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-supp')">☕ Kaffeekasse</button>
-            <div id="acc-supp" class="acc-content">
-                <p style="text-align:center; color:#ddd; font-style:italic;">Koffein in Code verwandeln!</p>
-                <a href="https://www.paypal.com/donate?hosted_button_id=DEINE_ID_HIER" target="_blank" class="btn-paypal pulse-btn">☕ JETZT SPENDEN</a>
+            <button class="acc-btn" onclick="toggleAccordion('acc-contact')">⚓ KONTAKT ZUR WERFT</button>
+            <div id="acc-contact" class="acc-content">
+                <div style="text-align:center; margin-bottom:20px;">
+                    <a href="https://code-werft.de" target="_blank">
+                        <img src="https://code-werft.de/code-werftgross.png" style="max-width:250px; opacity:0.9;">
+                    </a>
+                </div>
+                <form id="aura-contact-form" action="https://formsubmit.co/piratkarl@web.de" method="POST" target="hiddenFrame">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="text" name="name" class="inp-city" placeholder="IDENTIFIKATION (NAME)" required>
+                    <input type="email" name="email" class="inp-city" placeholder="RÜCKKANAL (E-MAIL)" required>
+                    <textarea name="message" class="inp-city" style="height:100px;" placeholder="NACHRICHT AN PIRATKARL..." required></textarea>
+                    <button type="submit" class="btn-save">NACHRICHT ABSENDEN</button>
+                </form>
+                <div id="form-success-msg" style="display:none; color:#0f0; text-align:center; margin-top:10px; font-weight:bold;">✅ SIGNAL ÜBERMITTELT!</div>
+                <iframe name="hiddenFrame" style="display:none;"></iframe>
             </div>
 
-            <button class="acc-btn" onclick="toggleAccordion('acc-sys')">💾 System & Historie</button>
+            <button class="acc-btn" onclick="toggleAccordion('acc-sys')">💾 SYSTEM-HISTORIE</button>
             <div id="acc-sys" class="acc-content">
-                <button class="btn-action" onclick="location.reload(true)">♻️ NEUSTART</button>
+                <button class="btn-action" onclick="location.reload(true)">♻️ SYSTEM-NEUSTART</button>
                 <div class="version-list">
-                    <h4>VERSIONS-HISTORIE</h4>
                     <div class="v-entry">
-                        <span class="v-date">15.02.2026</span> <span class="v-num">V1.0 (STABLE)</span>
-                        <ul>
-                            <li>Offizieller Release</li>
-                            <li>Atomzeit-Sync (Korrektur Drift)</li>
-                            <li>Auto-Update Engine (Server-Check)</li>
-                            <li>4x4 Vorhersage & UV/AQI</li>
+                        <span class="v-num">V1.0 STABLE (2026)</span>
+                        <ul style="color:#888; font-size:13px;">
+                            <li>Finaler Master-Release</li>
+                            <li>Atomzeit-Korrektur (Sync-Engine)</li>
+                            <li>4x4 Vorhersage-Matrix</li>
+                            <li>UV-Index & Luftqualitäts-Monitor</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <button class="btn-save" onclick="saveSettings()">💾 SPEICHERN & SCHLIESSEN</button>
+            <button class="btn-save" style="margin-top:20px; width:100%;" onclick="saveSettings()">💾 EINSTELLUNGEN ÜBERNEHMEN</button>
         </div>
     </div>
 
